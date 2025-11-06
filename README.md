@@ -31,12 +31,19 @@
 ## Project Structure
 
 src/
-├── pages/       # Dashboard, Pools, Watchlist
-├── components/  # PoolCard, ChartToggle
-├── loaders/     # poolsLoader.js (mock + API)
-├── App.jsx/     # Main app component
-├── index.css    # Global styles (rem/em/px)
-└── Main.jsx/    # Entry point
+├── loaders/
+│   ├── poolsLoader.js
+│   └── watchlistLoader.js
+├── router.jsx
+├── layout/
+│   ├── Layout.jsx
+│   └── Navbar.jsx
+├── pages/
+│   ├── Pools.jsx
+│   └── Watchlist.jsx
+├── App.jsx
+├── index.css
+└── main.jsx
 
 ---
 
@@ -62,7 +69,7 @@ src/
 ## Development Process
 
 - [x] 0. Main Deps install + initial configuration
-- [] 1. Skeleton + dark theme + routing
+- [x] 1. Skeleton + dark theme + basic routing
 - [] 2. 20 mock pools + filters
 - [] 3. Firebase + watchlist
 - [] 4. Animated chart + PWA
