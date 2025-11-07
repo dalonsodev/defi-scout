@@ -11,17 +11,21 @@ function getRiskBadge(risk) {
 }
 
 function renderPools(pools) {
-   return pools.map(pool => (
-      <div key={pool.id} className="card bg-base-200 shadow p-4 m-2">
-      <h3>{pool.name}</h3>
-      <p>Chain: {pool.chain} | APY: {pool.apy}% | TVL: {pool.tvl}</p>
-      <p>Risk: 
-         <span className={`badge ${getRiskBadge(pool.risk)}`}>
-            {pool.risk}
-         </span>
-      </p>
-    </div>
-   ))
+   return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+         {pools.map(pool => (
+            <div key={pool.id} className="card bg-base-200 shadow p-4 m-2">
+               <h3>{pool.name}</h3>
+               <p>Chain: {pool.chain} | APY: {pool.apy}% | TVL: {pool.tvl}</p>
+               <p>Risk:{" "}
+                  <span className={`badge ${getRiskBadge(pool.risk)}`}>
+                     {pool.risk}
+                  </span>
+               </p>
+            </div>
+         ))}
+      </div>
+   )
 }
 
 export default function Pools() {

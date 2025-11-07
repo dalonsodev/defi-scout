@@ -1,2 +1,11 @@
 @import "tailwindcss";
+
+@theme {
+  --breakpoint-sm: 450px; /* Custom breakpoint */
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
 @plugin "daisyui";
