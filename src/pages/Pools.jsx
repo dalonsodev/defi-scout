@@ -1,5 +1,6 @@
 import React from "react"
 import { useLoaderData, Await, useSearchParams } from "react-router-dom"
+import Dropdown from "../components/common/Dropdown"
 
 function getRiskBadge(risk) {
    const badgeMap = {
@@ -63,15 +64,6 @@ export default function Pools() {
       setSearchParams(newParams)
    }
 
-   // const platformOptions = [
-   //    "UniswapV2", 
-   //    "UniswapV3", 
-   //    "Orca", 
-   //    "Meteora", 
-   //    "Camelot", 
-   //    "PancakeSwap"
-   // ] ------> Para sacar logica del return -> Componente /common/Dropdown.jsx ***
-
    return (
       <>
          <div className="flex flex-wrap gap-2 mb-4 p-4">
@@ -91,85 +83,10 @@ export default function Pools() {
                <div className="label">
                   <span className="label-text">Platform</span>
                </div>
-               <div className="dropdown">
-                  <label tabIndex={0} className="btn btn-sm w-full justify-between">
-                     {platforms.length > 0 ? `Selected (${platforms.length})` : "All Platforms"}
-                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                     </svg>
-                  </label>
-                  <ul
-                     className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-                     tabIndex="0"
-                  >
-                     <li>
-                        <label className="label cursor-pointer">
-                           <input 
-                              type="checkbox"
-                              className="checkbox checkbox-sm"
-                              checked={platforms.includes("UniswapV2")}
-                              onChange={() => handlePlatformToggle("UniswapV2")}
-                           />
-                           <span className="label-text ml-2">Uniswap V2</span>
-                        </label>
-                     </li>
-                     <li>
-                        <label className="label cursor-pointer">
-                           <input 
-                              type="checkbox"
-                              className="checkbox checkbox-sm"
-                              checked={platforms.includes("UniswapV3")}
-                              onChange={() => handlePlatformToggle("UniswapV3")}
-                           />
-                           <span className="label-text ml-2">Uniswap V3</span>
-                        </label>
-                     </li>
-                     <li>
-                        <label className="label cursor-pointer">
-                           <input 
-                              type="checkbox"
-                              className="checkbox checkbox-sm"
-                              checked={platforms.includes("Orca")}
-                              onChange={() => handlePlatformToggle("Orca")}
-                           />
-                           <span className="label-text ml-2">Orca</span>
-                        </label>
-                     </li>
-                     <li>
-                        <label className="label cursor-pointer">
-                           <input 
-                              type="checkbox"
-                              className="checkbox checkbox-sm"
-                              checked={platforms.includes("Meteora")}
-                              onChange={() => handlePlatformToggle("Meteora")}
-                           />
-                           <span className="label-text ml-2">Meteora</span>
-                        </label>
-                     </li>
-                     <li>
-                        <label className="label cursor-pointer">
-                           <input 
-                              type="checkbox"
-                              className="checkbox checkbox-sm"
-                              checked={platforms.includes("Camelot")}
-                              onChange={() => handlePlatformToggle("Camelot")}
-                           />
-                           <span className="label-text ml-2">Camelot</span>
-                        </label>
-                     </li>
-                     <li>
-                        <label className="label cursor-pointer">
-                           <input 
-                              type="checkbox"
-                              className="checkbox checkbox-sm"
-                              checked={platforms.includes("PancakeSwap")}
-                              onChange={() => handlePlatformToggle("PancakeSwap")}
-                           />
-                           <span className="label-text ml-2">PancakeSwap</span>
-                        </label>
-                     </li>
-                  </ul>
-               </div>
+               <Dropdown 
+                  selected={platforms}
+                  onToggle={handlePlatformToggle}
+               />
             </label>
             <label>TVL
                <input 
