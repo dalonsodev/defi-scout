@@ -17,7 +17,7 @@ function renderPools(pools) {
          {pools.map(pool => (
             <div key={pool.id} className="card bg-base-200 shadow p-4 m-2">
                <h3>{pool.name}</h3>
-               <p>Chain: 
+               <p>Chain:{" "} 
                   {pool.chain} | APY: {pool.apy}% | TVL: {pool.tvl}
                </p>
                <p>Platform: {pool.platform}</p>
