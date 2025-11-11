@@ -7,6 +7,49 @@ function formatNumber(n) {
    return n.toString()
 }
 
+const platformBranding = {
+   "uniswap-v2": "Uniswap V2",
+   "uniswap-v3": "Uniswap V3",
+   "sushiswap": "SushiSwap",
+   "pancakeswap": "PancakeSwap",
+   "curve-dex": "Curve",
+   "balancer": "Balancer",
+   "quickswap": "QuickSwap",
+   "spiritswap": "SpiritSwap",
+   "spookyswap": "SpookySwap",
+   "traderjoe": "Trader Joe",
+   "camelot": "Camelot",
+   "orca": "Orca",
+   "benqui": "BENQUI",
+   "biswap": "Biswap"
+}
+
+function formatPlatform(platformName) {
+   if (!platformName) {
+      return "Unknown"
+   }
+
+   const key = platformName.toLowerCase()
+   if (platformBranding[key]) {
+      return platformBranding[key]
+   }
+
+   return platformName
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, char => char.toUpperCase())
+      .replace(/ v(\d)/gi, " V$1")
+      .replace(/ dex/gi, " DEX")
+      .replace(/ amm/gi, " AMM")
+}
+
+function formatName(name) {
+   if (!name) {
+      return "LP Pool"
+   }
+   return name
+      .replace(/-/g, " / ")
+}
+
 async function fetchDeFiLlama() {
    try {
       const res = await fetch("https://yields.llama.fi/pools?limit=30")
@@ -25,11 +68,11 @@ async function fetchDeFiLlama() {
          lpPools.map(async (pool) => {
             const basePool = {
                id: pool.pool,
-               name: pool.symbol || "LP Pool",
+               name: formatName(pool.symbol) || "LP Pool",
                symbol: pool.symbol || "UNKNOWN",
                chain: pool.chain,
-               platform: pool.project,
-               apy: pool.apy.toFixed(2) || 0,
+               platform: formatPlatform(pool.project),
+               apy: Number(pool.apy.toFixed(2)) || 0,
                tvl: formatNumber(pool.tvlUsd) || 0,
                vol24h: formatNumber(pool.volumeUsd1d) || 0,
                risk: pool.apy > 15 ? "High" : pool.apy > 8 ? "Medium" : "Low"
