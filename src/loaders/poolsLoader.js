@@ -26,13 +26,13 @@ async function fetchDeFiLlama() {
             const basePool = {
                id: pool.pool,
                name: pool.symbol || "LP Pool",
+               symbol: pool.symbol || "UNKNOWN",
                chain: pool.chain,
                platform: pool.project,
                apy: pool.apy.toFixed(2) || 0,
                tvl: formatNumber(pool.tvlUsd) || 0,
                vol24h: formatNumber(pool.volumeUsd1d) || 0,
-               risk: pool.apy > 15 ? "High" : pool.apy > 8 ? "Medium" : "Low",
-               symbol: pool.symbol || "UNKNOWN"
+               risk: pool.apy > 15 ? "High" : pool.apy > 8 ? "Medium" : "Low"
             }
 
             try {
