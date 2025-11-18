@@ -1,25 +1,15 @@
-export default function Dropdown({ selected, onToggle}) {
-
-   const platformOptions = [
-      "UniswapV2", 
-      "UniswapV3", 
-      "Orca", 
-      "Meteora", 
-      "Camelot", 
-      "PancakeSwap"
-   ]
-
+export default function Dropdown({ selected, onToggle, options }) {
    function renderOptions(selected, onToggle) {
-      const options = platformOptions.map(option => (
-         <li key={option}>
+      const optionsList = options.map(option => (
+         <li key={option.value}>
             <label className="label cursor-pointer">
                <input 
                   type="checkbox"
                   className="checkbox checkbox-sm"
-                  checked={selected.includes(option)}
-                  onChange={() => onToggle(option)}
+                  checked={selected.includes(option.value)}
+                  onChange={() => onToggle(option.value)}
                />
-               <span className="label-text ml-2">{option}</span>
+               <span className="label-text ml-2">{option.display}</span>
             </label>
          </li>
       ))
@@ -29,7 +19,7 @@ export default function Dropdown({ selected, onToggle}) {
             className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
             tabIndex="0"
          >
-            {options}
+            {optionsList}
          </ul>
       )
    }

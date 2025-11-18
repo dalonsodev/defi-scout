@@ -52,7 +52,7 @@ function formatName(name) {
 
 async function fetchDeFiLlama() {
    try {
-      const res = await fetch("https://yields.llama.fi/pools?limit=30")
+      const res = await fetch("https://yields.llama.fi/pools")
 
       if (!res.ok) {
          throw new Error("DeFiLlama pools fetch failed")
@@ -64,47 +64,30 @@ async function fetchDeFiLlama() {
          .filter(pool => (pool.volumeUsd1d || 0) > 0)
          .slice(0, 20)
    
-      const poolsWithSparkline = await Promise.all(
-         lpPools.map(async (pool) => {
-            const basePool = {
-               id: pool.pool,
-               name: formatName(pool.symbol) || "LP Pool",
-               symbol: pool.symbol || "UNKNOWN",
-               chain: pool.chain,
-               platform: formatPlatform(pool.project),
-               apy: Number(pool.apy.toFixed(2)) || 0,
-               tvl: formatNumber(pool.tvlUsd) || 0,
-               vol24h: formatNumber(pool.volumeUsd1d) || 0,
-               risk: pool.apy > 15 ? "High" : pool.apy > 8 ? "Medium" : "Low"
-            }
-
-            try {
-               const chartRes = await fetch(`https://yields.llama.fi/chart/${pool.pool}`)
-               if (!chartRes.ok) {
-                  throw new Error("Chart fetch failed")
-               }
-               const chart = await chartRes.json()
-
-               const history = chart.data.slice(-7)
-               const sparklineIn7d = history.length > 0
-                  ? history.map(day => day.apy || 0)
-                  : null
-               
-               return { ...basePool, sparklineIn7d }
-            } catch {
-               return { ...basePool, sparklineIn7d: null }
-            }
-         })
-      )
-      return poolsWithSparkline
+      return lpPools.map((pool) => ({
+         id: pool.pool,
+         name: formatName(pool.symbol) || "LP Pool",
+         symbol: pool.symbol || "UNKNOWN",
+         chain: pool.chain,
+         project: pool.project,
+         platformName: formatPlatform(pool.project),
+         apyBase: Number(pool.apyBase.toFixed(2)),
+         apyFormatted: `${pool.apyBase.toFixed(2)}%`,
+         tvlUsd: pool.tvlUsd || 0,
+         tvlFormatted: formatNumber(pool.tvlUsd) || 0,
+         volumeUsd1d: pool.volumeUsd1d || 0,
+         volumeFormatted: formatNumber(pool.volumeUsd1d) || 0,
+         riskLevel: pool.apyBase > 15 ? "High" : pool.apyBase > 8 ? "Medium" : "Low",
+         sparklineIn7d: null
+      }))
    } catch (err) {
       console.error("DeFiLlama error:", err)
       return []
    }
 }
 
-export async function poolsLoader() {
-   const pools = await fetchDeFiLlama()
-
-   return defer({ pools })
+export function poolsLoader() {
+   return defer({
+      pools: fetchDeFiLlama()
+   })
 }
