@@ -62,7 +62,6 @@ async function fetchDeFiLlama() {
       const lpPools = data
          .filter(pool => pool.exposure === "multi")
          .filter(pool => (pool.volumeUsd1d || 0) > 0)
-         .slice(0, 20)
    
       return lpPools.map((pool) => ({
          id: pool.pool,

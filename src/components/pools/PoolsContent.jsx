@@ -1,8 +1,8 @@
-import { useMemo } from "react"
+import { useMemo, useState, useEffect } from "react"
 import filterPools from "../../utils/filterPools"
 import PoolFilters from "./PoolFilters"
 import PoolTable from "./PoolTable"
-import PoolCards from "./PoolCards"
+import PaginationControls from "../common/PaginationControls"
 
 export default function PoolsContent({
    resolvedPools,
@@ -10,7 +10,6 @@ export default function PoolsContent({
    updateFilter,
    togglePlatform,
    clearFilters,
-   isDesktop
 }) {
    const availablePlatforms = useMemo(() => {
       if (!resolvedPools) return []
@@ -27,6 +26,24 @@ export default function PoolsContent({
       if (!resolvedPools || !Array.isArray(resolvedPools)) return []
       return filterPools(resolvedPools, filters)
    }, [resolvedPools, filters])
+
+   const [pageIndex, setPageIndex] = useState(0)
+   const pageSize = 40
+   const totalPages = Math.ceil(filteredPools.length / pageSize)
+
+   const paginatedPools = useMemo(() => {
+      const start = pageIndex * pageSize
+      const end = start + pageSize
+      return filteredPools.slice(start, end)
+   }, [filteredPools, pageIndex, pageSize])
+
+   useEffect(() => {
+      setPageIndex(0)
+   }, [filters])
+
+   const handlePageChange = (newPage) => {
+      setPageIndex(newPage - 1) // convert from 1-based to 0-based
+   }
 
    return (
       <>
@@ -49,9 +66,14 @@ export default function PoolsContent({
                </button>
             </div>
          ) : (
-            isDesktop
-            ? <PoolTable pools={filteredPools} />
-            : <PoolCards pools={filteredPools} />
+            <>
+               <PoolTable pools={paginatedPools} />
+               <PaginationControls 
+                  totalPages={totalPages}
+                  currentPage={pageIndex + 1} // convert from 0-based to 1-based
+                  onPageChange={handlePageChange}
+               />
+            </>
          )}
       </>
    )
