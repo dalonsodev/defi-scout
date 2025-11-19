@@ -8,15 +8,15 @@
 
 ## ✨ Features
 
-- **Real-time Pool Data:** Fetches 18k+ pools from DeFiLlama API with optimized loading (~1s)
-- **Advanced Filtering:** Search by coin/pair, platform, TVL, volume, and risk level
-- **Smart UX:** Instant client-side filtering with responsive table/cards layout
-- **Dynamic Platform List:** Dropdown auto-generates from available data
-- **Sortable Columns:** Click headers to sort by any metric
-- **Mobile-First:** Responsive design with card view for smaller screens
+- **Pool Explorer:** Responsive table with key metrics (APY, TVL, Volume, Chain, Platform, Risk)
+- **Client-side pagination:** Navigate through +18k liquidity pools with controls
+- **Real-time Filtering:** Instant filters by coin/pair, platform, TVL, volume, and risk level
+- **Dynamic Platform List:** Dropdown auto-generates from available data with proper branding
+- **Smart Sorting:** Click column headers to sort (powered by TanStack Table)
+- **Performance Optimized:** Sub-second load times with deferred data loading
+- **Watchlist:** Save favorite pools with ⭐ (Firebase Auth + Firestore) *[Coming soon]*
 
 ### 🚧 In Progress
-- Pagination for large datasets
 - Watchlist with Firebase Auth
 - APY history charts (7/30/90d)
 - PWA capabilities
@@ -91,19 +91,16 @@ src/
 
 ## 🏗️ Development Roadmap
 
-- [x] Initial setup + routing + dark theme
-- [x] DeFiLlama API integration
-- [x] Optimized data loading (defer + streaming)
-- [x] Advanced filter system (5+ criteria)
-- [x] Responsive table with sorting
-- [x] Feature-based architecture
-- [ ] Pagination for 18k+ pools
-- [ ] Lazy-loaded sparkline charts
-- [ ] PoolDetails page for each pool (table row or card)
-- [ ] Firebase authentication
-- [ ] Watchlist functionality
-- [ ] PWA + offline support
-- [ ] Production deployment
+- [x] **Phase 0:** Project setup + dependencies
+- [x] **Phase 1:** Dark theme + routing skeleton
+- [x] **Phase 2:** API integration (DeFiLlama) + data transformation
+- [x] **Phase 3:** Filtering system + table UI + sorting
+- [x] **Phase 4:** Client-side pagination (20 items/page)
+- [ ] **Phase 5:** Sticky first column + responsive table improvements
+- [ ] **Phase 6:** Pool detail pages with charts and token metadata
+- [ ] **Phase 7:** Lazy-loaded sparklines in table
+- [ ] **Phase 8:** Firebase auth + watchlist functionality
+- [ ] **Phase 9:** PWA configuration + deployment
 
 ---
 
