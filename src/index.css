@@ -8,4 +8,13 @@
   --breakpoint-2xl: 1536px;
 }
 
+@layer utilities {
+   .scrollbar-hide {
+      scrollbar-width: none;
+   }
+   .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+   }
+}
+
 @plugin "daisyui";

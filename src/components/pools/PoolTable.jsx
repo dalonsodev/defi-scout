@@ -147,7 +147,7 @@ export default function PoolTable({ pools }) {
    }
 
    return (
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto scrollbar-hide">
          <table className="min-w-full divide-y divide-base-300">
             <thead className="bg-base-300">
                {renderHeaders()}
