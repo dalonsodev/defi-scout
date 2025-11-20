@@ -18,7 +18,7 @@ export default function Dropdown({ selected, onToggle, options }) {
       <div className="relative" ref={dropdownRef}>
          <button
             type="button"
-            className="btn btn-sm w-full justify-between"
+            className="btn btn-sm w-full justify-between rounded-xl"
             onClick={() => setIsOpen(!isOpen)}
          >
             {selected.length > 0 ? `Selected (${selected.length})` : "All Platforms"}
@@ -28,7 +28,7 @@ export default function Dropdown({ selected, onToggle, options }) {
          </button>
 
          {isOpen && (
-            <ul className="absolute z-10 mt-2 menu p-2 shadow bg-base-100 rounded-box w-52">
+            <ul className="absolute z-10 mt-2 menu p-2 shadow bg-base-100 rounded-3xl w-52">
                {options.map(option => (
                   <li key={option.value}>
                      <label className="label cursor-pointer">

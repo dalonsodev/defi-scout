@@ -19,14 +19,16 @@ export default function PoolTable({ pools }) {
             accessorKey: "name",
             header: "Pool",
             cell: ({ row }) => (
-               <div className="font-medium text-base-content">{row.original.name}</div>
+               <div className="font-medium text-base-content">
+                  {row.original.name}
+               </div>
             )
          },
          {
             accessorKey: "chain",
             header: "Chain",
             cell: ({ row }) => (
-               <span className="badge badge-primary badge-sm rounded-full">
+               <span className="badge badge-primary badge-sm rounded-l-lg">
                   {row.original.chain}
                </span>
             )
@@ -35,8 +37,29 @@ export default function PoolTable({ pools }) {
             accessorKey: "platformName",
             header: "Platform",
             cell: ({ row }) => (
-               <span className="text-sm text-base-content/70">{row.original.platformName}</span>
+               <span className="text-sm text-base-content/70">
+                  {row.original.platformName}
+               </span>
             )
+         },
+         {
+            accessorKey: "riskLevel",
+            header: "Risk",
+            cell: ({ row }) => {
+               const risk = row.original.riskLevel
+               const colorMap = {
+                  Low: "badge-success",
+                  Medium: "badge-warning",
+                  High: "badge-error"
+               }
+               return (
+                  <span
+                     className={`badge badge-sm ${colorMap[risk] || "badge-ghost"}`}
+                  >
+                     {risk}
+                  </span>
+               )
+            }
          },
          {
             accessorKey: "apyBase",
@@ -94,7 +117,7 @@ export default function PoolTable({ pools }) {
                <th
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
-                  className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-700 transition"
+                  className="px-6 py-4 text-left text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition"
                >
                   {flexRender(header.column.columnDef.header, header.getContext())}
                   {header.column.getIsSorted() && (
@@ -112,10 +135,10 @@ export default function PoolTable({ pools }) {
       return table.getRowModel().rows.map(row => (
          <tr
             key={row.id}
-            className="hover:bg-linear-to-r hover:from-gray-700 hover:to-gray-800 transition duration-150"
+            className="hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
          >
             {row.getVisibleCells().map(cell => (
-               <td key={cell.id} className="px-6 py-6 whitespace-nowrap text-sm">
+               <td key={cell.id} className="px-4 py-6 whitespace-nowrap text-sm">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                </td>
             ))}
@@ -124,17 +147,15 @@ export default function PoolTable({ pools }) {
    }
 
    return (
-      <div className="rounded-xl overflow-hidden bg-base-200">
-         <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-base-300">
-               <thead className="bg-linear-to-r from-bg-base-300 to-bg-base-300">
-                  {renderHeaders()}
-               </thead>
-               <tbody className="bg-base-200 divide-y divide-base-300">
-                  {renderRows()}
-               </tbody>
-            </table>
-         </div>
+      <div className="overflow-x-auto">
+         <table className="min-w-full divide-y divide-base-300">
+            <thead className="bg-base-300">
+               {renderHeaders()}
+            </thead>
+            <tbody className="bg-base-200 divide-y divide-base-300">
+               {renderRows()}
+            </tbody>
+         </table>
       </div>
    )
 }

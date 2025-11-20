@@ -16,7 +16,7 @@ export default function Pools() {
    } = usePoolFilters()
 
    return (
-      <div className="container mx-auto">
+      <div className="mx-auto max-w-7xl">
          <header className="p-4">
             <h1 className="text-3xl font-bold">Top LP Pools</h1>
             <p className="text-gray-600">Liquidity pools with real volume and APY history</p>

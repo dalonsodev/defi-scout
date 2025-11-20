@@ -66,14 +66,17 @@ export default function PoolsContent({
                </button>
             </div>
          ) : (
-            <>
+            <div className="overflow-hidden bg-base-200 mx-0 sm:-mx-2 md:mx-0 rounded-3xl shadow-lg">
                <PoolTable pools={paginatedPools} />
-               <PaginationControls 
-                  totalPages={totalPages}
-                  currentPage={pageIndex + 1} // convert from 0-based to 1-based
-                  onPageChange={handlePageChange}
-               />
-            </>
+
+               <div className="py-4">
+                  <PaginationControls 
+                     totalPages={totalPages}
+                     currentPage={pageIndex + 1} // convert from 0-based to 1-based
+                     onPageChange={handlePageChange}
+                  />
+               </div>
+            </div>
          )}
       </>
    )

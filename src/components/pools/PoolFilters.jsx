@@ -9,7 +9,7 @@ export default function PoolFilters({
 }) {
 
    return (
-      <div className="flex flex-wrap gap-2 mb-4 p-4 bg-base-100 rounded-box">
+      <div className="flex flex-wrap gap-2 mb-4 p-4 bg-base-100">
          <label className="form-control max-w-xs">
             <div className="label">
                <span className="label-text">Coin/Pair</span>
@@ -18,7 +18,7 @@ export default function PoolFilters({
                type="text"
                placeholder="SOL or SOL/USDC"
                value={filters.search}
-               className="input input-bordered input-sm"
+               className="input input-bordered input-sm rounded-xl"
                onChange={(e) => updateFilter("search", e.target.value)}
             />
          </label>
@@ -39,7 +39,7 @@ export default function PoolFilters({
                type="number"
                placeholder="Min TVL ($)"
                value={filters.tvlUsd}
-               className="input input-bordered input-sm"
+               className="input input-bordered input-sm rounded-xl"
                onChange={(e) => updateFilter("tvlUsd", e.target.value)}
             />
          </label>
@@ -49,7 +49,7 @@ export default function PoolFilters({
                type="number"
                placeholder="Min 24h Vol ($)"
                value={filters.volumeUsd1d}
-               className="input input-bordered input-sm"
+               className="input input-bordered input-sm rounded-xl"
                onChange={(e) => updateFilter("volumeUsd1d", e.target.value)}
             />
          </label>
@@ -58,7 +58,7 @@ export default function PoolFilters({
             <select 
                value={filters.riskLevel}
                onChange={(e) => updateFilter("riskLevel", e.target.value)}
-               className="select select-bordered select-sm"
+               className="select select-bordered select-sm rounded-xl"
             >
                <option value="">All</option>
                <option value="Low">Low</option>
