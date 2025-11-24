@@ -7,6 +7,7 @@ import {
    flexRender
 } from "@tanstack/react-table"
 import MiniSparkline from "../common/MiniSparkline"
+import PlatformIcon from "../common/PlatformIcon"
 
 export default function PoolTable({ pools }) {
    const [sorting, setSorting] = useState([
@@ -37,9 +38,15 @@ export default function PoolTable({ pools }) {
             accessorKey: "platformName",
             header: "Platform",
             cell: ({ row }) => (
-               <span className="text-sm text-base-content/70">
-                  {row.original.platformName}
-               </span>
+               <div className="flex items-center gap-2">
+                  <PlatformIcon
+                     platform={row.original.project}
+                     size="md"
+                  />
+                  <span className="text-sm text-base-content/70">
+                     {row.original.platformName}
+                  </span>
+               </div>
             )
          },
          {
