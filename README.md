@@ -49,7 +49,6 @@ src/
 │   ├── pools/           # Pool feature components
 │   │   ├── PoolsContent.jsx
 │   │   ├── PoolTable.jsx
-│   │   ├── PoolCards.jsx
 │   │   └── PoolFilters.jsx
 │   └── layout/
 │       ├── Layout.jsx
@@ -57,6 +56,7 @@ src/
 ├── data/
 │   └── platformIcons.js
 ├── hooks/
+│   ├── useBreakpoint.js
 │   ├── useDebounce.js
 │   └── usePoolFilters.js
 ├── loaders/
@@ -101,9 +101,9 @@ src/
 - [x] **Phase 2:** API integration (DeFiLlama) + data transformation
 - [x] **Phase 3:** Filtering system + table UI + sorting
 - [x] **Phase 4:** Client-side pagination (20 items/page)
-- [ ] **Phase 5:** Sticky first column + responsive table improvements
-- [ ] **Phase 6:** Pool detail pages with charts and token metadata
-- [ ] **Phase 7:** Lazy-loaded sparklines in table
+- [x] **Phase 5:** Sticky first column + responsive table improvements
+- [ ] **Phase 6:** Lazy-loaded sparklines in table
+- [ ] **Phase 7:** Pool detail pages with charts and token metadata
 - [ ] **Phase 8:** Firebase auth + watchlist functionality
 - [ ] **Phase 9:** PWA configuration + deployment
 
