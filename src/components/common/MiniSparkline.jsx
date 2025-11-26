@@ -3,12 +3,13 @@ export default function MiniSparkline({
    width = 80,
    height = 40
 }) {
-   if (!data) return null
+   if (!data) return (
+      <div className="w-20 h-10 bg-base-300 rounded animate-pulse" />
+   )
    
-   if (data.length < 2) 
-      return (
-   <span className="text-xs text-base-content/50">No data</span>
-)
+   if (data.length < 2) return (
+      <span className="text-xs text-base-content/50">No data</span>
+   )
 
    const values = data
 

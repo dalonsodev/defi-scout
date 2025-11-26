@@ -1,9 +1,14 @@
 import { useRef, useState, useEffect } from "react"
+import { chunkArray } from "../utils/chunkArray"
+import { delay } from "../utils/chunkArray"
 
 export default function useSparklines({ visiblePools }) {
    const cache = useRef({})
-   const [, forceUpdate] = useState(0)
+   const [_, setLoadingBatch] = useState(0)
    const isLoading = useRef(false)
+
+   const BATCH_SIZE = 20
+   const DELAY_MS = 600
 
    useEffect(() => {
       if (!visiblePools || visiblePools.length === 0) return
@@ -20,39 +25,49 @@ export default function useSparklines({ visiblePools }) {
    async function fetchSparklines(poolIds) {
       isLoading.current = true
 
-      const promises = poolIds.map(async (poolId) => {
-         try {
-            const res = await fetch(`https://yields.llama.fi/chart/${poolId}`)
-            if (!res.ok) throw new Error(`Failed fetch for ${poolId}`)
-               
-            const json = await res.json()
-            const data = json.data
+      const batches = chunkArray(poolIds, BATCH_SIZE)
 
-            const last7 = data
-               .slice(-7)
-               .map(snapshot => snapshot.apyBase)
+      for (let i = 0; i < batches.length; i++) {
+         const batch = batches[i]
 
-            return { poolId, data: last7 }
+         const promises = batch.map(async poolId => {
+            try {
+               const res = await fetch(`https://yields.llama.fi/chart/${poolId}`)
+               if (!res.ok) throw new Error(`Failed fetch for ${poolId}`)
+                  
+               const json = await res.json()
+               const data = json.data
 
-         } catch (err) {
-            console.warn(`Sparkline fetch failed for ${poolId}:`, err)
-            return { poolId, data: null }
+               const last7 = data
+                  .slice(-7)
+                  .map(snapshot => snapshot.apyBase)
+
+               return { poolId, data: last7 }
+
+            } catch (err) {
+               console.warn(`Sparkline fetch failed for ${poolId}:`, err)
+               return { poolId, data: null }
+            }
+         })
+
+         const results = await Promise.allSettled(promises)
+
+         results.forEach(result => {
+            if (result.status === "fulfilled" && result.value.data) {
+               cache.current[result.value.poolId] = result.value.data
+            }
+         })
+
+         setLoadingBatch(i + 1)
+
+         if (i < batches.length - 1) {
+            await delay(DELAY_MS)
          }
-      })
-
-      const results = await Promise.allSettled(promises)
-
-      results.forEach(result => {
-         if (result.status === "fulfilled" && result.value.data) {
-            cache.current[result.value.poolId] = result.value.data
-         }
-      })
+      }
 
       isLoading.current = false
-      forceUpdate(v => v + 1) // trigger re-render
+      setLoadingBatch(0) // reset
    }
-
-   console.log('Cache state:', cache.current)
    
    return {
       sparklineData: cache.current,
