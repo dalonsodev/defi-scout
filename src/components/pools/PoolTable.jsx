@@ -10,7 +10,7 @@ import MiniSparkline from "../common/MiniSparkline"
 import PlatformIcon from "../common/PlatformIcon"
 import useBreakpoint from "../../hooks/useBreakpoint"
 
-export default function PoolTable({ pools }) {
+export default function PoolTable({ pools, sparklineData }) {
    const { isDesktop } = useBreakpoint()
 
    const [sorting, setSorting] = useState([
@@ -60,6 +60,38 @@ export default function PoolTable({ pools }) {
             )
          },
          {
+            accessorKey: "sparklineIn7d",
+            header: "APY (7d)",
+            meta: { showOn: "both" },
+            cell: ({ row }) => {
+               const data = sparklineData?.[row.original.id]
+
+               return data
+                  ? <MiniSparkline data={data} />
+                  : <span className="text-xs text-base-content/70">No data</span>
+            }
+         },
+         {
+            accessorKey: "riskLevel",
+            header: "Risk",
+            meta: { showOn: "desktop" },
+            cell: ({ row }) => {
+               const risk = row.original.riskLevel
+               const colorMap = {
+                  Low: "badge-success",
+                  Medium: "badge-warning",
+                  High: "badge-error"
+               }
+               return (
+                  <span
+                     className={`badge badge-sm ${colorMap[risk] || "badge-ghost"}`}
+                  >
+                     {risk}
+                  </span>
+               )
+            }
+         },
+         {
             accessorKey: "chain",
             header: "Chain",
             meta: { showOn: "desktop" },
@@ -95,39 +127,9 @@ export default function PoolTable({ pools }) {
                   </span>
                </div>
             )
-         },
-         {
-            accessorKey: "riskLevel",
-            header: "Risk",
-            meta: { showOn: "desktop" },
-            cell: ({ row }) => {
-               const risk = row.original.riskLevel
-               const colorMap = {
-                  Low: "badge-success",
-                  Medium: "badge-warning",
-                  High: "badge-error"
-               }
-               return (
-                  <span
-                     className={`badge badge-sm ${colorMap[risk] || "badge-ghost"}`}
-                  >
-                     {risk}
-                  </span>
-               )
-            }
-         },
-         {
-            accessorKey: "sparklineIn7d",
-            header: "APY (7d)",
-            meta: { showOn: "desktop" },
-            cell: ({ row }) => (
-               row.original.sparklineIn7d
-                  ? <MiniSparkline data={row.original.sparklineIn7d} />
-                  : <span className="text-xs text-base-content/70">No data</span>
-            )
          }
       ]
-   }, [])
+   }, [sparklineData])
 
    const visibleColumns = useMemo(() => {
       return columns.filter(col => {

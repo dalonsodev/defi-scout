@@ -38,8 +38,10 @@ function formatPlatform(platformName) {
       .replace(/-/g, " ")
       .replace(/\b\w/g, char => char.toUpperCase())
       .replace(/ v(\d)/gi, " V$1")
-      .replace(/ dex/gi, " DEX")
-      .replace(/ amm/gi, " AMM")
+      .replace(/ slipstream/gi, "")
+      .replace(/ liquidity/gi, "")
+      .replace(/ dex/gi, "")
+      .replace(/ amm/gi, "")
 }
 
 function formatName(name) {
@@ -76,8 +78,7 @@ async function fetchDeFiLlama() {
          tvlFormatted: formatNumber(pool.tvlUsd) || 0,
          volumeUsd1d: pool.volumeUsd1d || 0,
          volumeFormatted: formatNumber(pool.volumeUsd1d) || 0,
-         riskLevel: pool.apyBase > 15 ? "High" : pool.apyBase > 8 ? "Medium" : "Low",
-         sparklineIn7d: null
+         riskLevel: pool.apyBase > 15 ? "High" : pool.apyBase > 8 ? "Medium" : "Low"
       }))
    } catch (err) {
       console.error("DeFiLlama error:", err)

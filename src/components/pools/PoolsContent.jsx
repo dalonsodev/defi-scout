@@ -3,6 +3,7 @@ import filterPools from "../../utils/filterPools"
 import PoolFilters from "./PoolFilters"
 import PoolTable from "./PoolTable"
 import PaginationControls from "../common/PaginationControls"
+import useSparklines from "../../hooks/useSparklines"
 
 export default function PoolsContent({
    resolvedPools,
@@ -45,6 +46,10 @@ export default function PoolsContent({
       setPageIndex(newPage - 1) // convert from 1-based to 0-based
    }
 
+   const { sparklineData } = useSparklines({
+      visiblePools: paginatedPools
+   })
+
    return (
       <>
          <PoolFilters
@@ -67,7 +72,10 @@ export default function PoolsContent({
             </div>
          ) : (
             <div className="overflow-hidden bg-base-200 mx-0 sm:-mx-2 md:mx-0 rounded-3xl shadow-lg">
-               <PoolTable pools={paginatedPools} />
+               <PoolTable 
+                  pools={paginatedPools} 
+                  sparklineData={sparklineData}
+               />
 
                <div className="py-4">
                   <PaginationControls 
