@@ -66,9 +66,7 @@ export default function PoolTable({ pools, sparklineData }) {
             cell: ({ row }) => {
                const data = sparklineData?.[row.original.id]
 
-               return data
-                  ? <MiniSparkline data={data} />
-                  : <span className="text-xs text-base-content/70">No data</span>
+               return <MiniSparkline data={data} />
             }
          },
          {
