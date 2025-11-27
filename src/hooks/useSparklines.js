@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react"
 
 export default function useSparklines({ visiblePoolIds }) {
    const cache = useRef({})
+   const [sparklineData, setSparklineData] = useState({})
    const [_, setLoadingBatch] = useState(0)
    const isLoading = useRef(false)
 
@@ -47,6 +48,8 @@ export default function useSparklines({ visiblePoolIds }) {
             cache.current[result.value.poolId] = result.value.data
          }
       })
+
+      setSparklineData({ ...cache.current })
 
       isLoading.current = false
       setLoadingBatch(0) // reset

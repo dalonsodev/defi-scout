@@ -20,7 +20,7 @@ export default function PoolTable({ pools, sparklineData, onVisiblePoolsChange }
 
    const visiblePoolIds = useIntersection(rowRefs, {
       threshold: 0.1,
-      rootMargin: "100px"
+      rootMargin: "200px"
    })
 
    useEffect(() => {
