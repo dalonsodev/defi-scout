@@ -10,7 +10,10 @@ export default function useIntersection(refs, options = {}) {
                const poolId = entry.target.dataset.poolId
 
                if (entry.isIntersecting) {
-                  setVisibleIds(prev => new Set(prev).add(poolId))
+                  setVisibleIds(prev => {
+                     if (prev.has(poolId)) return prev
+                     return new Set(prev).add(poolId)
+                  })
                }
             })
          }, 
