@@ -4,6 +4,8 @@ import PoolFilters from "./PoolFilters"
 import PoolTable from "./PoolTable"
 import PaginationControls from "../common/PaginationControls"
 import useSparklines from "../../hooks/useSparklines"
+import useRequestQueue from "../../hooks/useRequestQueue"
+import useIntersection from "../../hooks/useIntersection"
 
 export default function PoolsContent({
    resolvedPools,
@@ -52,8 +54,15 @@ export default function PoolsContent({
       setPageIndex(newPage - 1) // convert from 1-based to 0-based
    }
 
+   const { queueRequest, cancelPendingRequests } = useRequestQueue({
+      maxTokens: 120,
+      refillRate: 1.8
+   })
+
    const { sparklineData } = useSparklines({
-      visiblePoolIds
+      visiblePoolIds,
+      queueRequest,
+      cancelPendingRequests
    })
 
    return (
