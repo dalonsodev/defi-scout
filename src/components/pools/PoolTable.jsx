@@ -1,8 +1,7 @@
-import { useMemo, useState, createRef, useEffect } from "react"
+import { useMemo, createRef, useEffect } from "react"
 import {
    useReactTable,
    getCoreRowModel,
-   getSortedRowModel,
    getFilteredRowModel,
    flexRender
 } from "@tanstack/react-table"
@@ -14,7 +13,9 @@ import useIntersection from "../../hooks/useIntersection"
 export default function PoolTable({ 
    pools, 
    sparklineData, 
-   onVisiblePoolsChange
+   onVisiblePoolsChange,
+   sorting,
+   onSortingChange
 }) {
    const { isDesktop } = useBreakpoint()
 
@@ -32,10 +33,6 @@ export default function PoolTable({
          onVisiblePoolsChange(visiblePoolIds)
       }
    }, [visiblePoolIds, onVisiblePoolsChange])
-
-   const [sorting, setSorting] = useState([
-      { id: "volumeUsd1d", desc: true }
-   ])
 
    const columns = useMemo(() => {
       return [
@@ -182,10 +179,10 @@ export default function PoolTable({
       data: pools,
       columns: visibleColumns,
       getCoreRowModel: getCoreRowModel(),
-      getSortedRowModel: getSortedRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
       state: { sorting },
-      onSortingChange: setSorting
+      onSortingChange: onSortingChange,
+      manualSorting: true
    })
 
    function renderHeaders() {
