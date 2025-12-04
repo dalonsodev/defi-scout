@@ -4,6 +4,7 @@ import PoolFilters from "./PoolFilters"
 import PoolTable from "./PoolTable"
 import PaginationControls from "../common/PaginationControls"
 import useSparklines from "../../hooks/useSparklines"
+import useRequestQueue from "../../hooks/useRequestQueue"
 
 export default function PoolsContent({
    resolvedPools,
@@ -29,6 +30,7 @@ export default function PoolsContent({
    }, [resolvedPools, filters])
 
    const [pageIndex, setPageIndex] = useState(0)
+   const [visiblePoolIds, setVisiblePoolIds] = useState(new Set())
    const pageSize = 40
    const totalPages = Math.ceil(filteredPools.length / pageSize)
 
@@ -40,14 +42,28 @@ export default function PoolsContent({
 
    useEffect(() => {
       setPageIndex(0)
+      setVisiblePoolIds(new Set())
    }, [filters])
+   
+   useEffect(() => {
+      setVisiblePoolIds(new Set())
+   }, [pageIndex])
 
    const handlePageChange = (newPage) => {
       setPageIndex(newPage - 1) // convert from 1-based to 0-based
    }
 
+   const { queueRequest, cancelPendingRequests } = useRequestQueue({
+      maxTokens: 80,
+      refillRate: 1.2,
+      concurrencyLimit: 10
+   })
+
    const { sparklineData } = useSparklines({
-      visiblePools: paginatedPools
+      visiblePoolIds,
+      queueRequest,
+      cancelPendingRequests,
+      currentPage: pageIndex + 1
    })
 
    return (
@@ -75,8 +91,9 @@ export default function PoolsContent({
                <PoolTable 
                   pools={paginatedPools} 
                   sparklineData={sparklineData}
+                  onVisiblePoolsChange={setVisiblePoolIds}
+                  currentPage={pageIndex + 1}
                />
-
                <div className="py-4">
                   <PaginationControls 
                      totalPages={totalPages}

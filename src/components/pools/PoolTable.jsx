@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, createRef, useEffect } from "react"
 import {
    useReactTable,
    getCoreRowModel,
@@ -9,9 +9,29 @@ import {
 import MiniSparkline from "../common/MiniSparkline"
 import PlatformIcon from "../common/PlatformIcon"
 import useBreakpoint from "../../hooks/useBreakpoint"
+import useIntersection from "../../hooks/useIntersection"
 
-export default function PoolTable({ pools, sparklineData }) {
+export default function PoolTable({ 
+   pools, 
+   sparklineData, 
+   onVisiblePoolsChange
+}) {
    const { isDesktop } = useBreakpoint()
+
+   const rowRefs = useMemo(() => {
+      return pools.map(() => createRef())
+   }, [pools])
+
+   const visiblePoolIds = useIntersection(rowRefs, {
+      threshold: 0.1,
+      rootMargin: "200px"
+   })
+
+   useEffect(() => {
+      if (onVisiblePoolsChange) {
+         onVisiblePoolsChange(visiblePoolIds)
+      }
+   }, [visiblePoolIds, onVisiblePoolsChange])
 
    const [sorting, setSorting] = useState([
       { id: "volumeUsd1d", desc: true }
@@ -65,7 +85,22 @@ export default function PoolTable({ pools, sparklineData }) {
             meta: { showOn: "both" },
             cell: ({ row }) => {
                const data = sparklineData?.[row.original.id]
-
+               
+               // If no data (rate-limit or still loading), show upgrade to PRO
+               if (!data) {
+                  return (
+                     <div className="flex justify-center">
+                        <div 
+                           className="tooltip tooltip-left cursor-help py-2.5" 
+                           data-tip="Upgrade to Pro for unlimited sparklines"
+                        >
+                           <span className="text-xs text-base-content/40 font-medium min-h-10">
+                              ⟢ Pro
+                           </span>
+                        </div>
+                     </div>
+                  )
+               }
                return <MiniSparkline data={data} />
             }
          },
@@ -181,9 +216,11 @@ export default function PoolTable({ pools, sparklineData }) {
    }
 
    function renderRows() {
-      return table.getRowModel().rows.map(row => (
+      return table.getRowModel().rows.map((row, i) => (
          <tr
             key={row.id}
+            ref={rowRefs[i]}
+            data-pool-id={row.original.id}
             className="hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
          >
             {row.getVisibleCells().map(cell => {
