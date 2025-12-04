@@ -1,76 +1,61 @@
 import { useRef, useState, useEffect } from "react"
-import { chunkArray } from "../utils/chunkArray"
-import { delay } from "../utils/chunkArray"
 
-export default function useSparklines({ visiblePools }) {
+export default function useSparklines({ 
+   visiblePoolIds, 
+   queueRequest, 
+   cancelPendingRequests, 
+   currentPage
+}) {
    const cache = useRef({})
-   const [_, setLoadingBatch] = useState(0)
-   const isLoading = useRef(false)
-
-   const BATCH_SIZE = 20
-   const DELAY_MS = 600
+   const [_, setSparklineData] = useState({})
 
    useEffect(() => {
-      if (!visiblePools || visiblePools.length === 0) return
-      if (isLoading.current) return
+      if (!visiblePoolIds || visiblePoolIds.size === 0) return
 
-      const poolIds = visiblePools.map(pool => pool.id)
+      if (currentPage > 10) return
+
+      const poolIds = Array.from(visiblePoolIds)
       const missingIds = poolIds.filter(id => !cache.current[id])
 
       if (missingIds.length === 0) return
 
-      fetchSparklines(missingIds)
-   }, [visiblePools])
-
-   async function fetchSparklines(poolIds) {
-      isLoading.current = true
-
-      const batches = chunkArray(poolIds, BATCH_SIZE)
-
-      for (let i = 0; i < batches.length; i++) {
-         const batch = batches[i]
-
-         const promises = batch.map(async poolId => {
-            try {
-               const res = await fetch(`https://yields.llama.fi/chart/${poolId}`)
-               if (!res.ok) throw new Error(`Failed fetch for ${poolId}`)
-                  
-               const json = await res.json()
-               const data = json.data
-
-               const last7 = data
-                  .slice(-7)
-                  .map(snapshot => snapshot.apyBase)
-
-               return { poolId, data: last7 }
-
-            } catch (err) {
-               console.warn(`Sparkline fetch failed for ${poolId}:`, err)
-               return { poolId, data: null }
-            }
-         })
-
-         const results = await Promise.allSettled(promises)
-
-         results.forEach(result => {
-            if (result.status === "fulfilled" && result.value.data) {
-               cache.current[result.value.poolId] = result.value.data
-            }
-         })
-
-         setLoadingBatch(i + 1)
-
-         if (i < batches.length - 1) {
-            await delay(DELAY_MS)
-         }
-      }
-
-      isLoading.current = false
-      setLoadingBatch(0) // reset
-   }
+      missingIds.forEach(async poolId => {
+         try {
+            const data = await queueRequest({
+               id: poolId,
+               priority: 1,
+               fetchFn: async () => {
+                  try {
+                     const res = await fetch(`https://yields.llama.fi/chart/${poolId}`)
    
-   return {
-      sparklineData: cache.current,
-      isLoading: isLoading.current
-   }
+                     if (!res.ok) {
+                        throw { status: res.status, isHttpError: true }
+                     }
+   
+                     return res.json()
+                  } catch (err) {
+                     if (err instanceof TypeError && err.message?.includes("Failed to fetch")) {
+                        throw { status: 429, isHttpError: true }
+                     }
+                     throw err
+                  }
+               }
+            })
+
+            const last7 = data.data.slice(-7).map(snapshot => snapshot.apyBase)
+            cache.current[poolId] = last7
+            setSparklineData({ ...cache.current })
+
+         } catch (err) {
+            if (err.isCancellation) return
+            if (err.status === 429) return
+            console.warn(`Sparkline fetch failed for ${poolId}: `, err)
+         }
+      })
+
+      return () => cancelPendingRequests()
+
+   }, [visiblePoolIds, queueRequest, cancelPendingRequests, currentPage])
+   
+   return { sparklineData: cache.current }
 }

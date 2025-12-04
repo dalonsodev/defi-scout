@@ -8,7 +8,7 @@ export default function MiniSparkline({
    )
    
    if (data.length < 2) return (
-      <span className="text-xs text-base-content/50">No data</span>
+      <span className="text-xs text-base-content/40 font-medium">No data</span>
    )
 
    const values = data
