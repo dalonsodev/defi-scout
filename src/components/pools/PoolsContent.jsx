@@ -5,6 +5,7 @@ import PoolTable from "./PoolTable"
 import PaginationControls from "../common/PaginationControls"
 import useSparklines from "../../hooks/useSparklines"
 import useRequestQueue from "../../hooks/useRequestQueue"
+import sortPools from "../../utils/sortPools"
 
 export default function PoolsContent({
    resolvedPools,
@@ -31,19 +32,29 @@ export default function PoolsContent({
 
    const [pageIndex, setPageIndex] = useState(0)
    const [visiblePoolIds, setVisiblePoolIds] = useState(new Set())
+   const [sorting, setSorting] = useState([{ id: "tvlUsd", desc: true }])
    const pageSize = 40
    const totalPages = Math.ceil(filteredPools.length / pageSize)
+
+   const sortedPools = useMemo(() => {
+      return sortPools(filteredPools, sorting)
+   }, [filteredPools, sorting])
 
    const paginatedPools = useMemo(() => {
       const start = pageIndex * pageSize
       const end = start + pageSize
-      return filteredPools.slice(start, end)
-   }, [filteredPools, pageIndex, pageSize])
+      return sortedPools.slice(start, end)
+   }, [sortedPools, pageIndex, pageSize])
 
    useEffect(() => {
       setPageIndex(0)
       setVisiblePoolIds(new Set())
    }, [filters])
+
+   useEffect(() => {
+      setPageIndex(0)
+      setVisiblePoolIds(new Set())
+   }, [sorting])
    
    useEffect(() => {
       setVisiblePoolIds(new Set())
@@ -54,7 +65,7 @@ export default function PoolsContent({
    }
 
    const { queueRequest, cancelPendingRequests } = useRequestQueue({
-      maxTokens: 80,
+      maxTokens: 20,
       refillRate: 1.2,
       concurrencyLimit: 10
    })
@@ -93,6 +104,8 @@ export default function PoolsContent({
                   sparklineData={sparklineData}
                   onVisiblePoolsChange={setVisiblePoolIds}
                   currentPage={pageIndex + 1}
+                  sorting={sorting}
+                  onSortingChange={setSorting}
                />
                <div className="py-4">
                   <PaginationControls 
