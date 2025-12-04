@@ -11,7 +11,11 @@ import PlatformIcon from "../common/PlatformIcon"
 import useBreakpoint from "../../hooks/useBreakpoint"
 import useIntersection from "../../hooks/useIntersection"
 
-export default function PoolTable({ pools, sparklineData, onVisiblePoolsChange }) {
+export default function PoolTable({ 
+   pools, 
+   sparklineData, 
+   onVisiblePoolsChange
+}) {
    const { isDesktop } = useBreakpoint()
 
    const rowRefs = useMemo(() => {
@@ -81,7 +85,22 @@ export default function PoolTable({ pools, sparklineData, onVisiblePoolsChange }
             meta: { showOn: "both" },
             cell: ({ row }) => {
                const data = sparklineData?.[row.original.id]
-
+               
+               // If no data (rate-limit or still loading), show upgrade to PRO
+               if (!data) {
+                  return (
+                     <div className="flex justify-center">
+                        <div 
+                           className="tooltip tooltip-left cursor-help py-2.5" 
+                           data-tip="Upgrade to Pro for unlimited sparklines"
+                        >
+                           <span className="text-xs text-base-content/40 font-medium min-h-10">
+                              ⟢ Pro
+                           </span>
+                        </div>
+                     </div>
+                  )
+               }
                return <MiniSparkline data={data} />
             }
          },

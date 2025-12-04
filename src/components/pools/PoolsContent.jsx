@@ -5,7 +5,6 @@ import PoolTable from "./PoolTable"
 import PaginationControls from "../common/PaginationControls"
 import useSparklines from "../../hooks/useSparklines"
 import useRequestQueue from "../../hooks/useRequestQueue"
-import useIntersection from "../../hooks/useIntersection"
 
 export default function PoolsContent({
    resolvedPools,
@@ -55,14 +54,16 @@ export default function PoolsContent({
    }
 
    const { queueRequest, cancelPendingRequests } = useRequestQueue({
-      maxTokens: 120,
-      refillRate: 1.8
+      maxTokens: 80,
+      refillRate: 1.2,
+      concurrencyLimit: 10
    })
 
    const { sparklineData } = useSparklines({
       visiblePoolIds,
       queueRequest,
-      cancelPendingRequests
+      cancelPendingRequests,
+      currentPage: pageIndex + 1
    })
 
    return (
@@ -91,6 +92,7 @@ export default function PoolsContent({
                   pools={paginatedPools} 
                   sparklineData={sparklineData}
                   onVisiblePoolsChange={setVisiblePoolIds}
+                  currentPage={pageIndex + 1}
                />
                <div className="py-4">
                   <PaginationControls 
