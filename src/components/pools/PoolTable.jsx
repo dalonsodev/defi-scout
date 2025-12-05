@@ -62,7 +62,7 @@ export default function PoolTable({
             meta: { showOn: "both" },
             cell: ({ row }) => (
                <div className="text-right text-base-content">
-                  {row.original.tvlFormatted}
+                  ${row.original.tvlFormatted}
                </div>
             )
          },
@@ -72,7 +72,7 @@ export default function PoolTable({
             meta: { showOn: "both" },
             cell: ({ row }) => (
                <div className="text-right text-base-content">
-                  {row.original.volumeFormatted}
+                  ${row.original.volumeFormatted}
                </div>
             )
          },
