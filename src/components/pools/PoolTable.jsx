@@ -41,8 +41,10 @@ export default function PoolTable({
             header: "Pool",
             meta: { showOn: "both", isSticky: true },
             cell: ({ row }) => (
-               <div className="font-medium text-base-content max-w-30">
-                  {row.original.name}
+               <div className="tooltip tooltip-right" data-tip={row.original.name}>
+                  <div className="font-medium text-base-content max-w-[120px] truncate">
+                     {row.original.name}
+                  </div>
                </div>
             )
          },
@@ -218,7 +220,7 @@ export default function PoolTable({
             key={row.id}
             ref={rowRefs[i]}
             data-pool-id={row.original.id}
-            className="hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
+            className="group hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
          >
             {row.getVisibleCells().map(cell => {
                const isSticky = cell.column.columnDef.meta?.isSticky
@@ -227,7 +229,7 @@ export default function PoolTable({
                   <td 
                      key={cell.id} 
                      className={`px-4 py-6 whitespace-nowrap text-sm
-                        ${isSticky ? "sticky left-0 bg-base-200 z-2 sticky-column-shadow" : ""}
+                        ${isSticky ? "sticky left-0 bg-base-200 group-hover:bg-base-200/20 z-2 sticky-column-shadow transition-colors duration-150" : ""}
                      `.trim()}
                   >
                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
