@@ -15,11 +15,10 @@
    .scrollbar-hide::-webkit-scrollbar {
       display: none;
    }
-  .sticky-column-shadow {
+   .sticky-column-shadow {
       box-shadow: 
-         /* inset -1px 0 0 0 oklch(0.2115 0.012 254.09), */
          5px 0 25px -2px rgba(0, 0, 0, 0.3);
-  }
+   }
 }
 
 @plugin "daisyui";
