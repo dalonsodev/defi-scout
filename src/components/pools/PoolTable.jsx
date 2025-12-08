@@ -10,6 +10,14 @@ import PlatformIcon from "../common/PlatformIcon"
 import useBreakpoint from "../../hooks/useBreakpoint"
 import useIntersection from "../../hooks/useIntersection"
 
+/**
+ * Z-INDEX HIERARCHY:
+ * z-2:  Body cells (sticky first column)
+ * z-10: Header cells (sticky horizontal scroll)
+ * z-11: Header-body intersection (top-left corner)
+ * z-20: UI elements (dropdowns, tooltips)
+ */
+
 export default function PoolTable({ 
    pools, 
    sparklineData, 
@@ -197,8 +205,8 @@ export default function PoolTable({
                   <th
                      key={header.id}
                      onClick={header.column.getToggleSortingHandler()}
-                     className={`px-6 py-4 text-left text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
-                        ${isSticky ? "sticky left-0 bg-base-300 z-3 sticky-column-shadow" : ""}
+                     className={`sticky top-0 z-10 bg-base-300 px-6 py-4 text-left text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
+                        ${isSticky ? "left-0 z-11 sticky-column-shadow" : ""}
                      `.trim()}
                   >
                      {flexRender(header.column.columnDef.header, header.getContext())}
@@ -241,8 +249,8 @@ export default function PoolTable({
    }
 
    return (
-      <div className="overflow-x-auto scrollbar-hide">
-         <table className="min-w-full divide-y divide-base-300">
+      <div className="overflow-x-auto scrollbar-hide rounded-t-3xl max-h-[840px]">
+         <table className="min-w-full divide-y divide-base-300 border-separate border-spacing-0">
             <thead className="bg-base-300">
                {renderHeaders()}
             </thead>

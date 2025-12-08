@@ -28,7 +28,7 @@ export default function Dropdown({ selected, onToggle, options }) {
          </button>
 
          {isOpen && (
-            <ul className="absolute z-10 mt-2 menu p-2 shadow bg-base-100 rounded-3xl w-52">
+            <ul className="absolute z-20 mt-2 menu p-2 shadow bg-base-100 rounded-3xl w-52">
                {options.map(option => (
                   <li key={option.value}>
                      <label className="label cursor-pointer">
