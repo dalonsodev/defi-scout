@@ -1,4 +1,4 @@
-import { useMemo, createRef, useEffect } from "react"
+import { useMemo, createRef, useEffect, forwardRef } from "react"
 import {
    useReactTable,
    getCoreRowModel,
@@ -10,13 +10,22 @@ import PlatformIcon from "../common/PlatformIcon"
 import useBreakpoint from "../../hooks/useBreakpoint"
 import useIntersection from "../../hooks/useIntersection"
 
-export default function PoolTable({ 
-   pools, 
-   sparklineData, 
+/**
+ * Z-INDEX HIERARCHY:
+ * z-2:  Body cells (sticky first column)
+ * z-10: Header cells (sticky horizontal scroll)
+ * z-11: Header-body intersection (top-left corner)
+ * z-20: UI elements (dropdowns, tooltips)
+ */
+
+const PoolTable = forwardRef(({
+   pools,
+   sparklineData,
    onVisiblePoolsChange,
    sorting,
    onSortingChange
-}) {
+}, ref) => {
+
    const { isDesktop } = useBreakpoint()
 
    const rowRefs = useMemo(() => {
@@ -41,8 +50,10 @@ export default function PoolTable({
             header: "Pool",
             meta: { showOn: "both", isSticky: true },
             cell: ({ row }) => (
-               <div className="font-medium text-base-content max-w-30">
-                  {row.original.name}
+               <div className="tooltip tooltip-right" data-tip={row.original.name}>
+                  <div className="font-medium text-base-content max-w-[120px] truncate">
+                     {row.original.name}
+                  </div>
                </div>
             )
          },
@@ -62,7 +73,7 @@ export default function PoolTable({
             meta: { showOn: "both" },
             cell: ({ row }) => (
                <div className="text-right text-base-content">
-                  {row.original.tvlFormatted}
+                  ${row.original.tvlFormatted}
                </div>
             )
          },
@@ -72,7 +83,7 @@ export default function PoolTable({
             meta: { showOn: "both" },
             cell: ({ row }) => (
                <div className="text-right text-base-content">
-                  {row.original.volumeFormatted}
+                  ${row.original.volumeFormatted}
                </div>
             )
          },
@@ -195,8 +206,8 @@ export default function PoolTable({
                   <th
                      key={header.id}
                      onClick={header.column.getToggleSortingHandler()}
-                     className={`px-6 py-4 text-left text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
-                        ${isSticky ? "sticky left-0 bg-base-300 z-3 sticky-column-shadow" : ""}
+                     className={`sticky top-0 z-10 bg-base-300 px-6 py-4 text-left text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
+                        ${isSticky ? "left-0 z-11 sticky-column-shadow" : ""}
                      `.trim()}
                   >
                      {flexRender(header.column.columnDef.header, header.getContext())}
@@ -218,7 +229,7 @@ export default function PoolTable({
             key={row.id}
             ref={rowRefs[i]}
             data-pool-id={row.original.id}
-            className="hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
+            className="group hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
          >
             {row.getVisibleCells().map(cell => {
                const isSticky = cell.column.columnDef.meta?.isSticky
@@ -227,8 +238,8 @@ export default function PoolTable({
                   <td 
                      key={cell.id} 
                      className={`px-4 py-6 whitespace-nowrap text-sm
-                        ${isSticky ? "sticky left-0 bg-base-200 z-2 sticky-column-shadow" : ""}
-                     `.trim()}
+                        ${isSticky ? "sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150" : ""}
+                     `.trim()} // sticky-column-shadow
                   >
                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -239,8 +250,11 @@ export default function PoolTable({
    }
 
    return (
-      <div className="overflow-x-auto scrollbar-hide">
-         <table className="min-w-full divide-y divide-base-300">
+      <div 
+         ref={ref}
+         className="overflow-x-auto scrollbar-hide rounded-t-3xl max-h-[592px] md:max-h-[840px]"
+      >
+         <table className="min-w-full divide-y divide-base-300 border-separate border-spacing-0">
             <thead className="bg-base-300">
                {renderHeaders()}
             </thead>
@@ -250,4 +264,8 @@ export default function PoolTable({
          </table>
       </div>
    )
-}
+})
+
+PoolTable.displayName = "PoolTable"
+
+export default PoolTable
