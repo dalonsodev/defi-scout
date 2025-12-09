@@ -1,4 +1,4 @@
-import { useMemo, createRef, useEffect } from "react"
+import { useMemo, createRef, useEffect, forwardRef } from "react"
 import {
    useReactTable,
    getCoreRowModel,
@@ -18,13 +18,14 @@ import useIntersection from "../../hooks/useIntersection"
  * z-20: UI elements (dropdowns, tooltips)
  */
 
-export default function PoolTable({ 
-   pools, 
-   sparklineData, 
+const PoolTable = forwardRef(({
+   pools,
+   sparklineData,
    onVisiblePoolsChange,
    sorting,
    onSortingChange
-}) {
+}, ref) => {
+
    const { isDesktop } = useBreakpoint()
 
    const rowRefs = useMemo(() => {
@@ -237,8 +238,8 @@ export default function PoolTable({
                   <td 
                      key={cell.id} 
                      className={`px-4 py-6 whitespace-nowrap text-sm
-                        ${isSticky ? "sticky left-0 bg-base-200 group-hover:bg-base-200/20 z-2 sticky-column-shadow transition-colors duration-150" : ""}
-                     `.trim()}
+                        ${isSticky ? "sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150" : ""}
+                     `.trim()} // sticky-column-shadow
                   >
                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -249,7 +250,10 @@ export default function PoolTable({
    }
 
    return (
-      <div className="overflow-x-auto scrollbar-hide rounded-t-3xl max-h-[840px]">
+      <div 
+         ref={ref}
+         className="overflow-x-auto scrollbar-hide rounded-t-3xl max-h-[592px] md:max-h-[840px]"
+      >
          <table className="min-w-full divide-y divide-base-300 border-separate border-spacing-0">
             <thead className="bg-base-300">
                {renderHeaders()}
@@ -260,4 +264,8 @@ export default function PoolTable({
          </table>
       </div>
    )
-}
+})
+
+PoolTable.displayName = "PoolTable"
+
+export default PoolTable

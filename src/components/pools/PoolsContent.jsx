@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react"
+import { useMemo, useState, useEffect, useRef } from "react"
 import filterPools from "../../utils/filterPools"
 import PoolFilters from "./PoolFilters"
 import PoolTable from "./PoolTable"
@@ -33,6 +33,9 @@ export default function PoolsContent({
    const [pageIndex, setPageIndex] = useState(0)
    const [visiblePoolIds, setVisiblePoolIds] = useState(new Set())
    const [sorting, setSorting] = useState([{ id: "tvlUsd", desc: true }])
+   const tableRef = useRef(null)
+   const tableScrollRef = useRef(null)
+   const isFirstRender = useRef(true)
    const pageSize = 40
    const totalPages = Math.ceil(filteredPools.length / pageSize)
 
@@ -59,6 +62,22 @@ export default function PoolsContent({
    useEffect(() => {
       setVisiblePoolIds(new Set())
    }, [pageIndex])
+
+   useEffect(() => {
+      if (isFirstRender.current) {
+         isFirstRender.current = false
+         return
+      }
+      if (tableScrollRef.current && tableRef.current) {
+         tableScrollRef.current.scrollTop = 0
+         tableRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+         })
+         tableRef.current.setAttribute("aria-live", "polite")
+         tableRef.current.setAttribute("aria-label", `Showing page ${pageIndex + 1} of ${totalPages}`)
+      }
+   }, [pageIndex, totalPages])
 
    const handlePageChange = (newPage) => {
       setPageIndex(newPage - 1) // convert from 1-based to 0-based
@@ -98,8 +117,12 @@ export default function PoolsContent({
                </button>
             </div>
          ) : (
-            <div className="bg-base-200 mx-0 sm:-mx-2 md:mx-0 rounded-3xl shadow-lg">
+            <div 
+               ref={tableRef}
+               className="bg-base-200 mx-0 sm:-mx-2 md:mx-0 rounded-3xl shadow-lg"
+            >
                <PoolTable 
+                  ref={tableScrollRef}
                   pools={paginatedPools} 
                   sparklineData={sparklineData}
                   onVisiblePoolsChange={setVisiblePoolIds}

@@ -17,7 +17,7 @@
    }
    .sticky-column-shadow {
       box-shadow: 
-         5px 0 25px -2px rgba(0, 0, 0, 0.3);
+         5px 0 20px -10px rgba(0, 0, 0, 0.3);
    }
 }
 
