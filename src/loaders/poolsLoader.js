@@ -1,5 +1,3 @@
-import { defer } from "react-router-dom"
-
 function formatNumber(n) {
    if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1) + "B"
    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M"
@@ -86,8 +84,7 @@ async function fetchDeFiLlama() {
    }
 }
 
-export function poolsLoader() {
-   return defer({
-      pools: fetchDeFiLlama()
-   })
+export async function poolsLoader() {
+   const pools = await fetchDeFiLlama()
+   return { pools }
 }
