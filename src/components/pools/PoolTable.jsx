@@ -113,26 +113,6 @@ const PoolTable = forwardRef(({
             }
          },
          {
-            accessorKey: "riskLevel",
-            header: "Risk",
-            meta: { showOn: "desktop" },
-            cell: ({ row }) => {
-               const risk = row.original.riskLevel
-               const colorMap = {
-                  Low: "badge-success",
-                  Medium: "badge-warning",
-                  High: "badge-error"
-               }
-               return (
-                  <span
-                     className={`badge badge-sm ${colorMap[risk] || "badge-ghost"}`}
-                  >
-                     {risk}
-                  </span>
-               )
-            }
-         },
-         {
             accessorKey: "chain",
             header: "Chain",
             meta: { showOn: "desktop" },
