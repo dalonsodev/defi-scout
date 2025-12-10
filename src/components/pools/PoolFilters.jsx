@@ -54,19 +54,6 @@ export default function PoolFilters({
             />
          </label>
 
-         <label className="form-control w-full max-w-xs">Risk
-            <select 
-               value={filters.riskLevel}
-               onChange={(e) => updateFilter("riskLevel", e.target.value)}
-               className="select select-bordered select-sm rounded-xl"
-            >
-               <option value="">All</option>
-               <option value="Low">Low</option>
-               <option value="Medium">Medium</option>
-               <option value="High">High</option>
-            </select>
-         </label>
-
          <div className="flex items-end">
             <button
                onClick={clearFilters}
