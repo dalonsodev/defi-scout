@@ -58,6 +58,45 @@ const GET_POOLS_QUERY = gql`
    }
 `
 
+const GET_POOL_HISTORY_QUERY = gql`
+   query GetPoolHistory($poolId: String!, $startDate: Int!) {
+      # Pool metadata (current state)
+      pool(id: $poolId) {
+         id
+         feeTier
+         token0 {
+            id
+            symbol
+            name
+         }
+         token1 {
+            id
+            symbol
+            name
+         }
+         createdAtTimestamp
+      }
+
+      # Historical snapshots (daily)
+      poolDayDatas(
+         where: {
+            pool: $poolId
+            date_gte: $startDate
+         }
+         first: 1000
+         orderBy: date
+         orderDirection: asc
+      ) {
+         date
+         volumeUSD
+         tvlUSD
+         feesUSD
+         token0Price
+         token1Price
+      }
+   }
+`
+
 // 3. Exported functions
 /**
  * Fetches pools from Uniswap v3 subgraph
@@ -74,4 +113,22 @@ const GET_POOLS_QUERY = gql`
 export async function fetchPools(variables) {
    const data = await client.request(GET_POOLS_QUERY, variables)
    return data.pools
+}
+
+/**
+ * Fetches historical data for a specific pool
+ * @param {string} poolId - Pool contract address (lowercase)
+ * @param {number} startDate - Unix timestamp (seconds) for oldest data point
+ * @returns {Promise<Array>} Array of daily snapshots
+ */
+
+export async function fetchPoolHistory(poolId, startDate) {
+   const data = await client.request(GET_POOL_HISTORY_QUERY, {
+      poolId: poolId.toLowerCase(), // The Graph normalizes addresses to lowercase
+      startDate
+   })
+   return {
+      pool: data.pool,
+      history: data.poolDayDatas
+   }
 }

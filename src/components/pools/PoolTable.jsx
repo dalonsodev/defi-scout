@@ -1,4 +1,5 @@
 import { useMemo, createRef, useEffect, forwardRef } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import {
    useReactTable,
    getCoreRowModel,
@@ -27,6 +28,7 @@ const PoolTable = forwardRef(({
 }, ref) => {
 
    const { isDesktop } = useBreakpoint()
+   const navigate = useNavigate()
 
    const rowRefs = useMemo(() => {
       return pools.map(() => createRef())
@@ -50,11 +52,17 @@ const PoolTable = forwardRef(({
             header: "Pool",
             meta: { showOn: "both", isSticky: true },
             cell: ({ row }) => (
-               <div className="tooltip tooltip-right" data-tip={row.original.name}>
-                  <div className="font-medium text-base-content max-w-[120px] truncate">
-                     {row.original.name}
+               <Link
+                  to={`/pools/${row.original.id}`}
+                  className="block"
+                  aria-label={`View details for ${row.original.name} pool`}
+               >
+                  <div className="tooltip tooltip-right" data-tip={row.original.name}>
+                     <div className="font-medium text-base-content max-w-[120px] truncate">
+                        {row.original.name}
+                     </div>
                   </div>
-               </div>
+               </Link>
             )
          },
          {
@@ -204,29 +212,50 @@ const PoolTable = forwardRef(({
    }
 
    function renderRows() {
-      return table.getRowModel().rows.map((row, i) => (
-         <tr
-            key={row.id}
-            ref={rowRefs[i]}
-            data-pool-id={row.original.id}
-            className="group hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
-         >
-            {row.getVisibleCells().map(cell => {
-               const isSticky = cell.column.columnDef.meta?.isSticky
+      return table.getRowModel().rows.map((row, i) => {
+         const poolId = row.original.id
 
-               return (
-                  <td 
-                     key={cell.id} 
-                     className={`px-4 py-6 whitespace-nowrap text-sm
-                        ${isSticky ? "sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150" : ""}
-                     `.trim()} // sticky-column-shadow
-                  >
-                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-               )
-            })}
-         </tr>
-      ))
+         
+         const handleRowClick = (e) => {
+            // don't navigate if user is selecting text
+            if (window.getSelection().toString()) return
+            
+            // don't navigate if clicking on a link (avoid double navigation)
+            if (e.target.closest("a")) return
+            
+            // handle modifier keys for opening in new tab
+            if (e.metaKey || e.ctrlKey) {
+               window.open(`/pools/${poolId}`, "_blank")
+            } else {
+               navigate(`/pools/${poolId}`)
+            }
+         }
+
+         return (
+            <tr
+               key={row.id}
+               ref={rowRefs[i]}
+               data-pool-id={row.original.id}
+               onClick={handleRowClick}
+               className="group hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
+            >
+               {row.getVisibleCells().map(cell => {
+                  const isSticky = cell.column.columnDef.meta?.isSticky
+
+                  return (
+                     <td 
+                        key={cell.id} 
+                        className={`px-4 py-6 whitespace-nowrap text-sm
+                           ${isSticky ? "sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150" : ""}
+                        `.trim()} // sticky-column-shadow
+                     >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                     </td>
+                  )
+               })}
+            </tr>
+         )
+      })
    }
 
    return (
