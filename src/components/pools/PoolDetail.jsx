@@ -1,0 +1,154 @@
+import { useLoaderData, Link } from "react-router-dom"
+
+export default function PoolDetail() {
+   const { pool, history } = useLoaderData()
+
+   const latestSnapshot = history[history.length - 1] || {}
+
+   const poolAgeDays = pool?.createdAtTimestamp
+      ? Math.floor(Date.now() / 1000 - pool.createdAtTimestamp) / 86400
+      : 0
+
+   const last7Days = history.slice(-7)
+   const avgAPY = calculateAverageAPY(last7Days, latestSnapshot.tvlUSD)
+
+   return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+         {/* Navigation */}
+         <Link
+            to="/"
+            className="btn btn-ghost btn-sm mb-6 gap-2"
+         >
+            <span>←</span>
+            <span>Back to Pools</span>
+         </Link>
+
+         {/* Header */}
+         <div className="bg-base-200 rounded-3xl p-6 mb-6 shadow-lg">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+               <div>
+                  <h1 className="text-3xl font-bold mb-2">
+                     {pool.token0.symbol} / {pool.token1.symbol}
+                  </h1>
+                  <div className="flex items-center gap-3 flex-wrap">
+                     <span className="badge badge-primary badge-lg">
+                        {(pool.feeTier / 10000).toFixed(2)}% Fee
+                     </span>
+                     <span className="text-sm text-base-content/60">
+                        {pool.token0.name} / {pool.token1.name}
+                     </span>
+                  </div>
+               </div>
+
+               <div className="flex-gap-2">
+                  <a 
+                     href={`https://etherscan.io/address/${pool.id}`}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="btn btn-outline btn-sm gap-2"
+                  >
+                     <span>View in explorer</span>
+                     <span>↗</span>
+                  </a>
+               </div>
+            </div>
+         </div>
+
+         {/* Stats Grid */}
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <StatCard 
+               label="TVL"
+               value={formatCurrency(latestSnapshot.tvlUSD)}
+               color="text-primary"
+            />
+            <StatCard 
+               label="Volume (24h)"
+               value={formatCurrency(latestSnapshot.volumeUSD)}
+               color="text-secondary"
+            />
+            <StatCard 
+               label="Avg APY (7d)"
+               value={`${avgAPY.toFixed(2)}%`}
+               color="text-success"
+            />
+            <StatCard 
+               label="Pool Age"
+               value={`${Math.floor(poolAgeDays)} days`}
+               color="text-info"
+            />
+         </div>
+
+         {/* Charts Placeholder */}
+         <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+               <ChartPlaceholder title="TVL Over Time" />
+               <ChartPlaceholder title="Volume Over Time" />
+               <ChartPlaceholder title="Price Chart" />
+               <ChartPlaceholder title="Fees Collected" />
+            </div>
+         </div>
+      </div>
+   )
+}
+
+// ===== Helper Components =====
+
+function StatCard({ label, value, color = "text-base-content" }) {
+   return (
+      <div className="bg-base-200 rounded-2xl p-4 shadow">
+         <div className="text-xs text-base-content/60 uppercase tracking-wide mb-1">
+            {label}
+         </div>
+         <div className={`text-xl md:text-2xl font-bold ${color}`}>
+            {value}
+         </div>
+      </div>
+   )
+}
+
+function ChartPlaceholder({ title }) {
+   return (
+      <div className="border-2 border-dashed border-base-300 rounded-xl p-8 h-64 flex flex-col items-center justify-center">
+         <div className="text-base-content/40 text-center">
+            {title}
+         </div>
+         <div className="text-sm">Coming in Day 5-6</div>
+      </div>
+   )
+}
+
+
+// ===== Utility Functions =====
+
+function formatCurrency(value) {
+   if (!value || value === 0) return "$0"
+
+   if (value >= 1_000_000_000) {
+      return `$${(value / 1_000_000_000).toFixed(2)}B`
+   }
+   if (value >= 1_000_000) {
+      return `$${(value / 1_000_000).toFixed(2)}M`
+   }
+   if (value >= 1_000) {
+      return `$${(value / 1_000).toFixed(2)}K`
+   }
+
+   return `$${value.toFixed(2)}`
+}
+
+function calculateAverageAPY(snapshots, currentTVL) {
+   if (!snapshots || snapshots.length === 0 || !currentTVL) return 0
+
+   const apyValues = snapshots
+      .filter(s => s.feesUSD && s.tvlUSD)
+      .map(s => {
+         const dailyFeeRate = s.feesUSD / s.tvlUSD
+         return dailyFeeRate * 365 * 100 // Annualized
+      })
+
+   if (apyValues.length === 0) return 0
+
+   const sum = apyValues.reduce((acc, curr) => acc + curr, 0)
+   return sum / apyValues.length
+}
