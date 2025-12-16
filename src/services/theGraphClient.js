@@ -64,6 +64,10 @@ const GET_POOL_HISTORY_QUERY = gql`
       pool(id: $poolId) {
          id
          feeTier
+         totalValueLockedToken0
+         totalValueLockedToken1
+         token0Price
+         token1Price
          token0 {
             id
             symbol

@@ -1,7 +1,16 @@
 import { useLoaderData, Link } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { TokenInfoBlock } from "./TokenInfoBlock"
+import { PoolCharts } from "./PoolCharts"
 
 export default function PoolDetail() {
    const { pool, history } = useLoaderData()
+   const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
+   const tokenSymbols = [pool.token0.symbol, pool.token1.symbol]
+
+   useEffect(() => {
+      window.scrollTo(0, 0)
+   }, [])
 
    const latestSnapshot = history[history.length - 1] || {}
 
@@ -78,15 +87,21 @@ export default function PoolDetail() {
             />
          </div>
 
-         {/* Charts Placeholder */}
+         {/* Token Info Block */}
+         <div className="grid gap-4 mb-6">
+            <TokenInfoBlock 
+               pool={pool}
+               selectedTokenIdx={selectedTokenIdx}
+               onTokenChange={setSelectedTokenIdx}
+            />
+         </div>
          <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-               <ChartPlaceholder title="TVL Over Time" />
-               <ChartPlaceholder title="Volume Over Time" />
-               <ChartPlaceholder title="Price Chart" />
-               <ChartPlaceholder title="Fees Collected" />
-            </div>
+            <PoolCharts 
+               history={history}
+               selectedTokenIdx={selectedTokenIdx}
+               tokenSymbols={tokenSymbols}
+            />
          </div>
       </div>
    )
@@ -107,32 +122,14 @@ function StatCard({ label, value, color = "text-base-content" }) {
    )
 }
 
-function ChartPlaceholder({ title }) {
-   return (
-      <div className="border-2 border-dashed border-base-300 rounded-xl p-8 h-64 flex flex-col items-center justify-center">
-         <div className="text-base-content/40 text-center">
-            {title}
-         </div>
-         <div className="text-sm">Coming in Day 5-6</div>
-      </div>
-   )
-}
-
 
 // ===== Utility Functions =====
 
 function formatCurrency(value) {
    if (!value || value === 0) return "$0"
-
-   if (value >= 1_000_000_000) {
-      return `$${(value / 1_000_000_000).toFixed(2)}B`
-   }
-   if (value >= 1_000_000) {
-      return `$${(value / 1_000_000).toFixed(2)}M`
-   }
-   if (value >= 1_000) {
-      return `$${(value / 1_000).toFixed(2)}K`
-   }
+   if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`
+   if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`
+   if (value >= 1e3) return `$${(value / 1e3).toFixed(2)}K`
 
    return `$${value.toFixed(2)}`
 }

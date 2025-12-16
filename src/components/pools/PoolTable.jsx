@@ -214,7 +214,6 @@ const PoolTable = forwardRef(({
    function renderRows() {
       return table.getRowModel().rows.map((row, i) => {
          const poolId = row.original.id
-
          
          const handleRowClick = (e) => {
             // don't navigate if user is selecting text
