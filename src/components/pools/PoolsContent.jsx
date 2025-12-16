@@ -8,27 +8,27 @@ import useRequestQueue from "../../hooks/useRequestQueue"
 import sortPools from "../../utils/sortPools"
 
 export default function PoolsContent({
-   resolvedPools,
+   pools,
    filters,
    updateFilter,
    togglePlatform,
    clearFilters,
 }) {
    const availablePlatforms = useMemo(() => {
-      if (!resolvedPools) return []
+      if (!pools) return []
 
-      const uniqueProjects = [...new Set(resolvedPools.map(pool => pool.project))]
+      const uniqueProjects = [...new Set(pools.map(pool => pool.project))]
 
       return uniqueProjects.map(project => ({
          value: project,
-         display: resolvedPools.find(p => p.project === project)?.platformName || project
+         display: pools.find(p => p.project === project)?.platformName || project
       })).sort((a, b) => a.display.localeCompare(b.display))
-   }, [resolvedPools])
+   }, [pools])
 
    const filteredPools = useMemo(() => {
-      if (!resolvedPools || !Array.isArray(resolvedPools)) return []
-      return filterPools(resolvedPools, filters)
-   }, [resolvedPools, filters])
+      if (!pools || !Array.isArray(pools)) return []
+      return filterPools(pools, filters)
+   }, [pools, filters])
 
    const [pageIndex, setPageIndex] = useState(0)
    const [visiblePoolIds, setVisiblePoolIds] = useState(new Set())

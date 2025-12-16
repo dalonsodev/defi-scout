@@ -7,7 +7,6 @@ export default function filterPools(pools, filters) {
       if (filters.platforms.length > 0 && !filters.platforms.includes(pool.project)) return false
       if (filters.tvlUsd && pool.tvlUsd < Number(filters.tvlUsd)) return false
       if (filters.volumeUsd1d && pool.volumeUsd1d < Number(filters.volumeUsd1d)) return false
-      if (filters.riskLevel && pool.riskLevel !== filters.riskLevel) return false
       
       return true
    })
