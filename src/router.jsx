@@ -6,7 +6,7 @@ import {
 import Pools from "./pages/Pools"
 import Watchlist from "./pages/Watchlist"
 import Layout from "./components/layout/Layout"
-import PoolDetail from "./components/pools/PoolDetail"
+import PoolDetail from "./components/pool-detail/PoolDetail"
 import Error from "./components/common/Error"
 import { poolsLoader } from "./loaders/poolsLoader"
 import { poolDetailLoader } from "./loaders/poolDetailLoader"
