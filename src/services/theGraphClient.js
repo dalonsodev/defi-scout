@@ -101,6 +101,29 @@ const GET_POOL_HISTORY_QUERY = gql`
    }
 `
 
+const GET_POOL_HOUR_DATAS_QUERY = gql`
+   query GetPoolHourDatas($poolId: String!, $startTime: Int!) {
+      poolHourDatas(
+         where: {
+            pool: $poolId
+            periodStartUnix_gte: $startTime
+         }
+         orderBy: periodStartUnix
+         orderDirection: asc
+         first: 720
+      ) {
+         periodStartUnix
+         token0Price
+         token1Price
+         feesUSD
+         sqrtPrice
+         liquidity
+         tvlUSD
+         tick   
+      }
+   }
+`
+
 // 3. Exported functions
 /**
  * Fetches pools from Uniswap v3 subgraph
@@ -135,4 +158,19 @@ export async function fetchPoolHistory(poolId, startDate) {
       pool: data.pool,
       history: data.poolDayDatas
    }
+}
+
+/**
+ * Fetches hourly historical data for a specific pool
+ * @param {string} poolId - Pool contract address (lowercase)
+ * @param {number} startTime - Unix timestamp (seconds) for oldest data point
+ * @returns {Promise<Array>} Array of hourly snapshots (up to 720 items)
+ */
+
+export async function fetchPoolHourData(poolId, startTime) {
+   const data = await client.request(GET_POOL_HOUR_DATAS_QUERY, {
+      poolId: poolId.toLowerCase(),
+      startTime
+   })
+   return data.poolHourDatas
 }
