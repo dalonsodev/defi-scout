@@ -26,7 +26,7 @@ export function formatPoolHourData(rawData) {
       startDate: hourlyData[0].date,
       endDate: hourlyData[hourlyData.length - 1].date,
       minPrice: Math.min(...hourlyData.map(h => h.token0Price)),
-      maxPrice: Math.min(...hourlyData.map(h => h.token1Price)),
+      maxPrice: Math.max(...hourlyData.map(h => h.token1Price)),
       medianPrice: calculateMedian(hourlyData.map(h => h.token0Price)),
       totalFeesUSD: hourlyData.reduce((acc, curr) => acc + curr.feesUSD, 0)
    }
