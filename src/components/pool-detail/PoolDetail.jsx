@@ -2,6 +2,7 @@ import { useLoaderData, Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { TokenInfoBlock } from "./TokenInfoBlock"
 import { PoolCharts } from "./PoolCharts"
+import { RangeCalculator } from "./RangeCalculator"
 
 export default function PoolDetail() {
    const { pool, history } = useLoaderData()
@@ -86,22 +87,32 @@ export default function PoolDetail() {
                color="text-info"
             />
          </div>
-
-         {/* Token Info Block */}
-         <div className="grid gap-4 mb-6">
-            <TokenInfoBlock 
-               pool={pool}
-               selectedTokenIdx={selectedTokenIdx}
-               onTokenChange={setSelectedTokenIdx}
-            />
-         </div>
-         <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
-            <PoolCharts 
-               history={history}
-               selectedTokenIdx={selectedTokenIdx}
-               tokenSymbols={tokenSymbols}
-            />
+         
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Range calculator */}
+            <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
+               <h2 className="text-xl font-semibold mb-4">Range Calculator</h2>
+               <RangeCalculator 
+                  pool={pool}
+                  selectedTokenIdx={selectedTokenIdx}
+               />
+            </div>
+            <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
+               {/* Historical data */}
+               <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
+               <div className="grid gap-4 mb-4">
+                  <TokenInfoBlock 
+                     pool={pool}
+                     selectedTokenIdx={selectedTokenIdx}
+                     onTokenChange={setSelectedTokenIdx}
+                  />
+               </div>
+               <PoolCharts 
+                  history={history}
+                  selectedTokenIdx={selectedTokenIdx}
+                  tokenSymbols={tokenSymbols}
+               />
+            </div>
          </div>
       </div>
    )

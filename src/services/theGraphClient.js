@@ -66,6 +66,7 @@ const GET_POOL_HISTORY_QUERY = gql`
          feeTier
          totalValueLockedToken0
          totalValueLockedToken1
+         totalValueLockedUSD
          token0Price
          token1Price
          token0 {

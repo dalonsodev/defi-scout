@@ -42,7 +42,8 @@ export function simulateRangePerformance({
 
    
    // ===== STAGE 2: DATA QUALITY ASSESSMENT =====
-   const { quality, warnings } = assessDataQuality(hourlyData)
+   const { quality, warnings: rawWarnings } = assessDataQuality(hourlyData)
+   const warnings = Array.isArray(rawWarnings) ? rawWarnings : []
    
    
    // ===== STAGE 3: BLOCKING DECISION =====
@@ -65,16 +66,28 @@ export function simulateRangePerformance({
       }
    }
 
-   // 4.2 Get current price from first hourly snapshot
-   const currentPrice = hourlyData[0].token0Price
+   // 4.2 Get current price from first hourly snapshot (PARSE TO NUMBER)
+   const currentPrice = parseFloat(hourlyData[0].token0Price)
 
-   // 4.3 Calculate USD prices using inference formula
-   const priceToken0InUSD = pool.totalValueLockedUSD /
-      (pool.totalValueLockedToken0 + pool.totalValueLockedToken1 / currentPrice)
-   const priceToken1InUSD = priceToken0InUSD / currentPrice
+   // Validate currentPrice
+   if (isNaN(currentPrice) || currentPrice <= 0) {
+      return {
+         success: false,
+         error: "Invalid current price from hourly data",
+         dataQuality: quality
+      }
+   }
+
+   // 4.3 Calculate USD prices using inference formula (PARSE pool values too)
+   const tvlUSD = parseFloat(pool.totalValueLockedUSD)
+   const tvl0 = parseFloat(pool.totalValueLockedToken0)
+   const tvl1 = parseFloat(pool.totalValueLockedToken1)
+
+   const priceToken1InUSD = tvlUSD / (tvl0 / currentPrice + tvl1)
+   const priceToken0InUSD = priceToken1InUSD / currentPrice
 
    // 4.3.1 Validate calculated prices
-   if (pool.totalValueLockedUSD <= 0) {
+   if (tvlUSD <= 0) {
       return {
          success: false,
          error: "Pool has no liquidity (TVL = $0)",
@@ -82,7 +95,7 @@ export function simulateRangePerformance({
       }
    }
 
-   if (pool.totalValueLockedToken0 <= 0 || pool.totalValueLockedToken1 <= 0) {
+   if (tvl0 <= 0 || tvl1 <= 0) {
       return {
          success: false,
          error: "Pool is imbalanced (one token at 0%). Cannot calculate prices.",
@@ -104,12 +117,33 @@ export function simulateRangePerformance({
    const amount0 = capitalPerToken / priceToken0InUSD
    const amount1 = capitalPerToken / priceToken1InUSD
 
+   // 4.4.5 Normalize user inputs to token0Price scale
+   // User inputs are in the display scale (respects selectedTokenIdx)
+   // But we always compare with token0Price in the loop
+   let normalizedMinPrice = minPrice
+   let normalizedMaxPrice = maxPrice
+
+   if (!fullRange && minPrice != null && maxPrice != null) {
+      if (selectedTokenIdx === 1) {
+         // User inputs are in token1Price scale (e.g., "USDT per WETH" = 3107)
+         // Convert to token0Price scale (e.g., "WETH per USDT" = 1/3107)
+         normalizedMinPrice = 1 / maxPrice  // Invert and swap
+         normalizedMaxPrice = 1 / minPrice
+      }
+      // else: selectedTokenIdx === 0, inputs already in token0Price scale
+   }
+
    // 4.5 Determine effective range (handle fullRange case)
    let effectiveMin
    let effectiveMax
    
+   // Dynamic buffer prevents false out-of-range errors
+   // Trade-off: Low volatility pools get tighter buffer (faster rejection)
+   //            High volatility pools get wider buffer (more tolerance)
+   // Future: Consider adding "conservative mode" flag for paranoid users
+   
    if (fullRange) {
-      const allPrices = hourlyData.map(h => h.token0Price)
+      const allPrices = hourlyData.map(h => parseFloat(h.token0Price))
       const minPrice = Math.min(...allPrices)
       const maxPrice = Math.max(...allPrices)
       const priceRange = maxPrice - minPrice
@@ -121,37 +155,33 @@ export function simulateRangePerformance({
       effectiveMin = minPrice * (1 - bufferMultiplier)
       effectiveMax = maxPrice * (1 + bufferMultiplier)                 
    } else {
-      effectiveMin = minPrice
-      effectiveMax = maxPrice
+      effectiveMin = normalizedMinPrice
+      effectiveMax = normalizedMaxPrice
    }
 
-   // 4.6 Calculate user liquidity using Poolfish formula
-   const sqrtPriceUpper = Math.sqrt(effectiveMax)
-   const sqrtPriceLower = Math.sqrt(effectiveMin)
+   // 🔍 DIAGNOSTIC
+   console.log('🔍 Effective Range:', { effectiveMin, effectiveMax })
+   console.log('🔍 Sample hourPrice:', parseFloat(hourlyData[0].token0Price))
 
-   let L_user
+   // 4.6 Calculate fee share using TVL ratio (simpler and accurate)
+   // User's position TVL relative to pool TVL
+   const userTVL = capitalUSD
+   const poolTVL = tvlUSD
 
-   if (selectedTokenIdx === 0) {
-      L_user = amount0 * Math.sqrt(currentPrice) / (sqrtPriceUpper - sqrtPriceLower)
-   } else {
-      L_user = amount1 / (sqrtPriceUpper - sqrtPriceLower)
-   }
+   // Base fee share (if user was in same range as entire pool)
+   const baseFeeShare = userTVL / poolTVL
 
+   // 🔍 DIAGNOSTIC
+   console.log('🔍 Fee Share Calculation:', {
+      userTVL: userTVL.toFixed(2),
+      poolTVL: poolTVL.toFixed(2),
+      baseFeeShare: (baseFeeShare * 100).toFixed(6) + '%'
+   })
    
+
    // ===== STAGE 5: FEE ACCUMULATION LOOP =====
-   // 5.0 Pre-loop validations
-   if (L_user <= 0 || !isFinite(L_user)) {
-      return {
-         success: false,
-         error: "Invalid liquidity calculation",
-         dataQuality: quality
-      }
-   }
-   // Sanity check: your initial liquidity shouldn't exceed pool's liquidity
-   if (L_user > hourlyData[0].liquidity) {
-      warnings.push("Your position would be larger than initial pool liquidity")
-   }
    
+   // 5.0 Pre-loop validations
    const MAX_WARNINGS = 5
 
    // 5.1 Initialize accumulators
@@ -159,52 +189,69 @@ export function simulateRangePerformance({
    let hoursInRange = 0
    
    // 5.2 Loop through hourly data
+   let debugCount = 0  // ⭐ Contador para limitar logs
+
    for (let i = 0; i < hourlyData.length; i++) {
       const hour = hourlyData[i]
 
-      // 5.3 Validate hour data (skip corrupted/incomplete hours)
-      if (hour.token0Price == null || hour.liquidity == null || 
-         hour.feesUSD == null) {
-            continue
-      }
+      // 5.3 Validate hour data (PARSE strings)
+      const hourPrice = parseFloat(hour.token0Price)
+      const hourLiquidity = parseFloat(hour.liquidity)
+      const hourFeesUSD = parseFloat(hour.feesUSD)
 
-      if (hour.token0Price <= 0 || hour.liquidity <= 0 || 
-         hour.feesUSD <= 0) {
-         continue
+      if (isNaN(hourPrice) || isNaN(hourLiquidity) || isNaN(hourFeesUSD)) {
+         continue // Skip corrupted hours
+      }
+      
+      if (hourPrice <= 0 || hourLiquidity <= 0 || hourFeesUSD < 0) {
+         continue // Note: feesUSD can be 0 (valid), but not negative
       }
 
       // 5.4 Check if price is in-range
-      const priceInRange = hour.token0Price >= effectiveMin &&
-                           hour.token0Price <= effectiveMax
+      const priceInRange = hourPrice >= effectiveMin &&
+                           hourPrice <= effectiveMax
       
+      // 🔍 DIAGNOSTIC (primeras 3 iteraciones)
+      if (debugCount < 3) {
+         console.log(`🔍 Hour ${i}:`, {
+            hourPrice: hourPrice.toFixed(8),
+            effectiveMin: effectiveMin.toFixed(8),
+            effectiveMax: effectiveMax.toFixed(8),
+            priceInRange,
+            hourFeesUSD,
+            hourLiquidity
+         })
+         debugCount++
+      }
+
       if (!priceInRange) {
          continue // Skip out-of-range hours
       }
 
-      // 5.5 Calculate fee share
-      const L_total = hour.liquidity
+      // 5.5 Use base fee share (simplified, no liquidity math)
+      const feeShare = baseFeeShare
 
-      // Edge Case 1: Skip if pool is empty
-      if (L_total === 0) {
-         continue
-      }
-
-      // Edge Case 2: Cap fee share at 100%
-      const rawFeeShare = L_user / L_total
-      const feeShare = Math.min(L_user / L_total, 1.0)
-
-      if (rawFeeShare > 1) {
-         warnings.push(`High liquidity share (${(rawFeeShare * 100).toFixed(1)}%) detected at hour ${i}. Pool may be unstable.`)
-      }
-
-      if (rawFeeShare > 0.5 && warnings.length < MAX_WARNINGS) {
-         warnings.push(`High liquidity share (${(rawFeeShare * 100).toFixed(1)}%) detected at hour ${i}`)
+      // 🔍 DIAGNOSTIC (first hour in-range)
+      if (hoursInRange === 0) {
+         console.log('🔍 First hour in range:', {
+            baseFeeShare: (baseFeeShare * 100).toFixed(6) + "%",
+            hourFeesUSD,
+            feesAccumulated: (hourFeesUSD * feeShare).toFixed(4)
+         })
       }
 
       // 5.6 Accumulate fees
-      totalFeesUSD += hour.feesUSD * feeShare
+      totalFeesUSD += hourFeesUSD * feeShare
       hoursInRange++
    }
+
+   // ⭐ Log final después del loop
+   console.log('🔍 Loop Summary:', {
+      totalFeesUSD: totalFeesUSD.toFixed(4),
+      hoursInRange,
+      totalHours: hourlyData.length,
+      percentInRange: ((hoursInRange / hourlyData.length) * 100).toFixed(1) + "%"
+   })
 
    if (warnings.length === MAX_WARNINGS) {
       warnings.push(`... and ${hoursInRange - MAX_WARNINGS} more anomalies. Pool data may be unstable.`)
@@ -213,13 +260,13 @@ export function simulateRangePerformance({
    // 5.7 Check if position was ever in-range
    if (hoursInRange === 0) {
       const actualPriceRange = {
-         min: Math.min(...hourlyData.map(h => h.token0Price)),
-         max: Math.min(...hourlyData.map(h => h.token0Price))
+         min: Math.min(...hourlyData.map(h => parseFloat(h.token0Price))),
+         max: Math.max(...hourlyData.map(h => parseFloat(h.token0Price)))
       }
 
       return {
          success: false,
-         error: `Price never entered range (${effectiveMin.toFixed(2)}-${effectiveMax.toFixed(2)}). Actual range: ${actualPriceRange.min.toFixed(2)}-${actualPriceRange.max.toFixed(2)}`,
+         error: `Price never entered range (${effectiveMin.toFixed(6)}-${effectiveMax.toFixed(6)}). Actual range: ${actualPriceRange.min.toFixed(6)}-${actualPriceRange.max.toFixed(6)}`,
          dataQuality: quality
       }
    }
@@ -244,13 +291,15 @@ export function simulateRangePerformance({
       warnings.unshift(`⚠️ Data quality downgraded to ${finalQuality} due to ${warnings.length} anomalies`)
    }
    
+   
    // ===== STAGE 6: IL CALCULATION =====
-   // 6.1 Get price endpoints
-   const initialPrice = hourlyData[0].token0Price
-   const finalPrice = hourlyData[hourlyData.length - 1].token0Price
+
+   // 6.1 Get price endpoints (PARSE)
+   const initialPrice = parseFloat(hourlyData[0].token0Price)
+   const finalPrice = parseFloat(hourlyData[hourlyData.length - 1].token0Price)
 
    // 6.2 Validate price data
-   if (initialPrice <= 0 || finalPrice <= 0) {
+   if (isNaN(initialPrice) || isNaN(finalPrice) || initialPrice <= 0 || finalPrice <= 0) {
       return {
          success: false,
          error: "Invalid price data for IL calculation",
@@ -262,7 +311,7 @@ export function simulateRangePerformance({
    const priceRatio = finalPrice / initialPrice
 
    // Classic IL formula: 2 × √(ratio) / (1 + ratio) - 1
-   const IL_decimal = (2 * Math.sqrt(priceRatio)) / (1 + priceRatio - 1)
+   const IL_decimal = (2 * Math.sqrt(priceRatio)) / (1 + priceRatio) - 1
    const IL_percent = IL_decimal * 100
 
    // 6.4 Add disclaimer for concentrated ranges
@@ -285,9 +334,9 @@ export function simulateRangePerformance({
    const initialAmount0 = amount0
    const initialAmount1 = amount1
 
-   const finalPriceToken0InUSD = pool.totalValueLockedUSD / 
-      (pool.totalValueLockedToken0 + pool.totalValueLockedToken1 / finalPrice)
-   const finalPriceToken1InUSD = finalPriceToken0InUSD / finalPrice
+   const finalPriceToken1InUSD = tvlUSD / 
+      (tvl0 / finalPrice + tvl1)
+   const finalPriceToken0InUSD = finalPriceToken1InUSD / finalPrice
 
    const holdValue = (initialAmount0 * finalPriceToken0InUSD) +
                      (initialAmount1 * finalPriceToken1InUSD)
