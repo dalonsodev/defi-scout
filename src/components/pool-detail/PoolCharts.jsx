@@ -2,7 +2,13 @@ import { TVLVolumeChart } from "./TVLVolumeChart"
 import { PriceChart } from "./PriceChart"
 import { FeesApyChart } from "./FeesApyChart"
 
-export function PoolCharts({ history, selectedTokenIdx, tokenSymbols }) {
+export function PoolCharts({ 
+   history, 
+   selectedTokenIdx, 
+   tokenSymbols,
+   rangeInputs,
+   currentPrice
+}) {
    if (!history || history.length === 0) {
       return (
          <div className="card bg-base-200 rounded-2xl p-8 text-center">
@@ -17,6 +23,8 @@ export function PoolCharts({ history, selectedTokenIdx, tokenSymbols }) {
             history={history} 
             selectedTokenIdx={selectedTokenIdx} 
             tokenSymbols={tokenSymbols}
+            rangeInputs={rangeInputs}
+            currentPrice={currentPrice}
          />
          <TVLVolumeChart history={history} />
          <FeesApyChart history={history} />

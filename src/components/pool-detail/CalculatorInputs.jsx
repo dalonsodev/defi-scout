@@ -1,13 +1,15 @@
 export function CalculatorInputs({ 
    inputs, 
-   onChange, 
+   onChange,
+   onIncrement,
+   onPresetClick,
    currentPrice,
    priceLabel,
    token0Symbol, 
    token1Symbol,
    token0PriceUSD,
    token1PriceUSD
-   }) {
+}) {
    const priceNum = Number(currentPrice)
       
    // Token amounts based on 50/50 split
@@ -39,22 +41,22 @@ export function CalculatorInputs({
          <div className="mt-3 space-y-2">
             <div className="flex items-center justify-between text-sm">
                <span className="flex items-center gap-2">
-               <span className="w-2 h-2 rounded-full bg-primary"></span>
-               {token0Symbol}:
+                  <span className="w-2 h-2 rounded-full bg-primary"></span>
+                  {token0Symbol}:
                </span>
                <span>
-               {token0Amount > 0 ? token0Amount.toFixed(5) : "N/A"} 
-               <span className="text-base-content/60 ml-2">${(inputs.capitalUSD / 2).toFixed(2)}</span>
+                  {token0Amount > 0 ? token0Amount.toFixed(5) : "N/A"} 
+                  <span className="text-base-content/60 ml-2">${(inputs.capitalUSD / 2).toFixed(2)}</span>
                </span>
             </div>
             <div className="flex items-center justify-between text-sm">
                <span className="flex items-center gap-2">
-               <span className="w-2 h-2 rounded-full bg-secondary"></span>
-               {token1Symbol}:
+                  <span className="w-2 h-2 rounded-full bg-secondary"></span>
+                  {token1Symbol}:
                </span>
                <span>
-               {token1Amount > 0 ? token1Amount.toFixed(5) : "N/A"}
-               <span className="text-base-content/60 ml-2">${(inputs.capitalUSD / 2).toFixed(2)}</span>
+                  {token1Amount > 0 ? token1Amount.toFixed(5) : "N/A"}
+                  <span className="text-base-content/60 ml-2">${(inputs.capitalUSD / 2).toFixed(2)}</span>
                </span>
             </div>
          </div>
@@ -62,62 +64,130 @@ export function CalculatorInputs({
 
          {/* Price Range */}
          <div className="mb-6">
-         <div className="flex justify-between items-center mb-2">
-            <label className="text-sm font-semibold">Price Range</label>
-            <label className="flex items-center gap-2 cursor-pointer">
-               <span className="text-sm">Full Range:</span>
-               <input
-               type="checkbox"
-               checked={inputs.fullRange}
-               onChange={(e) => onChange('fullRange', e.target.checked)}
-               className="toggle toggle-sm"
-               />
-            </label>
-         </div>
-
-         {/* Min/Max inputs (disabled if fullRange) */}
-         <div className="grid grid-cols-2 gap-3 mb-3">
-            <div>
-               <label className="block text-xs text-base-content/60 mb-1">Min Price</label>
-               <input
-                  type="number"
-                  value={inputs.minPrice}
-                  onChange={(e) => onChange('minPrice', e.target.value)}
-                  disabled={inputs.fullRange}
-                  placeholder="0"
-                  className="input input-sm w-full bg-base-300"
-                  step="0.0001"
-               />
-               <p className="text-xs text-base-content/50 mt-1">
-                  {priceLabel}
-               </p>
-            </div>
-            <div>
-               <label className="block text-xs text-base-content/60 mb-1">Max Price</label>
-               <input
-                  type="number"
-                  value={inputs.maxPrice}
-                  onChange={(e) => onChange('maxPrice', e.target.value)}
-                  disabled={inputs.fullRange}
-                  placeholder="∞"
-                  className="input input-sm w-full bg-base-300"
-                  step="0.0001"
-               />
-               <p className="text-xs text-base-content/50 mt-1">
-                  {priceLabel}
-               </p>
-            </div>
-         </div>
-
-         {/* Most Active Price - usar priceNum */}
-         <div className="bg-base-300 rounded-lg p-3">
             <div className="flex justify-between items-center mb-2">
-               <span className="text-xs text-base-content/60">Most Active Price Assumption</span>
-               <button className="btn btn-circle btn-xs">?</button>
+               <label className="text-sm font-semibold">Price Range</label>
+               <label className="flex items-center gap-2 cursor-pointer">
+                  <span className="text-sm">Full Range:</span>
+                  <input
+                     type="checkbox"
+                     checked={inputs.fullRange}
+                     onChange={(e) => onChange('fullRange', e.target.checked)}
+                     className="toggle toggle-sm"
+                  />
+               </label>
             </div>
-            <p className="text-sm font-mono">{priceNum.toFixed(8)}</p>
-            <p className="text-xs text-base-content/50">{priceLabel}</p>
-         </div>
+
+            <div className="flex gap-2 mb-3">
+               <button
+                  type="button"
+                  onClick={() => onPresetClick("±10%")}
+                  className="btn btn-sm btn-outline flex-1"
+                  disabled={inputs.fullRange}
+               >
+                  ±10%
+               </button>
+               <button
+                  type="button"
+                  onClick={() => onPresetClick("±15%")}
+                  className="btn btn-sm btn-outline flex-1"
+                  disabled={inputs.fullRange}
+               >
+                  ±15%
+               </button>
+               <button
+                  type="button"
+                  onClick={() => onPresetClick("±20%")}
+                  className="btn btn-sm btn-outline flex-1"
+                  disabled={inputs.fullRange}
+               >
+                  ±20%
+               </button>
+            </div>
+
+            {/* Min/Max inputs (disabled if fullRange) */}
+            <div className="grid grid-cols-2 gap-3 mb-3">
+               <div>
+                  <div className="flex justify-between items-center mb-1">
+                     <label className="text-xs text-base-content/60">Min Price</label>
+                     <div className="flex gap-1">
+                        <button
+                           type="button"
+                           onClick={() => onIncrement('minPrice', -1)}
+                           disabled={inputs.fullRange}
+                           className="btn btn-xs btn-circle btn-ghost"
+                           title="Decrease by 1 tick spacing"
+                        >
+                           −
+                        </button>
+                        <button
+                           type="button"
+                           onClick={() => onIncrement('minPrice', 1)}
+                           disabled={inputs.fullRange}
+                           className="btn btn-xs btn-circle btn-ghost"
+                           title="Increase by 1 tick spacing"
+                        >
+                           +
+                        </button>
+                     </div>
+                  </div>
+                  <input
+                     type="number"
+                     value={inputs.fullRange ? "" : inputs.minPrice}
+                     onChange={(e) => onChange('minPrice', e.target.value)}
+                     disabled={inputs.fullRange}
+                     placeholder="0"
+                     className="input input-sm w-full bg-base-300"
+                     step="0.0001"
+                  />
+                  <p className="text-xs text-base-content/50 mt-1">{priceLabel}</p>
+               </div>
+               
+               <div>
+                  <div className="flex justify-between items-center mb-1">
+                     <label className="text-xs text-base-content/60">Max Price</label>
+                     <div className="flex gap-1">
+                        <button
+                           type="button"
+                           onClick={() => onIncrement('maxPrice', -1)}
+                           disabled={inputs.fullRange}
+                           className="btn btn-xs btn-circle btn-ghost"
+                           title="Decrease by 1 tick spacing"
+                        >
+                           −
+                        </button>
+                        <button
+                           type="button"
+                           onClick={() => onIncrement('maxPrice', 1)}
+                           disabled={inputs.fullRange}
+                           className="btn btn-xs btn-circle btn-ghost"
+                           title="Increase by 1 tick spacing"
+                        >
+                           +
+                        </button>
+                     </div>
+                  </div>
+                  <input
+                     type="number"
+                     value={inputs.fullRange ? "" : inputs.maxPrice}
+                     onChange={(e) => onChange('maxPrice', e.target.value)}
+                     disabled={inputs.fullRange}
+                     placeholder="∞"
+                     className="input input-sm w-full bg-base-300"
+                     step="0.0001"
+                  />
+                  <p className="text-xs text-base-content/50 mt-1">{priceLabel}</p>
+               </div>
+            </div>
+
+            {/* Most Active Price - use priceNum */}
+            <div className="bg-base-300 rounded-lg p-3">
+               <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs text-base-content/60">Most Active Price Assumption</span>
+                  <button className="btn btn-circle btn-xs">?</button>
+               </div>
+               <p className="text-sm font-mono">{priceNum.toFixed(8)}</p>
+               <p className="text-xs text-base-content/50">{priceLabel}</p>
+            </div>
          </div>
 
          {/* Create Position Button */}
