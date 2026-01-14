@@ -7,14 +7,23 @@ import { RangeCalculator } from "./RangeCalculator"
 export default function PoolDetail() {
    const { pool, history } = useLoaderData()
    const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
+   const [rangeInputs, setRangeInputs] = useState({
+      minPrice: null,
+      maxPrice: null,
+      capitalUSD: 1000,
+      fullRange: false
+   })
    const tokenSymbols = [pool.token0.symbol, pool.token1.symbol]
+   
+   const currentPrice = selectedTokenIdx === 0
+      ? (pool.token0Price || 0)
+      : (pool.token1Price || 0)
 
    useEffect(() => {
       window.scrollTo(0, 0)
    }, [])
 
    const latestSnapshot = history[history.length - 1] || {}
-
    const poolAgeDays = pool?.createdAtTimestamp
       ? Math.floor(Date.now() / 1000 - pool.createdAtTimestamp) / 86400
       : 0
@@ -95,6 +104,8 @@ export default function PoolDetail() {
                <RangeCalculator 
                   pool={pool}
                   selectedTokenIdx={selectedTokenIdx}
+                  inputs={rangeInputs}
+                  onInputsChange={setRangeInputs}
                />
             </div>
             <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
@@ -111,6 +122,8 @@ export default function PoolDetail() {
                   history={history}
                   selectedTokenIdx={selectedTokenIdx}
                   tokenSymbols={tokenSymbols}
+                  rangeInputs={rangeInputs}
+                  currentPrice={currentPrice}
                />
             </div>
          </div>

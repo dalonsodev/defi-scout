@@ -2,41 +2,56 @@ import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { CalculatorStats } from "./CalculatorStats"
 import { CalculatorInputs } from "./CalculatorInputs"
 import { useDebounce } from "../../hooks/useDebounce"
-import { simulateRangePerformance } from "../../utils/simulateRangePerformance"
 import { fetchPoolHourData } from "../../services/theGraphClient"
+import { simulateRangePerformance } from "../../utils/simulateRangePerformance"
+import { calculatePresetRange } from "../../utils/calculatePresetRange"
+import { incrementPriceByTick } from "../../utils/uniswapV3Ticks"
 
-export function RangeCalculator({ pool, selectedTokenIdx }) {
+export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange }) {
    // === 1. STATE MANAGEMENT ===
-   const [inputs, setInputs] = useState({
-      capitalUSD: 1000,
-      minPrice: "",
-      maxPrice: "",
-      fullRange: false
-   })
    const [hourlyData, setHourlyData] = useState(null)
    const [isLoading, setIsLoading] = useState(true)
    const [fetchError, setFetchError] = useState(null)
 
-   // === 1.5. AUTO-CONVERT INPUTS ON TOKEN FLIP ===
    const prevTokenIdx = useRef(selectedTokenIdx)
+   const hasPopulated = useRef(false)
+   
+   // === 1.2. Auto-populate inputs on mount ±10% range ===
+   useEffect(() => {
+      if (hasPopulated.current) return
+      if (inputs.minPrice !== null || inputs.maxPrice !== null) return
 
+      const basePrice = selectedTokenIdx === 0
+         ? pool.token0Price
+         : 1 / pool.token0Price
+
+      const minPrice = basePrice * 0.9
+      const maxPrice = basePrice * 1.1
+
+      onInputsChange(prev => ({
+         ...prev,
+         minPrice,
+         maxPrice
+      }))
+
+      hasPopulated.current = true
+   }, [inputs.minPrice, inputs.maxPrice, selectedTokenIdx, pool.token0Price, onInputsChange]) // Intentionally empty deps (on mount only)
+
+   // === 1.3. AUTO-CONVERT INPUTS ON TOKEN FLIP ===
    useEffect(() => {
       // Skip first render (no conversion needed)
       if (prevTokenIdx.current === selectedTokenIdx) {
          return
       }
-      // Skip if fullRange (no inputs to convert)
       if (inputs.fullRange) {
          prevTokenIdx.current = selectedTokenIdx
          return
       }
-      // Skip if inputs are empty
       if (inputs.minPrice === "" || inputs.maxPrice === "") {
          prevTokenIdx.current = selectedTokenIdx
          return
       }
       
-      // Convert existing inputs to new scale
       const oldMin = Number(inputs.minPrice)
       const oldMax = Number(inputs.maxPrice)
 
@@ -50,14 +65,14 @@ export function RangeCalculator({ pool, selectedTokenIdx }) {
       const newMin = 1 / oldMax
       const newMax = 1 / oldMin
 
-      setInputs(prev => ({
+      onInputsChange(prev => ({
          ...prev,
          minPrice: newMin.toFixed(8), // Preserve precision
          maxPrice: newMax.toFixed(8)
       }))
 
       prevTokenIdx.current = selectedTokenIdx
-   }, [selectedTokenIdx, inputs.fullRange, inputs.minPrice, inputs.maxPrice])
+   }, [selectedTokenIdx, inputs.fullRange, inputs.minPrice, inputs.maxPrice, onInputsChange])
 
    // === 2. DEBOUNCING ===
    const debouncedInputs = useDebounce(inputs, 500)
@@ -123,13 +138,10 @@ export function RangeCalculator({ pool, selectedTokenIdx }) {
       return () => { cancelled = true }
    }, [pool.id])
 
-   // === 4. EVENT HANDLERS ===
-   const handleInputChange = useCallback((field, value) => {
-      setInputs(prev => ({ ...prev, [field]: value }))
-   }, [])
 
-   // === 5. PRICE CALCULATIONS (DEFENSIVE) ===
-   // 5.1 Get current price (prefer hourly data)
+
+   // === 4. PRICE CALCULATIONS (DEFENSIVE) ===
+   // 4.1 Get current price (prefer hourly data)
    const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
       const currentPrice = hourlyData?.[0]?.token0Price
          ? parseFloat(hourlyData[0].token0Price)
@@ -139,16 +151,16 @@ export function RangeCalculator({ pool, selectedTokenIdx }) {
       const tvl0 = parseFloat(pool.totalValueLockedToken0)
       const tvl1 = parseFloat(pool.totalValueLockedToken1)
 
-      // 5.2 Basic validation
+      // 4.2 Basic validation
       if (tvlUSD <= 0 || tvl0 <= 0 || tvl1 <= 0 || currentPrice <= 0) {
          return { token0PriceUSD: 0, token1PriceUSD: 0 }
       }
 
-      // 5.3 Try inference formula first
+      // 4.3 Try inference formula first
       let price1USD = tvlUSD / (tvl0 / currentPrice + tvl1)
       let price0USD = price1USD / currentPrice
 
-      // 5.4 Validate inference result (sanity check)
+      // 4.4 Validate inference result (sanity check)
       const inferenceIsValid =
          isFinite(price0USD) &&
          isFinite(price1USD) &&
@@ -160,7 +172,7 @@ export function RangeCalculator({ pool, selectedTokenIdx }) {
          // Sanity: TVL reconstruction should match (within 10% error)
          Math.abs((tvl0 * price0USD + tvl1 * price1USD) - tvlUSD) / tvlUSD < 0.1
 
-      // 5.5 If inference failed, use stablecoin heuristic as fallback
+      // 4.5 If inference failed, use stablecoin heuristic as fallback
       if (!inferenceIsValid) {
          const stableSymbols = ["USDT", "USDC", "DAI", "BUSD", "FRAX", "TUSD", "USDD"]
          const token0IsStable = stableSymbols.includes(pool.token0.symbol)
@@ -195,17 +207,45 @@ export function RangeCalculator({ pool, selectedTokenIdx }) {
       const price = selectedTokenIdx === 0
          ? Number(pool.token0Price)
          : Number(pool.token1Price)
-
-      return price
-   }, [selectedTokenIdx, pool.token0Price, pool.token1Price])
-
+      
+         return price
+      }, [selectedTokenIdx, pool.token0Price, pool.token1Price])
+      
    const priceLabel = useMemo(() => {
       return selectedTokenIdx === 0
          ? `${pool.token0.symbol} per ${pool.token1.symbol}`
          : `${pool.token1.symbol} per ${pool.token0.symbol}`
    }, [selectedTokenIdx, pool.token0.symbol, pool.token1.symbol])
 
-   // === 7. RESULTS (MEMOIZED) ===
+   // === 5. EVENT HANDLERS ===
+   const handleInputChange = useCallback((field, value) => {
+      onInputsChange(prev => ({ ...prev, [field]: value }))
+   }, [onInputsChange])
+
+   // Increment/decrement using Uniswap V3 tick spacing
+   const handleInputIncrement = useCallback((field, delta) => {
+      const currentValue = Number(inputs[field])
+      if (!currentValue || currentValue <= 0) return
+
+      // Calculate new price using tick math
+      const newValue = incrementPriceByTick(currentValue, pool.feeTier, delta)
+      onInputsChange(prev => ({ ...prev, [field]: newValue }))
+   }, [inputs, pool.feeTier, onInputsChange])
+
+   const handlePresetClick = useCallback((presetType) => {
+      const { minPrice, maxPrice } = calculatePresetRange(
+         displayPrice,
+         selectedTokenIdx,
+         presetType
+      )
+      onInputsChange(prev => ({
+         ...prev,
+         minPrice,
+         maxPrice
+      }))
+   }, [displayPrice, selectedTokenIdx, onInputsChange])
+
+   // === 6. RESULTS (MEMOIZED) ===
    const results = useMemo(() => {
       if (!hourlyData) return null
 
@@ -236,6 +276,8 @@ export function RangeCalculator({ pool, selectedTokenIdx }) {
                <CalculatorInputs 
                   inputs={inputs}
                   onChange={handleInputChange}
+                  onIncrement={handleInputIncrement}
+                  onPresetClick={handlePresetClick}
                   currentPrice={displayPrice}
                   priceLabel={priceLabel}
                   token0Symbol={pool.token0.symbol}
