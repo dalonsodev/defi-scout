@@ -73,11 +73,13 @@ const GET_POOL_HISTORY_QUERY = gql`
             id
             symbol
             name
+            decimals
          }
          token1 {
             id
             symbol
             name
+            decimals
          }
          createdAtTimestamp
       }

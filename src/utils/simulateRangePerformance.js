@@ -1,5 +1,6 @@
 import { assessDataQuality } from "./assessDataQuality"
 import { calculateTokenRatio } from "./calculateTokenRatio"
+import { calculateLiquidity } from "./calculateLiquidity"
 
 export function simulateRangePerformance({
    capitalUSD,
@@ -70,6 +71,15 @@ export function simulateRangePerformance({
       return {
          success: false,
          error: "Pool metadata incomplete. Cannot calculate liquidity.",
+         dataQuality: quality
+      }
+   }
+
+   // 4.1.1 Validate token decimals (required for liquidity normalization)
+   if (!pool?.token0?.decimals || !pool?.token1?.decimals) {
+      return {
+         success: false,
+         error: "Token decimals missing. Cannot normalize liquidity.",
          dataQuality: quality
       }
    }
@@ -201,19 +211,46 @@ export function simulateRangePerformance({
       effectiveMax: effectiveMax.toFixed(8) 
    })
 
-   // 4.6 Calculate fee share using TVL ratio (simpler and accurate)
-   // User's position TVL relative to pool TVL
-   const userTVL = capitalUSD
-   const poolTVL = tvlUSD
+   // 4.6 Calculate user liquidity (Uniswap V3 formula)
+   const L_user = calculateLiquidity(
+      amount0,
+      amount1,
+      currentPrice,
+      effectiveMin,
+      effectiveMax
+   )
 
-   // Base fee share (if user was in same range as entire pool)
-   const baseFeeShare = userTVL / poolTVL
+   // Validation: Position must have active liquidity
+   if (L_user <= 0) {
+      return {
+         success: false,
+         error: "Position has no active liquidity at current price. Price may be outside your range.",
+         dataQuality: quality
+      }
+   }
+   
+   // 🔍 DIAGNOSTIC
+   console.log('🔍 Liquidity Calculation:', {
+      L_user: L_user.toFixed(2),
+      amount0: amount0.toFixed(2),
+      amount1: amount1.toFixed(2),
+      currentPrice: currentPrice.toFixed(8)
+   })
+   
+   // 4.7 Calculate liquidity normalization exponent
+   // Uniswap V3 scales liquidity by geometric mean of token decimals
+   const decimals0 = parseInt(pool.token0.decimals)
+   const decimals1 = parseInt(pool.token1.decimals)
+   const liquidityExponent = (decimals0 + decimals1) / 2
 
    // 🔍 DIAGNOSTIC
-   console.log('🔍 Fee Share Calculation:', {
-      userTVL: userTVL.toFixed(2),
-      poolTVL: poolTVL.toFixed(2),
-      baseFeeShare: (baseFeeShare * 100).toFixed(6) + '%'
+   console.log('Liquidity Normalization:', {
+      token0Symbol: pool.token0.symbol,
+      token1Symbol: pool.token1.symbol,
+      decimals0,
+      decimals1,
+      exponent: liquidityExponent,
+      normalizationFactor: `10^${liquidityExponent}`
    })
    
 
@@ -228,6 +265,15 @@ export function simulateRangePerformance({
    
    // 5.2 Loop through hourly data
    let debugCount = 0  // ⭐ Contador para limitar logs
+
+   // 🔍 DIAGNOSTIC - Calculate expected fee share from TVL
+   const expectedFeeShare = capitalUSD / tvlUSD
+   console.log('🔍 Fee Share Sanity Check:', {
+      capitalUSD: capitalUSD.toFixed(2),
+      poolTVL: tvlUSD.toFixed(2),
+      expectedFeeShare: (expectedFeeShare * 100).toFixed(6) + '%',
+      expectedFeeShareDecimal: expectedFeeShare.toExponential(4)
+   })
 
    for (let i = 0; i < hourlyData.length; i++) {
       const hour = hourlyData[i]
@@ -266,13 +312,29 @@ export function simulateRangePerformance({
          continue // Skip out-of-range hours
       }
 
-      // 5.5 Use base fee share (simplified, no liquidity math)
-      const feeShare = baseFeeShare
+      // 5.5 Calculate dynamic fee share using liquidity
+      // Use BigInt to preserve precision of on-chain values
+      const L_pool_bigint = BigInt(hour.liquidity)
+
+      // Skip hour if pool liquidity is invalid
+      if (L_pool_bigint <= 0) {
+         continue
+      }
+
+      // Normalize pool liquidity using token decimals
+      // Formula: L_human = L_onchain / 10^((decimals0 + decimals1) / 2)
+      const L_pool_normalized = Number(L_pool_bigint) / Math.pow(10, liquidityExponent)
+
+      // Fee share = user liquidity / total liquidity
+      const feeShare = L_user / (L_pool_normalized + L_user)
 
       // 🔍 DIAGNOSTIC (first hour in-range)
       if (hoursInRange === 0) {
          console.log('🔍 First hour in range:', {
-            baseFeeShare: (baseFeeShare * 100).toFixed(6) + "%",
+            L_user: L_user.toFixed(2),
+            L_pool_raw: L_pool_bigint.toString(),
+            L_pool_normalized: L_pool_normalized.toFixed(2),
+            feeShare: (feeShare * 100).toFixed(6) + "%",
             hourFeesUSD,
             feesAccumulated: (hourFeesUSD * feeShare).toFixed(4)
          })

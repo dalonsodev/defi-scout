@@ -1,10 +1,6 @@
 /**
- * amount0
- * amount1
- * price
- * minPrice
- * maxPrice
- * 
+ * Uniswap V3 whitepaper
+ * Reference: https://uniswap.org/whitepaper-v3.pdf
  */
 
 /**
