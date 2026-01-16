@@ -1,10 +1,12 @@
 import { assessDataQuality } from "./assessDataQuality"
+import { calculateTokenRatio } from "./calculateTokenRatio"
 
 export function simulateRangePerformance({
    capitalUSD,
    minPrice,
    maxPrice,
    fullRange,
+   assumedPrice,
    selectedTokenIdx,
    hourlyData,
    pool
@@ -32,6 +34,12 @@ export function simulateRangePerformance({
          return { 
             success: false, 
             error: "Min Price must be lower than Max Price" 
+         }
+      }
+      if (assumedPrice == null) {
+         return {
+            success: false,
+            error: "Assumed Entry Price required when full range is off"
          }
       }
    }
@@ -112,56 +120,86 @@ export function simulateRangePerformance({
          }
    }
 
-   // 4.4 Split capital 50/50 and convert to token amounts
-   const capitalPerToken = capitalUSD / 2
-   const amount0 = capitalPerToken / priceToken0InUSD
-   const amount1 = capitalPerToken / priceToken1InUSD
+   // 4.4 Calculate token composition + effective range
+   let token0Percent, token1Percent, capital0USD, capital1USD, amount0, amount1
+   let effectiveMin, effectiveMax
+   
+   if (fullRange) {
+      // ===== FULL RANGE MODE =====
+      
+      // Token composition: Always 50/50 (like Uniswap V2)
+      token0Percent = 50
+      token1Percent = 50
+      capital0USD = capitalUSD / 2
+      capital1USD = capitalUSD / 2
+      amount0 = capital0USD / priceToken0InUSD
+      amount1 = capital1USD / priceToken1InUSD
 
-   // 4.4.5 Normalize user inputs to token0Price scale
-   // User inputs are in the display scale (respects selectedTokenIdx)
-   // But we always compare with token0Price in the loop
-   let normalizedMinPrice = minPrice
-   let normalizedMaxPrice = maxPrice
+      // Effective range: Dynamic buffer based on historical volatility
+      const allPrices = hourlyData.map(h => parseFloat(h.token0Price))
+      const historicalMin = Math.min(...allPrices)
+      const historicalMax = Math.max(...allPrices)
+      const priceRange = historicalMax - historicalMin
+      const volatility = priceRange / historicalMin
 
-   if (!fullRange && minPrice != null && maxPrice != null) {
+      const bufferMultiplier = volatility < 0.2 ? 0.3 :
+                              volatility < 0.5 ? 0.5 :
+                              1.0
+      effectiveMin = historicalMin * (1 - bufferMultiplier)
+      effectiveMax = historicalMax * (1 + bufferMultiplier) 
+
+   } else {
+      // ===== CONCENTRATED RANGE MODE =====
+
+      // Step 1: Normalize user inputs to token0Price scale
+      let normalizedMinPrice = minPrice
+      let normalizedMaxPrice = maxPrice
+      let normalizedAssumedPrice = assumedPrice
+
       if (selectedTokenIdx === 1) {
          // User inputs are in token1Price scale (e.g., "USDT per WETH" = 3107)
          // Convert to token0Price scale (e.g., "WETH per USDT" = 1/3107)
          normalizedMinPrice = 1 / maxPrice  // Invert and swap
          normalizedMaxPrice = 1 / minPrice
+         normalizedAssumedPrice = 1 / assumedPrice
       }
-      // else: selectedTokenIdx === 0, inputs already in token0Price scale
-   }
 
-   // 4.5 Determine effective range (handle fullRange case)
-   let effectiveMin
-   let effectiveMax
-   
-   // Dynamic buffer prevents false out-of-range errors
-   // Trade-off: Low volatility pools get tighter buffer (faster rejection)
-   //            High volatility pools get wider buffer (more tolerance)
-   // Future: Consider adding "conservative mode" flag for paranoid users
-   
-   if (fullRange) {
-      const allPrices = hourlyData.map(h => parseFloat(h.token0Price))
-      const minPrice = Math.min(...allPrices)
-      const maxPrice = Math.max(...allPrices)
-      const priceRange = maxPrice - minPrice
-      const volatility = priceRange / minPrice
+      // Step 2: Calculate token ratio using tick-based formula
+      const ratioResult = calculateTokenRatio(
+         normalizedAssumedPrice,
+         normalizedMinPrice,
+         normalizedMaxPrice,
+         pool.feeTier
+      )
 
-      const bufferMultiplier = volatility < 0.2 ? 0.3 :
-                              volatility < 0.5 ? 0.5 :
-                              1.0
-      effectiveMin = minPrice * (1 - bufferMultiplier)
-      effectiveMax = maxPrice * (1 + bufferMultiplier)                 
-   } else {
+      token0Percent = ratioResult.token0Percent
+      token1Percent = ratioResult.token1Percent
+
+      // Step 3: Split capital according to ratio
+      capital0USD = capitalUSD * (token0Percent / 100)
+      capital1USD = capitalUSD * (token1Percent / 100)
+   
+      // Step 4: Convert to token amounts
+      amount0 = capital0USD / priceToken0InUSD
+      amount1 = capital1USD / priceToken1InUSD
+      
+      // Step 5: Set effective range (no buffer needed, user-defined)
       effectiveMin = normalizedMinPrice
       effectiveMax = normalizedMaxPrice
    }
 
    // 🔍 DIAGNOSTIC
-   console.log('🔍 Effective Range:', { effectiveMin, effectiveMax })
-   console.log('🔍 Sample hourPrice:', parseFloat(hourlyData[0].token0Price))
+   console.log('🔍 Composition:', {
+      mode: fullRange ? 'FULL_RANGE' : 'CONCENTRATED',
+      token0Percent,
+      token1Percent,
+      capital0USD: capital0USD.toFixed(2),
+      capital1USD: capital1USD.toFixed(2)
+   })
+   console.log('🔍 Effective Range:', { 
+      effectiveMin: effectiveMin.toFixed(8), 
+      effectiveMax: effectiveMax.toFixed(8) 
+   })
 
    // 4.6 Calculate fee share using TVL ratio (simpler and accurate)
    // User's position TVL relative to pool TVL
@@ -314,11 +352,6 @@ export function simulateRangePerformance({
    const IL_decimal = (2 * Math.sqrt(priceRatio)) / (1 + priceRatio) - 1
    const IL_percent = IL_decimal * 100
 
-   // 6.4 Add disclaimer for concentrated ranges
-   if (!fullRange) {
-      warnings.push("IL calculated using full-range formula. Actual IL may be lower for concentrated positions.")
-   }
-
 
    // ===== STAGE 7: APR CALCULATION =====
 
@@ -361,6 +394,8 @@ export function simulateRangePerformance({
       totalFeesUSD,
       feeReturnPercent,
       APR,
+      dailyFeesUSD: totalFeesUSD / daysOfData,
+      daysOfData,
 
       // Range metrics
       hoursInRange,
@@ -376,6 +411,16 @@ export function simulateRangePerformance({
       netPnlPercent,
       holdPnL,
       holdPnLPercent,
+
+      // Position composition
+      composition: {
+         token0Percent,
+         token1Percent,
+         capital0USD,
+         capital1USD,
+         amount0,
+         amount1
+      },
 
       // Meta
       dataQuality: finalQuality,
