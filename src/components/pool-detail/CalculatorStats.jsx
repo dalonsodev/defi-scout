@@ -38,18 +38,15 @@ export function CalculatorStats({ results, loading, fetchError }) {
       )
    }
 
-   {results.dataQuality === "LIMITED" && (
-      <div className="alert alert-warning mb-4">
-         <span>⚠️ Limited historical data. APR estimate may be less accurate.</span>
-      </div>
-   )}
-
    // Success: mostrar stats
-   const dailyFees = results.totalFeesUSD / 7 // 7 días de histórico
+   const dailyFees = results.dailyFeesUSD // From simulation
    const monthlyFees = dailyFees * 30
    const yearlyFees = dailyFees * 365
    const yearlyAPR = results.APR
    const monthlyAPR = yearlyAPR / 12
+
+   // Data quality disclaimer
+   const hasLimitedData = results.daysOfData < 7
 
    return (
       <div className="mb-6">
@@ -72,6 +69,13 @@ export function CalculatorStats({ results, loading, fetchError }) {
                </span>
             </div>
          </div>
+
+         {/* Data Quality Warning */}
+         {hasLimitedData && (
+            <div className="alert alert-warning text-xs mb-4">
+               ⚠️ Based on {results.daysOfData.toFixed(1)} days. Projections may be vary.
+            </div>
+         )}
 
          <div className="flex gap-2">
             <button className="btn btn-sm btn-outline flex-1">Compare Pools</button>

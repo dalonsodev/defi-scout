@@ -15,9 +15,22 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
 
    const prevTokenIdx = useRef(selectedTokenIdx)
    const hasPopulated = useRef(false)
+
+   // 🔍 DIAGNOSTIC
+   console.log("Inputs:", inputs)
+
+   // === 2. DISPLAY ===
+   const displayPrice = useMemo(() => {
+      const price = selectedTokenIdx === 0
+         ? Number(pool.token0Price)
+         : Number(pool.token1Price)
+      
+         return price
+      }, [selectedTokenIdx, pool.token0Price, pool.token1Price])
    
-   // === 1.2. Auto-populate inputs on mount ±10% range ===
+   // === 3. Auto-populate inputs on mount ±10% range ===
    useEffect(() => {
+      if (!pool) return
       if (hasPopulated.current) return
       if (inputs.minPrice !== null || inputs.maxPrice !== null) return
 
@@ -27,17 +40,19 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
 
       const minPrice = basePrice * 0.9
       const maxPrice = basePrice * 1.1
+      const assumedPrice = displayPrice
 
       onInputsChange(prev => ({
          ...prev,
          minPrice,
-         maxPrice
+         maxPrice,
+         assumedPrice
       }))
 
       hasPopulated.current = true
-   }, [inputs.minPrice, inputs.maxPrice, selectedTokenIdx, pool.token0Price, onInputsChange]) // Intentionally empty deps (on mount only)
+   }, [inputs.minPrice, inputs.maxPrice, selectedTokenIdx, pool.token0Price, onInputsChange, displayPrice, pool])
 
-   // === 1.3. AUTO-CONVERT INPUTS ON TOKEN FLIP ===
+   // === 3.1 AUTO-CONVERT INPUTS ON TOKEN FLIP ===
    useEffect(() => {
       // Skip first render (no conversion needed)
       if (prevTokenIdx.current === selectedTokenIdx) {
@@ -54,9 +69,18 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
       
       const oldMin = Number(inputs.minPrice)
       const oldMax = Number(inputs.maxPrice)
+      const oldAssumedPrice = Number(inputs.assumedPrice)
 
       // Validate before conversion
-      if (oldMin <= 0 || oldMax <= 0 || !isFinite(oldMin) || !isFinite(oldMax)) {
+      if (
+         oldMin <= 0 || 
+         oldMax <= 0 || 
+         oldAssumedPrice <= 0 ||
+         !isFinite(oldMin) || 
+         !isFinite(oldMax) ||
+         !isFinite(oldAssumedPrice)
+      ) 
+         {
          prevTokenIdx.current = selectedTokenIdx
          return
       }
@@ -64,20 +88,22 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
       // Invert AND swap (min becomes max and vice versa)
       const newMin = 1 / oldMax
       const newMax = 1 / oldMin
+      const newAssumedPrice = 1 / oldAssumedPrice
 
       onInputsChange(prev => ({
          ...prev,
          minPrice: newMin.toFixed(8), // Preserve precision
-         maxPrice: newMax.toFixed(8)
+         maxPrice: newMax.toFixed(8),
+         assumedPrice: newAssumedPrice
       }))
 
       prevTokenIdx.current = selectedTokenIdx
-   }, [selectedTokenIdx, inputs.fullRange, inputs.minPrice, inputs.maxPrice, onInputsChange])
+   }, [selectedTokenIdx, inputs.fullRange, inputs.minPrice, inputs.maxPrice, inputs.assumedPrice, onInputsChange])
 
-   // === 2. DEBOUNCING ===
+   // === 4. DEBOUNCING ===
    const debouncedInputs = useDebounce(inputs, 500)
 
-   // === 3. DATA FETCHING ===
+   // === 5. DATA FETCHING ===
    useEffect(() => {
       let cancelled = false
 
@@ -86,40 +112,41 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
             const startTime = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)
             const data = await fetchPoolHourData(pool.id, startTime)
 
-            console.log('🔍 Query params:', {
-               poolId: pool.id,
-               startTime,
-               startDate: new Date(startTime * 1000).toISOString(),
-               expectedSnapshots: 7 * 24 // 168
-            })
+            // 🔍 DIAGNOSTIC
+            // console.log('🔍 Query params:', {
+            //    poolId: pool.id,
+            //    startTime,
+            //    startDate: new Date(startTime * 1000).toISOString(),
+            //    expectedSnapshots: 7 * 24 // 168
+            // })
 
-            if (data?.length > 0) {
-               const actualHours = (data[data.length - 1].periodStartUnix - data[0].periodStartUnix) / 3600
-               console.log('📊 Coverage:', {
-                  snapshots: data.length,
-                  actualHours: Math.round(actualHours),
-                  completeness: (data.length / 168 * 100).toFixed(1) + '%'
-               })
-            }
+            // if (data?.length > 0) {
+            //    const actualHours = (data[data.length - 1].periodStartUnix - data[0].periodStartUnix) / 3600
+            //    console.log('📊 Coverage:', {
+            //       snapshots: data.length,
+            //       actualHours: Math.round(actualHours),
+            //       completeness: (data.length / 168 * 100).toFixed(1) + '%'
+            //    })
+            // }
 
             // 🔍 DIAGNOSTIC
-            console.group('🔍 Hourly Data Diagnostic')
-            console.log('Pool ID:', pool.id)
-            console.log('Requested startTime:', new Date(startTime * 1000))
-            console.log('Data received:', data?.length || 0, 'snapshots')
-            if (data?.length > 0) {
-            console.log('First snapshot:', {
-               time: new Date(data[0].periodStartUnix * 1000),
-               token0Price: data[0].token0Price,
-               liquidity: data[0].liquidity,
-               feesUSD: data[0].feesUSD
-            })
-            console.log('Last snapshot:', {
-               time: new Date(data[data.length - 1].periodStartUnix * 1000),
-               token0Price: data[data.length - 1].token0Price
-            })
-            }
-            console.groupEnd()
+            // console.group('🔍 Hourly Data Diagnostic')
+            // console.log('Pool ID:', pool.id)
+            // console.log('Requested startTime:', new Date(startTime * 1000))
+            // console.log('Data received:', data?.length || 0, 'snapshots')
+            // if (data?.length > 0) {
+            // console.log('First snapshot:', {
+            //    time: new Date(data[0].periodStartUnix * 1000),
+            //    token0Price: data[0].token0Price,
+            //    liquidity: data[0].liquidity,
+            //    feesUSD: data[0].feesUSD
+            // })
+            // console.log('Last snapshot:', {
+            //    time: new Date(data[data.length - 1].periodStartUnix * 1000),
+            //    token0Price: data[data.length - 1].token0Price
+            // })
+            // }
+            // console.groupEnd()
 
             if (!cancelled) {
                setHourlyData(data)
@@ -140,8 +167,8 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
 
 
 
-   // === 4. PRICE CALCULATIONS (DEFENSIVE) ===
-   // 4.1 Get current price (prefer hourly data)
+   // === 6. PRICE CALCULATIONS (DEFENSIVE) ===
+   // 6.1 Get current price (prefer hourly data)
    const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
       const currentPrice = hourlyData?.[0]?.token0Price
          ? parseFloat(hourlyData[0].token0Price)
@@ -151,16 +178,16 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
       const tvl0 = parseFloat(pool.totalValueLockedToken0)
       const tvl1 = parseFloat(pool.totalValueLockedToken1)
 
-      // 4.2 Basic validation
+      // 6.2 Basic validation
       if (tvlUSD <= 0 || tvl0 <= 0 || tvl1 <= 0 || currentPrice <= 0) {
          return { token0PriceUSD: 0, token1PriceUSD: 0 }
       }
 
-      // 4.3 Try inference formula first
+      // 6.3 Try inference formula first
       let price1USD = tvlUSD / (tvl0 / currentPrice + tvl1)
       let price0USD = price1USD / currentPrice
 
-      // 4.4 Validate inference result (sanity check)
+      // 6.4 Validate inference result (sanity check)
       const inferenceIsValid =
          isFinite(price0USD) &&
          isFinite(price1USD) &&
@@ -172,7 +199,7 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
          // Sanity: TVL reconstruction should match (within 10% error)
          Math.abs((tvl0 * price0USD + tvl1 * price1USD) - tvlUSD) / tvlUSD < 0.1
 
-      // 4.5 If inference failed, use stablecoin heuristic as fallback
+      // 6.5 If inference failed, use stablecoin heuristic as fallback
       if (!inferenceIsValid) {
          const stableSymbols = ["USDT", "USDC", "DAI", "BUSD", "FRAX", "TUSD", "USDD"]
          const token0IsStable = stableSymbols.includes(pool.token0.symbol)
@@ -201,15 +228,6 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
 
       return { token0PriceUSD: price0USD, token1PriceUSD: price1USD }
    }, [hourlyData, pool.id, pool.token0Price, pool.token0.symbol, pool.token1.symbol, pool.totalValueLockedUSD, pool.totalValueLockedToken0, pool.totalValueLockedToken1])
-
-   // === 6. DISPLAY ===
-   const displayPrice = useMemo(() => {
-      const price = selectedTokenIdx === 0
-         ? Number(pool.token0Price)
-         : Number(pool.token1Price)
-      
-         return price
-      }, [selectedTokenIdx, pool.token0Price, pool.token1Price])
       
    const priceLabel = useMemo(() => {
       return selectedTokenIdx === 0
@@ -217,7 +235,7 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
          : `${pool.token1.symbol} per ${pool.token0.symbol}`
    }, [selectedTokenIdx, pool.token0.symbol, pool.token1.symbol])
 
-   // === 5. EVENT HANDLERS ===
+   // === 7. EVENT HANDLERS ===
    const handleInputChange = useCallback((field, value) => {
       onInputsChange(prev => ({ ...prev, [field]: value }))
    }, [onInputsChange])
@@ -233,9 +251,9 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
    }, [inputs, pool.feeTier, onInputsChange])
 
    const handlePresetClick = useCallback((presetType) => {
+      const assumedPrice = displayPrice
       const { minPrice, maxPrice } = calculatePresetRange(
-         displayPrice,
-         selectedTokenIdx,
+         assumedPrice,
          presetType
       )
       onInputsChange(prev => ({
@@ -243,22 +261,25 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
          minPrice,
          maxPrice
       }))
-   }, [displayPrice, selectedTokenIdx, onInputsChange])
+   }, [displayPrice, onInputsChange])
 
-   // === 6. RESULTS (MEMOIZED) ===
+   // === 8. RESULTS (MEMOIZED) ===
    const results = useMemo(() => {
       if (!hourlyData) return null
+
+      const assumedPrice = inputs.assumedPrice
 
       return simulateRangePerformance({
          capitalUSD: debouncedInputs.capitalUSD,
          minPrice: debouncedInputs.minPrice === "" ? null : Number(debouncedInputs.minPrice),
          maxPrice: debouncedInputs.maxPrice === "" ? null : Number(debouncedInputs.maxPrice),
          fullRange: debouncedInputs.fullRange,
+         assumedPrice,
          selectedTokenIdx,
          hourlyData,
          pool
       })
-   }, [debouncedInputs, selectedTokenIdx, hourlyData, pool])
+   }, [debouncedInputs, selectedTokenIdx, hourlyData, pool, inputs.assumedPrice])
 
    return (
       <div className="grid gap-6">
@@ -284,6 +305,7 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
                   token1Symbol={pool.token1.symbol}
                   token0PriceUSD={token0PriceUSD}
                   token1PriceUSD={token1PriceUSD}
+                  composition={results?.composition || null}
                />
             </div>
          </div>

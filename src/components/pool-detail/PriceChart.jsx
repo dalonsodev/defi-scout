@@ -66,7 +66,7 @@ export function PriceChart({
 
                {currentPrice > 0 && (
                   <ReferenceLine
-                     y={currentPrice}
+                     y={!rangeInputs.fullRange ? rangeInputs.assumedPrice : currentPrice}
                      stroke={CHART_COLORS.primary}
                      strokeDasharray="5 5"
                   />

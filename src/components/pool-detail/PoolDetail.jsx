@@ -8,10 +8,11 @@ export default function PoolDetail() {
    const { pool, history } = useLoaderData()
    const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
    const [rangeInputs, setRangeInputs] = useState({
+      capitalUSD: 1000,
+      fullRange: false,
       minPrice: null,
       maxPrice: null,
-      capitalUSD: 1000,
-      fullRange: false
+      assumedPrice: null
    })
    const tokenSymbols = [pool.token0.symbol, pool.token1.symbol]
    
@@ -100,7 +101,6 @@ export default function PoolDetail() {
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Range calculator */}
             <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
-               <h2 className="text-xl font-semibold mb-4">Range Calculator</h2>
                <RangeCalculator 
                   pool={pool}
                   selectedTokenIdx={selectedTokenIdx}
