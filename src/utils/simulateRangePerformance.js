@@ -1,6 +1,7 @@
 import { assessDataQuality } from "./assessDataQuality"
 import { calculateTokenRatio } from "./calculateTokenRatio"
 import { calculateLiquidity } from "./calculateLiquidity"
+import { calculateIL } from "./calculateIL"
 
 export function simulateRangePerformance({
    capitalUSD,
@@ -407,11 +408,8 @@ export function simulateRangePerformance({
       }
    }
 
-   // 6.3 Calculate IL using AMM formula (independent of token types)
-   const priceRatio = finalPrice / initialPrice
-
    // Classic IL formula: 2 × √(ratio) / (1 + ratio) - 1
-   const IL_decimal = (2 * Math.sqrt(priceRatio)) / (1 + priceRatio) - 1
+   const IL_decimal = calculateIL(initialPrice, finalPrice)
    const IL_percent = IL_decimal * 100
 
 
