@@ -43,6 +43,7 @@ const GET_POOLS_QUERY = gql`
          collectedFeesToken0
          collectedFeesToken1
          token0Price
+         token1Price
          createdAtTimestamp
          token0 {
             id
@@ -74,14 +75,21 @@ const GET_POOL_HISTORY_QUERY = gql`
             symbol
             name
             decimals
+            derivedETH
          }
          token1 {
             id
             symbol
             name
             decimals
+            derivedETH
          }
          createdAtTimestamp
+      }
+      
+      # Internal oracle to convert from ETH to USD
+      bundle(id: "1") {
+         ethPriceUSD
       }
 
       # Historical snapshots (daily)
