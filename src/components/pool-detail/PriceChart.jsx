@@ -5,13 +5,20 @@ import {
    YAxis,
    CartesianGrid,
    Tooltip,
-   ResponsiveContainer
+   ResponsiveContainer,
+   ReferenceLine
 } from "recharts"
 import { CustomPriceTooltip } from "./CustomPriceTooltip"
 import { CHART_COLORS } from "../../utils/chartColors"
 import { formatCompactCurrency } from "../../utils/formatCompactCurrency"
 
-export function PriceChart({ history, selectedTokenIdx, tokenSymbols }) {
+export function PriceChart({ 
+   history, 
+   selectedTokenIdx, 
+   tokenSymbols,
+   rangeInputs,
+   currentPrice
+}) {
    const dataKey = selectedTokenIdx === 0 ? "token0Price" : "token1Price"
    const selectedSymbol = tokenSymbols[selectedTokenIdx]
    
@@ -37,6 +44,10 @@ export function PriceChart({ history, selectedTokenIdx, tokenSymbols }) {
                <YAxis 
                   stroke={CHART_COLORS.axis}
                   style={{ fontSize: "11px" }}
+                  domain={[
+                     (dataMin) => dataMin * 0.9,
+                     (dataMax) => dataMax * 1.1
+                  ]}
                   tickFormatter={(value) => (
                      value > 1
                         ? formatCompactCurrency(value)
@@ -52,6 +63,29 @@ export function PriceChart({ history, selectedTokenIdx, tokenSymbols }) {
                   dot={false}
                   name={`${selectedSymbol} Price`}
                />
+
+               {currentPrice > 0 && (
+                  <ReferenceLine
+                     y={!rangeInputs.fullRange ? rangeInputs.assumedPrice : currentPrice}
+                     stroke={CHART_COLORS.primary}
+                     strokeDasharray="5 5"
+                  />
+               )}
+
+               {!rangeInputs.fullRange && (
+                  <>
+                     <ReferenceLine 
+                        y={rangeInputs.minPrice}
+                        stroke={CHART_COLORS.secondary}
+                        strokeDasharray="5 5"
+                     />
+                     <ReferenceLine 
+                        y={rangeInputs.maxPrice}
+                        stroke={CHART_COLORS.secondary}
+                        strokeDasharray="5 5"
+                     />
+                  </>
+               )}
 
                <Tooltip content={
                   <CustomPriceTooltip 

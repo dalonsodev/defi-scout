@@ -43,6 +43,7 @@ const GET_POOLS_QUERY = gql`
          collectedFeesToken0
          collectedFeesToken1
          token0Price
+         token1Price
          createdAtTimestamp
          token0 {
             id
@@ -66,19 +67,29 @@ const GET_POOL_HISTORY_QUERY = gql`
          feeTier
          totalValueLockedToken0
          totalValueLockedToken1
+         totalValueLockedUSD
          token0Price
          token1Price
          token0 {
             id
             symbol
             name
+            decimals
+            derivedETH
          }
          token1 {
             id
             symbol
             name
+            decimals
+            derivedETH
          }
          createdAtTimestamp
+      }
+      
+      # Internal oracle to convert from ETH to USD
+      bundle(id: "1") {
+         ethPriceUSD
       }
 
       # Historical snapshots (daily)
@@ -97,6 +108,29 @@ const GET_POOL_HISTORY_QUERY = gql`
          feesUSD
          token0Price
          token1Price
+      }
+   }
+`
+
+const GET_POOL_HOUR_DATAS_QUERY = gql`
+   query GetPoolHourDatas($poolId: String!, $startTime: Int!) {
+      poolHourDatas(
+         where: {
+            pool: $poolId
+            periodStartUnix_gte: $startTime
+         }
+         orderBy: periodStartUnix
+         orderDirection: asc
+         first: 720
+      ) {
+         periodStartUnix
+         token0Price
+         token1Price
+         feesUSD
+         sqrtPrice
+         liquidity
+         tvlUSD
+         tick   
       }
    }
 `
@@ -135,4 +169,19 @@ export async function fetchPoolHistory(poolId, startDate) {
       pool: data.pool,
       history: data.poolDayDatas
    }
+}
+
+/**
+ * Fetches hourly historical data for a specific pool
+ * @param {string} poolId - Pool contract address (lowercase)
+ * @param {number} startTime - Unix timestamp (seconds) for oldest data point
+ * @returns {Promise<Array>} Array of hourly snapshots (up to 720 items)
+ */
+
+export async function fetchPoolHourData(poolId, startTime) {
+   const data = await client.request(GET_POOL_HOUR_DATAS_QUERY, {
+      poolId: poolId.toLowerCase(),
+      startTime
+   })
+   return data.poolHourDatas
 }
