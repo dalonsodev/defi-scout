@@ -46,23 +46,25 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
 
       const capitalUSD = rangeInputs.capitalUSD || 1000
       const { amount0, amount1, token0Percent, token1Percent } = results.composition
-
-      // Calculate IL value
-      const currentPriceRatio = token0PriceUSD / token1PriceUSD
-      const futurePriceRatio = futureToken0Price / futureToken1Price
-      const IL_decimal = calculateIL(currentPriceRatio, futurePriceRatio)
-      const lpValueBeforeFees = capitalUSD * (1 + IL_decimal)
-
-      // Calculate days to cover IL
-      const ilLoss = Math.abs(lpValueBeforeFees - capitalUSD)
-      const daysToBreakEven = results.dailyFeesUSD > 0
-         ? ilLoss / results.dailyFeesUSD
-         : 0
-
-      // ===== HODL STRATEGY =====
+      
+      // Calculate HODL value first
       const hodlFutureValue =
          amount0 * futureToken0Price +
          amount1 * futureToken1Price
+
+      // Calculate IL
+      const currentPoolPrice = token0PriceUSD / token1PriceUSD
+      const futurePoolPrice = futureToken0Price / futureToken1Price
+      const IL_decimal = calculateIL(currentPoolPrice, futurePoolPrice)
+      const lpValueBeforeFees = capitalUSD * (1 + IL_decimal)
+
+      // Calculate days to cover IL (catch up to HODL)
+      const lpDeficit = hodlFutureValue - lpValueBeforeFees
+      const daysToBreakEven = lpDeficit > 0 && results.dailyFeesUSD > 0
+         ? lpDeficit / results.dailyFeesUSD
+         : 0
+
+      // ===== HODL STRATEGY =====
 
       const hodl = {
          token0Symbol: poolData.token0.symbol,
