@@ -28,11 +28,11 @@ export function TimeLineControl({ days, onDaysChange, daysToBreakEven }) {
                </button>
                
                <input 
-                  type="text"
+                  type="number"
                   value={days}
                   onChange={(e) => {
                      const val = parseInt(e.target.value)
-                     if (!isNaN(val)) {
+                     if (isNaN(val)) {
                         onDaysChange(0)
                      } else {
                         onDaysChange(Math.max(0, Math.min(val, 365)))
