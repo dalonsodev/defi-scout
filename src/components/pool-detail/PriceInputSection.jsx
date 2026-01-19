@@ -52,7 +52,7 @@ export function PriceInputSection({
                   aria-label="Future Price"
                />
             </div>
-            <label htmlFor="" className="label">
+            <label className="label">
                <span className="label-text-alt mt-2">{token0Symbol} Price</span>
                <span className="label-text-alt mt-2">
                   ({token0ChangePercent >= 0 ? "+" : ""}{token0ChangePercent}%)
@@ -89,7 +89,7 @@ export function PriceInputSection({
                   aria-label="Future Price"
                />
             </div>
-            <label htmlFor="" className="label">
+            <label className="label">
                <span className="label-text-alt mt-2">{token1Symbol} Price</span>
                <span className="label-text-alt mt-2">
                   ({token1ChangePercent >= 0 ? "+" : ""}{token1ChangePercent}%)
