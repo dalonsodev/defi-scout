@@ -58,7 +58,7 @@ export function TokenInfoBlock({ pool, selectedTokenIdx, onTokenChange }) {
    }
 
    return (
-      <div className="rounded-2xl bg-base-200 p-4 mb-4">
+      <div className="rounded-2xl bg-base-200 mb-4">
          {/* Current Price */}
          {currentPrice && (
             <div className="mb-3 p-3 rounded-lg bg-base-300">

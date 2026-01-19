@@ -2,18 +2,29 @@ import { useLoaderData, Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { TokenInfoBlock } from "./TokenInfoBlock"
 import { PoolCharts } from "./PoolCharts"
+import { RangeCalculator } from "./RangeCalculator"
 
 export default function PoolDetail() {
    const { pool, history } = useLoaderData()
    const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
+   const [rangeInputs, setRangeInputs] = useState({
+      capitalUSD: 1000,
+      fullRange: false,
+      minPrice: null,
+      maxPrice: null,
+      assumedPrice: null
+   })
    const tokenSymbols = [pool.token0.symbol, pool.token1.symbol]
+   
+   const currentPrice = selectedTokenIdx === 0
+      ? (pool.token0Price || 0)
+      : (pool.token1Price || 0)
 
    useEffect(() => {
       window.scrollTo(0, 0)
    }, [])
 
    const latestSnapshot = history[history.length - 1] || {}
-
    const poolAgeDays = pool?.createdAtTimestamp
       ? Math.floor(Date.now() / 1000 - pool.createdAtTimestamp) / 86400
       : 0
@@ -86,22 +97,35 @@ export default function PoolDetail() {
                color="text-info"
             />
          </div>
-
-         {/* Token Info Block */}
-         <div className="grid gap-4 mb-6">
-            <TokenInfoBlock 
-               pool={pool}
-               selectedTokenIdx={selectedTokenIdx}
-               onTokenChange={setSelectedTokenIdx}
-            />
-         </div>
-         <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
-            <PoolCharts 
-               history={history}
-               selectedTokenIdx={selectedTokenIdx}
-               tokenSymbols={tokenSymbols}
-            />
+         
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Range calculator */}
+            <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
+               <RangeCalculator 
+                  pool={pool}
+                  selectedTokenIdx={selectedTokenIdx}
+                  inputs={rangeInputs}
+                  onInputsChange={setRangeInputs}
+               />
+            </div>
+            <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
+               {/* Historical data */}
+               <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
+               <div className="grid gap-4 mb-4">
+                  <TokenInfoBlock 
+                     pool={pool}
+                     selectedTokenIdx={selectedTokenIdx}
+                     onTokenChange={setSelectedTokenIdx}
+                  />
+               </div>
+               <PoolCharts 
+                  history={history}
+                  selectedTokenIdx={selectedTokenIdx}
+                  tokenSymbols={tokenSymbols}
+                  rangeInputs={rangeInputs}
+                  currentPrice={currentPrice}
+               />
+            </div>
          </div>
       </div>
    )
