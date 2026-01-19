@@ -2,8 +2,6 @@ export function TimeLineControl({ days, onDaysChange, daysToBreakEven }) {
    const increment = () => onDaysChange(Math.min(days + 1, 365))
    const decrement = () => onDaysChange(Math.max(days - 1, 0))
 
-   console.log("Days to BE:", daysToBreakEven)
-
    return (
       <div className="form-control">
          <div className="grid grid-cols-2 gap-4">
