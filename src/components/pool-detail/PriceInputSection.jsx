@@ -48,17 +48,14 @@ export function PriceInputSection({
                   type="number" 
                   value={futureToken0PriceUSD}
                   onChange={(e) => onToken0PriceChange(e.target.value)}
-                  step="0.000001"
                   className="flex-1 bg-transparent"
                   aria-label="Future Price"
                />
             </div>
             <label htmlFor="" className="label">
                <span className="label-text-alt mt-2">{token0Symbol} Price</span>
-               <span className={`label-text-alt font-bold mt-2 ${
-                  parseFloat(token0ChangePercent) >= 0 ? "text-success" : "text-error"
-               }`}>
-                  {token0ChangePercent >= 0 ? "+" : ""}{token0ChangePercent}%
+               <span className="label-text-alt mt-2">
+                  ({token0ChangePercent >= 0 ? "+" : ""}{token0ChangePercent}%)
                </span>
             </label>
          </div>
@@ -68,7 +65,7 @@ export function PriceInputSection({
             <div className="input input-bordered bg-base-300 flex items-center">
                <span className="text-base-content/60">$</span>
                <input 
-                  type="text" 
+                  type="number" 
                   value={currentToken1PriceUSD}
                   disabled
                   className="flex-1 bg-transparent"
@@ -85,20 +82,17 @@ export function PriceInputSection({
             <div className="input input-bordered flex items-center">
                <span>$</span>
                <input 
-                  type="text" 
+                  type="number" 
                   value={futureToken1PriceUSD}
                   onChange={(e) => onToken1PriceChange(e.target.value)}
-                  step="0.000001"
                   className="flex-1 bg-transparent"
                   aria-label="Future Price"
                />
             </div>
             <label htmlFor="" className="label">
                <span className="label-text-alt mt-2">{token1Symbol} Price</span>
-               <span className={`label-text-alt font-bold mt-2 ${
-                  parseFloat(token1ChangePercent) >= 0 ? "text-success" : "text-error"
-               }`}>
-                  {token1ChangePercent >= 0 ? "+" : ""}{token1ChangePercent}%
+               <span className="label-text-alt mt-2">
+                  ({token1ChangePercent >= 0 ? "+" : ""}{token1ChangePercent}%)
                </span>
             </label>
          </div>
