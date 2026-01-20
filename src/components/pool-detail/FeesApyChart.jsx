@@ -8,7 +8,7 @@ import {
    ResponsiveContainer
 } from "recharts"
 import { CustomTooltip } from "./CustomTooltip"
-import { CHART_COLORS } from "../../utils/chartColors"
+import { CHART_COLORS } from "../../constants/chartColors"
 import { formatCompactCurrency } from "../../utils/formatCompactCurrency"
 
 export function FeesApyChart({ history }) {
