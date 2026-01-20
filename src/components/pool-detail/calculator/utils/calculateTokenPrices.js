@@ -26,9 +26,9 @@ export function calculateTokenPrices(pool, currentPrice) {
 
    // 6.5 If inference failed, use stablecoin heuristic as fallback
    if (!inferenceIsValid) {
-      const stableSymbols = ["USDT", "USDC", "DAI", "BUSD", "FRAX", "TUSD", "USDD"]
-      const token0IsStable = stableSymbols.includes(pool.token0.symbol)
-      const token1IsStable = stableSymbols.includes(pool.token1.symbol)
+      const STABLE_SYMBOLS = ["USDT", "USDC", "DAI", "BUSD", "FRAX", "TUSD", "USDD"]
+      const token0IsStable = STABLE_SYMBOLS.includes(pool.token0.symbol)
+      const token1IsStable = STABLE_SYMBOLS.includes(pool.token1.symbol)
 
       if (token1IsStable) {
          // token1 is stablecoin → token1 = $1, derive token0

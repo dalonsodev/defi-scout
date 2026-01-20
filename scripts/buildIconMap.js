@@ -3,7 +3,7 @@ import { writeFileSync } from "fs"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 
-const platforms = [
+const PLATFORMS = [
    "curve-dex",
    "uniswap-v2",
    "fluid-dex",
@@ -51,13 +51,13 @@ const platforms = [
 
 export async function buildIconMap() {
    const results = await Promise.allSettled(
-      platforms.map(platform => testPlatformIcon(platform))
+      PLATFORMS.map(platform => testPlatformIcon(platform))
    )
 
    const iconMap = {}
 
    results.forEach((result, index) => {
-      const platform = platforms[index]
+      const platform = PLATFORMS[index]
 
       if (result.status === "fulfilled") {
          iconMap[platform] = result.value
