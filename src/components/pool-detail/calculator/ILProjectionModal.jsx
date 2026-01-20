@@ -1,7 +1,7 @@
 import { PriceInputSection } from "./PriceInputSection"
 import { TimeLineControl } from "./TimeLineControl"
 import { StrategyComparison } from "./StrategyComparison"
-import { useProjectionCalculator } from "../../hooks/useProjectionCalculator"
+import { useProjectionCalculator } from "../../../hooks/useProjectionCalculator"
 
 export function ILProjectionModal({
    isOpen,

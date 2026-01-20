@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { CalculatorStats } from "./CalculatorStats"
 import { CalculatorInputs } from "./CalculatorInputs"
-import { useDebounce } from "../../hooks/useDebounce"
-import { fetchPoolHourData } from "../../services/theGraphClient"
-import { simulateRangePerformance } from "../../utils/simulateRangePerformance"
-import { calculatePresetRange } from "../../utils/calculatePresetRange"
-import { calculateTokenPrices } from "../../utils/calculateTokenPrices"
-import { incrementPriceByTick } from "../../utils/uniswapV3Ticks"
+import { useDebounce } from "../../../hooks/useDebounce"
+import { fetchPoolHourData } from "../../../services/theGraphClient"
+import { simulateRangePerformance } from "../../../utils/simulateRangePerformance"
+import { calculatePresetRange } from "../../../utils/calculatePresetRange"
+import { calculateTokenPrices } from "../../../utils/calculateTokenPrices"
+import { incrementPriceByTick } from "../../../utils/uniswapV3Ticks"
 
 export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange }) {
    // === 1. STATE MANAGEMENT ===
