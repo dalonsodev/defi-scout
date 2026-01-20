@@ -1,5 +1,5 @@
-import { CHART_COLORS } from "../../constants/chartColors"
-import { formatCompactCurrency } from "../../utils/formatCompactCurrency"
+import { CHART_COLORS } from "../../../constants/chartColors"
+import { formatCompactCurrency } from "../../../utils/formatCompactCurrency"
 
 export function CustomTooltip({ active, payload, label }) {
    if (!active || !payload || payload.length === 0) {

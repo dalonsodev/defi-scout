@@ -1,7 +1,7 @@
 import { useLoaderData, Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { TokenInfoBlock } from "./TokenInfoBlock"
-import { PoolCharts } from "./PoolCharts"
+import { PoolCharts } from "./charts/PoolCharts"
 import { RangeCalculator } from "./RangeCalculator"
 
 export default function PoolDetail() {
