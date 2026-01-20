@@ -10,7 +10,6 @@ export function CalculatorStats({
 }) {
    const [isModalOpen, setIsModalOpen] = useState(false)
 
-   // Error de fetch (TheGraph falló)
    if (fetchError) {
       return (
          <div className="mb-6">
@@ -19,7 +18,6 @@ export function CalculatorStats({
       )
    }
 
-   // Loading (hourlyData aún no cargó)
    if (isLoading || results === null) {
       return (
          <div className="mb-6">
@@ -39,7 +37,6 @@ export function CalculatorStats({
       )
    }
 
-   // Error de simulación (invalid range)
    if (!results.success) {
       return (
          <div className="mb-6">
@@ -49,8 +46,7 @@ export function CalculatorStats({
       )
    }
 
-   // Success: mostrar stats
-   const dailyFees = results.dailyFeesUSD // From simulation
+   const dailyFees = results.dailyFeesUSD
    const monthlyFees = dailyFees * 30
    const yearlyFees = dailyFees * 365
    const yearlyAPR = results.APR
@@ -100,7 +96,6 @@ export function CalculatorStats({
             </div>
          </div>
 
-         {/* Simulate Position Performance Modal */}
          <ILProjectionModal 
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}

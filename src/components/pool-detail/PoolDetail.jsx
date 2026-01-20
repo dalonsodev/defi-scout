@@ -74,7 +74,6 @@ export function PoolDetail() {
             </div>
          </div>
 
-         {/* Stats Grid */}
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <StatCard 
                label="TVL"
@@ -99,7 +98,6 @@ export function PoolDetail() {
          </div>
          
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Range calculator */}
             <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
                <RangeCalculator 
                   pool={pool}
@@ -109,7 +107,6 @@ export function PoolDetail() {
                />
             </div>
             <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
-               {/* Historical data */}
                <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
                <div className="grid gap-4 mb-4">
                   <TokenInfoBlock 

@@ -7,6 +7,7 @@ import { simulateRangePerformance } from "./utils/simulateRangePerformance"
 import { calculatePresetRange } from "./utils/calculatePresetRange"
 import { calculateTokenPrices } from "./utils/calculateTokenPrices"
 import { incrementPriceByTick } from "./utils/uniswapV3Ticks"
+import { debugLog } from "../../../utils/logger"
 
 export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange }) {
    // === 1. STATE MANAGEMENT ===
@@ -18,7 +19,7 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
    const hasPopulated = useRef(false)
 
    // 🔍 DIAGNOSTIC
-   console.log("Inputs:", inputs)
+   debugLog("Inputs:", inputs)
 
    // === 2. DISPLAY ===
    const displayPrice = useMemo(() => {
@@ -112,42 +113,6 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
          try {
             const startTime = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)
             const data = await fetchPoolHourData(pool.id, startTime)
-
-            // 🔍 DIAGNOSTIC
-            // console.log('🔍 Query params:', {
-            //    poolId: pool.id,
-            //    startTime,
-            //    startDate: new Date(startTime * 1000).toISOString(),
-            //    expectedSnapshots: 7 * 24 // 168
-            // })
-
-            // if (data?.length > 0) {
-            //    const actualHours = (data[data.length - 1].periodStartUnix - data[0].periodStartUnix) / 3600
-            //    console.log('📊 Coverage:', {
-            //       snapshots: data.length,
-            //       actualHours: Math.round(actualHours),
-            //       completeness: (data.length / 168 * 100).toFixed(1) + '%'
-            //    })
-            // }
-
-            // 🔍 DIAGNOSTIC
-            // console.group('🔍 Hourly Data Diagnostic')
-            // console.log('Pool ID:', pool.id)
-            // console.log('Requested startTime:', new Date(startTime * 1000))
-            // console.log('Data received:', data?.length || 0, 'snapshots')
-            // if (data?.length > 0) {
-            // console.log('First snapshot:', {
-            //    time: new Date(data[0].periodStartUnix * 1000),
-            //    token0Price: data[0].token0Price,
-            //    liquidity: data[0].liquidity,
-            //    feesUSD: data[0].feesUSD
-            // })
-            // console.log('Last snapshot:', {
-            //    time: new Date(data[data.length - 1].periodStartUnix * 1000),
-            //    token0Price: data[data.length - 1].token0Price
-            // })
-            // }
-            // console.groupEnd()
 
             if (!cancelled) {
                setHourlyData(data)

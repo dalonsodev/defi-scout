@@ -2,6 +2,7 @@ import { assessDataQuality } from "./assessDataQuality"
 import { calculateTokenRatio } from "./calculateTokenRatio"
 import { calculateLiquidity } from "./calculateLiquidity"
 import { calculateIL } from "./calculateIL"
+import { debugLog } from "../../../../utils/logger"
 
 export function simulateRangePerformance({
    capitalUSD,
@@ -200,14 +201,14 @@ export function simulateRangePerformance({
    }
 
    // 🔍 DIAGNOSTIC
-   console.log('🔍 Composition:', {
+   debugLog('🔍 Composition:', {
       mode: fullRange ? 'FULL_RANGE' : 'CONCENTRATED',
       token0Percent,
       token1Percent,
       capital0USD: capital0USD.toFixed(2),
       capital1USD: capital1USD.toFixed(2)
    })
-   console.log('🔍 Effective Range:', { 
+   debugLog('🔍 Effective Range:', { 
       effectiveMin: effectiveMin.toFixed(8), 
       effectiveMax: effectiveMax.toFixed(8) 
    })
@@ -231,7 +232,7 @@ export function simulateRangePerformance({
    }
    
    // 🔍 DIAGNOSTIC
-   console.log('🔍 Liquidity Calculation:', {
+   debugLog('🔍 Liquidity Calculation:', {
       L_user: L_user.toFixed(2),
       amount0: amount0.toFixed(2),
       amount1: amount1.toFixed(2),
@@ -245,7 +246,7 @@ export function simulateRangePerformance({
    const liquidityExponent = (decimals0 + decimals1) / 2
 
    // 🔍 DIAGNOSTIC
-   console.log('Liquidity Normalization:', {
+   debugLog('Liquidity Normalization:', {
       token0Symbol: pool.token0.symbol,
       token1Symbol: pool.token1.symbol,
       decimals0,
@@ -269,7 +270,7 @@ export function simulateRangePerformance({
 
    // 🔍 DIAGNOSTIC - Calculate expected fee share from TVL
    const expectedFeeShare = capitalUSD / tvlUSD
-   console.log('🔍 Fee Share Sanity Check:', {
+   debugLog('🔍 Fee Share Sanity Check:', {
       capitalUSD: capitalUSD.toFixed(2),
       poolTVL: tvlUSD.toFixed(2),
       expectedFeeShare: (expectedFeeShare * 100).toFixed(6) + '%',
@@ -298,7 +299,7 @@ export function simulateRangePerformance({
       
       // 🔍 DIAGNOSTIC (primeras 3 iteraciones)
       if (debugCount < 3) {
-         console.log(`🔍 Hour ${i}:`, {
+         debugLog(`🔍 Hour ${i}:`, {
             hourPrice: hourPrice.toFixed(8),
             effectiveMin: effectiveMin.toFixed(8),
             effectiveMax: effectiveMax.toFixed(8),
@@ -331,7 +332,7 @@ export function simulateRangePerformance({
 
       // 🔍 DIAGNOSTIC (first hour in-range)
       if (hoursInRange === 0) {
-         console.log('🔍 First hour in range:', {
+         debugLog('🔍 First hour in range:', {
             L_user: L_user.toFixed(2),
             L_pool_raw: L_pool_bigint.toString(),
             L_pool_normalized: L_pool_normalized.toFixed(2),
@@ -347,7 +348,7 @@ export function simulateRangePerformance({
    }
 
    // ⭐ Log final después del loop
-   console.log('🔍 Loop Summary:', {
+   debugLog('🔍 Loop Summary:', {
       totalFeesUSD: totalFeesUSD.toFixed(4),
       hoursInRange,
       totalHours: hourlyData.length,
