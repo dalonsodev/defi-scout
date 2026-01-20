@@ -1,5 +1,5 @@
 import { fetchPoolHistory } from "../services/theGraphClient"
-import { formatPoolHistory } from "../utils/formatPoolHistory"
+import { formatPoolHistory } from "./utils/formatPoolHistory"
 
 /**
  * Loader for pool detail page
