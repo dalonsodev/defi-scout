@@ -4,8 +4,8 @@ import { PoolTable } from "./PoolTable"
 import { PaginationControls } from "../common/PaginationControls"
 import { useSparklines } from "../../hooks/useSparklines"
 import { useRequestQueue } from "../../hooks/useRequestQueue"
-import filterPools from "./utils/filterPools"
-import sortPools from "./utils/sortPools"
+import { filterPools } from "./utils/filterPools"
+import { sortPools } from "./utils/sortPools"
 
 export function PoolsContent({
    pools,
