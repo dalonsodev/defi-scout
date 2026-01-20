@@ -1,4 +1,4 @@
-import { CHART_COLORS } from "../../utils/chartColors"
+import { CHART_COLORS } from "../../constants/chartColors"
 import { formatCompactCurrency } from "../../utils/formatCompactCurrency"
 
 export function CustomTooltip({ active, payload, label }) {

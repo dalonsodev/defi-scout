@@ -1,4 +1,4 @@
-import { CHART_COLORS } from '../../utils/chartColors'
+import { CHART_COLORS } from '../../constants/chartColors'
 
 export function CustomPriceTooltip({ 
    active, 
