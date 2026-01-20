@@ -9,8 +9,8 @@ import {
    ReferenceLine
 } from "recharts"
 import { CustomPriceTooltip } from "./CustomPriceTooltip"
-import { CHART_COLORS } from "../../constants/chartColors"
-import { formatCompactCurrency } from "../../utils/formatCompactCurrency"
+import { CHART_COLORS } from "../../../constants/chartColors"
+import { formatCompactCurrency } from "../../../utils/formatCompactCurrency"
 
 export function PriceChart({ 
    history, 
