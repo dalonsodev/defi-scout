@@ -1,4 +1,4 @@
-export default function MiniSparkline({
+export function MiniSparkline({
    data,
    width = 80,
    height = 40

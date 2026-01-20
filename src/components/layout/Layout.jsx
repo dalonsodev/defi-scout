@@ -1,7 +1,7 @@
 import { Outlet, useNavigation } from "react-router-dom"
-import Navbar from "./Navbar"
+import { Navbar } from "./Navbar"
 
-export default function Layout() {
+export function Layout() {
    const navigation = useNavigation()
    const isLoading = navigation.state === "loading"
 

@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react"
 
-export default function useSparklines({ 
+export function useSparklines({ 
    visiblePoolIds, 
    queueRequest, 
    cancelPendingRequests, 

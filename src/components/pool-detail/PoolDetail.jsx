@@ -4,7 +4,7 @@ import { TokenInfoBlock } from "./TokenInfoBlock"
 import { PoolCharts } from "./charts/PoolCharts"
 import { RangeCalculator } from "./calculator/RangeCalculator"
 
-export default function PoolDetail() {
+export function PoolDetail() {
    const { pool, history } = useLoaderData()
    const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
    const [rangeInputs, setRangeInputs] = useState({

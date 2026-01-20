@@ -1,13 +1,13 @@
 import { useMemo, useState, useEffect, useRef } from "react"
-import PoolFilters from "./PoolFilters"
-import PoolTable from "./PoolTable"
-import PaginationControls from "../common/PaginationControls"
-import useSparklines from "../../hooks/useSparklines"
-import useRequestQueue from "../../hooks/useRequestQueue"
+import { PoolFilters } from "./PoolFilters"
+import { PoolTable } from "./PoolTable"
+import { PaginationControls } from "../common/PaginationControls"
+import { useSparklines } from "../../hooks/useSparklines"
+import { useRequestQueue } from "../../hooks/useRequestQueue"
 import filterPools from "./utils/filterPools"
 import sortPools from "./utils/sortPools"
 
-export default function PoolsContent({
+export function PoolsContent({
    pools,
    filters,
    updateFilter,

@@ -1,7 +1,6 @@
-import React from "react"
 import { getVisiblePages } from "../../utils/pagination"
 
-export default function PaginationControls({
+export function PaginationControls({
    currentPage,
    totalPages,
    onPageChange

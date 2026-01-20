@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 
-export default function useIntersection(refs, options = {}) {
+export function useIntersection(refs, options = {}) {
    const [visibleIds, setVisibleIds] = useState(new Set())
 
    useEffect(() => {

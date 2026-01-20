@@ -6,10 +6,10 @@ import {
    getFilteredRowModel,
    flexRender
 } from "@tanstack/react-table"
-import MiniSparkline from "../common/MiniSparkline"
-import PlatformIcon from "../common/PlatformIcon"
-import useBreakpoint from "../../hooks/useBreakpoint"
-import useIntersection from "../../hooks/useIntersection"
+import { MiniSparkline } from "../common/MiniSparkline"
+import { PlatformIcon } from "../common/PlatformIcon"
+import { useBreakpoint } from "../../hooks/useBreakpoint"
+import { useIntersection } from "../../hooks/useIntersection"
 
 /**
  * Z-INDEX HIERARCHY:
@@ -276,4 +276,4 @@ const PoolTable = forwardRef(({
 
 PoolTable.displayName = "PoolTable"
 
-export default PoolTable
+export { PoolTable }

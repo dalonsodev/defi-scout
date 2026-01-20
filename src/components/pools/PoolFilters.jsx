@@ -1,6 +1,6 @@
-import Dropdown from "../common/Dropdown"
+import { Dropdown } from "../common/Dropdown"
 
-export default function PoolFilters({
+export function PoolFilters({
    filters, 
    updateFilter,
    togglePlatform,

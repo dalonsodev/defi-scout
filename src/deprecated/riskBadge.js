@@ -1,4 +1,4 @@
-export default function getRiskBadge(risk) {
+export function getRiskBadge(risk) {
    const badgeMap = {
       Low: "badge-success",
       Medium: "badge-warning",

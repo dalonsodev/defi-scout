@@ -1,7 +1,7 @@
 import { useLoaderData } from "react-router-dom"
 import { useMediaQuery } from "react-responsive"
-import usePoolFilters from "../hooks/usePoolFIlters"
-import PoolsContent from "../components/pools/PoolsContent"
+import { usePoolFilters } from "../hooks/usePoolFIlters"
+import { PoolsContent } from "../components/pools/PoolsContent"
 
 export default function Pools() {
    const { pools } = useLoaderData()

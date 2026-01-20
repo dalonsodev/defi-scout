@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { PLATFORM_ICONS } from "../../data/platformIcons"
 
-export default function PlatformIcon({ platform, size = "md" }) {
+export function PlatformIcon({ platform, size = "md" }) {
    const [hasError, setHasError] = useState(false)
 
    const ext = PLATFORM_ICONS[platform]
