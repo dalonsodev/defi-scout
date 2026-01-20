@@ -1,5 +1,5 @@
 import { fetchPools } from "../services/theGraphClient"
-import { formatPoolData } from "../utils/formatPoolData"
+import { formatPoolData } from "./utils/formatPoolData"
 
 async function fetchUniswapPools() {
    try {
