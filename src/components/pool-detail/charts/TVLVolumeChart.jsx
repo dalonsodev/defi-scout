@@ -11,8 +11,8 @@ import {
    ResponsiveContainer
 } from "recharts"
 import { CustomTooltip } from "./CustomTooltip"
-import { CHART_COLORS } from "../../constants/chartColors"
-import { formatCompactCurrency } from "../../utils/formatCompactCurrency"
+import { CHART_COLORS } from "../../../constants/chartColors"
+import { formatCompactCurrency } from "../../../utils/formatCompactCurrency"
 
 export function TVLVolumeChart({ history }) {
    const historyWithRatio = useMemo(() => {
