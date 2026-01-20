@@ -1,4 +1,4 @@
-export default function filterPools(pools, filters) {
+export function filterPools(pools, filters) {
    if (!pools || !Array.isArray(pools)) return []
 
    return pools.filter(pool => {

@@ -2,7 +2,7 @@ const RISK_RANK = {
    low: 1, 
    medium: 2, 
    high: 3, 
-   // Fallbacks explícitos
+   // Explicit fallbacks
    "": 999,
    "undefined": 999,
    "null": 999
@@ -20,7 +20,7 @@ const getSortValue = (pool, columnId) => {
 }
 
 
-export default function sortPools(pools, sorting) {
+export function sortPools(pools, sorting) {
    if (sorting.length === 0) {
       return pools
    }
