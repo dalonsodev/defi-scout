@@ -9,7 +9,7 @@ export function TokenInfoBlock({ pool, selectedTokenIdx, onTokenChange }) {
       const tvl0 = parseFloat(pool.totalValueLockedToken0)
       const tvl1 = parseFloat(pool.totalValueLockedToken1)
 
-      // guard against division by 0
+      // Guard against division by 0
       if (tvl0 === 0 && tvl1 === 0) {
          return []
       }
@@ -78,6 +78,7 @@ export function TokenInfoBlock({ pool, selectedTokenIdx, onTokenChange }) {
                </div>
             </div>
          )}
+
          {/* Toggle Button Group */}
          <div className="join">
             <button 
@@ -93,11 +94,13 @@ export function TokenInfoBlock({ pool, selectedTokenIdx, onTokenChange }) {
                {pool.token1.symbol}
             </button>
          </div>
+
          {/* Contract links */}
          <div className="mt-4 space-y-2">
             <TokenLink token={pool.token0} />
             <TokenLink token={pool.token1} />
          </div>
+
          {/* Mini PieChart */}
          {pieData.length > 0 && (
             <div className="mt-4">

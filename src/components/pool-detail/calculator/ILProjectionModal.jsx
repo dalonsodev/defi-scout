@@ -39,14 +39,12 @@ export function ILProjectionModal({
                </button>
             </div>
 
-            {/* Content */}
             <StrategyComparison 
                hodlStrategy={hodlStrategy}
                lpStrategy={lpStrategy}
                isCalculating={isCalculating}
             />
 
-            {/* User inputs */}
             <div className="space-y-6">
                <PriceInputSection 
                   token0Symbol={poolData.token0.symbol}

@@ -50,6 +50,7 @@ export function CalculatorInputs({
                      <span className="text-base-content/60 ml-2">${capital0.toFixed(2)}</span>
                   </span>
                </div>
+               
                <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
                      <span className="w-2 h-2 rounded-full bg-secondary"></span>
@@ -78,6 +79,7 @@ export function CalculatorInputs({
                </label>
             </div>
 
+            {/* Preset Buttons (disabled if fullRange) */}
             <div className="flex gap-2 mb-3">
                <button
                   type="button"
@@ -131,6 +133,7 @@ export function CalculatorInputs({
                         </button>
                      </div>
                   </div>
+
                   <input
                      type="number"
                      value={inputs.fullRange ? "" : inputs.minPrice}
@@ -140,6 +143,7 @@ export function CalculatorInputs({
                      className="input input-md w-full text-lg text-center bg-base-300"
                      step="0.0001"
                   />
+
                   <p className="text-xs text-center text-base-content/50 mt-2">{priceLabel}</p>
                </div>
                
@@ -167,6 +171,7 @@ export function CalculatorInputs({
                         </button>
                      </div>
                   </div>
+
                   <input
                      type="number"
                      value={inputs.fullRange ? "" : inputs.maxPrice}
@@ -176,6 +181,7 @@ export function CalculatorInputs({
                      className="input input-md w-full text-lg text-center bg-base-300"
                      step="0.0001"
                   />
+
                   <p className="text-xs text-center text-base-content/50 mt-2">{priceLabel}</p>
                </div>
             </div>
@@ -196,6 +202,7 @@ export function CalculatorInputs({
                         </div>
                      </button>
                   </div>
+
                   <div className="flex items-center">
                      <button 
                         type="button"
@@ -215,6 +222,7 @@ export function CalculatorInputs({
                      </button>
                   </div>
                </div>
+
                <input 
                   type="number"
                   value={inputs.fullRange ? "" : inputs.assumedPrice}
@@ -223,6 +231,7 @@ export function CalculatorInputs({
                   placeholder={inputs.fullRange ? "50/50 split" : ""}
                   className="input input-md w-full text-lg text-center bg-base-300"
                />
+
                <p className="text-xs text-center text-base-content/50 mt-2">{priceLabel}</p>
             </div>
          </div>

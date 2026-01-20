@@ -16,7 +16,6 @@ export function PaginationControls({
 
    return (
       <div className="flex items-center justify-center gap-2 py-3">
-
          <button 
             onClick={goToPrev}
             disabled={isFirstPage}

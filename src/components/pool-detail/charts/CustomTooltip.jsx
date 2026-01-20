@@ -18,7 +18,7 @@ export function CustomTooltip({ active, payload, label }) {
          {/* Date header */}
          <p className="font-semibold mb-2">{label}</p>
 
-         {/* Aquí irán las métricas */}
+         {/* Metrics */}
          {payload.map((entry, index) => {
             let formattedValue
 

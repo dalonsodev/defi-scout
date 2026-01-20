@@ -15,7 +15,6 @@ export function CustomPriceTooltip({
   const selectedSymbol = tokenSymbols[selectedTokenIdx]
   const oppositeSymbol = tokenSymbols[selectedTokenIdx === 0 ? 1 : 0]
   
-  // Formatear precio según magnitud
   const price = entry.value
   const formattedPrice = price < 1 ? price.toFixed(8) : price.toFixed(2)
 

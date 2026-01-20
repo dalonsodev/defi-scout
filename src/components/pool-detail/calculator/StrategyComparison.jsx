@@ -1,3 +1,5 @@
+import { debugLog } from "../../../utils/logger"
+
 export function StrategyComparison({
    hodlStrategy,
    lpStrategy,
@@ -6,8 +8,8 @@ export function StrategyComparison({
    const winner = lpStrategy?.pnl > hodlStrategy?.pnl ? "lp" : "hodl"
 
    // 🔍 DIAGNOSTIC
-   console.log("HODL Strategy:", hodlStrategy)
-   console.log("LP Strategy:", lpStrategy)
+   debugLog("HODL Strategy:", hodlStrategy)
+   debugLog("LP Strategy:", lpStrategy)
 
    return (
       <div className="grid gap-4">
