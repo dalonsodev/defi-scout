@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 
-export default function Dropdown({ selected, onToggle, options }) {
+export function Dropdown({ selected, onToggle, options }) {
    const [isOpen, setIsOpen] = useState(false)
    const dropdownRef = useRef(null)
 

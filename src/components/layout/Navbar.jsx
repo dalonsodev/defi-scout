@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 
-export default function Navbar() {
+export function Navbar() {
   return (
     <header className="navbar bg-base-100 shadow px-0 sm:px-2 md:px-2">
       <div className="flex-1">

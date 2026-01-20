@@ -30,7 +30,7 @@ async function processBatchWithConcurrencyLimit(batch, concurrencyLimit) {
    return { results, remaining: [], has429: false }
 }
 
-export default function useRequestQueue({ maxTokens, refillRate, concurrencyLimit = 10 }) {
+export function useRequestQueue({ maxTokens, refillRate, concurrencyLimit = 10 }) {
    const queueRef = useRef([])
    const tokensRef = useRef(maxTokens)
    const lastRefillRef = useRef(Date.now())

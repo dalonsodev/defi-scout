@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react"
 
-export default function usePoolFilters() {
+export function usePoolFilters() {
    const [filters, setFilters] = useState({
       search: "",
       platforms: [],
