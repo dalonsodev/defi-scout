@@ -1,6 +1,7 @@
 import { GraphQLClient, gql } from "graphql-request"
 
-// 1. Configuration
+// ===== CONFIGURATION =====
+
 const SUBGRAPH_URL = "https://gateway.thegraph.com/api/subgraphs/id/5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV"
 const API_KEY = import.meta.env.VITE_THEGRAPH_API_KEY
 
@@ -10,7 +11,12 @@ const client = new GraphQLClient(SUBGRAPH_URL, {
    }
 })
 
-// 2. Query definitions
+// ===== QUERY DEFINITIONS =====
+
+/**
+ * Discovery Query: Retrieves top-tier pools based on liquidity and activity.
+ * Note: GraphQL requires TVL/Volume as strings for high-precision comparisons.
+ */
 const GET_POOLS_QUERY = gql`
    query GetPools(
       $first: Int!, 
@@ -59,6 +65,9 @@ const GET_POOLS_QUERY = gql`
    }
 `
 
+/**
+ * Analytical Query: Fetches a combined set of metadata, price oracles, and daily trends.
+ */
 const GET_POOL_HISTORY_QUERY = gql`
    query GetPoolHistory($poolId: String!, $startDate: Int!) {
       # Pool metadata (current state)
@@ -87,7 +96,8 @@ const GET_POOL_HISTORY_QUERY = gql`
          createdAtTimestamp
       }
       
-      # Internal oracle to convert from ETH to USD
+      # Uniswap Oracle: The "bundle" with id "1" is the global singleton
+      # that stores the current ETH price in USD for derived valuations
       bundle(id: "1") {
          ethPriceUSD
       }
@@ -112,6 +122,17 @@ const GET_POOL_HISTORY_QUERY = gql`
    }
 `
 
+/**
+ * High-Resolution Analytical Query
+ * 
+ * Use Case: Powers concentrated liquidity range calculator by analyzing short-term
+ * price volatility and liquidity depth. Hourly granularity (vs daily) required to
+ * detect intraday rebalancing patterns and flash crash risk.
+ * 
+ * Trade-off: 720-item limit (30 days × 24 hours) balances historical depth vs
+ * query performance. TheGraph enforces 1000-item max, so 720 leaves headroom for
+ * pagination edge cases.
+ */
 const GET_POOL_HOUR_DATAS_QUERY = gql`
    query GetPoolHourDatas($poolId: String!, $startTime: Int!) {
       poolHourDatas(
@@ -135,34 +156,44 @@ const GET_POOL_HOUR_DATAS_QUERY = gql`
    }
 `
 
-// 3. Exported functions
+// ===== SERVICE LAYER =====
+
 /**
- * Fetches pools from Uniswap v3 subgraph
- * @param {Object} variables - GraphQL variables
+ * Service: Fetches pools from Uniswap v3 subgraph with quality filters.
+ * 
+ * Design Decision: Configured for top 1000 pools by liquidity (not all 8k+)
+ * to ensure consistent UX. Low-TVL pools have unreliable APY data and high
+ * slippage risk, making them unsuitable for a portfolio showcase.
+ * 
+ * @param {Object} variables - GraphQL query variables
  * @param {number} variables.first - Number of pools to fetch
  * @param {number} variables.skip - Pagination offset
- * @param {string} variables.orderBy - Field to order by
+ * @param {string} variables.orderBy - Field to sort by (e.g. "totalValueLockedUSD")
  * @param {string} variables.orderDirection - "asc" or "desc"
- * @param {string} variables.minTVL - Minimum TVL in USD (string format)
- * @param {string} variables.minVol - Minimum Volume in USD
- * @returns {Promise<Array>} Array of pool objects
+ * @param {string} variables.minTVL - Minimum TVL in USD (string for precision)
+ * @param {string} variables.minVol - Minimum 24h volume in USD
+ * 
+ * @returns {Promise<Array>} Array of pool objects (tokens, TVL, volume, fees)
  */
-
 export async function fetchPools(variables) {
    const data = await client.request(GET_POOLS_QUERY, variables)
    return data.pools
 }
 
 /**
- * Fetches historical data for a specific pool
- * @param {string} poolId - Pool contract address (lowercase)
- * @param {number} startDate - Unix timestamp (seconds) for oldest data point
- * @returns {Promise<Array>} Array of daily snapshots
+ * Service: Fetches 30-day historical data for pool detail charts.
+ * 
+ * @param {string} poolId - Pool contract address (case-insensitive, normalized to lowercase)
+ * @param {number} startDate - Unix timestamp in seconds for oldest data point
+ * 
+ * @returns {Promise<Object>} result
+ * @returns {Object} result.pool - Pool metadata (tokens, TVL, prices)
+ * @returns {Array} result.history - Daily snapshots (volumeUSD, tvlUSD, feesUSD, prices)
  */
-
 export async function fetchPoolHistory(poolId, startDate) {
    const data = await client.request(GET_POOL_HISTORY_QUERY, {
-      poolId: poolId.toLowerCase(), // The Graph normalizes addresses to lowercase
+      // TheGraph indexes addresses in lowercase (checksummed addresses return null)
+      poolId: poolId.toLowerCase(), 
       startDate
    })
    return {
@@ -172,12 +203,13 @@ export async function fetchPoolHistory(poolId, startDate) {
 }
 
 /**
- * Fetches hourly historical data for a specific pool
- * @param {string} poolId - Pool contract address (lowercase)
- * @param {number} startTime - Unix timestamp (seconds) for oldest data point
- * @returns {Promise<Array>} Array of hourly snapshots (up to 720 items)
+ * Service: Fetches hourly snapshots for concentrated liquidity range simulations.
+ * 
+ * @param {string} poolId - Pool contract address (case-insensitive)
+ * @param {number} startTime - Unix timestamp in seconds (epoch start of hour)
+ * 
+ * @returns {Promise<Array>} Array of hourly datapoints (up to 720 items = 30 days)
  */
-
 export async function fetchPoolHourData(poolId, startTime) {
    const data = await client.request(GET_POOL_HOUR_DATAS_QUERY, {
       poolId: poolId.toLowerCase(),

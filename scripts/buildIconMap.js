@@ -49,7 +49,23 @@ const PLATFORMS = [
    "nerveswap"
 ]
 
+/**
+ * Build-time script utility: Platform Icon Discovery & Mapping
+ * Generate a static mapping of platform identifiers to their available icon formats.
+ * It iterates through the PLATFORMS list, probes DefiLlama's CDN for .jpg/.png files,
+ * and writes the resulting map to "src/data/platformIcons.js"
+ * @async
+ * @function buildIconMap
+ * @requires testPlatformIcon - Utility to probe CDN endpoints
+ * @requires fs - Node.js filesystem for static file generation
+ * @returns {Promise<void>} Resolves when the file has been successfully written
+ */
 export async function buildIconMap() {
+   /**
+    * Parallel Discovery:
+    * Probes all platforms simultaneously using Promise.allSettled to ensure a single
+    * failing network does not halt the entire map generation.
+    */
    const results = await Promise.allSettled(
       PLATFORMS.map(platform => testPlatformIcon(platform))
    )
@@ -66,6 +82,12 @@ export async function buildIconMap() {
       }
    })
 
+   /**
+    * Code Generation Logic:
+    * Manually constructs a JavaScript module string.
+    * This avoids a runtime JSON.parse() and allows for direct ESM imports 
+    * in the frontend.
+    */
    const entries = Object.entries(iconMap)
    const lines = entries.map(([platform, ext]) => {
       const value = ext === null ? "null" : `"${ext}"`
@@ -76,10 +98,12 @@ export async function buildIconMap() {
 ${lines.join(",\n")}
 }
 `
+   // Path Resolution: Standard Node.js boilerplate for ESM compatibility
    const __filename = fileURLToPath(import.meta.url)
    const __dirname = dirname(__filename)
    const outputPath = join(__dirname, "..", "src", "data", "platformIcons.js")
 
+   // Overwrites the target data file with the new mapping
    writeFileSync(outputPath, fileContent, "utf-8")
 
    console.log('✅ Icon map generated at:', outputPath)

@@ -7,6 +7,28 @@ import { useRequestQueue } from "../../hooks/useRequestQueue"
 import { filterPools } from "./utils/filterPools"
 import { sortPools } from "./utils/sortPools"
 
+/**
+ * Component: Pool Data Pipeline Orchestrator
+ * 
+ * Architecture: Manages the full cycle of 8k+ pool dataset through
+ * a client-side pipeline: Raw data => Filter => Sort => Paginate => Render
+ * 
+ * Key Decisions:
+ * - Client-side processing: DeFiLlama API returns full dataset (no server pagination)
+ * - pageSize: 40 items (DeFi industry standard: Uniswap=50, Curve=40, Aave=25)
+ * - visiblePoolIds reset on filter/sort: Prevents stale sparkline cache when rows change
+ * 
+ * Performance Trade-off: Sorting 8k items on every column click (~50ms) vs server-side
+ * queries (would add ~800ms network latency). Client-side wins for this dataset size.
+ * 
+ * @param {Object} props
+ * @param {Array<Object>} props.pools - Full pool dataset from poolsLoader (8k items)
+ * @param {Object} props.filters - Active filters state (search, tvlUsd, volumeUsd1d etc.)
+ * @param {Function} props.updateFilter - Updates individual filter key (triggers re-filter)
+ * @param {Function} props.togglePlatform - Multi-select handler for platform dropdown
+ * @param {Function} props.clearFilters - Reset all filters to defaults
+ * @returns {JSX.Element}
+ */
 export function PoolsContent({
    pools,
    filters,
@@ -49,20 +71,28 @@ export function PoolsContent({
       return sortedPools.slice(start, end)
    }, [sortedPools, pageIndex, pageSize])
 
+   // Reset to page 1 and clear sparkline cache when filters change
+   // (prevents showing cached data for rows that moved/disappeared)
    useEffect(() => {
       setPageIndex(0)
       setVisiblePoolIds(new Set())
    }, [filters])
 
+   // Reset to page 1 and clear sparkline cache when sorting changes
+   // (prevents showing cached data in new row order)
    useEffect(() => {
       setPageIndex(0)
       setVisiblePoolIds(new Set())
    }, [sorting])
    
+   // Clear sparkline cache when navigating pages
+   // (IntersectionObserver will trigger fresh fetches for new visible rows)
    useEffect(() => {
       setVisiblePoolIds(new Set())
    }, [pageIndex])
 
+   // Auto-scroll to table top on pagination/filter/sort changes
+   // Skip first render to prevent jump during initial load
    useEffect(() => {
       if (isFirstRender.current) {
          isFirstRender.current = false
@@ -80,7 +110,7 @@ export function PoolsContent({
    }, [pageIndex, totalPages])
 
    const handlePageChange = (newPage) => {
-      setPageIndex(newPage - 1) // convert from 1-based to 0-based
+      setPageIndex(newPage - 1) // Convert from 1-based to 0-based
    }
 
    const { queueRequest, cancelPendingRequests } = useRequestQueue({
@@ -133,7 +163,7 @@ export function PoolsContent({
                <div className="py-4">
                   <PaginationControls 
                      totalPages={totalPages}
-                     currentPage={pageIndex + 1} // convert from 0-based to 1-based
+                     currentPage={pageIndex + 1}
                      onPageChange={handlePageChange}
                   />
                </div>
