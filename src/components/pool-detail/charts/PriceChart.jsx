@@ -12,6 +12,17 @@ import { CustomPriceTooltip } from "./CustomPriceTooltip"
 import { CHART_COLORS } from "../../../constants/chartColors"
 import { formatCompactCurrency } from "../../../utils/formatCompactCurrency"
 
+/**
+ * UI: Strategic Price & Range Chart.
+ * Visualizes asset price trends against liquidity provider boundaries.
+ * @param {Object} props
+ * @param {Array<Object>} props.history - Timeseries data from the pool API
+ * @param {number} props.selectedTokenIdx - Index of the token used as base price (0 or 1)
+ * @param {string[]} props.tokenSymbols - Tuple of token symbols [Symbol0, Symbol1]
+ * @param {Object} props.rangeInputs - Current simulation range (minPrice, maxPrice, assumedPrice)
+ * @param {number} props.currentPrice - Live market price for the asset
+ * @returns {JSX.Element}
+ */
 export function PriceChart({ 
    history, 
    selectedTokenIdx, 
@@ -72,6 +83,10 @@ export function PriceChart({
                   />
                )}
 
+               {/* Concentrated Liquidity Bounds:
+                  Visualizes the "ticks" where the user's capital is active
+                  Hidden if "full range" is active as boundaries woud be effectively [0, ∞]
+               */}
                {!rangeInputs.fullRange && (
                   <>
                      <ReferenceLine 

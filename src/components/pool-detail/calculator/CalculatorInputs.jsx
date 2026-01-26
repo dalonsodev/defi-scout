@@ -1,3 +1,23 @@
+/**
+ * UI: LP Position Parameter Controls.
+ * Manages capital allocation, price range boundaries (tick-aligned), and token composition.
+ * 
+ * Architecture: Composition data flows from simulateRangePerformance hook.
+ * While simulation runs, shows fallback 50/50 split to prevent layout shift.
+ * 
+ * @param {Object} props
+ * @param {Object} props.inputs - Calculator state (capitalUSD, minPrice, maxPrice, assumedPrice, fullRange)
+ * @param {Function} props.onChange - State dispatcher for user inputs
+ * @param {Function} props.onIncrement - Tick-aligned price adjustment (±1 tick spacing based on fee tier)
+ * @param {Function} props.onPresetClick - Applies volatility presets ("±10%", "±15%", "±20%")
+ * @param {string} props.priceLabel - Display format (e.g., "USDC per ETH")
+ * @param {string} props.token0Symbol
+ * @param {string} props.token1Symbol
+ * @param {number} props.token0PriceUSD - Current market price of token0
+ * @param {number} props.token1PriceUSD - 
+ * @param {Object} [props.composition] - Calculated token split from simulation hook (null during computation)
+ * @returns {JSX.Element}
+ */
 export function CalculatorInputs({ 
    inputs, 
    onChange,
@@ -10,7 +30,8 @@ export function CalculatorInputs({
    token1PriceUSD,
    composition
 }) {
-   // Token amounts based on composition, fallback to 50/50
+   // Fallback Calculation: While simulateRangePerformance runs, assume 50/50 split
+   // This prevents UI flash when composition transitions from null => calculated values
    const token0Amount = composition?.amount0 ?? (
       token0PriceUSD > 0 ? (inputs.capitalUSD / 2) / token0PriceUSD : 0
    )
@@ -24,7 +45,7 @@ export function CalculatorInputs({
 
    return (
       <div>
-         {/* Deposit Amount */}
+         {/* Capital Input */}
          <div className="mb-6">
             <label className="block text-sm font-semibold mb-2">Deposit Amount</label>
             <div className="relative">
@@ -38,7 +59,7 @@ export function CalculatorInputs({
                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl text-base-content/60">$</span>
             </div>
 
-            {/* Token breakdown */}
+            {/* Token Distribution Display */}
             <div className="mt-3 space-y-2">
                <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
@@ -64,7 +85,7 @@ export function CalculatorInputs({
             </div>
          </div>
 
-         {/* Price Range */}
+         {/* Price Range Configuration */}
          <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
                <label className="text-sm font-semibold">Price Range</label>
@@ -79,7 +100,8 @@ export function CalculatorInputs({
                </label>
             </div>
 
-            {/* Preset Buttons (disabled if fullRange) */}
+            {/* Volatility Presets
+                Disabled when fullRange=true (liquidity spans 0 to ∞, no discrete bounds) */}
             <div className="flex gap-2 mb-3">
                <button
                   type="button"
@@ -107,7 +129,7 @@ export function CalculatorInputs({
                </button>
             </div>
 
-            {/* Min/Max inputs (disabled if fullRange) */}
+            {/* Min/Max Price Boundaries with Tick Adjustment */}
             <div className="grid grid-cols-2 gap-3 mb-3">
                <div className="form-control bg-base-300 rounded-lg p-3">
                   <div className="flex justify-between items-center mb-1">
@@ -186,7 +208,7 @@ export function CalculatorInputs({
                </div>
             </div>
 
-            {/* Most Active Price - use priceNum */}
+            {/* Assumed Entry Price for Simulation */}
             <div className="bg-base-300 rounded-lg p-3">
                <div className="flex justify-between items-center mb-2 gap-2">
                   <div className="flex items-center">
@@ -236,7 +258,7 @@ export function CalculatorInputs({
             </div>
          </div>
 
-         {/* Create Position Button */}
+         {/* Protocol deep-link */}
          <button className="btn btn-primary w-full">
             Create Position on Uniswap →
          </button>

@@ -1,7 +1,23 @@
-// APY = (Fees acumulados / Edad en días / TVL) * 365 * 100
+// APY Calculation Logic: (Accumulated Fees / Age in Days / TVL) * 365 * 100
 
+/**
+ * Utility - Data Transformation Layer: Normalizes raw protocol data into the app schema.
+ * Performs three (3) critical operations:
+ * 1. Type Casting: Converts API strings/BigInts into JS floats for math operations.
+ * 2. Metric Derivation: Calculates pool age and estimated APY based on historical fee accrual.
+ * 3. UI Formatting: Generates human-readable strings (K, M, B) for financial dashboards.
+ * @param {Array<Object>} rawPools - Collection of pool objects from the API
+ * @param {string} rawPools[].id - Deployment address of the pool
+ * @param {string} rawPools[].totalValueLockedUSD - TVL in strig format
+ * @param {string} rawPools[].createdAtTimestamp - Unix timestamp of pool creation
+ * @param {Object} rawPools[].token0 - Metadata for the first token in the pair
+ * @returns {Array<Object>} Normalized pool objects with "formatted" sufixes and calculated apyBase
+ */
 export function formatPoolData(rawPools) {
-   // helper: formatNumber()
+   /**
+    * Formats large denominations into human-readable strings (K, M, B).
+    * Precision: 1 decimal place for abbreviated values, 2 for raw numbers.
+    */
    function formatNumber(n) {
       if (n >= 1e9) return (n / 1e9).toFixed(1) + "B"
       if (n >= 1e6) return (n / 1e6).toFixed(1) + "M"
@@ -9,13 +25,21 @@ export function formatPoolData(rawPools) {
       return n.toFixed(2)
    }
 
-   // helper: calculatePoolAge()
+   /**
+    * Converts Unix timestamps to pool age.
+    * Unit: Days (floating point).
+    */
    function calculatePoolAge(createdAtTimestamp) {
       const poolAgeDays = (Date.now() / 1000 - createdAtTimestamp) / 86400
       return poolAgeDays
    }
 
-   // helper: calculateAPY()
+   /**
+    * Estimates APY using an "Accumulated Fees" approach.
+    * CRITICAL AUDIT NOTE: This formula assumes "collectedFeesUSD" is the total
+    * fees since inception. If the API returns a 24h snapshot,
+    * the poolAgeDays division will result in a near-zero APY.
+    */
    function calculateAPY(
       collectedFeesUSD, 
       volumeUSD,
@@ -23,12 +47,16 @@ export function formatPoolData(rawPools) {
       poolAgeDays, 
       totalValueLockedUSD
    ) {
+      // Safety Checks: Avoid division by zero and handle nascent pools
       if (poolAgeDays < 1) return 0
       if (totalValueLockedUSD === 0) return 0
       if (!poolAgeDays || !totalValueLockedUSD) return 0
 
       let feesForCalculation = collectedFeesUSD
 
+      // Heuristic: Fallback for missing/corrupt fee data
+      // If fees are suspiciously low (<$100), estimate based on volume * feeTier
+      // 1,000,000 divisor converts Basis Points to decimal
       if (collectedFeesUSD < 100) {
          const feeRate = feeTier / 1000000
          feesForCalculation = volumeUSD * feeRate
@@ -36,6 +64,7 @@ export function formatPoolData(rawPools) {
 
       if (!feesForCalculation) return 0
 
+      // APY Projection: Extrapolates historical daily average to annual percentage
       const dailyFeeRate = feesForCalculation / poolAgeDays / totalValueLockedUSD
       const apyBase = dailyFeeRate * 365 * 100   
       
@@ -43,6 +72,7 @@ export function formatPoolData(rawPools) {
    }
 
    return rawPools.map(pool => {
+      // Type Casting: Force all numeric inputs to float to prevent concatenation errors
       const feeTier = parseFloat(pool.feeTier)
       const liquidity = parseFloat(pool.liquidity)
       const tvlUsd = parseFloat(pool.totalValueLockedUSD)
@@ -66,6 +96,7 @@ export function formatPoolData(rawPools) {
       )
 
       return {
+         // UI-ready schema: Consolidates symbols and formats financial values
          id: pool.id,
          symbol: `${pool.token0.symbol} / ${pool.token1.symbol || "UNKNOWN"}`,
          feeTier,

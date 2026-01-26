@@ -1,3 +1,22 @@
+/**
+ * UI: Price Projection Controls (Dual-Token).
+ * Allows independent future price input for token0 and token1 to simulate
+ * asymmetric market movements (e.g. ETH +20%, USDC flat).
+ * 
+ * Displays percentage change to help users gauge market move magnitude.
+ * Formula: ((future - current) / current) * 100
+ * 
+ * @param {Object} props
+ * @param {string} props.token0Symbol
+ * @param {string} props.token1Symbol
+ * @param {number} props.currentToken0PriceUSD - Current market price (API source)
+ * @param {number} props.currentToken1PriceUSD
+ * @param {number} props.futureToken0PriceUSD - User-projected price
+ * @param {number} props.futureToken1PriceUSD
+ * @param {Function} props.onToken0PriceChange - Update handler for token0 projection
+ * @param {Function} props.onToken1PriceChange - Update handler for token1 projection
+ * @returns {JSX.Element}
+ */
 export function PriceInputSection({
    token0Symbol,
    token1Symbol,
@@ -8,6 +27,7 @@ export function PriceInputSection({
    onToken0PriceChange,
    onToken1PriceChange
 }) {
+   // Percentages Deviation: Convert absolute price delta to % for display
    const token0ChangePercent = currentToken0PriceUSD > 0
       ? ((futureToken0PriceUSD - currentToken0PriceUSD) / currentToken0PriceUSD * 100).toFixed(2)
       : "0.00"
@@ -17,9 +37,10 @@ export function PriceInputSection({
 
    return (
       <div className="grid grid-cols-2 gap-4">
-         {/* Token0 Current Price (read-only) */}
+
+         {/* Current Price: Token0 (Read-only, API-sourced) */}        
          <div className="form-control">
-            <label htmlFor="" className="label">
+            <label className="label">
                <span className="label-text mb-2 font-semibold">Current Price</span>
             </label>
             <div className="input input-bordered bg-base-300 flex items-center">
@@ -32,14 +53,14 @@ export function PriceInputSection({
                   aria-label="Current Price"
                />
             </div>
-            <label htmlFor="" className="label">
+            <label className="label">
                <span className="label-text-alt mt-2">{token0Symbol} Price (USD)</span>
             </label>
          </div>
 
-         {/* Token0 Future Price (editable) */}
+         {/* Future Price: Token0 (User Projection) */}
          <div className="form-control">
-            <label htmlFor="" className="label">
+            <label className="label">
                <span className="label mb-2 font-semibold">Future Price</span>
             </label>
             <div className="input input-bordered flex items-center">
@@ -60,7 +81,7 @@ export function PriceInputSection({
             </label>
          </div>
 
-         {/* Token1 Current Price (read-only) */}
+         {/* Current Price: Token1 (Read-only, API-sourced) */}
          <div className="form-control">
             <div className="input input-bordered bg-base-300 flex items-center">
                <span className="text-base-content/60">$</span>
@@ -72,12 +93,12 @@ export function PriceInputSection({
                   aria-label="Current Price"
                />
             </div>
-            <label htmlFor="" className="label">
+            <label className="label">
                <span className="label-text-alt mt-2">{token1Symbol} Price (USD)</span>
             </label>
          </div>
 
-         {/* Token1 Future Price (editable) */}
+         {/* Future Price: Token1 (User Projection) */}
          <div className="form-control">
             <div className="input input-bordered flex items-center">
                <span>$</span>
