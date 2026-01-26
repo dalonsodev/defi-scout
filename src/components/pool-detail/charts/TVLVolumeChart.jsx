@@ -14,8 +14,19 @@ import { CustomTooltip } from "./CustomTooltip"
 import { CHART_COLORS } from "../../../constants/chartColors"
 import { formatCompactCurrency } from "../../../utils/formatCompactCurrency"
 
+/**
+ * UI: Capital Efficiency & Liquidity Chart.
+ * Correlates Total Value Locked (TVL) with Trading Volume to assess pool health.
+ * @param {Object} props
+ * @param {Array<Object>} props.history - Timeseries data from the pool API
+ * @returns {JSX.Element}
+ */
 export function TVLVolumeChart({ history }) {
+   // Logic: Calculate capital efficiency ratio (Volume / TVL)
+   // Higher ratios indicate better fee generation per dollar of liquidity
    const historyWithRatio = useMemo(() => {
+      if (!history) return []
+      
       return history.map(day => ({
          ...day,
          volumeToTvlRatio: day.tvlUSD > 0 ? day.volumeUSD / day.tvlUSD : 0
@@ -39,6 +50,7 @@ export function TVLVolumeChart({ history }) {
                   height={60}
                />
 
+               {/* Axis Left: TVL & Volume (USD Denominated) */}
                <YAxis 
                   yAxisId="left"
                   stroke={CHART_COLORS.axis}
@@ -46,6 +58,7 @@ export function TVLVolumeChart({ history }) {
                   tickFormatter={(value) => formatCompactCurrency(value)}
                />
 
+               {/* Axis Right: Efficiency Ratio (Decimal) */}
                <YAxis 
                   yAxisId="right"
                   orientation="right"
@@ -54,6 +67,7 @@ export function TVLVolumeChart({ history }) {
                   tickFormatter={(value) => formatCompactCurrency(value)}
                />
 
+               {/* Background: TVL represents the "depth" of the pool */}
                <Area 
                   yAxisId="left"
                   type="monotone"
@@ -64,6 +78,7 @@ export function TVLVolumeChart({ history }) {
                   name="TVL"
                />
 
+               {/* Middle: Volume represents the "activity" */}
                <Bar 
                   yAxisId="right"
                   dataKey="volumeUSD"
@@ -72,6 +87,7 @@ export function TVLVolumeChart({ history }) {
                   name="Volume"
                />
 
+               {/* Foreground: Efficiency Ratio (The most important trend) */}
                <Line 
                   yAxisId="right"
                   type="monotone"
