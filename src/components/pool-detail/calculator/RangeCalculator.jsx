@@ -7,37 +7,58 @@ import { simulateRangePerformance } from "./utils/simulateRangePerformance"
 import { calculatePresetRange } from "./utils/calculatePresetRange"
 import { calculateTokenPrices } from "./utils/calculateTokenPrices"
 import { incrementPriceByTick } from "./utils/uniswapV3Ticks"
+import { debugLog } from "../../../utils/logger"
 
+/**
+ * UI: Uniswap V3 Range Calculator Orchestrator
+ * Manages state synchronization, price inversion on token flip, and fee simulation.
+ * 
+ * Architecture: Centralized state (inputs) lifted to PoolDetail parent for SSOT.
+ * This component handles derived state (displayPrice, priceLabel) and effect coordination
+ * 
+ * @param {Object} props
+ * @param {Object} props.pool - Pool data from TheGraph (token prices, metadata)
+ * @param {number} props.selectedTokenIdx - Base token index (0 or 1, controls price inversion)
+ * @param {Object} props.inputs - Centralized calculator state (capitalUSD, minPrice, maxPrice, assumedPrice, fullRange)
+ * @param {Function} props.onInputsChange - State dispatcher for calculator inputs
+ * @returns {JSX.Element}
+ */
 export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange }) {
-   // === 1. STATE MANAGEMENT ===
    const [hourlyData, setHourlyData] = useState(null)
    const [isLoading, setIsLoading] = useState(true)
    const [fetchError, setFetchError] = useState(null)
 
+   // Flow Control: Prevents effect double-firing on token flip
    const prevTokenIdx = useRef(selectedTokenIdx)
    const hasPopulated = useRef(false)
 
-   // 🔍 DIAGNOSTIC
-   console.log("Inputs:", inputs)
+   debugLog("Inputs:", inputs)
 
-   // === 2. DISPLAY ===
+   // Derived State: Display price adapts to selected base token
    const displayPrice = useMemo(() => {
-      const price = selectedTokenIdx === 0
-         ? Number(pool.token0Price)
-         : Number(pool.token1Price)
-      
-         return price
-      }, [selectedTokenIdx, pool.token0Price, pool.token1Price])
+      if (!hourlyData) return 0
+
+      const currentPrice = parseFloat(hourlyData[0].token0Price)
+
+      return selectedTokenIdx === 0
+         ? currentPrice          // Token0 per Token1
+         : 1 / currentPrice      // Token1 per Token0 (reciprocal)
+      }, [selectedTokenIdx, hourlyData])
    
-   // === 3. Auto-populate inputs on mount ±10% range ===
+   /**
+    * Hydration: Initialize default ±10% range on first load.
+    * Prevents empty state UI while providing sensible starting bounds.
+    */
    useEffect(() => {
       if (!pool) return
       if (hasPopulated.current) return
-      if (inputs.minPrice !== null || inputs.maxPrice !== null) return
-
+      if (inputs.minPrice !== "" || inputs.maxPrice !== "") return
+      if (!hourlyData) return
+         
+      const currentPrice = parseFloat(hourlyData[0].token0Price)
       const basePrice = selectedTokenIdx === 0
-         ? pool.token0Price
-         : 1 / pool.token0Price
+         ? currentPrice
+         : 1 / currentPrice
 
       const minPrice = basePrice * 0.9
       const maxPrice = basePrice * 1.1
@@ -51,11 +72,28 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
       }))
 
       hasPopulated.current = true
-   }, [inputs.minPrice, inputs.maxPrice, selectedTokenIdx, pool.token0Price, onInputsChange, displayPrice, pool])
+   }, [
+      inputs.minPrice, 
+      inputs.maxPrice, 
+      selectedTokenIdx, 
+      hourlyData,
+      onInputsChange,
+      displayPrice,
+      pool
+   ])
 
-   // === 3.1 AUTO-CONVERT INPUTS ON TOKEN FLIP ===
+   /**
+    * Price Inversion Synchronization (Token Flip)
+    * 
+    * Mathematical Invariant: In Uniswap V3, price of A/B = 1 / (B/A).
+    * When base token changes, we must:
+    * 1. Invert all prices: P' = 1/P
+    * 2. Swap min/max: (a < x < b) becomes (1/b < 1/x < 1/a)
+    * 
+    * Example: ETH/USDC [1500, 2000] → USDC/ETH [0.0005, 0.000667]
+    * 
+    */
    useEffect(() => {
-      // Skip first render (no conversion needed)
       if (prevTokenIdx.current === selectedTokenIdx) {
          return
       }
@@ -72,7 +110,7 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
       const oldMax = Number(inputs.maxPrice)
       const oldAssumedPrice = Number(inputs.assumedPrice)
 
-      // Validate before conversion
+      // Validation: Skip if invalid state (prevents NaN propagation)
       if (
          oldMin <= 0 || 
          oldMax <= 0 || 
@@ -86,14 +124,14 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
          return
       }
 
-      // Invert AND swap (min becomes max and vice versa)
+      // Invert and swap boundaries
       const newMin = 1 / oldMax
       const newMax = 1 / oldMin
       const newAssumedPrice = 1 / oldAssumedPrice
 
       onInputsChange(prev => ({
          ...prev,
-         minPrice: newMin.toFixed(8), // Preserve precision
+         minPrice: newMin.toFixed(8), // Preserve precision for low-value assets
          maxPrice: newMax.toFixed(8),
          assumedPrice: newAssumedPrice
       }))
@@ -101,10 +139,20 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
       prevTokenIdx.current = selectedTokenIdx
    }, [selectedTokenIdx, inputs.fullRange, inputs.minPrice, inputs.maxPrice, inputs.assumedPrice, onInputsChange])
 
-   // === 4. DEBOUNCING ===
+   // Performance Optimization: Debounce by 500ms.
+   // Prevents expensive simulateRangePerformance() recalculations on every keystroke.
+   // Cost: ~50-100ms for 168 hourly data points (blocks render during computation).
    const debouncedInputs = useDebounce(inputs, 500)
 
-   // === 5. DATA FETCHING ===
+   /**
+    * Data Fetching: 7-Day Hourly Lookback.
+    * Retrieves 168 data points for fee growth simulation.
+    * 
+    * Why 7 days? Balance between:
+    * - Sample size (statistical significance)
+    * - Recency (captures current market conditions)
+    * Trade-off: Longer windows (30d) smooth outliers but miss regime changes.
+    */
    useEffect(() => {
       let cancelled = false
 
@@ -112,42 +160,6 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
          try {
             const startTime = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)
             const data = await fetchPoolHourData(pool.id, startTime)
-
-            // 🔍 DIAGNOSTIC
-            // console.log('🔍 Query params:', {
-            //    poolId: pool.id,
-            //    startTime,
-            //    startDate: new Date(startTime * 1000).toISOString(),
-            //    expectedSnapshots: 7 * 24 // 168
-            // })
-
-            // if (data?.length > 0) {
-            //    const actualHours = (data[data.length - 1].periodStartUnix - data[0].periodStartUnix) / 3600
-            //    console.log('📊 Coverage:', {
-            //       snapshots: data.length,
-            //       actualHours: Math.round(actualHours),
-            //       completeness: (data.length / 168 * 100).toFixed(1) + '%'
-            //    })
-            // }
-
-            // 🔍 DIAGNOSTIC
-            // console.group('🔍 Hourly Data Diagnostic')
-            // console.log('Pool ID:', pool.id)
-            // console.log('Requested startTime:', new Date(startTime * 1000))
-            // console.log('Data received:', data?.length || 0, 'snapshots')
-            // if (data?.length > 0) {
-            // console.log('First snapshot:', {
-            //    time: new Date(data[0].periodStartUnix * 1000),
-            //    token0Price: data[0].token0Price,
-            //    liquidity: data[0].liquidity,
-            //    feesUSD: data[0].feesUSD
-            // })
-            // console.log('Last snapshot:', {
-            //    time: new Date(data[data.length - 1].periodStartUnix * 1000),
-            //    token0Price: data[data.length - 1].token0Price
-            // })
-            // }
-            // console.groupEnd()
 
             if (!cancelled) {
                setHourlyData(data)
@@ -163,13 +175,12 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
       }
 
       loadHourlyData()
-      return () => { cancelled = true }
+      return () => { cancelled = true } // Cleanup: Prevents state update on unmounted component
    }, [pool.id])
 
 
 
-   // === 6. PRICE CALCULATIONS (DEFENSIVE) ===
-   // 6.1 Get current price (prefer hourly data)
+   // Token Price Normalization: Convert pool prices to USD for display
    const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
       const currentPrice = hourlyData?.[0]?.token0Price
          ? parseFloat(hourlyData[0].token0Price)
@@ -184,35 +195,37 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
          : `${pool.token1.symbol} per ${pool.token0.symbol}`
    }, [selectedTokenIdx, pool.token0.symbol, pool.token1.symbol])
 
-   // === 7. EVENT HANDLERS ===
    const handleInputChange = useCallback((field, value) => {
       onInputsChange(prev => ({ ...prev, [field]: value }))
    }, [onInputsChange])
 
-   // Increment/decrement using Uniswap V3 tick spacing
+   /**
+    * Tick-Aligned Price Adjustment.
+    * Uniswap V3 prices are discrete (quantized by fee tier).
+    * This ensures manual adjustments land on valid tick boundaries.
+    */
    const handleInputIncrement = useCallback((field, delta) => {
       const currentValue = Number(inputs[field])
       if (!currentValue || currentValue <= 0) return
 
-      // Calculate new price using tick math
       const newValue = incrementPriceByTick(currentValue, pool.feeTier, delta)
       onInputsChange(prev => ({ ...prev, [field]: newValue }))
    }, [inputs, pool.feeTier, onInputsChange])
 
    const handlePresetClick = useCallback((presetType) => {
       const assumedPrice = displayPrice
-      const { minPrice, maxPrice } = calculatePresetRange(
-         assumedPrice,
-         presetType
-      )
-      onInputsChange(prev => ({
-         ...prev,
-         minPrice,
-         maxPrice
-      }))
+      const { minPrice, maxPrice } = calculatePresetRange(assumedPrice,presetType)
+      onInputsChange(prev => ({...prev, minPrice, maxPrice}))
    }, [displayPrice, onInputsChange])
 
-   // === 8. RESULTS (MEMOIZED) ===
+   /**
+    * Fee Simulation Engine (Memoized).
+    * Most CPU-intensive operation: iterates through 168 hourly snapshots,
+    * calculates liquidity concentration, and projects fee accrual.
+    * 
+    * Runs only when debounced inputs or market data changes.
+    * 
+    */
    const results = useMemo(() => {
       if (!hourlyData) return null
 
@@ -232,7 +245,6 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
 
    return (
       <div className="grid gap-6">
-         {/* Left Column: Stats + Inputs */}
          <div className="flex flex-col gap-6">
             <div className="card rounded-2xl bg-base-200">
                <CalculatorStats 

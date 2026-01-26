@@ -11,6 +11,16 @@ import { CustomTooltip } from "./CustomTooltip"
 import { CHART_COLORS } from "../../../constants/chartColors"
 import { formatCompactCurrency } from "../../../utils/formatCompactCurrency"
 
+/**
+ * UI: Historical Yield & Revenue Chart.
+ * Renders dual-axis composed chart comparing daily fee revenue (USD) vs. annualized yield (APY).
+ * @param {Object} props
+ * @param {Array<Object>} props.history - Timeseries data from the pool API
+ * @param {string} props.history[].dateShort - Formatted date for X-axis (e.g. "Jan 01")
+ * @param {number} props.history[].feesUSD - Daily fee revenue in USD (Left Y-axis)
+ * @param {number} props.history[].apy - Annualized Percentage Yield (Right Y-Axis)
+ * @returns {JSX.Element}
+ */
 export function FeesApyChart({ history }) {
    return (
       <div className="card bg-base-200 rounded-2xl">
@@ -29,7 +39,7 @@ export function FeesApyChart({ history }) {
             height={60}
           />
           
-          {/* Left axis: Fees (USD) */}
+          {/* Left axis: Fees (USD) - Primary metric */}
           <YAxis 
             yAxisId="left"
             stroke={CHART_COLORS.axis}
@@ -37,7 +47,7 @@ export function FeesApyChart({ history }) {
             tickFormatter={(value) => formatCompactCurrency(value)}
           />
           
-          {/* Right axis: APY (percentage) */}
+          {/* Right axis: APY (percentage) - Secondary metric */}
           <YAxis 
             yAxisId="right"
             orientation="right"

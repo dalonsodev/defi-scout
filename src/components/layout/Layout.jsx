@@ -1,7 +1,25 @@
 import { Outlet, useNavigation } from "react-router-dom"
-import Navbar from "./Navbar"
+import { Navbar } from "./Navbar"
 
-export default function Layout() {
+/**
+ * Architecture: Global Application Aayout Wrapper.
+ * 
+ * Design Decision: Centralized loading state using React Router's useNavigation
+ * instead of per-component loaders. This provides a consistent UX across all
+ * route transitions without prop drilling or context providers.
+ * 
+ * Trade-off: Shows loading spinner for ALL navigation (not route specific)
+ * Acceptable for this app's data volume (<10MB deferred pool data), but enterprise
+ * apps might need granular loading states per section.
+ * 
+ * UI Constraints:
+ * - max-w-5xl: Optimal line length for financial data tables (prevents horizontal
+ * eye strain on ultrawide monitors, follows Nielsen Norman Group guidelines)
+ * - Fixed spinner (top-right): Non-blocking, doesn't shift layout on show/hide
+ * 
+ * @returns {JSX.Element} Global site structure: navbar + route outlet + loading indicator
+ */
+export function Layout() {
    const navigation = useNavigation()
    const isLoading = navigation.state === "loading"
 

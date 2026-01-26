@@ -6,19 +6,41 @@ import {
    getFilteredRowModel,
    flexRender
 } from "@tanstack/react-table"
-import MiniSparkline from "../common/MiniSparkline"
-import PlatformIcon from "../common/PlatformIcon"
-import useBreakpoint from "../../hooks/useBreakpoint"
-import useIntersection from "../../hooks/useIntersection"
+import { MiniSparkline } from "../common/MiniSparkline"
+import { PlatformIcon } from "../common/PlatformIcon"
+import { useBreakpoint } from "../../hooks/useBreakpoint"
+import { useIntersection } from "../../hooks/useIntersection"
 
 /**
- * Z-INDEX HIERARCHY:
- * z-2:  Body cells (sticky first column)
- * z-10: Header cells (sticky horizontal scroll)
- * z-11: Header-body intersection (top-left corner)
- * z-20: UI elements (dropdowns, tooltips)
+ * Z-INDEX HIERARCHY (Critical for sticky positioning):
+ * z-2: Body cells (sticky first column on horizontal scroll)
+ * z-10: Header cells (sticky on vertical scroll)
+ * z-11: Header-body intersection (top-left corner, both sticky directions)
+ * z-20: UI overlays (dropdowns, tooltips, modals)
  */
 
+/**
+ * Component: High-Performance Pool Data Grid
+ * 
+ * Performance Optimizations:
+ * - IntersectionObserver: Lazy-loads sparklines for visible rows only (prevents 8k API calls)
+ * - manualSorting: true: Disables TanStack auto-sort (already handled by sortPools utility in parent)
+ * - Sticky headers with internal scroll: Keeps column labels visible during vertical navigation
+ * 
+ * CSS Limitation: Sticky positioning breaks with overflow ancestors (must use internal scroll container).
+ * Solution: max-h-[840px] wrapper with overflow-y-auto, not body scroll.
+ * 
+ * Accessibility: CMD/CTRL+click on rows opens detail page in new tab (power user feature)
+ * 
+ * @param {Object} props
+ * @param {Array<Object>} props.pools - Paginated pool dataset (40 items max)
+ * @param {Object<string, Array<number>>} props.sparklineData - Cache of historical APY data by pool ID
+ * @param {Function} props.onVisiblePoolsChange - Callback to notify parent of IDs in viewport
+ * @param {Array<id: string, desc: boolean>} props.sorting - TanStack sorting state
+ * @param {Function} props.onSortingChange - Handler to update sorting criteria
+ * @param {React.ForwardedRef<HTMLDivElement[lang="en"]>} ref - Ref to internal scroll container (for auto-scroll)
+ * @returns {JSX.Element}
+ */
 const PoolTable = forwardRef(({
    pools,
    sparklineData,
@@ -102,7 +124,6 @@ const PoolTable = forwardRef(({
             cell: ({ row }) => {
                const data = sparklineData?.[row.original.id]
                
-               // If no data (rate-limit or still loading), show upgrade to PRO
                if (!data) {
                   return (
                      <div className="flex justify-center">
@@ -184,6 +205,11 @@ const PoolTable = forwardRef(({
       manualSorting: true
    })
 
+   /**
+    * Renders sticky table headers with sort controls.
+    * Uses flexRender (TanStack utility) instead of manual JSX to preserve
+    * column metadata (accessorKey, custom cell renderers).
+    */
    function renderHeaders() {
       return table.getHeaderGroups().map(hg => (
          <tr key={hg.id}>
@@ -211,18 +237,22 @@ const PoolTable = forwardRef(({
       ))
    }
 
+   /**
+    * Render table rows with IntersectionObserver refs for lazy sparkline loading.
+    * Supports CMD/CTRL+click for opening detail pages in new tabs.
+    */
    function renderRows() {
       return table.getRowModel().rows.map((row, i) => {
          const poolId = row.original.id
          
          const handleRowClick = (e) => {
-            // don't navigate if user is selecting text
+            // Don't navigate if user is selecting text
             if (window.getSelection().toString()) return
             
-            // don't navigate if clicking on a link (avoid double navigation)
+            // Don't navigate if clicking on a link (prevents double navigation)
             if (e.target.closest("a")) return
             
-            // handle modifier keys for opening in new tab
+            // CMD/CTRL+click: Open in new tab (power user feature)
             if (e.metaKey || e.ctrlKey) {
                window.open(`/pools/${poolId}`, "_blank")
             } else {
@@ -246,7 +276,7 @@ const PoolTable = forwardRef(({
                         key={cell.id} 
                         className={`px-4 py-6 whitespace-nowrap text-sm
                            ${isSticky ? "sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150" : ""}
-                        `.trim()} // sticky-column-shadow
+                        `.trim()}
                      >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                      </td>
@@ -276,4 +306,4 @@ const PoolTable = forwardRef(({
 
 PoolTable.displayName = "PoolTable"
 
-export default PoolTable
+export { PoolTable }

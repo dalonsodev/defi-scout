@@ -1,6 +1,24 @@
-import Dropdown from "../common/Dropdown"
+import { Dropdown } from "../common/Dropdown"
 
-export default function PoolFilters({
+/**
+ * UI: Client-Side Pool Filtering Interface
+ * 
+ * Architecture Decision: All filtering logic runs in-browser instead of API queries
+ * because DeFiLlama's endpoint doesn't support query params (returns full +8k dataset).
+ * Trade-off: Instant filtering UX vs initial 1.2s load time.
+ * 
+ * Filter Pipeline: Search (text match) => Platform (multi-select) => TVL/Volume (numeric threshold)
+ * Triggers re-render in parent (PoolsContent) via updateFilter callback.
+ * 
+ * @param {Object} props
+ * @param {Object} props.filters - Active filter state (search, platforms, tvlUSD, volumeUsd1d)
+ * @param {Function} props.updateFilter - Setter for individual filter keys (debounced in parent)
+ * @param {Function} props.togglePlatform - Multi-select handler for platform dropdown
+ * @param {Function} props.clearFilters - Reset all filters to default values
+ * @param {Array<{value: string, display: string}>} props.availablePlatforms - Platform options from pool data
+ * @returns {JSX.Element}
+ */
+export function PoolFilters({
    filters, 
    updateFilter,
    togglePlatform,
@@ -64,5 +82,4 @@ export default function PoolFilters({
          </div>
       </div>
    )
-
 }
