@@ -4,37 +4,53 @@ import { TokenInfoBlock } from "./TokenInfoBlock"
 import { PoolCharts } from "./charts/PoolCharts"
 import { RangeCalculator } from "./calculator/RangeCalculator"
 
+/**
+ * Architechture: Pool Analytics & Strategy Dashboard.
+ * State orchestrator for liquidity simulation and historical trend visualization.
+ * @returns {JSX.Element}
+ */
 export function PoolDetail() {
    const { pool, history } = useLoaderData()
    const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
    const [rangeInputs, setRangeInputs] = useState({
       capitalUSD: 1000,
       fullRange: false,
-      minPrice: null,
-      maxPrice: null,
-      assumedPrice: null
+      minPrice: "",
+      maxPrice: "",
+      assumedPrice: ""
    })
-   const tokenSymbols = [pool.token0.symbol, pool.token1.symbol]
-   
-   const currentPrice = selectedTokenIdx === 0
-      ? (pool.token0Price || 0)
-      : (pool.token1Price || 0)
 
+   // Event Management: Scroll to top on route entry
    useEffect(() => {
       window.scrollTo(0, 0)
    }, [])
 
+   // Domain Logic: Price inversion and token symbol
+   const tokenSymbols = [pool.token0.symbol, pool.token1.symbol]
+   
+   /**
+    * Math: Resolve relative price
+    * Uniswap price is usually token0/token1. If user selects token1 as base,
+    * we may need to handle the reciprocal price depending on the calculator's logic.
+    */
+   const currentPrice = selectedTokenIdx === 0
+      ? (pool.token0Price || 0)
+      : (pool.token1Price || 0)
+
+
+   // Stats: Derived metrics from historical snapshots
    const latestSnapshot = history[history.length - 1] || {}
    const poolAgeDays = pool?.createdAtTimestamp
       ? Math.floor(Date.now() / 1000 - pool.createdAtTimestamp) / 86400
       : 0
 
+   // Calculate sample-based APY (7-day window)
    const last7Days = history.slice(-7)
    const avgAPY = calculateAverageAPY(last7Days, latestSnapshot.tvlUSD)
 
    return (
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-         {/* Navigation */}
+         {/* NAVIGATION: Contextual return */}
          <Link
             to="/"
             className="btn btn-ghost btn-sm mb-6 gap-2"
@@ -43,7 +59,7 @@ export function PoolDetail() {
             <span>Back to Pools</span>
          </Link>
 
-         {/* Header */}
+         {/* Header: Identity and protocol info */}
          <div className="bg-base-200 rounded-3xl p-6 mb-6 shadow-lg">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                <div>
@@ -74,6 +90,7 @@ export function PoolDetail() {
             </div>
          </div>
 
+         {/* Grid: Key Performance Indicators */}
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <StatCard 
                label="TVL"
@@ -97,6 +114,7 @@ export function PoolDetail() {
             />
          </div>
          
+         {/* Main Interface: Simulator vs History */}
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
                <RangeCalculator 
