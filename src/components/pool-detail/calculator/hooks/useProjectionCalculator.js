@@ -56,7 +56,6 @@ import { calculateIL } from "../utils/calculateIL"
  */
 export function useProjectionCalculator(poolData, rangeInputs, results) {
    // Price Inference: Calculate current USD prices from pool's token0Price
-   // (token1Price not provided by The Graph, derive from token0Price reciprocal)
    const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
       const currentPrice = parseFloat(poolData.token0Price)
       return calculateTokenPrices(poolData, currentPrice)
@@ -67,7 +66,17 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
    const [futureToken1Price, setFutureToken1Price] = useState(token1PriceUSD)
    const [projectionDays, setProjectionDays] = useState(0)
 
-   // Hydration: Sync inputs with current prices when pool changes
+   /**
+    * Price Hydration Strategy
+    * 
+    * Problem: Initial prices come from poolData (async loader).
+    * Using useState(token0PriceUSD) captures stale value (undefined) on mount.
+    * 
+    * Solution: useEffect syncs state once prices are computed.
+    * React-idiomatic pattern for "derived initial state".
+    * 
+    * Trade-off: One extra render (mount with 0, then update) vs simpler code.
+    */
    useEffect(() => {
       setFutureToken0Price(token0PriceUSD)
       setFutureToken1Price(token1PriceUSD)
@@ -75,7 +84,17 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
 
    // Strategy Simulation: Calculate HODL vs LP outcomes under given scenario
    const { hodlStrategy, lpStrategy, daysToBreakEven } = useMemo(() => {
-      // Early Return: Skip calculation if prerequisites missing
+      /*
+       * Early Return: Invalid State Handling
+       * 
+       * Returns null strategies when:
+       * 1. simulateRangePerformance failed (results.success = false)
+       * 2. User entered invalid prices (≤ 0)
+       * 3. Projection days is negative
+       * 
+       * UI Contract: Consumer must check "isCalculating" before rendering,
+       * and show placeholder like "Adjust inputs to see projection"
+       */
       if (!results?.success) {
          return { hodlStrategy: null, lpStrategy: null, daysToBreakEven: 0 }
       }
@@ -88,25 +107,15 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
 
       const capitalUSD = rangeInputs.capitalUSD || 1000
       const { amount0, amount1, token0Percent, token1Percent } = results.composition
-      
+
+
+      // ===== STRATEGY A: HODL (Buy and Hold) =====
+
       // HODL Value: Token quantities * future prices
       const hodlFutureValue =
          amount0 * futureToken0Price +
          amount1 * futureToken1Price
 
-      // Impermanent Loss: Compare price ratios (current vs future)
-      const currentPoolPrice = token0PriceUSD / token1PriceUSD
-      const futurePoolPrice = futureToken0Price / futureToken1Price
-      const IL_decimal = calculateIL(currentPoolPrice, futurePoolPrice)
-      const lpValueBeforeFees = capitalUSD * (1 + IL_decimal)
-
-      // Breakeven Analysis: Days needed for fees to offset IL deficit
-      const lpDeficit = hodlFutureValue - lpValueBeforeFees
-      const daysToBreakEven = lpDeficit > 0 && results.dailyFeesUSD > 0
-         ? lpDeficit / results.dailyFeesUSD
-         : 0
-
-      // Strategy A: HODL - Buy and hold both assets
       const hodl = {
          token0Symbol: poolData.token0.symbol,
          token1Symbol: poolData.token1.symbol,
@@ -119,12 +128,38 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
          pnlPercent: ((hodlFutureValue - capitalUSD) / capitalUSD * 100).toFixed(2)
       }
 
-      // Strategy B: LP - Provide liquidity on Uniswap V3
+
+      // ===== STRATEGY B: LP (Uniswap V3) =====
+
+      // Step 1: Calculate Impermanent Loss (price movement effect)
+      const currentPoolPrice = token0PriceUSD / token1PriceUSD
+      const futurePoolPrice = futureToken0Price / futureToken1Price
+
+      // IL = 0% when futurePrice === currentPrice (no price change)
+      /**
+       * Impermanent Loss Calculation
+       * 
+       * USes standard Uniswap V2/V3 formula:
+       *    IL = (2 * √(price_ratio) / (1 + price_ratio)) - 1
+       * 
+       * Source: Pintail's "Uniswap: A Good Deal for Liquidity Providers?"
+       * https://pintail.medium.com/uniswap-a-good-deal-for-liquidity-providers-104c0b6816f2
+       * 
+       * Returns: Decimal (e.g. -0.05 for 5% loss)
+       */
+      const IL_decimal = calculateIL(currentPoolPrice, futurePoolPrice)
       const IL_percent = (IL_decimal * 100).toFixed(2)
+
+      // Step 2: Calculate LP position value after IL (before fees)
+      // IL reduces position value relative to HODL
+      const lpValueAfterIL = capitalUSD * (1 + IL_decimal)
+
+      // Step 3: Add projected fee earnings
       const projectedFees = projectionDays > 0
          ? results.dailyFeesUSD * projectionDays
          : 0
-      const lpFutureValue = lpValueBeforeFees + projectedFees
+         
+      const lpFutureValue = lpValueAfterIL + projectedFees
 
       const lp = {
          token0Symbol: poolData.token0.symbol,
@@ -140,6 +175,15 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
          ilPercent: IL_percent
       }
 
+
+      // ===== BREAKEVEN ANALYSIS =====
+
+      // Days needed for fees to offset IL loss
+      const ilLossUSD = hodlFutureValue - lpValueAfterIL
+      const daysToBreakEven = ilLossUSD > 0 && results.dailyFeesUSD > 0
+         ? ilLossUSD / results.dailyFeesUSD
+         : 0
+      
       return { hodlStrategy: hodl, lpStrategy: lp, daysToBreakEven }
    }, [
       results,
