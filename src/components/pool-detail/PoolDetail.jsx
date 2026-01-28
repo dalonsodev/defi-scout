@@ -1,8 +1,9 @@
 import { useLoaderData, Link } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { TokenInfoBlock } from "./TokenInfoBlock"
 import { PoolCharts } from "./charts/PoolCharts"
 import { RangeCalculator } from "./calculator/RangeCalculator"
+import { invertPriceRange } from "./calculator/utils/invertPriceRange"
 
 /**
  * Architechture: Pool Analytics & Strategy Dashboard.
@@ -19,6 +20,21 @@ export function PoolDetail() {
       maxPrice: "",
       assumedPrice: ""
    })
+
+   const handleTokenChange = useCallback((newIdx) => {
+      const invertedPrices = invertPriceRange({
+         minPrice: rangeInputs.minPrice,
+         maxPrice: rangeInputs.maxPrice,
+         assumedPrice: rangeInputs.assumedPrice,
+         fullRange: rangeInputs.fullRange
+      })
+
+      setSelectedTokenIdx(newIdx)
+
+      if (invertedPrices) {
+         setRangeInputs(prev => ({ ...prev, ...invertedPrices }))
+      }
+   }, [rangeInputs])
 
    // Event Management: Scroll to top on route entry
    useEffect(() => {
@@ -130,7 +146,7 @@ export function PoolDetail() {
                   <TokenInfoBlock 
                      pool={pool}
                      selectedTokenIdx={selectedTokenIdx}
-                     onTokenChange={setSelectedTokenIdx}
+                     onTokenChange={handleTokenChange}
                   />
                </div>
                <PoolCharts 
