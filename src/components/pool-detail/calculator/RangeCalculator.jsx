@@ -25,9 +25,6 @@ import { debugLog } from "../../../utils/logger"
  */
 export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange }) {
    const { hourlyData, isLoading, fetchError } = usePoolHourlyData(pool.id)
-
-   // Flow Control: Prevents effect double-firing on token flip
-   const prevTokenIdx = useRef(selectedTokenIdx)
    const hasPopulated = useRef(false)
 
    debugLog("Inputs:", inputs)
@@ -79,63 +76,6 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
       displayPrice,
       pool
    ])
-
-   /**
-    * Price Inversion Synchronization (Token Flip)
-    * 
-    * Mathematical Invariant: In Uniswap V3, price of A/B = 1 / (B/A).
-    * When base token changes, we must:
-    * 1. Invert all prices: P' = 1/P
-    * 2. Swap min/max: (a < x < b) becomes (1/b < 1/x < 1/a)
-    * 
-    * Example: ETH/USDC [1500, 2000] → USDC/ETH [0.0005, 0.000667]
-    * 
-    */
-   useEffect(() => {
-      if (prevTokenIdx.current === selectedTokenIdx) {
-         return
-      }
-      if (inputs.fullRange) {
-         prevTokenIdx.current = selectedTokenIdx
-         return
-      }
-      if (inputs.minPrice === "" || inputs.maxPrice === "") {
-         prevTokenIdx.current = selectedTokenIdx
-         return
-      }
-      
-      const oldMin = Number(inputs.minPrice)
-      const oldMax = Number(inputs.maxPrice)
-      const oldAssumedPrice = Number(inputs.assumedPrice)
-
-      // Validation: Skip if invalid state (prevents NaN propagation)
-      if (
-         oldMin <= 0 || 
-         oldMax <= 0 || 
-         oldAssumedPrice <= 0 ||
-         !isFinite(oldMin) || 
-         !isFinite(oldMax) ||
-         !isFinite(oldAssumedPrice)
-      ) 
-         {
-         prevTokenIdx.current = selectedTokenIdx
-         return
-      }
-
-      // Invert and swap boundaries
-      const newMin = 1 / oldMax
-      const newMax = 1 / oldMin
-      const newAssumedPrice = 1 / oldAssumedPrice
-
-      onInputsChange(prev => ({
-         ...prev,
-         minPrice: newMin.toFixed(8), // Preserve precision for low-value assets
-         maxPrice: newMax.toFixed(8),
-         assumedPrice: newAssumedPrice
-      }))
-
-      prevTokenIdx.current = selectedTokenIdx
-   }, [selectedTokenIdx, inputs.fullRange, inputs.minPrice, inputs.maxPrice, inputs.assumedPrice, onInputsChange])
 
    // Performance Optimization: Debounce by 500ms.
    // Prevents expensive simulateRangePerformance() recalculations on every keystroke.
