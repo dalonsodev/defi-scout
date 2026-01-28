@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react"
+import { useEffect, useMemo, useCallback, useRef } from "react"
 import { CalculatorStats } from "./CalculatorStats"
 import { CalculatorInputs } from "./CalculatorInputs"
 import { useDebounce } from "../../../hooks/useDebounce"
-import { fetchPoolHourData } from "../../../services/theGraphClient"
+import { usePoolHourlyData } from "./hooks/usePoolHourlyData"
 import { simulateRangePerformance } from "./utils/simulateRangePerformance"
 import { calculatePresetRange } from "./utils/calculatePresetRange"
 import { calculateTokenPrices } from "./utils/calculateTokenPrices"
@@ -24,9 +24,7 @@ import { debugLog } from "../../../utils/logger"
  * @returns {JSX.Element}
  */
 export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange }) {
-   const [hourlyData, setHourlyData] = useState(null)
-   const [isLoading, setIsLoading] = useState(true)
-   const [fetchError, setFetchError] = useState(null)
+   const { hourlyData, isLoading, fetchError } = usePoolHourlyData(pool.id)
 
    // Flow Control: Prevents effect double-firing on token flip
    const prevTokenIdx = useRef(selectedTokenIdx)
@@ -43,7 +41,7 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
       return selectedTokenIdx === 0
          ? currentPrice          // Token0 per Token1
          : 1 / currentPrice      // Token1 per Token0 (reciprocal)
-      }, [selectedTokenIdx, hourlyData])
+   }, [selectedTokenIdx, hourlyData])
    
    /**
     * Hydration: Initialize default ±10% range on first load.
@@ -143,41 +141,6 @@ export function RangeCalculator({ pool, selectedTokenIdx, inputs, onInputsChange
    // Prevents expensive simulateRangePerformance() recalculations on every keystroke.
    // Cost: ~50-100ms for 168 hourly data points (blocks render during computation).
    const debouncedInputs = useDebounce(inputs, 500)
-
-   /**
-    * Data Fetching: 7-Day Hourly Lookback.
-    * Retrieves 168 data points for fee growth simulation.
-    * 
-    * Why 7 days? Balance between:
-    * - Sample size (statistical significance)
-    * - Recency (captures current market conditions)
-    * Trade-off: Longer windows (30d) smooth outliers but miss regime changes.
-    */
-   useEffect(() => {
-      let cancelled = false
-
-      async function loadHourlyData() {
-         try {
-            const startTime = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)
-            const data = await fetchPoolHourData(pool.id, startTime)
-
-            if (!cancelled) {
-               setHourlyData(data)
-               setIsLoading(false)
-            }
-         } catch (err) {
-            console.error('❌ Fetch error:', err)
-            if (!cancelled) {
-               setFetchError(err.message)
-               setIsLoading(false)
-            }
-         }
-      }
-
-      loadHourlyData()
-      return () => { cancelled = true } // Cleanup: Prevents state update on unmounted component
-   }, [pool.id])
-
 
 
    // Token Price Normalization: Convert pool prices to USD for display
