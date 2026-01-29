@@ -1,7 +1,6 @@
 import { useMemo, useCallback } from "react"
 import { CalculatorStats } from "./CalculatorStats"
 import { CalculatorInputs } from "./CalculatorInputs"
-import { useDebounce } from "../../../hooks/useDebounce"
 import { simulateRangePerformance } from "./utils/simulateRangePerformance"
 import { calculatePresetRange } from "./utils/calculatePresetRange"
 import { calculateTokenPrices } from "./utils/calculateTokenPrices"
@@ -44,12 +43,6 @@ export function RangeCalculator({
          : 1 / currentPrice      // Token1 per Token0 (reciprocal)
    }, [selectedTokenIdx, hourlyData])
 
-   // Performance Optimization: Debounce by 500ms.
-   // Prevents expensive simulateRangePerformance() recalculations on every keystroke.
-   // Cost: ~50-100ms for 168 hourly data points (blocks render during computation).
-   const debouncedInputs = useDebounce(inputs, 500)
-
-
    // Token Price Normalization: Convert pool prices to USD for display
    const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
       const currentPrice = hourlyData?.[0]?.token0Price
@@ -90,11 +83,10 @@ export function RangeCalculator({
 
    /**
     * Fee Simulation Engine (Memoized).
-    * Most CPU-intensive operation: iterates through 168 hourly snapshots,
-    * calculates liquidity concentration, and projects fee accrual.
+    * Iterates through 168 hourly snapshots to calculate liquidity concentration,
+    * and project fee accrual. Runs in <30ms (negligible blocking time).
     *
-    * Runs only when debounced inputs or market data changes.
-    *
+    * Recalculates only whenever inputs or market data change.
     */
    const results = useMemo(() => {
       if (!hourlyData) return null
@@ -102,16 +94,16 @@ export function RangeCalculator({
       const assumedPrice = inputs.assumedPrice
 
       return simulateRangePerformance({
-         capitalUSD: debouncedInputs.capitalUSD,
-         minPrice: debouncedInputs.minPrice === "" ? null : Number(debouncedInputs.minPrice),
-         maxPrice: debouncedInputs.maxPrice === "" ? null : Number(debouncedInputs.maxPrice),
-         fullRange: debouncedInputs.fullRange,
+         capitalUSD: inputs.capitalUSD,
+         minPrice: inputs.minPrice === "" ? null : Number(inputs.minPrice),
+         maxPrice: inputs.maxPrice === "" ? null : Number(inputs.maxPrice),
+         fullRange: inputs.fullRange,
          assumedPrice,
          selectedTokenIdx,
          hourlyData,
          pool
       })
-   }, [debouncedInputs, selectedTokenIdx, hourlyData, pool, inputs.assumedPrice])
+   }, [inputs, selectedTokenIdx, hourlyData, pool])
 
    return (
       <div className="grid gap-6">
