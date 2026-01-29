@@ -7,17 +7,17 @@ import { inferTokenPricesFromTVL } from "../../../../utils/inferTokenPricesFromT
 
 /**
  * Orchestrator: Simulates historical LP position performance using hourly on-chain data.
- * 
+ *
  * Architecture: Multi-stage pipeline (validation → composition → fee loop → metrics)
  * to prevent cascading errors. Each stage can fail independently with contextual errors.
- * 
+ *
  * Model Simplifications (Trade-off: Speed vs Accuracy):
  * 1. Assumes constant token amounts → Reality: AMM rebalances on swaps
  * 2. Infers USD prices from current pool TVL → Reality: Historical prices would be better
  * 3. Uses linear interpolation for fee share → Reality: Tick-level precision exists
- * 
+ *
  * Accuracy: Good for ±20% price moves over 7-30 days. Degrades for >50% moves or <7 days.
- * 
+ *
  * @param {Object} params - Simulation configuration
  * @param {number} params.capitalUSD - Initial investment in USD (min $10)
  * @param {number} params.minPrice - Lower price bound (in selected token scale)
@@ -27,14 +27,14 @@ import { inferTokenPricesFromTVL } from "../../../../utils/inferTokenPricesFromT
  * @param {number} params.selectedTokenIdx - 0 or 1, defines price scale interpretation
  * @param {Object[]} params.hourlyData - TheGraph poolHourData snapshots (min 168 hours)
  * @param {Object} params.pool - Pool metadata (TVL, decimals, feeTier)
- * 
+ *
  * @returns {Object} Simulation result
  * @returns {boolean} returns.success - Operation status
  * @returns {string} [returns.error] - Human-readable error message (if failed)
  * @returns {number} [returns.APR] - Annualized fee return (if successful)
  * @returns {string} returns.dataQuality - "EXCELLENT" | "RELIABLE" | "LIMITED" | "INSUFFICIENT"
  * @returns {string[]} returns.warnings - Array of data anomalies detected
- * 
+ *
  * @example
  * // Simulate $10k ETH/USDC position (0.3% fee, $2500-$3500 range)
  * const result = simulateRangePerformance({
@@ -80,14 +80,14 @@ export function simulateRangePerformance({
 
    const { quality, warnings: rawWarnings } = assessDataQuality(hourlyData)
    const warnings = Array.isArray(rawWarnings) ? rawWarnings : []
-   
+
 
    // ===== STAGE 3: BLOCKING DECISION =====
 
    // Quality gate: Insufficient data prevents unreliable projections
    if (quality === "INSUFFICIENT") {
-      return { 
-         success: false, 
+      return {
+         success: false,
          error: "Pool needs 7+ days of data",
          quality
       }
@@ -185,7 +185,7 @@ export function simulateRangePerformance({
          dataQuality: quality
       }
    }
-   
+
    /*
    * Liquidity Normalization for Decimal Differences
    *
@@ -231,7 +231,7 @@ export function simulateRangePerformance({
       finalQuality,
       warnings: feeWarnings
    } = feeResult
-   
+
    const allWarnings = [...warnings, feeWarnings]
 
 
@@ -244,7 +244,7 @@ export function simulateRangePerformance({
    const feeReturnPercent = (totalFeesUSD / capitalUSD) * 100
    const APR = feeReturnPercent * (365 / daysOfData)
 
-   return { 
+   return {
       success: true,
 
       // Fee metrics (historical baseline for projections)
