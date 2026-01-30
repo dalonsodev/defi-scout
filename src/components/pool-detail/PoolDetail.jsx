@@ -12,7 +12,7 @@ import { usePoolHourlyData } from "./calculator/hooks/usePoolHourlyData"
  * @returns {JSX.Element}
  */
 export function PoolDetail() {
-   const { pool, history } = useLoaderData()
+   const { pool, history, ethPriceUSD } = useLoaderData()
    const { hourlyData, isLoading, fetchError } = usePoolHourlyData(pool.id)
    const hasHydrated = useRef(false)
    const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
@@ -171,6 +171,7 @@ export function PoolDetail() {
                   hourlyData={hourlyData}
                   isLoading={isLoading}
                   fetchError={fetchError}
+                  ethPriceUSD={ethPriceUSD}
                />
             </div>
             <div className="bg-base-200 rounded-3xl p-6 shadow-lg">

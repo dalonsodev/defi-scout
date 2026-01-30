@@ -28,7 +28,8 @@ export function RangeCalculator({
    onInputsChange,
    hourlyData,
    isLoading,
-   fetchError
+   fetchError,
+   ethPriceUSD
 }) {
    debugLog("Inputs:", inputs)
 
@@ -49,8 +50,13 @@ export function RangeCalculator({
          ? parseFloat(hourlyData[0].token0Price)
          : parseFloat(pool.token0Price)
 
-      return calculateTokenPrices(pool, currentPrice)
-   }, [hourlyData, pool])
+      return calculateTokenPrices(
+         pool.token0,
+         pool.token1,
+         ethPriceUSD,
+         currentPrice
+      )
+   }, [hourlyData, pool, ethPriceUSD])
 
    const priceLabel = useMemo(() => {
       return selectedTokenIdx === 0
@@ -77,7 +83,7 @@ export function RangeCalculator({
 
    const handlePresetClick = useCallback((presetType) => {
       const assumedPrice = displayPrice
-      const { minPrice, maxPrice } = calculatePresetRange(assumedPrice,presetType)
+      const { minPrice, maxPrice } = calculatePresetRange(assumedPrice, presetType)
       onInputsChange(prev => ({...prev, minPrice, maxPrice}))
    }, [displayPrice, onInputsChange])
 
@@ -101,9 +107,10 @@ export function RangeCalculator({
          assumedPrice,
          selectedTokenIdx,
          hourlyData,
-         pool
+         pool,
+         ethPriceUSD
       })
-   }, [inputs, selectedTokenIdx, hourlyData, pool])
+   }, [inputs, selectedTokenIdx, hourlyData, pool, ethPriceUSD])
 
    return (
       <div className="grid gap-6">
@@ -117,6 +124,7 @@ export function RangeCalculator({
                   rangeInputs={inputs}
                   token0PriceUSD={token0PriceUSD}
                   token1PriceUSD={token1PriceUSD}
+                  ethPriceUSD={ethPriceUSD}
                />
             </div>
 

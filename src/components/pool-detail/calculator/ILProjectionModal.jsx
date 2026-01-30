@@ -6,13 +6,13 @@ import { useProjectionCalculator } from "./hooks/useProjectionCalculator"
 /**
  * UI: IL (Impermanent Loss) vs HODL Strategy Simulator
  * Compares LP position (concentrated liquidity + fee accrual) against passive holding.
- * 
+ *
  * IL Explained: Opportunity cost from AMM rebalancing when prices diverge.
  * Formula: IL% = (LP_Value / HODL_Value) - 1
- * 
+ *
  * Performance: Heavy computation (rebalancing simulation at each price tick).
  * Results debounced via useProjectionCalculator to prevent lag on input changes.
- * 
+ *
  * @param {Object} props
  * @param {boolean} props.isOpen - Modal visibility state
  * @param {Function} props.onClose - Cleanup callback (resets local simulation state)
@@ -26,7 +26,8 @@ export function ILProjectionModal({
    onClose,
    poolData,
    rangeInputs,
-   results
+   results,
+   ethPriceUSD
 }) {
    // Hook Orchestration: Manages complex IL math + debounced recalculation.
    // Simulates AMM rebalancing at each price move, calculates cumulative fees,
@@ -44,16 +45,16 @@ export function ILProjectionModal({
       setFutureToken1Price,
       setProjectionDays,
       daysToBreakEven
-   } = useProjectionCalculator(poolData, rangeInputs, results)
+   } = useProjectionCalculator(poolData, rangeInputs, results, ethPriceUSD)
 
    return (
       <dialog className={`modal ${isOpen ? "modal-open" : ""}`}>
          <div className="modal-box max-w-xl bg-base-200">
-            
+
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                <h3 className="text-2xl font-bold">Simulate Position Performance</h3>
-               <button 
+               <button
                   onClick={onClose}
                   className="btn btn-sm btn-circle btn-ghost"
                >
@@ -62,7 +63,7 @@ export function ILProjectionModal({
             </div>
 
             {/* Strategy Comparison Cards */}
-            <StrategyComparison 
+            <StrategyComparison
                hodlStrategy={hodlStrategy}
                lpStrategy={lpStrategy}
                isCalculating={isCalculating}
@@ -70,7 +71,7 @@ export function ILProjectionModal({
 
             {/* Simulation Controls */}
             <div className="space-y-6">
-               <PriceInputSection 
+               <PriceInputSection
                   token0Symbol={poolData.token0.symbol}
                   token1Symbol={poolData.token1.symbol}
                   currentToken0PriceUSD={currentToken0PriceUSD}
@@ -80,7 +81,7 @@ export function ILProjectionModal({
                   onToken0PriceChange={setFutureToken0Price}
                   onToken1PriceChange={setFutureToken1Price}
                />
-               <TimeLineControl 
+               <TimeLineControl
                   days={projectionDays}
                   onDaysChange={setProjectionDays}
                   daysToBreakEven={daysToBreakEven}
@@ -89,7 +90,7 @@ export function ILProjectionModal({
          </div>
 
          {/* Backdrop: Click-outside-to-close */}
-         <form 
+         <form
             method="dialog"
             onClick={onClose}
             className="modal-backdrop"

@@ -2,52 +2,47 @@ import { assessDataQuality } from "./assessDataQuality"
 import { calculateLiquidity } from "./calculateLiquidity"
 import { validateInputs } from "../pipeline/validateInputs"
 import { calculateComposition } from "../pipeline/calculateComposition"
-import { calculateFeesWithQuality } from "../pipeline/calcululateFeesWithQuality"
+import { calculateFeesWithQuality } from "../pipeline/calculateFeesWithQuality"
 import { inferTokenPricesFromTVL } from "../../../../utils/inferTokenPricesFromTVL"
+import { debugLog } from "../../../../utils/logger"
 
 /**
- * Orchestrator: Simulates historical LP position performance using hourly on-chain data.
+ * Orchestrates historical LP position simulation using hourly on-chain data.
  *
- * Architecture: Multi-stage pipeline (validation → composition → fee loop → metrics)
- * to prevent cascading errors. Each stage can fail independently with contextual errors.
+ * Pipeline Architecture (fail-fast stages):
+ * 1. Validate inputs (capital, price range, data completeness)
+ * 2. Assess data quality (EXCELLENT/RELIABLE/LIMITED/INSUFFICIENT)
+ * 3. Infer token USD prices from pool TVL
+ * 4. Calculate position composition (50/50 vs concentrated)
+ * 5. Compute liquidity (L_user) with decimal normalization
+ * 6. Accumulate fees from hourly snapshots
+ * 7. Calculate APR and return metrics
  *
- * Model Simplifications (Trade-off: Speed vs Accuracy):
- * 1. Assumes constant token amounts → Reality: AMM rebalances on swaps
- * 2. Infers USD prices from current pool TVL → Reality: Historical prices would be better
- * 3. Uses linear interpolation for fee share → Reality: Tick-level precision exists
+ * Model Trade-offs (Speed vs Accuracy):
+ * - Assumes constant token amounts → Reality: AMM rebalances
+ * - Infers USD prices from current TVL → Reality: use historical prices
+ * - Linear interpolation for fee share → Reality: tick-level precision
+ * - Accuracy: Good for ±20% moves over 7-30 days
  *
- * Accuracy: Good for ±20% price moves over 7-30 days. Degrades for >50% moves or <7 days.
- *
- * @param {Object} params - Simulation configuration
- * @param {number} params.capitalUSD - Initial investment in USD (min $10)
- * @param {number} params.minPrice - Lower price bound (in selected token scale)
- * @param {number} params.maxPrice - Upper price bound (in selected token scale)
- * @param {boolean} params.fullRange - If true, simulates V2 position (50/50 split)
+ * @param {Object} params
+ * @param {number} params.capitalUSD - Initial investment (min $10)
+ * @param {number} params.minPrice - Lower bound (in selected token scale)
+ * @param {number} params.maxPrice - Upper bound (in selected token scale)
+ * @param {boolean} params.fullRange - If true, simulates V2-style 50/50 position
  * @param {number} params.assumedPrice - Entry price for concentrated positions
- * @param {number} params.selectedTokenIdx - 0 or 1, defines price scale interpretation
- * @param {Object[]} params.hourlyData - TheGraph poolHourData snapshots (min 168 hours)
+ * @param {number} params.selectedTokenIdx - 0 or 1 (defines price interpretation)
+ * @param {Object[]} params.hourlyData - TheGraph poolHourData (min 168 hours)
  * @param {Object} params.pool - Pool metadata (TVL, decimals, feeTier)
  *
  * @returns {Object} Simulation result
  * @returns {boolean} returns.success - Operation status
- * @returns {string} [returns.error] - Human-readable error message (if failed)
+ * @returns {string} [returns.error] - Error message if failed
  * @returns {number} [returns.APR] - Annualized fee return (if successful)
- * @returns {string} returns.dataQuality - "EXCELLENT" | "RELIABLE" | "LIMITED" | "INSUFFICIENT"
- * @returns {string[]} returns.warnings - Array of data anomalies detected
- *
- * @example
- * // Simulate $10k ETH/USDC position (0.3% fee, $2500-$3500 range)
- * const result = simulateRangePerformance({
- *    capitalUSD: 10000,
- *    minPrice: 2500,
- *    maxPrice: 3500,
- *    fullRange: false,
- *    assumedPrice: 3000,
- *    selectedTokenIdx: 1, // Price in USDC per ETH
- *    hourlyData: [...], // 168+ hours of poolHourData
- *    pool: { feeTier: 3000, ... }
- * })
- * // => { success: true, APR: 45.2, IL_percent: -3.1, netPnL: 412.50, ... }
+ * @returns {number} [returns.totalFeesUSD] - Accumulated historical fees
+ * @returns {number} [returns.dailyFeesUSD] - Average daily fees
+ * @returns {Object} [returns.composition] - Position breakdown (amounts, USD values)
+ * @returns {string} returns.dataQuality - EXCELLENT | RELIABLE | LIMITED | INSUFFICIENT
+ * @returns {string[]} returns.warnings - Anomalies detected (max 5)
  */
 export function simulateRangePerformance({
    capitalUSD,
@@ -59,8 +54,7 @@ export function simulateRangePerformance({
    hourlyData,
    pool
 }) {
-   // ===== STAGE 1: BASIC VALIDATIONS =====
-
+   // ===== STAGE 1: INPUT VALIDATION =====
    const validation = validateInputs({
       capitalUSD,
       minPrice,
@@ -71,32 +65,21 @@ export function simulateRangePerformance({
       hourlyData
    })
 
-   if (!validation.success) {
-      return validation
-   }
-
+   if (!validation.success) return validation
 
    // ===== STAGE 2: DATA QUALITY ASSESSMENT =====
-
    const { quality, warnings: rawWarnings } = assessDataQuality(hourlyData)
    const warnings = Array.isArray(rawWarnings) ? rawWarnings : []
 
-
-   // ===== STAGE 3: BLOCKING DECISION =====
-
-   // Quality gate: Insufficient data prevents unreliable projections
    if (quality === "INSUFFICIENT") {
       return {
          success: false,
-         error: "Pool needs 7+ days of data",
+         error: "Pool needs 7+ days of data for reliable projections",
          quality
       }
    }
 
-
-   // ===== STAGE 4: PRICE INFERENCE =====
-
-   // Validate pool metadata (required for liquidity normalization)
+   // ===== STAGE 3: METADATA VALIDATION =====
    if (!pool?.totalValueLockedToken0 || !pool?.totalValueLockedToken1) {
       return {
          success: false,
@@ -113,7 +96,7 @@ export function simulateRangePerformance({
       }
    }
 
-   // Get current price from first hourly snapshot (TheGraph returns descending order)
+   // ===== STAGE 4: PRICE INFERENCE =====
    const currentPrice = parseFloat(hourlyData[0].token0Price)
 
    const priceInferenceResult = inferTokenPricesFromTVL({
@@ -133,9 +116,7 @@ export function simulateRangePerformance({
 
    const { priceToken0InUSD, priceToken1InUSD } = priceInferenceResult
 
-
    // ===== STAGE 5: COMPOSITION CALCULATION =====
-
    const allPrices = hourlyData.map(h => parseFloat(h.token0Price))
    const compositionResult = calculateComposition({
       userInputs: {
@@ -168,50 +149,66 @@ export function simulateRangePerformance({
    const { capital0USD, capital1USD } = capitalAllocation
    const { min: effectiveMin, max: effectiveMax } = effectiveRange
 
-   // Calculate user liquidity (Uniswap V3 formula: L = √(xy))
-   const L_user = calculateLiquidity(
-      amount0,
-      amount1,
-      currentPrice,
-      effectiveMin,
-      effectiveMax
-   )
+   debugLog('Position Composition:', {
+      capital: `$${capitalUSD.toLocaleString()}`,
+      split: `${token0Percent}% / ${token1Percent}%`,
+      range: `${effectiveMin.toFixed(4)} - ${effectiveMax.toFixed(4)}`
+   })
 
-   // Validation: Zero liquidity means price is outside range (edge case)
-   if (L_user <= 0) {
+   // ===== STAGE 6: LIQUIDITY CALCULATION =====
+   const decimals0 = parseInt(pool.token0.decimals)
+   const decimals1 = parseInt(pool.token1.decimals)
+
+   // Geometric mean of decimals (L = √(amount0 × amount1) in sqrt space)
+   const liquidityExponent = (decimals0 + decimals1) / 2
+   let L_user_base
+
+   if (fullRange) {
+      // Full range: Simplified formula (entire 0 to ∞ curve)
+      L_user_base = Math.sqrt(amount0 * amount1)
+   } else {
+      // Concentrated: Canonical Uniswap V3 formula
+      L_user_base = calculateLiquidity(
+         amount0,
+         amount1,
+         currentPrice,
+         effectiveMin,
+         effectiveMax
+      )
+   }
+
+   if (L_user_base <= 0 || !isFinite(L_user_base)) {
       return {
          success: false,
-         error: "Position has no active liquidity at current price. Price may be outside your range.",
+         error: "Invalid liquidity calculation. Check range parameters.",
          dataQuality: quality
       }
    }
 
-   /*
-   * Liquidity Normalization for Decimal Differences
-   *
-   * Problem: On-chain liquidity uses raw units (e.g. 1e18 for USDC, 1e6 for USDT).
-   * Solution: Apply geometric mean of decimals as scaling factor.
-   *
-   * Why average? Because L = √(amount0 * amount1), so:
-   * L_raw = √((amount0 * 10^d0) * (amount1 * 10^d1))
-   * L_raw = √(amount0 * amount1) * 10^((d0+d1)/2)
-   *           ↑ human-readable        ↑ scaling exponent
-   *
-   * Example: ETH (18 decimals) / USDC (6 decimals) → exponent = 12 (from 10^12)
-   */
-   const decimals0 = parseInt(pool.token0.decimals)
-   const decimals1 = parseInt(pool.token1.decimals)
-   const liquidityExponent = (decimals0 + decimals1) / 2
+   // Scale to RAW units (matches TheGraph's L_pool scale)
+   const L_user = L_user_base * Math.pow(10, liquidityExponent)
 
+   // Sanity check: Fee share should be reasonable
+   const L_pool_first = parseFloat(hourlyData[0].liquidity)
+   const feeSharePercent = (L_user / L_pool_first) * 100
 
-   // ===== STAGE 6: FEE ACCUMULATION LOOP =====
+   debugLog('Liquidity Calculated:', {
+      L_user: L_user.toExponential(3),
+      L_pool: L_pool_first.toExponential(3),
+      feeShare: `${feeSharePercent.toFixed(6)}%`,
+      expected: fullRange ? '0.0001% - 0.001%' : '0.001% - 0.1%'
+   })
 
+   if (feeSharePercent > 100) {
+      debugLog('⚠️ Fee share > 100% (possible scaling bug)')
+   }
+
+   // ===== STAGE 7: FEE ACCUMULATION =====
    const feeResult = calculateFeesWithQuality({
       hourlyData,
       effectiveMin,
       effectiveMax,
       L_user,
-      liquidityExponent,
       initialQuality: quality,
       debug: false
    })
@@ -232,33 +229,28 @@ export function simulateRangePerformance({
       warnings: feeWarnings
    } = feeResult
 
-   const allWarnings = [...warnings, feeWarnings]
+   const allWarnings = [...warnings, ...feeWarnings]
 
-
-   // ===== STAGE 7: METRIC AGGREGATION =====
-
-   // Calculate time period (TheGraph poolHourData = 1 snapshot per hour)
+   // ===== STAGE 8: METRIC AGGREGATION =====
    const daysOfData = hourlyData.length / 24
-
-   // Calculate APR (annualized fee return)
    const feeReturnPercent = (totalFeesUSD / capitalUSD) * 100
    const APR = feeReturnPercent * (365 / daysOfData)
 
+   debugLog('Final Metrics:', {
+      totalFees: `$${totalFeesUSD.toFixed(2)}`,
+      APR: `${APR.toFixed(2)}%`,
+      inRange: `${percentInRange.toFixed(1)}%`
+   })
+
    return {
       success: true,
-
-      // Fee metrics (historical baseline for projections)
       totalFeesUSD,
       feeReturnPercent,
       APR,
       dailyFeesUSD: totalFeesUSD / daysOfData,
       daysOfData,
-
-      // Range metrics
       hoursInRange,
       percentInRange,
-
-      // Position composition
       composition: {
          token0Percent,
          token1Percent,
@@ -267,8 +259,6 @@ export function simulateRangePerformance({
          amount0,
          amount1
       },
-
-      // Meta
       dataQuality: finalQuality,
       warnings: allWarnings.slice(0, 5)
    }
