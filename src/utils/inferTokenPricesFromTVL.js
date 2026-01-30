@@ -1,18 +1,18 @@
 /**
  * Utility: Infers USD prices of both tokens using current TVL snapshot.
- * 
+ *
  * Formula: priceToken1 = totalUSD / (tvl0/currentPrice + tvl1)
  *          priceToken0 = priceToken1 / currentPrice
- * 
+ *
  * Trade-offs: Uses current TVL as proxy for historical prices.
  * Acceptable error: <5% for 7-30 day periods.
- * 
+ *
  * @param {Object} params
  * @param {number} params.tvlUSD - Total pool TVL in USD
- * @param {number} prarms.tvlToken0 - Amount of token0 in pool
- * @param {number} prarms.tvlToken1 - Amount of token1 in pool
+ * @param {number} prams.tvlToken0 - Amount of token0 in pool
+ * @param {number} prams.tvlToken1 - Amount of token1 in pool
  * @param {number} params.currentPrice - token0Price from hourlyData
- * 
+ *
  * @returns {Object} Result
  * @returns {boolean} result.success
  * @returns {string} [results.error]
@@ -27,9 +27,9 @@ export function inferTokenPricesFromTVL({
 }) {
    const isInvalidPrice = (price) => price <= 0 || !isFinite(price)
 
-   if (tvlUSD == null || tvlToken0 == null || 
+   if (tvlUSD == null || tvlToken0 == null ||
       tvlToken1 == null || currentPrice == null) {
-      
+
       return {
          success: false,
          error: "Pool metadata incomplete. Cannot calculate prices."

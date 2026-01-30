@@ -2,7 +2,7 @@ import { assessDataQuality } from "./assessDataQuality"
 import { calculateLiquidity } from "./calculateLiquidity"
 import { validateInputs } from "../pipeline/validateInputs"
 import { calculateComposition } from "../pipeline/calculateComposition"
-import { calculateFeesWithQuality } from "../pipeline/calcululateFeesWithQuality"
+import { calculateFeesWithQuality } from "../pipeline/calculateFeesWithQuality"
 import { inferTokenPricesFromTVL } from "../../../../utils/inferTokenPricesFromTVL"
 
 /**

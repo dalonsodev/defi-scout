@@ -3,11 +3,11 @@ import { debugLog } from "../../../../utils/logger"
 
 /**
  * Pipeline Stage: Calculates token composition and effective price range for LP position.
- * 
+ *
  * Supports two modes:
  * - Full Range: 50/50 split with volatility-based buffer (V2-style)
  * - Concentrated: Custom ratio based on user-defined price bounds (V3-style)
- * 
+ *
  * @param {Object} params
  * @param {Object} params.userInputs - User-controlled parameters
  * @param {number} params.userInputs.capitalUSD - Investment amount
@@ -16,15 +16,15 @@ import { debugLog } from "../../../../utils/logger"
  * @param {boolean} params.userInputs.fullRange - Mode selector
  * @param {number} params.userInputs.assumedPrice - Entry price for concentrated mode
  * @param {number} params.userInputs.selectedTokenIdx - Price scale (0 or 1)
- * 
+ *
  * @param {Object} params.poolState - On-chain pool state
  * @param {number} params.poolState.currentPrice - token0Price from hourlyData[0]
  * @param {number} params.poolState.priceToken0InUSD - USD price of token0
  * @param {number} params.poolState.priceToken1InUSD - USD price of token1
  * @param {number} params.poolState.feeTier - Pool fee tier (500/3000/10000)
- * 
+ *
  * @param {number[]} params.historicalPrices - Array of token0Price values for volatility calc
- * 
+ *
  * @returns {Object} Result
  * @returns {boolean} returns.success
  * @returns {string} [returns.error]
@@ -62,14 +62,13 @@ export function calculateComposition({
    } = poolState
 
    // ===== VALIDATIONS =====
-   // TODO: Añadir validaciones básicas (capitalUSD > 0, prices > 0, etc.)
    if (!feeTier) {
       return {
          success: false,
          error: "No fee tier available. Pool data may be corrupted."
       }
    }
-   
+
       if (selectedTokenIdx !== 0 && selectedTokenIdx !== 1) {
          return {
             success: false,
@@ -160,11 +159,11 @@ export function calculateComposition({
 
       const token0Percent = ratioResult.token0Percent
       const token1Percent = ratioResult.token1Percent
-      
+
       // Step 3: Split capital according to ratio
       const capital0USD = capitalUSD * (token0Percent / 100)
       const capital1USD = capitalUSD * (token1Percent / 100)
-      
+
       // Step 4: Convert USD capital to token amounts
       const amount0 = capital0USD / priceToken0InUSD
       const amount1 = capital1USD / priceToken1InUSD
@@ -181,9 +180,9 @@ export function calculateComposition({
          capital0USD: capital0USD.toFixed(2),
          capital1USD: capital1USD.toFixed(2)
       })
-      debugLog('🔍 Effective Range:', { 
-         effectiveMin: effectiveMin.toFixed(8), 
-         effectiveMax: effectiveMax.toFixed(8) 
+      debugLog('🔍 Effective Range:', {
+         effectiveMin: effectiveMin.toFixed(8),
+         effectiveMax: effectiveMax.toFixed(8)
       })
 
       return {
