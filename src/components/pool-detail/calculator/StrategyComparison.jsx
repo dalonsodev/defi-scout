@@ -2,15 +2,15 @@ import { debugLog } from "../../../utils/logger"
 
 /**
  * UI: Strategy Comparison Dashboard
- * 
+ *
  * Architecture: Side-by-side layout (vs tabs) for instant visual comparison.
  * Rationale: Users need to compare 6-8 metrics simultaneously (token balances,
  * P&L, fees, IL). Tabs would require mental context switching.
- * 
- * Winer Logic: Based solely on net PNL (not ROI%) because absolute profit
- * matters more for porfolio allocation decisions. If both strategies lose,
+ *
+ * Winner Logic: Based solely on net PNL (not ROI%) because absolute profit
+ * matters more for portfolio allocation decisions. If both strategies lose,
  * shows the smaller loss as "winner" (lesser evil).
- * 
+ *
  * @param {Object} props
  * @param {Object} props.hodlStrategy - Buy-and-hold simulation results
  * @param {number} props.hodlStrategy.pnl - Net profit/loss in USD
@@ -18,9 +18,9 @@ import { debugLog } from "../../../utils/logger"
  * @param {Object} props.lpStrategy - Uniswap V3 LP simulation results
  * @param {number} props.lpStrategy.pnl - Net P&L including fees and IL
  * @param {number} props.lpStrategy.feesEarned - Accumulated swap fees
- * @param {boolean} props.isCalculating - Loading state during simulation 
+ * @param {boolean} props.isCalculating - Loading state during simulation
  * @returns {JSX.Element} Comparison dashboard with winner highlight
- * 
+ *
  * @example
  * <StrategyComparison
  *    hodlStrategy={{ pnl: 120.50, totalValue: 1120.50 }}
@@ -41,13 +41,13 @@ export function StrategyComparison({
 
    return (
       <div className="grid gap-4">
-         <StrategyCard 
+         <StrategyCard
             title="Strategy A: HODL"
             isWinner={winner === "hodl"}
             data={hodlStrategy}
             isCalculating={isCalculating}
          />
-         <StrategyCard 
+         <StrategyCard
             title="Strategy B: Uniswap V3"
             isWinner={winner === "lp"}
             data={lpStrategy}
@@ -59,14 +59,14 @@ export function StrategyComparison({
 
 /**
  * UI: Strategy Presentation Card.
- * 
- * Design Decision: Ring highlight (vs background color) to mantain dark-mode
+ *
+ * Design Decision: Ring highlight (vs background color) to maintain dark-mode
  * consistency. DaisyUI's "ring-success" provides 2px green border without
  * conflicting with card's base-300 background.
- * 
+ *
  * Data Flow: Receives pre-calculated metrics from useProjectionCalculator hook.
  * No local calculations to keep this component pure presentation.
- * 
+ *
  * @param {Object} props
  * @param {string} props.title - Strategy name (e.g., "HODL", "Uniswap V3")
  * @param {boolean} props.isWinner - Triggers "Best" badge and success ring
@@ -95,7 +95,7 @@ function StrategyCard({ title, isWinner, data, isCalculating }) {
                <span className="badge badge-success">Best</span>
             )}
          </div>
-         
+
          {isCalculating || !data ? (
             <div className="skeleton h-32" />
          ) : (
