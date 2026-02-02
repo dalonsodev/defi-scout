@@ -2,18 +2,18 @@ import { priceToTick, getTickSpacing, alignTickToSpacing } from "./uniswapV3Tick
 
 /**
  * Utility: Calculates token composition ratio for Uniswap V3 concentrated positions.
- * 
- * Architecture: Token ratio changes non-linearly accross price ranges due to
+ *
+ * Architecture: Token ratio changes non-linearly across price ranges due to
  * rebalancing. A position at tick 100 in [50, 150] is NOT 50/50 composition.
- * 
+ *
  * @param {number} assumedPrice - Entry price (token1/token0 ratio)
  * @param {number} minPrice - Lower bound of concentrated range
  * @param {number} maxPrice - Upper bound of concentrated range
  * @param {number} feeTier - Pool fee tier (100, 500, 3000, 10000 bps)
- * 
+ *
  * @returns {{ token0Percent: number, token1Percent: number }}
  * Composition rounded to 2 decimals (UI display precision)
- * 
+ *
  * @example
  * // ETH/USDC pool at $3000, range $2500-$3500, 0.3% fee
  * calculateTokenRatio(3000, 2500, 3500, 3000)
@@ -40,7 +40,7 @@ export function calculateTokenRatio(
       return { token0Percent: 50, token1Percent: 50 }
    }
 
-   // Convert prices to tick indices (logaritmic scale: tick = log1.0001(price))
+   // Convert prices to tick indices (logarithmic scale: tick = log1.0001(price))
    const tickCurrent = priceToTick(assumedPrice)
    const tickLower = priceToTick(minPrice)
    const tickUpper = priceToTick(maxPrice)
