@@ -138,8 +138,6 @@ export function RangeCalculator({
                   priceLabel={priceLabel}
                   token0Symbol={pool.token0.symbol}
                   token1Symbol={pool.token1.symbol}
-                  token0PriceUSD={token0PriceUSD}
-                  token1PriceUSD={token1PriceUSD}
                   composition={results?.composition || null}
                />
             </div>
