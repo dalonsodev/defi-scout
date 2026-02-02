@@ -21,17 +21,17 @@ import { useIntersection } from "../../hooks/useIntersection"
 
 /**
  * Component: High-Performance Pool Data Grid
- * 
+ *
  * Performance Optimizations:
  * - IntersectionObserver: Lazy-loads sparklines for visible rows only (prevents 8k API calls)
  * - manualSorting: true: Disables TanStack auto-sort (already handled by sortPools utility in parent)
  * - Sticky headers with internal scroll: Keeps column labels visible during vertical navigation
- * 
+ *
  * CSS Limitation: Sticky positioning breaks with overflow ancestors (must use internal scroll container).
  * Solution: max-h-[840px] wrapper with overflow-y-auto, not body scroll.
- * 
+ *
  * Accessibility: CMD/CTRL+click on rows opens detail page in new tab (power user feature)
- * 
+ *
  * @param {Object} props
  * @param {Array<Object>} props.pools - Paginated pool dataset (40 items max)
  * @param {Object<string, Array<number>>} props.sparklineData - Cache of historical APY data by pool ID
@@ -123,12 +123,12 @@ const PoolTable = forwardRef(({
             meta: { showOn: "both" },
             cell: ({ row }) => {
                const data = sparklineData?.[row.original.id]
-               
+
                if (!data) {
                   return (
                      <div className="flex justify-center">
-                        <div 
-                           className="tooltip tooltip-left cursor-help py-2.5" 
+                        <div
+                           className="tooltip tooltip-left cursor-help py-2.5"
                            data-tip="Upgrade to Pro for unlimited sparklines"
                         >
                            <span className="text-xs text-base-content/40 font-medium min-h-10">
@@ -156,9 +156,9 @@ const PoolTable = forwardRef(({
             header: "DEX",
             meta: { showOn: "mobile" },
             cell: ({ row }) => (
-               <PlatformIcon 
-                  platform={row.original.project} 
-                  size="md" 
+               <PlatformIcon
+                  platform={row.original.project}
+                  size="md"
                />
             )
          },
@@ -215,7 +215,7 @@ const PoolTable = forwardRef(({
          <tr key={hg.id}>
             {hg.headers.map(header => {
                const isSticky = header.column.columnDef.meta?.isSticky
-               
+
                return (
                   <th
                      key={header.id}
@@ -244,14 +244,14 @@ const PoolTable = forwardRef(({
    function renderRows() {
       return table.getRowModel().rows.map((row, i) => {
          const poolId = row.original.id
-         
+
          const handleRowClick = (e) => {
             // Don't navigate if user is selecting text
             if (window.getSelection().toString()) return
-            
+
             // Don't navigate if clicking on a link (prevents double navigation)
             if (e.target.closest("a")) return
-            
+
             // CMD/CTRL+click: Open in new tab (power user feature)
             if (e.metaKey || e.ctrlKey) {
                window.open(`/pools/${poolId}`, "_blank")
@@ -272,8 +272,8 @@ const PoolTable = forwardRef(({
                   const isSticky = cell.column.columnDef.meta?.isSticky
 
                   return (
-                     <td 
-                        key={cell.id} 
+                     <td
+                        key={cell.id}
                         className={`px-4 py-6 whitespace-nowrap text-sm
                            ${isSticky ? "sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150" : ""}
                         `.trim()}
@@ -288,7 +288,7 @@ const PoolTable = forwardRef(({
    }
 
    return (
-      <div 
+      <div
          ref={ref}
          className="overflow-x-auto scrollbar-hide rounded-t-3xl max-h-[592px] md:max-h-[840px]"
       >
