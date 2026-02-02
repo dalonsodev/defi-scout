@@ -1,47 +1,35 @@
 /**
  * UI: LP Position Parameter Controls.
  * Manages capital allocation, price range boundaries (tick-aligned), and token composition.
- * 
+ *
  * Architecture: Composition data flows from simulateRangePerformance hook.
- * While simulation runs, shows fallback 50/50 split to prevent layout shift.
- * 
+ * While simulation runs, shows "--" placeholders until composition data arrives.
+ *
  * @param {Object} props
  * @param {Object} props.inputs - Calculator state (capitalUSD, minPrice, maxPrice, assumedPrice, fullRange)
  * @param {Function} props.onChange - State dispatcher for user inputs
  * @param {Function} props.onIncrement - Tick-aligned price adjustment (±1 tick spacing based on fee tier)
  * @param {Function} props.onPresetClick - Applies volatility presets ("±10%", "±15%", "±20%")
- * @param {string} props.priceLabel - Display format (e.g., "USDC per ETH")
- * @param {string} props.token0Symbol
- * @param {string} props.token1Symbol
- * @param {number} props.token0PriceUSD - Current market price of token0
- * @param {number} props.token1PriceUSD - 
+ * @param {string} props.priceLabel - Display format (e.g. "USDC per ETH")
+ * @param {string} props.token0Symbol - Token0 display name (e.g. "ETH")
+ * @param {string} props.token1Symbol - Token1 display name (e.g. "USDC")
  * @param {Object} [props.composition] - Calculated token split from simulation hook (null during computation)
  * @returns {JSX.Element}
  */
-export function CalculatorInputs({ 
-   inputs, 
+export function CalculatorInputs({
+   inputs,
    onChange,
    onIncrement,
    onPresetClick,
    priceLabel,
-   token0Symbol, 
+   token0Symbol,
    token1Symbol,
-   token0PriceUSD,
-   token1PriceUSD,
    composition
 }) {
-   // Fallback Calculation: While simulateRangePerformance runs, assume 50/50 split
-   // This prevents UI flash when composition transitions from null => calculated values
-   const token0Amount = composition?.amount0 ?? (
-      token0PriceUSD > 0 ? (inputs.capitalUSD / 2) / token0PriceUSD : 0
-   )
-
-   const token1Amount = composition?.amount1 ?? (
-      token1PriceUSD > 0 ? (inputs.capitalUSD / 2) / token1PriceUSD : 0
-   )
-
-   const capital0 = composition?.capital0USD ?? (inputs.capitalUSD / 2)
-   const capital1 = composition?.capital1USD ?? (inputs.capitalUSD / 2)
+   const token0Amount = composition?.amount0
+   const token1Amount = composition?.amount1
+   const capital0 = composition?.capital0USD
+   const capital1 = composition?.capital1USD
 
    return (
       <div>
@@ -67,11 +55,11 @@ export function CalculatorInputs({
                      {token0Symbol}:
                   </span>
                   <span>
-                     {token0Amount > 0 ? token0Amount.toFixed(6) : "--"} 
-                     <span className="text-base-content/60 ml-2">${capital0.toFixed(2)}</span>
+                     {token0Amount > 0 ? token0Amount.toFixed(6) : "--"}
+                     <span className="text-base-content/60 ml-2">${capital0?.toFixed(2) ?? "--"}</span>
                   </span>
                </div>
-               
+
                <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
                      <span className="w-2 h-2 rounded-full bg-secondary"></span>
@@ -79,7 +67,7 @@ export function CalculatorInputs({
                   </span>
                   <span>
                      {token1Amount > 0 ? token1Amount.toFixed(6) : "--"}
-                     <span className="text-base-content/60 ml-2">${capital1.toFixed(2)}</span>
+                     <span className="text-base-content/60 ml-2">${capital1?.toFixed(2) ?? "--"}</span>
                   </span>
                </div>
             </div>
@@ -168,7 +156,7 @@ export function CalculatorInputs({
 
                   <p className="text-xs text-center text-base-content/50 mt-2">{priceLabel}</p>
                </div>
-               
+
                <div className="form-control bg-base-300 rounded-lg p-3">
                   <div className="flex justify-between items-center mb-1">
                      <label className="text-xs text-base-content/60">Max Price</label>
@@ -214,8 +202,8 @@ export function CalculatorInputs({
                   <div className="flex items-center">
                      <span className="text-xs text-base-content/60 pr-2">Assumed Entry Price</span>
                      <button className="btn btn-circle btn-xs">
-                        <div 
-                           className="tooltip tooltip-right" 
+                        <div
+                           className="tooltip tooltip-right"
                            data-tip="It first populates with the most recent price for the pool. You can adjust your desired entry price for the range calculator."
                         >
                            <div className="font-medium text-base-content max-w-[120px] truncate">
@@ -226,7 +214,7 @@ export function CalculatorInputs({
                   </div>
 
                   <div className="flex items-center">
-                     <button 
+                     <button
                         type="button"
                         onClick={() => onIncrement("assumedPrice", - 1)}
                         className="btn btn-xs btn-circle btn-ghost"
@@ -234,7 +222,7 @@ export function CalculatorInputs({
                      >
                         −
                      </button>
-                     <button 
+                     <button
                         type="button"
                         onClick={() => onIncrement("assumedPrice", 1)}
                         className="btn btn-xs btn-circle btn-ghost"
@@ -245,7 +233,7 @@ export function CalculatorInputs({
                   </div>
                </div>
 
-               <input 
+               <input
                   type="number"
                   value={inputs.fullRange ? "" : inputs.assumedPrice}
                   onChange={(e) => onChange('assumedPrice', Number(e.target.value))}
