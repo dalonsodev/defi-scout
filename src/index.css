@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --breakpoint-sm: 450px; /* Custom breakpoint */
@@ -9,16 +9,15 @@
 }
 
 @layer utilities {
-   .scrollbar-hide {
-      scrollbar-width: none;
-   }
-   .scrollbar-hide::-webkit-scrollbar {
-      display: none;
-   }
-   .sticky-column-shadow {
-      box-shadow: 
-         5px 0 20px -10px rgba(0, 0, 0, 0.3);
-   }
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .sticky-column-shadow {
+    box-shadow: 5px 0 20px -10px rgba(0, 0, 0, 0.3);
+  }
 }
 
 @plugin "daisyui";

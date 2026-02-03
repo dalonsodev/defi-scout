@@ -1,5 +1,5 @@
-import { calculateTokenRatio } from "../utils/calculateTokenRatio"
-import { debugLog } from "../../../../utils/logger"
+import { calculateTokenRatio } from '../utils/calculateTokenRatio'
+import { debugLog } from '../../../../utils/logger'
 
 /**
  * Pipeline Stage 2: Calculates LP position composition and effective price bounds.
@@ -42,166 +42,161 @@ import { debugLog } from "../../../../utils/logger"
  * @returns {number} returns.effectiveRange.max - Upper boundary
  */
 export function calculateComposition({
-   userInputs,
-   poolState,
-   historicalPrices
+  userInputs,
+  poolState,
+  historicalPrices,
 }) {
-   const {
-      capitalUSD,
-      minPrice,
-      maxPrice,
-      fullRange,
-      assumedPrice,
-      selectedTokenIdx
-   } = userInputs
+  const {
+    capitalUSD,
+    minPrice,
+    maxPrice,
+    fullRange,
+    assumedPrice,
+    selectedTokenIdx,
+  } = userInputs
 
-   const {
-      currentPrice,
-      priceToken0InUSD,
-      priceToken1InUSD,
-      feeTier
-   } = poolState
+  const { currentPrice, priceToken0InUSD, priceToken1InUSD, feeTier } =
+    poolState
 
-   if (!feeTier) {
-      return {
-         success: false,
-         error: "No fee tier available. Pool data may be corrupted."
-      }
-   }
+  if (!feeTier) {
+    return {
+      success: false,
+      error: 'No fee tier available. Pool data may be corrupted.',
+    }
+  }
 
-   if (selectedTokenIdx !== 0 && selectedTokenIdx !== 1) {
-      return {
-         success: false,
-         error: "You must select a token."
-      }
-   }
+  if (selectedTokenIdx !== 0 && selectedTokenIdx !== 1) {
+    return {
+      success: false,
+      error: 'You must select a token.',
+    }
+  }
 
-   if (capitalUSD <= 0 || minPrice <= 0 || maxPrice <= 0 || assumedPrice <= 0) {
-      return {
-         success: false,
-         error: "Values must be positive."
-      }
-   }
+  if (capitalUSD <= 0 || minPrice <= 0 || maxPrice <= 0 || assumedPrice <= 0) {
+    return {
+      success: false,
+      error: 'Values must be positive.',
+    }
+  }
 
-   if (currentPrice <= 0 || priceToken0InUSD <= 0 || priceToken1InUSD <= 0) {
-      return {
-         success: false,
-         error: "Prices must be positive."
-      }
-   }
+  if (currentPrice <= 0 || priceToken0InUSD <= 0 || priceToken1InUSD <= 0) {
+    return {
+      success: false,
+      error: 'Prices must be positive.',
+    }
+  }
 
-   // ===== FULL RANGE MODE (V2-STYLE) =====
-   if (fullRange) {
-      // Fixed 50/50 split regardless of price (no impermanent loss mitigation)
-      const token0Percent = 50
-      const token1Percent = 50
-      const capital0USD = capitalUSD / 2
-      const capital1USD = capitalUSD / 2
-      const amount0 = capital0USD / priceToken0InUSD
-      const amount1 = capital1USD / priceToken1InUSD
+  // ===== FULL RANGE MODE (V2-STYLE) =====
+  if (fullRange) {
+    // Fixed 50/50 split regardless of price (no impermanent loss mitigation)
+    const token0Percent = 50
+    const token1Percent = 50
+    const capital0USD = capitalUSD / 2
+    const capital1USD = capitalUSD / 2
+    const amount0 = capital0USD / priceToken0InUSD
+    const amount1 = capital1USD / priceToken1InUSD
 
-      // Dynamic buffer: Scales with historical volatility to reduce out-of-range risk
-      // Example: 10% volatility → 30% buffer, 50% volatility → 50% buffer, 100%+ → 100%
-      const historicalMin = Math.min(...historicalPrices)
-      const historicalMax = Math.max(...historicalPrices)
-      const volatility = (historicalMax - historicalMin) / historicalMin
+    // Dynamic buffer: Scales with historical volatility to reduce out-of-range risk
+    // Example: 10% volatility → 30% buffer, 50% volatility → 50% buffer, 100%+ → 100%
+    const historicalMin = Math.min(...historicalPrices)
+    const historicalMax = Math.max(...historicalPrices)
+    const volatility = (historicalMax - historicalMin) / historicalMin
 
-      const bufferMultiplier = volatility < 0.2 ? 0.3 :
-                               volatility < 0.5 ? 0.5 :
-                               1.0
+    const bufferMultiplier =
+      volatility < 0.2 ? 0.3 : volatility < 0.5 ? 0.5 : 1.0
 
-      const effectiveMin = historicalMin * (1 - bufferMultiplier)
-      const effectiveMax = historicalMax * (1 + bufferMultiplier)
+    const effectiveMin = historicalMin * (1 - bufferMultiplier)
+    const effectiveMax = historicalMax * (1 + bufferMultiplier)
 
-      return {
-         success: true,
-         composition: {
-            token0Percent,
-            token1Percent,
-            amount0,
-            amount1
-         },
-         capitalAllocation: {
-            capital0USD,
-            capital1USD,
-         },
-         effectiveRange: {
-            min: effectiveMin,
-            max: effectiveMax
-         }
-      }
-   }
-
-   // ===== CONCENTRATED MODE (V3-STYLE) =====
-   const minNum = Number(minPrice)
-   const maxNum = Number(maxPrice)
-   const assumedNum = Number(assumedPrice)
-
-   // Step 1: Normalize price scale to protocol standard (token0Price)
-   // UI displays prices relative to selected token (e.g. "3107 USDT per WETH")
-   // but calculations require canonical token0Price scale ("0.000322 WETH per USDT")
-   let normalizedMinPrice = minNum
-   let normalizedMaxPrice = maxNum
-   let normalizedAssumedPrice = assumedNum
-
-   if (selectedTokenIdx === 1) {
-      // Invert bounds: min/max swap when flipping perspective
-      // Example: [2900, 3300] USDT/WETH → [1/3300, 1/2900] WETH/USDT
-      normalizedMinPrice = 1 / maxNum
-      normalizedMaxPrice = 1 / minNum
-      normalizedAssumedPrice = 1 / assumedNum
-   }
-
-   // Step 2: Compute ratio using Uniswap V3 tick-based liquidity formula
-   // See calculateTokenRatio.js for sqrt(price) math details
-   const ratioResult = calculateTokenRatio(
-      normalizedAssumedPrice,
-      normalizedMinPrice,
-      normalizedMaxPrice,
-      feeTier
-   )
-
-   const token0Percent = ratioResult.token0Percent
-   const token1Percent = ratioResult.token1Percent
-
-   // Step 3: Allocate capital proportionally
-   const capital0USD = capitalUSD * (token0Percent / 100)
-   const capital1USD = capitalUSD * (token1Percent / 100)
-
-   // Step 4: Convert USD values to token quantities (human-readable units, NOT wei)
-   const amount0 = capital0USD / priceToken0InUSD
-   const amount1 = capital1USD / priceToken1InUSD
-
-   // Step 5: Set effective range (user-defined, no buffer needed)
-   const effectiveMin = normalizedMinPrice
-   const effectiveMax = normalizedMaxPrice
-
-   // Debug output (only in dev mode, see logger.js)
-   debugLog("Composition Calculated:", {
-      mode: "CONCENTRATED",
-      token0Percent,
-      token1Percent,
-      capital0USD: capital0USD.toFixed(2),
-      capital1USD: capital1USD.toFixed(2),
-      effectiveMin: effectiveMin.toFixed(8),
-      effectiveMax: effectiveMax.toFixed(8)
-   })
-
-   return {
+    return {
       success: true,
       composition: {
-         token0Percent,
-         token1Percent,
-         amount0,
-         amount1
+        token0Percent,
+        token1Percent,
+        amount0,
+        amount1,
       },
       capitalAllocation: {
-         capital0USD,
-         capital1USD,
+        capital0USD,
+        capital1USD,
       },
       effectiveRange: {
-         min: effectiveMin,
-         max: effectiveMax
-      }
-   }
+        min: effectiveMin,
+        max: effectiveMax,
+      },
+    }
+  }
+
+  // ===== CONCENTRATED MODE (V3-STYLE) =====
+  const minNum = Number(minPrice)
+  const maxNum = Number(maxPrice)
+  const assumedNum = Number(assumedPrice)
+
+  // Step 1: Normalize price scale to protocol standard (token0Price)
+  // UI displays prices relative to selected token (e.g. "3107 USDT per WETH")
+  // but calculations require canonical token0Price scale ("0.000322 WETH per USDT")
+  let normalizedMinPrice = minNum
+  let normalizedMaxPrice = maxNum
+  let normalizedAssumedPrice = assumedNum
+
+  if (selectedTokenIdx === 1) {
+    // Invert bounds: min/max swap when flipping perspective
+    // Example: [2900, 3300] USDT/WETH → [1/3300, 1/2900] WETH/USDT
+    normalizedMinPrice = 1 / maxNum
+    normalizedMaxPrice = 1 / minNum
+    normalizedAssumedPrice = 1 / assumedNum
+  }
+
+  // Step 2: Compute ratio using Uniswap V3 tick-based liquidity formula
+  // See calculateTokenRatio.js for sqrt(price) math details
+  const ratioResult = calculateTokenRatio(
+    normalizedAssumedPrice,
+    normalizedMinPrice,
+    normalizedMaxPrice,
+    feeTier,
+  )
+
+  const token0Percent = ratioResult.token0Percent
+  const token1Percent = ratioResult.token1Percent
+
+  // Step 3: Allocate capital proportionally
+  const capital0USD = capitalUSD * (token0Percent / 100)
+  const capital1USD = capitalUSD * (token1Percent / 100)
+
+  // Step 4: Convert USD values to token quantities (human-readable units, NOT wei)
+  const amount0 = capital0USD / priceToken0InUSD
+  const amount1 = capital1USD / priceToken1InUSD
+
+  // Step 5: Set effective range (user-defined, no buffer needed)
+  const effectiveMin = normalizedMinPrice
+  const effectiveMax = normalizedMaxPrice
+
+  // Debug output (only in dev mode, see logger.js)
+  debugLog('Composition Calculated:', {
+    mode: 'CONCENTRATED',
+    token0Percent,
+    token1Percent,
+    capital0USD: capital0USD.toFixed(2),
+    capital1USD: capital1USD.toFixed(2),
+    effectiveMin: effectiveMin.toFixed(8),
+    effectiveMax: effectiveMax.toFixed(8),
+  })
+
+  return {
+    success: true,
+    composition: {
+      token0Percent,
+      token1Percent,
+      amount0,
+      amount1,
+    },
+    capitalAllocation: {
+      capital0USD,
+      capital1USD,
+    },
+    effectiveRange: {
+      min: effectiveMin,
+      max: effectiveMax,
+    },
+  }
 }

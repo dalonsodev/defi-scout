@@ -1,16 +1,16 @@
-import { useMemo, createRef, useEffect, forwardRef } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useMemo, createRef, useEffect, forwardRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
-   useReactTable,
-   getCoreRowModel,
-   getFilteredRowModel,
-   flexRender
-} from "@tanstack/react-table"
-import { baseColumns } from "../../data/tableColumns"
-import { SparklineCell } from "./cells/SparklineCell"
-import { PlatformIcon } from "../common/PlatformIcon"
-import { useBreakpoint } from "../../hooks/useBreakpoint"
-import { useIntersection } from "../../hooks/useIntersection"
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  flexRender,
+} from '@tanstack/react-table'
+import { baseColumns } from '../../data/tableColumns'
+import { SparklineCell } from './cells/SparklineCell'
+import { PlatformIcon } from '../common/PlatformIcon'
+import { useBreakpoint } from '../../hooks/useBreakpoint'
+import { useIntersection } from '../../hooks/useIntersection'
 
 /**
  * Z-INDEX HIERARCHY (Critical for sticky positioning):
@@ -42,267 +42,261 @@ import { useIntersection } from "../../hooks/useIntersection"
  * @param {React.ForwardedRef<HTMLDivElement[lang="en"]>} ref - Ref to internal scroll container (for auto-scroll)
  * @returns {JSX.Element}
  */
-const PoolTable = forwardRef(({
-   pools,
-   sparklineData,
-   onVisiblePoolsChange,
-   sorting,
-   onSortingChange
-}, ref) => {
+const PoolTable = forwardRef(
+  (
+    { pools, sparklineData, onVisiblePoolsChange, sorting, onSortingChange },
+    ref,
+  ) => {
+    const { isDesktop } = useBreakpoint()
+    const navigate = useNavigate()
 
-   const { isDesktop } = useBreakpoint()
-   const navigate = useNavigate()
-
-   const rowRefs = useMemo(() => {
+    const rowRefs = useMemo(() => {
       return pools.map(() => createRef())
-   }, [pools])
+    }, [pools])
 
-   const visiblePoolIds = useIntersection(rowRefs, {
+    const visiblePoolIds = useIntersection(rowRefs, {
       threshold: 0.1,
-      rootMargin: "200px"
-   })
+      rootMargin: '200px',
+    })
 
-   useEffect(() => {
+    useEffect(() => {
       if (onVisiblePoolsChange) {
-         onVisiblePoolsChange(visiblePoolIds)
+        onVisiblePoolsChange(visiblePoolIds)
       }
-   }, [visiblePoolIds, onVisiblePoolsChange])
+    }, [visiblePoolIds, onVisiblePoolsChange])
 
-
-   const columns = useMemo(() => {
-      return baseColumns.map(col => {
-
-         if (col.accessorKey === "name") {
-            return {
-               ...col,
-               cell: ({ row }) => (
-                  <Link
-                     to={`/pools/${row.original.id}`}
-                     className="block"
-                     aria-label={`View details for ${row.original.name} pool`}
-                  >
-                     <div className="tooltip tooltip-right" data-tip={row.original.name}>
-                        <div className="font-medium text-base-content max-w-[120px] truncate">
-                           {row.original.name}
-                        </div>
-                     </div>
-                  </Link>
-               )
-            }
-         }
-
-         if (col.accessorKey === "apyBase") {
-            return {
-               ...col,
-               cell: ({ row }) => (
-                  <div className="text-right font-semibold text-green-600">
-                     {Number(row.original.apyBase || 0).toFixed(2)}%
+    const columns = useMemo(() => {
+      return baseColumns.map((col) => {
+        if (col.accessorKey === 'name') {
+          return {
+            ...col,
+            cell: ({ row }) => (
+              <Link
+                to={`/pools/${row.original.id}`}
+                className="block"
+                aria-label={`View details for ${row.original.name} pool`}
+              >
+                <div
+                  className="tooltip tooltip-right"
+                  data-tip={row.original.name}
+                >
+                  <div className="font-medium text-base-content max-w-[120px] truncate">
+                    {row.original.name}
                   </div>
-               )
-            }
-         }
+                </div>
+              </Link>
+            ),
+          }
+        }
 
-         if (col.accessorKey === "tvlUsd") {
-            return {
-               ...col,
-               cell: ({ row }) => (
-                  <div className="text-right text-base-content">
-                      ${row.original.tvlFormatted}
-                  </div>
-               )
-            }
-         }
+        if (col.accessorKey === 'apyBase') {
+          return {
+            ...col,
+            cell: ({ row }) => (
+              <div className="text-right font-semibold text-green-600">
+                {Number(row.original.apyBase || 0).toFixed(2)}%
+              </div>
+            ),
+          }
+        }
 
-         if (col.accessorKey === "volumeUsd1d") {
-            return {
-               ...col,
-               cell: ({ row }) => (
-                  <div className="text-right text-base-content">
-                     ${row.original.volumeFormatted}
-                  </div>
-               )
-            }
-         }
+        if (col.accessorKey === 'tvlUsd') {
+          return {
+            ...col,
+            cell: ({ row }) => (
+              <div className="text-right text-base-content">
+                ${row.original.tvlFormatted}
+              </div>
+            ),
+          }
+        }
 
-         if (col.accessorKey === "sparklineIn7d") {
-            return {
-               ...col,
-               cell: ({ row }) => (
-                  <SparklineCell
-                     poolId={row.original.id}
-                     sparklineData={sparklineData}
-                  />
-               )
-            }
-         }
+        if (col.accessorKey === 'volumeUsd1d') {
+          return {
+            ...col,
+            cell: ({ row }) => (
+              <div className="text-right text-base-content">
+                ${row.original.volumeFormatted}
+              </div>
+            ),
+          }
+        }
 
-         if (col.accessorKey === "chain") {
-            return {
-               ...col,
-               cell: ({ row }) => (
-                  <span className="badge badge-primary badge-sm rounded-l-lg">
-                     {row.original.chain}
-                  </span>
-               )
-            }
-         }
+        if (col.accessorKey === 'sparklineIn7d') {
+          return {
+            ...col,
+            cell: ({ row }) => (
+              <SparklineCell
+                poolId={row.original.id}
+                sparklineData={sparklineData}
+              />
+            ),
+          }
+        }
 
-         if (col.id === "platformIconOnly") {
-            return {
-               ...col,
-               cell: ({ row }) => (
-                  <PlatformIcon
-                     platform={row.original.project}
-                     size="md"
-                  />
-               )
-            }
-         }
+        if (col.accessorKey === 'chain') {
+          return {
+            ...col,
+            cell: ({ row }) => (
+              <span className="badge badge-primary badge-sm rounded-l-lg">
+                {row.original.chain}
+              </span>
+            ),
+          }
+        }
 
-         if (col.accessorKey === "platformName") {
-            return {
-               ...col,
-               cell: ({ row }) => (
-                  <div className="flex items-center gap-2">
-                     <PlatformIcon
-                        platform={row.original.project}
-                        size="md"
-                     />
-                     <span className="text-sm text-base-content/70">
-                        {row.original.platformName}
-                     </span>
-                  </div>
-               )
-            }
-         }
+        if (col.id === 'platformIconOnly') {
+          return {
+            ...col,
+            cell: ({ row }) => (
+              <PlatformIcon platform={row.original.project} size="md" />
+            ),
+          }
+        }
 
-         return col
+        if (col.accessorKey === 'platformName') {
+          return {
+            ...col,
+            cell: ({ row }) => (
+              <div className="flex items-center gap-2">
+                <PlatformIcon platform={row.original.project} size="md" />
+                <span className="text-sm text-base-content/70">
+                  {row.original.platformName}
+                </span>
+              </div>
+            ),
+          }
+        }
+
+        return col
       })
-   }, [sparklineData])
+    }, [sparklineData])
 
-   const visibleColumns = useMemo(() => {
-      return columns.filter(col => {
-         const showOn = col.meta?.showOn
+    const visibleColumns = useMemo(() => {
+      return columns.filter((col) => {
+        const showOn = col.meta?.showOn
 
-         if (!showOn) return true
+        if (!showOn) return true
 
-         if (showOn === "both") return true
-         if (showOn === "mobile" && !isDesktop) return true
-         if (showOn === "desktop" && isDesktop) return true
+        if (showOn === 'both') return true
+        if (showOn === 'mobile' && !isDesktop) return true
+        if (showOn === 'desktop' && isDesktop) return true
 
-         return false
+        return false
       })
-   }, [columns, isDesktop])
+    }, [columns, isDesktop])
 
-   const table = useReactTable({
+    const table = useReactTable({
       data: pools,
       columns: visibleColumns,
       getCoreRowModel: getCoreRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
       state: { sorting },
       onSortingChange: onSortingChange,
-      manualSorting: true
-   })
+      manualSorting: true,
+    })
 
-   /**
-    * Renders sticky table headers with sort controls.
-    * Uses flexRender (TanStack utility) instead of manual JSX to preserve
-    * column metadata (accessorKey, custom cell renderers).
-    */
-   function renderHeaders() {
-      return table.getHeaderGroups().map(hg => (
-         <tr key={hg.id}>
-            {hg.headers.map(header => {
-               const isSticky = header.column.columnDef.meta?.isSticky
+    /**
+     * Renders sticky table headers with sort controls.
+     * Uses flexRender (TanStack utility) instead of manual JSX to preserve
+     * column metadata (accessorKey, custom cell renderers).
+     */
+    function renderHeaders() {
+      return table.getHeaderGroups().map((hg) => (
+        <tr key={hg.id}>
+          {hg.headers.map((header) => {
+            const isSticky = header.column.columnDef.meta?.isSticky
 
-               return (
-                  <th
-                     key={header.id}
-                     onClick={header.column.getToggleSortingHandler()}
-                     className={`sticky top-0 z-10 bg-base-300 px-6 py-4 text-left text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
-                        ${isSticky ? "left-0 z-11 sticky-column-shadow" : ""}
+            return (
+              <th
+                key={header.id}
+                onClick={header.column.getToggleSortingHandler()}
+                className={`sticky top-0 z-10 bg-base-300 px-6 py-4 text-left text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
+                        ${isSticky ? 'left-0 z-11 sticky-column-shadow' : ''}
                      `.trim()}
-                  >
-                     {flexRender(header.column.columnDef.header, header.getContext())}
-                     {header.column.getIsSorted() && (
-                        <span className="ml-1">
-                           {header.column.getIsSorted() === "desc" ? "↓" : "↑"}
-                        </span>
-                     )}
-                  </th>
-               )
-            })}
-         </tr>
+              >
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext(),
+                )}
+                {header.column.getIsSorted() && (
+                  <span className="ml-1">
+                    {header.column.getIsSorted() === 'desc' ? '↓' : '↑'}
+                  </span>
+                )}
+              </th>
+            )
+          })}
+        </tr>
       ))
-   }
+    }
 
-   /**
-    * Render table rows with IntersectionObserver refs for lazy sparkline loading.
-    * Supports CMD/CTRL+click for opening detail pages in new tabs.
-    */
-   function renderRows() {
+    /**
+     * Render table rows with IntersectionObserver refs for lazy sparkline loading.
+     * Supports CMD/CTRL+click for opening detail pages in new tabs.
+     */
+    function renderRows() {
       return table.getRowModel().rows.map((row, i) => {
-         const poolId = row.original.id
+        const poolId = row.original.id
 
-         const handleRowClick = (e) => {
-            // Don't navigate if user is selecting text
-            if (window.getSelection().toString()) return
+        const handleRowClick = (e) => {
+          // Don't navigate if user is selecting text
+          if (window.getSelection().toString()) return
 
-            // Don't navigate if clicking on a link (prevents double navigation)
-            if (e.target.closest("a")) return
+          // Don't navigate if clicking on a link (prevents double navigation)
+          if (e.target.closest('a')) return
 
-            // CMD/CTRL+click: Open in new tab (power user feature)
-            if (e.metaKey || e.ctrlKey) {
-               window.open(`/pools/${poolId}`, "_blank")
-            } else {
-               navigate(`/pools/${poolId}`)
-            }
-         }
+          // CMD/CTRL+click: Open in new tab (power user feature)
+          if (e.metaKey || e.ctrlKey) {
+            window.open(`/pools/${poolId}`, '_blank')
+          } else {
+            navigate(`/pools/${poolId}`)
+          }
+        }
 
-         return (
-            <tr
-               key={row.id}
-               ref={rowRefs[i]}
-               data-pool-id={row.original.id}
-               onClick={handleRowClick}
-               className="group hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
-            >
-               {row.getVisibleCells().map(cell => {
-                  const isSticky = cell.column.columnDef.meta?.isSticky
+        return (
+          <tr
+            key={row.id}
+            ref={rowRefs[i]}
+            data-pool-id={row.original.id}
+            onClick={handleRowClick}
+            className="group hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
+          >
+            {row.getVisibleCells().map((cell) => {
+              const isSticky = cell.column.columnDef.meta?.isSticky
 
-                  return (
-                     <td
-                        key={cell.id}
-                        className={`px-4 py-6 whitespace-nowrap text-sm
-                           ${isSticky ? "sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150" : ""}
+              return (
+                <td
+                  key={cell.id}
+                  className={`px-4 py-6 whitespace-nowrap text-sm
+                           ${isSticky ? 'sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150' : ''}
                         `.trim()}
-                     >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                     </td>
-                  )
-               })}
-            </tr>
-         )
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              )
+            })}
+          </tr>
+        )
       })
-   }
+    }
 
-   return (
+    return (
       <div
-         ref={ref}
-         className="overflow-x-auto scrollbar-hide rounded-t-3xl max-h-[592px] md:max-h-[840px]"
+        ref={ref}
+        className="overflow-x-auto scrollbar-hide rounded-t-3xl max-h-[592px] md:max-h-[840px]"
       >
-         <table className="min-w-full divide-y divide-base-300 border-separate border-spacing-0">
-            <thead className="bg-base-300">
-               {renderHeaders()}
-            </thead>
-            <tbody className="bg-base-200 divide-y divide-base-300">
-               {renderRows()}
-            </tbody>
-         </table>
+        <table className="min-w-full divide-y divide-base-300 border-separate border-spacing-0">
+          <thead className="bg-base-300">{renderHeaders()}</thead>
+          <tbody className="bg-base-200 divide-y divide-base-300">
+            {renderRows()}
+          </tbody>
+        </table>
       </div>
-   )
-})
+    )
+  },
+)
 
-PoolTable.displayName = "PoolTable"
+PoolTable.displayName = 'PoolTable'
 
 export { PoolTable }

@@ -9,6 +9,7 @@
 ## ✨ Features
 
 ### Core Functionality
+
 - **Pool Explorer:** Responsive table with key metrics (APY, TVL, Volume, Chain, Platform, Risk)
 - **Pool Detail Pages:** Click any pool to view:
   - 30-day historical charts (TVL/Volume, Price, Fees/APY)
@@ -20,6 +21,7 @@
 - **Smart Pagination:** Navigate 40 items/page with ellipsis controls and auto-reset on filter/sort changes
 
 ### Performance & UX
+
 - **⚡ Sub-second loads:** Fetches and transforms 8k pools in <1s (deferred loading with React Router)
 - **Rate-limited Sparklines:** Token bucket algorithm (80 tokens, 1.2/s refill) with circuit breaker
   - Lazy-loaded via IntersectionObserver (200px viewport threshold)
@@ -30,6 +32,7 @@
 - **Historical Data:** TheGraph API integration for 30-day pool snapshots
 
 ### Design
+
 - **Dark-mode first:** DaisyUI theme with custom 450px mobile breakpoint
 - **Sticky columns:** First column persists on horizontal scroll with shadow effect
 - **Responsive hiding:** Intelligently collapses columns on mobile (pool → apy → tvl → vol → platform icon)
@@ -37,6 +40,7 @@
 - **Optimized Date Formatting:** Rotated labels ("Dec 22" at 45°) prevent overlap
 
 ### 🚧 Coming Soon
+
 - **Range Calculator:** Based on historical data of the pool and desired APY
 - **Enhanced Charts:** 1/7/30/90 day toggles for improved control and granularity
 - **Watchlist** with Firebase Auth + Firestore persistence
@@ -46,16 +50,16 @@
 
 ## 🛠 Tech Stack
 
-| Technology            | Purpose                          |
-|-----------------------|----------------------------------|
-| **Vite + React**      | Build tool + UI framework        |
-| **React Router 6.4+** | Routing with loaders/defer       |
-| **TanStack Table v8** | Headless table (manual sorting)  |
-| **Recharts**          | Declarative data visualization   |
-| **Tailwind + DaisyUI**| Utility-first CSS + components   |
-| **The Graph**         | Decentralized GraphQL (subgraphs)|
-| **Firebase**          | Auth + Firestore *(planned)*     |
-| **DeFiLlama API**     | Real-time pool yield data        |
+| Technology             | Purpose                           |
+| ---------------------- | --------------------------------- |
+| **Vite + React**       | Build tool + UI framework         |
+| **React Router 6.4+**  | Routing with loaders/defer        |
+| **TanStack Table v8**  | Headless table (manual sorting)   |
+| **Recharts**           | Declarative data visualization    |
+| **Tailwind + DaisyUI** | Utility-first CSS + components    |
+| **The Graph**          | Decentralized GraphQL (subgraphs) |
+| **Firebase**           | Auth + Firestore _(planned)_      |
+| **DeFiLlama API**      | Real-time pool yield data         |
 
 ---
 
@@ -121,17 +125,20 @@ src/
 ## 🏗️ Setup and Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/dalonsodev/defi-scout.git
    cd defi-scout
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Run development server:**
+
    ```bash
    npm run dev
    ```
@@ -146,33 +153,42 @@ src/
 ## 🏗️ Architecture Decisions
 
 ### Why Client-Side Filtering/Sorting?
+
 DeFiLlama's `/pools` API returns a static snapshot without server-side pagination or sorting parameters. To provide real-time filtering without rate limits, all transformations happen client-side:
+
 ```
 API (8k pools) → Filter → Sort → Paginate (40 items) → Render
 ```
 
 ### Why TheGraph for Historical Data?
+
 DeFiLlama's `/chart/:poolId` endpoint has aggressive rate limits. TheGraph provides:
+
 - Decentralized infrastructure (no single point of failure)
 - GraphQL flexibility (query only needed fields)
 - 30-day history in single request (reduces API calls)
 - Free tier sufficient for portfolio project scale
 
 ### Why Token Bucket for Sparklines?
+
 The `/chart/:poolId` endpoint has undocumented rate limits. Token bucket allows:
+
 - Controlled burst capacity (80 initial requests)
 - Sustained throughput (1.2 req/s)
 - Circuit breaker on 429 errors (fail-fast, no retry storms)
 
 ### Why Manual Sorting in TanStack Table?
+
 Sorting before pagination ensures global ordering across all 8k pools, not just the 40 visible rows. Configured with `manualSorting: true` to prevent double-sorting.
 
 ### Why Recharts over D3?
+
 - **Declarative API:** Faster development (3 charts in 2h vs D3's 6h+)
 - **React-native:** Built for React (no imperative DOM manipulation)
 - **Trade-off:** Less flexibility for custom interactions (acceptable for MVP)
 
 ### Why Hex Colors in Charts?
+
 SVG `fill` and `stroke` attributes don't support CSS variables like `hsl(var(--primary))`. Hex values ensure consistent theming across charts.
 
 ---
@@ -208,4 +224,4 @@ SVG `fill` and `stroke` attributes don't support CSS variables like `hsl(var(--p
 ## 📬 Contact
 
 Built by **David Alonso** | [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)  
-Live demo: *Coming soon at https://*
+Live demo: _Coming soon at https://_

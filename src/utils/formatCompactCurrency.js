@@ -14,15 +14,15 @@
  * formatCompactCurrency(890)       // "$890" (no decimals < 1K)
  */
 export function formatCompactCurrency(value) {
-   // Threshold: Billions (10^9)
-   if (value >= 1e9) return `$${(value / 1e9).toFixed(1)}B`
+  // Threshold: Billions (10^9)
+  if (value >= 1e9) return `$${(value / 1e9).toFixed(1)}B`
 
-   // Threshold: Millions (10^6)
-   if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`
+  // Threshold: Millions (10^6)
+  if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`
 
-   // Threshold: Thousands (10^3)
-   if (value >= 1e3) return `$${(value / 1e3).toFixed(1)}K`
+  // Threshold: Thousands (10^3)
+  if (value >= 1e3) return `$${(value / 1e3).toFixed(1)}K`
 
-   // Small values: No decimals (reduces visual clutter in tight UI spaces)
-   return `$${value.toFixed(0)}`
+  // Small values: No decimals (reduces visual clutter in tight UI spaces)
+  return `$${value.toFixed(0)}`
 }

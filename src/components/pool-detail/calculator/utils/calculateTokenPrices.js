@@ -18,46 +18,51 @@
  *
  * @returns {{ token0PriceUSD: number, token1PriceUSD: number }}
  */
-export function calculateTokenPrices(token0, token1, ethPriceUSD, currentPrice) {
-   // Parse oracle data
-   const derivedETH0 = parseFloat(token0.derivedETH || 0)
-   const derivedETH1 = parseFloat(token1.derivedETH || 0)
+export function calculateTokenPrices(
+  token0,
+  token1,
+  ethPriceUSD,
+  currentPrice,
+) {
+  // Parse oracle data
+  const derivedETH0 = parseFloat(token0.derivedETH || 0)
+  const derivedETH1 = parseFloat(token1.derivedETH || 0)
 
-   // ===== PRIMARY METHOD: Oracle-based =====
-   if (derivedETH0 > 0 && derivedETH1 > 0 && ethPriceUSD > 0) {
-      return {
-         token0PriceUSD: derivedETH0 * ethPriceUSD,
-         token1PriceUSD: derivedETH1 * ethPriceUSD
-      }
-   }
+  // ===== PRIMARY METHOD: Oracle-based =====
+  if (derivedETH0 > 0 && derivedETH1 > 0 && ethPriceUSD > 0) {
+    return {
+      token0PriceUSD: derivedETH0 * ethPriceUSD,
+      token1PriceUSD: derivedETH1 * ethPriceUSD,
+    }
+  }
 
-   // ===== FALLBACK: Stablecoin Heuristic =====
-   const STABLES = ["USDT", "USDC", "DAI", "USDe", "PYUSD", "FDUSD", "USDS"]
-   const token0IsStable = STABLES.includes(token0.symbol)
-   const token1IsStable = STABLES.includes(token1.symbol)
+  // ===== FALLBACK: Stablecoin Heuristic =====
+  const STABLES = ['USDT', 'USDC', 'DAI', 'USDe', 'PYUSD', 'FDUSD', 'USDS']
+  const token0IsStable = STABLES.includes(token0.symbol)
+  const token1IsStable = STABLES.includes(token1.symbol)
 
-   if (token1IsStable && currentPrice > 0) {
-      return {
-         token0PriceUSD: currentPrice,
-         token1PriceUSD: 1
-      }
-   }
+  if (token1IsStable && currentPrice > 0) {
+    return {
+      token0PriceUSD: currentPrice,
+      token1PriceUSD: 1,
+    }
+  }
 
-   if (token0IsStable && currentPrice > 0) {
-      return {
-         token0PriceUSD: 1,
-         token1PriceUSD: 1 / currentPrice
-      }
-   }
+  if (token0IsStable && currentPrice > 0) {
+    return {
+      token0PriceUSD: 1,
+      token1PriceUSD: 1 / currentPrice,
+    }
+  }
 
-   // ===== FAILURE: No viable method =====
-   console.warn("[calculateTokenPrices] All methods failed", {
-      token0: token0.symbol,
-      token1: token1.symbol,
-      derivedETH0,
-      derivedETH1,
-      ethPriceUSD
-   })
+  // ===== FAILURE: No viable method =====
+  console.warn('[calculateTokenPrices] All methods failed', {
+    token0: token0.symbol,
+    token1: token1.symbol,
+    derivedETH0,
+    derivedETH1,
+    ethPriceUSD,
+  })
 
-   return { token0PriceUSD: 0, token1PriceUSD: 0 }
+  return { token0PriceUSD: 0, token1PriceUSD: 0 }
 }

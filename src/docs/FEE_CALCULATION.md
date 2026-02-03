@@ -21,7 +21,7 @@ We use Uniswap V3's liquidity formulas adapted for off-chain simulation:
 // From token0 contribution
 L0 = amount0 * (√price * √maxPrice) / (√maxPrice - √price)
 
-// From token1 contribution  
+// From token1 contribution
 L1 = amount1 / (√price - √minPrice)
 
 // Conservative approach (bottleneck principle)
@@ -37,6 +37,7 @@ feeShare = L_user / (L_user + L_pool)
 ```
 
 Where:
+
 - `L_user`: User's liquidity (calculated above)
 - `L_pool`: Pool's total liquidity from TheGraph (hourly snapshots)
 
@@ -49,8 +50,9 @@ IL_decimal = (2 × √priceRatio) / (1 + priceRatio) - 1
 ```
 
 **Used in:**
+
 - Historical backtest: Compare initial vs final pool price
-- Future projections: Compare current vs user-input future price  
+- Future projections: Compare current vs user-input future price
 - Strategy comparison: HODL value vs LP value (capital × (1 + IL))
 
 **Implementation:** `src/utils/calculateIL.js`
@@ -61,12 +63,13 @@ On-chain liquidity values are scaled by token decimals. To compare `L_user` (off
 
 ```javascript
 exponent = (decimals0 + decimals1) / 2
-L_pool_normalized = L_pool_onchain / 10^exponent
+L_pool_normalized = (L_pool_onchain / 10) ^ exponent
 ```
 
 **Examples:**
+
 - WETH (18) / USDC (6): exponent = 12 → factor = 10^12
-- DAI (18) / USDC (6): exponent = 12 → factor = 10^12  
+- DAI (18) / USDC (6): exponent = 12 → factor = 10^12
 - WETH (18) / DAI (18): exponent = 18 → factor = 10^18
 
 ### Precision Handling
@@ -94,17 +97,23 @@ src/utils/
 ### Integration Points
 
 **Liquidity calculation (Stage 4.6):**
+
 ```javascript
 const L_user = calculateLiquidity(
-   amount0, amount1,
-   currentPrice, effectiveMin, effectiveMax
+  amount0,
+  amount1,
+  currentPrice,
+  effectiveMin,
+  effectiveMax,
 )
 ```
 
 **Fee accumulation (Stage 5.5):**
+
 ```javascript
 const L_pool_bigint = BigInt(hour.liquidity)
-const L_pool_normalized = Number(L_pool_bigint) / Math.pow(10, liquidityExponent)
+const L_pool_normalized =
+  Number(L_pool_bigint) / Math.pow(10, liquidityExponent)
 const feeShare = L_user / (L_pool_normalized + L_user)
 totalFeesUSD += hourFeesUSD * feeShare
 ```
@@ -120,14 +129,14 @@ totalFeesUSD += hourFeesUSD * feeShare
 Compare fee share with TVL-based baseline:
 
 ```javascript
-expectedFeeShare = capitalUSD / poolTVL  // Baseline (full range)
+expectedFeeShare = capitalUSD / poolTVL // Baseline (full range)
 actualFeeShare = L_user / (L_user + L_pool) // Should be 3-30x higher for concentrated ranges
 ```
 
 ## Performance Impact
 
 - **Full range (±∞):** Fee share ≈ TVL ratio (1x)
-- **±50% range:** 2-5x higher  
+- **±50% range:** 2-5x higher
 - **±10% range:** 5-15x higher
 - **±5% range:** 10-30x higher
 
@@ -140,5 +149,5 @@ actualFeeShare = L_user / (L_user + L_pool) // Should be 3-30x higher for concen
 ## References
 
 - [Uniswap V3 Whitepaper](https://uniswap.org/whitepaper-v3.pdf) - Section 6.2 (Liquidity)
-- [Uniswap V3 Development Book](https://uniswapv3book.com/docs/milestone_3/calculating-liquidity/) - Practical implementation  
+- [Uniswap V3 Development Book](https://uniswapv3book.com/docs/milestone_3/calculating-liquidity/) - Practical implementation
 - [MDN BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt) - Precision handling

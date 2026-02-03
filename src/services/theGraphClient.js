@@ -1,14 +1,15 @@
-import { GraphQLClient, gql } from "graphql-request"
+import { GraphQLClient, gql } from 'graphql-request'
 
 // ===== CONFIGURATION =====
 
-const SUBGRAPH_URL = "https://gateway.thegraph.com/api/subgraphs/id/5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV"
+const SUBGRAPH_URL =
+  'https://gateway.thegraph.com/api/subgraphs/id/5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV'
 const API_KEY = import.meta.env.VITE_THEGRAPH_API_KEY
 
 const client = new GraphQLClient(SUBGRAPH_URL, {
-   headers: {
-      Authorization: `Bearer ${API_KEY}`
-   }
+  headers: {
+    Authorization: `Bearer ${API_KEY}`,
+  },
 })
 
 // ===== QUERY DEFINITIONS =====
@@ -18,108 +19,102 @@ const client = new GraphQLClient(SUBGRAPH_URL, {
  * Note: GraphQL requires TVL/Volume as strings for high-precision comparisons.
  */
 const GET_POOLS_QUERY = gql`
-   query GetPools(
-      $first: Int!,
-      $skip: Int!,
-      $orderDirection: String!,
-      $orderBy: String!,
-      $minTVL: String!,
-      $minVol: String!
-   ) {
-      pools(
-         first: $first
-         skip: $skip
-         orderBy: $orderBy
-         orderDirection: $orderDirection
-         where: {
-            totalValueLockedUSD_gt: $minTVL
-            volumeUSD_gt: $minVol
-         }
-      ) {
-         id
-         feeTier
-         liquidity
-         totalValueLockedUSD
-         totalValueLockedToken0
-         totalValueLockedToken1
-         volumeUSD
-         volumeToken0
-         volumeToken1
-         collectedFeesUSD
-         collectedFeesToken0
-         collectedFeesToken1
-         token0Price
-         token1Price
-         createdAtTimestamp
-         token0 {
-            id
-            symbol
-            name
-         }
-         token1 {
-            id
-            symbol
-            name
-         }
+  query GetPools(
+    $first: Int!
+    $skip: Int!
+    $orderDirection: String!
+    $orderBy: String!
+    $minTVL: String!
+    $minVol: String!
+  ) {
+    pools(
+      first: $first
+      skip: $skip
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      where: { totalValueLockedUSD_gt: $minTVL, volumeUSD_gt: $minVol }
+    ) {
+      id
+      feeTier
+      liquidity
+      totalValueLockedUSD
+      totalValueLockedToken0
+      totalValueLockedToken1
+      volumeUSD
+      volumeToken0
+      volumeToken1
+      collectedFeesUSD
+      collectedFeesToken0
+      collectedFeesToken1
+      token0Price
+      token1Price
+      createdAtTimestamp
+      token0 {
+        id
+        symbol
+        name
       }
-   }
+      token1 {
+        id
+        symbol
+        name
+      }
+    }
+  }
 `
 
 /**
  * Analytical Query: Fetches a combined set of metadata, price oracles, and daily trends.
  */
 const GET_POOL_HISTORY_QUERY = gql`
-   query GetPoolHistory($poolId: ID!, $poolIdString: String!, $startDate: Int!) {
-      # Pool metadata (current state)
-      pool(id: $poolId) {
-         id
-         feeTier
-         totalValueLockedToken0
-         totalValueLockedToken1
-         totalValueLockedUSD
-         token0Price
-         token1Price
-         token0 {
-            id
-            symbol
-            name
-            decimals
-            derivedETH
-         }
-         token1 {
-            id
-            symbol
-            name
-            decimals
-            derivedETH
-         }
-         createdAtTimestamp
+  query GetPoolHistory($poolId: ID!, $poolIdString: String!, $startDate: Int!) {
+    # Pool metadata (current state)
+    pool(id: $poolId) {
+      id
+      feeTier
+      totalValueLockedToken0
+      totalValueLockedToken1
+      totalValueLockedUSD
+      token0Price
+      token1Price
+      token0 {
+        id
+        symbol
+        name
+        decimals
+        derivedETH
       }
+      token1 {
+        id
+        symbol
+        name
+        decimals
+        derivedETH
+      }
+      createdAtTimestamp
+    }
 
-      # Uniswap Oracle: The "bundle" with id "1" is the global singleton
-      # that stores the current ETH price in USD for derived valuations
-      bundle(id: "1") {
-         ethPriceUSD
-      }
+    # Uniswap Oracle: The "bundle" with id "1" is the global singleton
+    # that stores the current ETH price in USD for derived valuations
+    bundle(id: "1") {
+      ethPriceUSD
+    }
 
-      # Historical snapshots (daily)
-      poolDayDatas(
-         where: {
-            pool: $poolIdString
-            date_gte: $startDate
-         }
-         first: 1000
-         orderBy: date
-         orderDirection: asc
-      ) {
-         date
-         volumeUSD
-         tvlUSD
-         feesUSD
-         token0Price
-         token1Price
-      }
-   }
+    # Historical snapshots (daily)
+    poolDayDatas(
+      where: { pool: $poolIdString, date_gte: $startDate }
+      first: 1000
+      orderBy: date
+      orderDirection: asc
+    ) {
+      date
+      volumeUSD
+      tvlUSD
+      feesUSD
+      token0Price
+      token1Price
+    }
+  }
 `
 
 /**
@@ -134,26 +129,23 @@ const GET_POOL_HISTORY_QUERY = gql`
  * pagination edge cases.
  */
 const GET_POOL_HOUR_DATAS_QUERY = gql`
-   query GetPoolHourDatas($poolId: String!, $startTime: Int!) {
-      poolHourDatas(
-         where: {
-            pool: $poolId
-            periodStartUnix_gte: $startTime
-         }
-         orderBy: periodStartUnix
-         orderDirection: asc
-         first: 720
-      ) {
-         periodStartUnix
-         token0Price
-         token1Price
-         feesUSD
-         sqrtPrice
-         liquidity
-         tvlUSD
-         tick
-      }
-   }
+  query GetPoolHourDatas($poolId: String!, $startTime: Int!) {
+    poolHourDatas(
+      where: { pool: $poolId, periodStartUnix_gte: $startTime }
+      orderBy: periodStartUnix
+      orderDirection: asc
+      first: 720
+    ) {
+      periodStartUnix
+      token0Price
+      token1Price
+      feesUSD
+      sqrtPrice
+      liquidity
+      tvlUSD
+      tick
+    }
+  }
 `
 
 // ===== SERVICE LAYER =====
@@ -176,8 +168,8 @@ const GET_POOL_HOUR_DATAS_QUERY = gql`
  * @returns {Promise<Array>} Array of pool objects (tokens, TVL, volume, fees)
  */
 export async function fetchPools(variables) {
-   const data = await client.request(GET_POOLS_QUERY, variables)
-   return data.pools
+  const data = await client.request(GET_POOLS_QUERY, variables)
+  return data.pools
 }
 
 /**
@@ -191,18 +183,18 @@ export async function fetchPools(variables) {
  * @returns {Array} result.history - Daily snapshots (volumeUSD, tvlUSD, feesUSD, prices)
  */
 export async function fetchPoolHistory(poolId, startDate) {
-   const normalizedId = poolId.toLowerCase();
-   const data = await client.request(GET_POOL_HISTORY_QUERY, {
-      // TheGraph indexes addresses in lowercase (checksummed addresses return null)
-      poolId: normalizedId,
-      poolIdString: normalizedId,
-      startDate
-   })
-   return {
-      pool: data.pool,
-      history: data.poolDayDatas,
-      ethPriceUSD: parseFloat(data.bundle?.ethPriceUSD || 0)
-   }
+  const normalizedId = poolId.toLowerCase()
+  const data = await client.request(GET_POOL_HISTORY_QUERY, {
+    // TheGraph indexes addresses in lowercase (checksummed addresses return null)
+    poolId: normalizedId,
+    poolIdString: normalizedId,
+    startDate,
+  })
+  return {
+    pool: data.pool,
+    history: data.poolDayDatas,
+    ethPriceUSD: parseFloat(data.bundle?.ethPriceUSD || 0),
+  }
 }
 
 /**
@@ -214,9 +206,9 @@ export async function fetchPoolHistory(poolId, startDate) {
  * @returns {Promise<Array>} Array of hourly datapoints (up to 720 items = 30 days)
  */
 export async function fetchPoolHourData(poolId, startTime) {
-   const data = await client.request(GET_POOL_HOUR_DATAS_QUERY, {
-      poolId: poolId.toLowerCase(),
-      startTime
-   })
-   return data.poolHourDatas
+  const data = await client.request(GET_POOL_HOUR_DATAS_QUERY, {
+    poolId: poolId.toLowerCase(),
+    startTime,
+  })
+  return data.poolHourDatas
 }
