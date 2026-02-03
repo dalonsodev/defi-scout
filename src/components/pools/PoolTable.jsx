@@ -6,7 +6,8 @@ import {
    getFilteredRowModel,
    flexRender
 } from "@tanstack/react-table"
-import { MiniSparkline } from "../common/MiniSparkline"
+import { baseColumns } from "../../data/tableColumns"
+import { SparklineCell } from "./cells/SparklineCell"
 import { PlatformIcon } from "../common/PlatformIcon"
 import { useBreakpoint } from "../../hooks/useBreakpoint"
 import { useIntersection } from "../../hooks/useIntersection"
@@ -67,118 +68,116 @@ const PoolTable = forwardRef(({
       }
    }, [visiblePoolIds, onVisiblePoolsChange])
 
-   const columns = useMemo(() => {
-      return [
-         {
-            accessorKey: "name",
-            header: "Pool",
-            meta: { showOn: "both", isSticky: true },
-            cell: ({ row }) => (
-               <Link
-                  to={`/pools/${row.original.id}`}
-                  className="block"
-                  aria-label={`View details for ${row.original.name} pool`}
-               >
-                  <div className="tooltip tooltip-right" data-tip={row.original.name}>
-                     <div className="font-medium text-base-content max-w-[120px] truncate">
-                        {row.original.name}
-                     </div>
-                  </div>
-               </Link>
-            )
-         },
-         {
-            accessorKey: "apyBase",
-            header: "APY",
-            meta: { showOn: "both" },
-            cell: ({ row }) => (
-               <div className="text-right font-semibold text-green-600">
-                  {Number(row.original.apyBase || 0).toFixed(2)}%
-               </div>
-            )
-         },
-         {
-            accessorKey: "tvlUsd",
-            header: "TVL",
-            meta: { showOn: "both" },
-            cell: ({ row }) => (
-               <div className="text-right text-base-content">
-                  ${row.original.tvlFormatted}
-               </div>
-            )
-         },
-         {
-            accessorKey: "volumeUsd1d",
-            header: "Vol (24h)",
-            meta: { showOn: "both" },
-            cell: ({ row }) => (
-               <div className="text-right text-base-content">
-                  ${row.original.volumeFormatted}
-               </div>
-            )
-         },
-         {
-            accessorKey: "sparklineIn7d",
-            header: "APY (7d)",
-            meta: { showOn: "both" },
-            cell: ({ row }) => {
-               const data = sparklineData?.[row.original.id]
 
-               if (!data) {
-                  return (
-                     <div className="flex justify-center">
-                        <div
-                           className="tooltip tooltip-left cursor-help py-2.5"
-                           data-tip="Upgrade to Pro for unlimited sparklines"
-                        >
-                           <span className="text-xs text-base-content/40 font-medium min-h-10">
-                              ⟢ Pro
-                           </span>
+   const columns = useMemo(() => {
+      return baseColumns.map(col => {
+
+         if (col.accessorKey === "name") {
+            return {
+               ...col,
+               cell: ({ row }) => (
+                  <Link
+                     to={`/pools/${row.original.id}`}
+                     className="block"
+                     aria-label={`View details for ${row.original.name} pool`}
+                  >
+                     <div className="tooltip tooltip-right" data-tip={row.original.name}>
+                        <div className="font-medium text-base-content max-w-[120px] truncate">
+                           {row.original.name}
                         </div>
                      </div>
-                  )
-               }
-               return <MiniSparkline data={data} />
+                  </Link>
+               )
             }
-         },
-         {
-            accessorKey: "chain",
-            header: "Chain",
-            meta: { showOn: "desktop" },
-            cell: ({ row }) => (
-               <span className="badge badge-primary badge-sm rounded-l-lg">
-                  {row.original.chain}
-               </span>
-            )
-         },
-         {
-            id: "platformIconOnly",
-            header: "DEX",
-            meta: { showOn: "mobile" },
-            cell: ({ row }) => (
-               <PlatformIcon
-                  platform={row.original.project}
-                  size="md"
-               />
-            )
-         },
-         {
-            accessorKey: "platformName",
-            header: "Platform",
-            meta: { showOn: "desktop" },
-            cell: ({ row }) => (
-               <div className="flex items-center gap-2">
+         }
+
+         if (col.accessorKey === "apyBase") {
+            return {
+               ...col,
+               cell: ({ row }) => (
+                  <div className="text-right font-semibold text-green-600">
+                     {Number(row.original.apyBase || 0).toFixed(2)}%
+                  </div>
+               )
+            }
+         }
+
+         if (col.accessorKey === "tvlUsd") {
+            return {
+               ...col,
+               cell: ({ row }) => (
+                  <div className="text-right text-base-content">
+                      ${row.original.tvlFormatted}
+                  </div>
+               )
+            }
+         }
+
+         if (col.accessorKey === "volumeUsd1d") {
+            return {
+               ...col,
+               cell: ({ row }) => (
+                  <div className="text-right text-base-content">
+                     ${row.original.volumeFormatted}
+                  </div>
+               )
+            }
+         }
+
+         if (col.accessorKey === "sparklineIn7d") {
+            return {
+               ...col,
+               cell: ({ row }) => (
+                  <SparklineCell
+                     poolId={row.original.id}
+                     sparklineData={sparklineData}
+                  />
+               )
+            }
+         }
+
+         if (col.accessorKey === "chain") {
+            return {
+               ...col,
+               cell: ({ row }) => (
+                  <span className="badge badge-primary badge-sm rounded-l-lg">
+                     {row.original.chain}
+                  </span>
+               )
+            }
+         }
+
+         if (col.id === "platformIconOnly") {
+            return {
+               ...col,
+               cell: ({ row }) => (
                   <PlatformIcon
                      platform={row.original.project}
                      size="md"
                   />
-                  <span className="text-sm text-base-content/70">
-                     {row.original.platformName}
-                  </span>
-               </div>
-            )
+               )
+            }
          }
-      ]
+
+         if (col.accessorKey === "platformName") {
+            return {
+               ...col,
+               cell: ({ row }) => (
+                  <div className="flex items-center gap-2">
+                     <PlatformIcon
+                        platform={row.original.project}
+                        size="md"
+                     />
+                     <span className="text-sm text-base-content/70">
+                        {row.original.platformName}
+                     </span>
+                  </div>
+               )
+            }
+         }
+
+         return col
+      })
    }, [sparklineData])
 
    const visibleColumns = useMemo(() => {
