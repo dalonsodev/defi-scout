@@ -1,57 +1,89 @@
-/**
- * Utility: Uniswap V3 Liquidity Calculator (L) for Active Positions
- * 
- * Architecture: Computes the "virtual liquidity" parameter L that determines:
- * 1. How much of each token is locked in the position
- * 2. The position's share of trading fees (proportional to L / L_global)
- * 
- * Design Decision: Returns Math.min(L0, L1) (the "binding constraint").
- * Rationale: In V3, a position can be limited by EITHER token's availability.
- * If user deposits 100 USDC but only 0.01 ETH, the effective liquidity is capped
- * by the ETH amount. This prevents overestimating fee earnings.
- * 
- * Reference: Uniswap V3 whitepaper, Section 6.2.1
- * https://uniswap.org/whitepaper-v3.pdf
- */
+import { debugLog } from "../../../../utils/logger"
 
 /**
- * Calculates Uniswap V3 liquidity (L) for a position
- * @param {number} amount0 - Token0 quantity deposited (e.g. 1000 USDC)
- * @param {number} amount1 - Token1 quantity deposited (e.g. 0.5 ETH)
- * @param {number} price - Current market price (token1/token0, e.g. 2000 USDC/ETH)
- * @param {number} minPrice - Lower bound of the range (Pa)
- * @param {number} maxPrice - Upper bound of the range (Pb)
- * @returns {number} L_user - Effective liquidity (0 if position is out of range)
- * 
- * @example
- * // User deposits $10k in 2000 USDC/ETH pool with ±10% range
- * const L = calculateLiquidity(5000, 2.5, 2000, 1800, 2200)
- * // Returns ~7071 (lower of the two token constraints)
+ * Calculates Uniswap V3 liquidity (L) for a concentrated position.
+ *
+ * Theory: L represents "virtual reserves" in the sqrt(price) space.
+ * It determines fee accrual rate: higher L = more capital deployed = more fees.
+ *
+ * Key Insight: Uniswap uses P = token1/token0 (e.g., WETH per USDC),
+ * but our data provides token0/token1 (e.g., USDC per WETH).
+ * We invert prices before applying Uniswap formulas.
+ *
+ * Position States:
+ * - Below range (P < P_low): 100% token0, use Δx formula
+ * - In range (P_low ≤ P ≤ P_high): Both tokens, take min(L0, L1)
+ * - Above range (P > P_high): 100% token1, use Δy formula
+ *
+ * @param {number} amount0 - Token0 amount (human units, e.g. 1000 USDC)
+ * @param {number} amount1 - Token1 amount (human units, e.g. 0.5 WETH)
+ * @param {number} price - Current price (token0/token1, e.g. 2000 USDC per WETH)
+ * @param {number} minPrice - Lower bound (same scale as price)
+ * @param {number} maxPrice - Upper bound (same scale as price)
+ * @returns {number} Liquidity in RAW units (compatible with TheGraph's L_pool)
  */
-export function calculateLiquidity(amount0, amount1, price, minPrice, maxPrice) {
-   // Edge Case: Position out of range → no fees earned, return 0
-   // This prevents division by zero in downstream calculations (fee APR would be Infinity)
-   if (price <= minPrice || price >= maxPrice) {
-      return 0
+export function calculateLiquidity(
+   amount0,
+   amount1,
+   price,
+   minPrice,
+   maxPrice
+) {
+   // Invert to Uniswap V3 convention (P = token1/token0)
+   const P = 1 / price
+   const P_low = 1 / maxPrice    // Higher token0/token1 → lower token1/token0
+   const P_high = 1 / minPrice
+
+   const sqrtP = Math.sqrt(P)
+   const sqrtPLow = Math.sqrt(P_low)
+   const sqrtPHigh = Math.sqrt(P_high)
+
+   debugLog('Liquidity Inputs:', {
+      amount0,
+      amount1,
+      currentPrice: price.toFixed(4),
+      range: `${minPrice.toFixed(4)} - ${maxPrice.toFixed(4)}`
+   })
+
+   debugLog('After Price Inversion:', {
+      P: P.toFixed(8),
+      P_low: P_low.toFixed(8),
+      P_high: P_high.toFixed(8),
+      sqrtP: sqrtP.toFixed(6)
+   })
+
+   let liquidity
+   let positionState
+
+   if (P <= P_low) {
+      // Below range: L = Δx × (√P_high × √P_low) / (√P_high - √P_low)
+      liquidity = amount0 * (sqrtPHigh * sqrtPLow) / (sqrtPHigh - sqrtPLow)
+      positionState = 'BELOW_RANGE (100% token0)'
+
+   } else if (P >= P_high) {
+      // Above range: L = Δy / (√P_high - √P_low)
+      liquidity = amount1 / (sqrtPHigh - sqrtPLow)
+      positionState = 'ABOVE_RANGE (100% token1)'
+
+   } else {
+      // In range: Calculate from both tokens, use minimum (binding constraint)
+      const liq0 = amount0 * (sqrtP * sqrtPHigh) / (sqrtPHigh - sqrtP)
+      const liq1 = amount1 / (sqrtP - sqrtPLow)
+
+      liquidity = Math.min(liq0, liq1)
+      positionState = `IN_RANGE (binding: ${liq0 < liq1 ? 'token0' : 'token1'})`
+
+      debugLog('In-Range Calculation:', {
+         liq0: liq0.toExponential(3),
+         liq1: liq1.toExponential(3),
+         final: liquidity.toExponential(3)
+      })
    }
 
-   // ===== STEP 1: SQRT TRANSFORMATIONS =====
-   // V3 math operates in "sqrt price space" for gas efficiency
-   const sqrtPrice = Math.sqrt(price)
-   const sqrtMinPrice = Math.sqrt(minPrice)
-   const sqrtMaxPrice = Math.sqrt(maxPrice)
+   debugLog('Calculated Liquidity:', {
+      state: positionState,
+      L_user: liquidity.toExponential(6)
+   })
 
-   // ===== STEP 2: CALCULATE L0 (TOKEN0 CONSTRAINT) =====
-   // Formula: L = Δx × (√P × √Pb) / (√Pb - √P)
-   // Represents: "How much liquidity can token0 provide?"
-   const L0 = amount0 * (sqrtPrice * sqrtMaxPrice) / (sqrtMaxPrice - sqrtPrice)
-   
-   // ===== STEP 3: CALCULATE L1 (TOKEN1 CONSTRAINT) =====
-   // Formula: L = Δy / (√P - √Pa)
-   // Represents: "How much liquidity can token1 provide?"
-   const L1 = amount1 * (sqrtPrice * sqrtMinPrice)
-   
-   // ===== STEP 4: RETURN BINDING CONSTRAINT =====
-   // Min ensures we don't overestimate position power when one token runs out
-   return Math.min(L0, L1)
+   return liquidity
 }
