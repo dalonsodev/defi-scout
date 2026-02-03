@@ -211,9 +211,11 @@ function StatCard({ label, value, color = "text-base-content" }) {
    )
 }
 
-
-// ===== Utility Functions =====
-
+/**
+ * Stats-optimized currency formatter (vs formatCompactCurrency in charts).
+ * Precision: .toFixed(2) for KPI cards where extra decimal improves clarity.
+ * Scope: Local to PoolDetail (if reused in 3+ components → refactor to utils).
+ */
 function formatCurrency(value) {
    if (!value || value === 0) return "$0"
    if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`
