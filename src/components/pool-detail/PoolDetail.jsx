@@ -1,16 +1,20 @@
 import { useLoaderData, Link } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useRef } from "react"
 import { TokenInfoBlock } from "./TokenInfoBlock"
 import { PoolCharts } from "./charts/PoolCharts"
 import { RangeCalculator } from "./calculator/RangeCalculator"
+import { invertPriceRange } from "./calculator/utils/invertPriceRange"
+import { usePoolHourlyData } from "./calculator/hooks/usePoolHourlyData"
 
 /**
- * Architechture: Pool Analytics & Strategy Dashboard.
+ * Architecture: Pool Analytics & Strategy Dashboard.
  * State orchestrator for liquidity simulation and historical trend visualization.
  * @returns {JSX.Element}
  */
 export function PoolDetail() {
-   const { pool, history } = useLoaderData()
+   const { pool, history, ethPriceUSD } = useLoaderData()
+   const { hourlyData, isLoading, fetchError } = usePoolHourlyData(pool.id)
+   const hasHydrated = useRef(false)
    const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
    const [rangeInputs, setRangeInputs] = useState({
       capitalUSD: 1000,
@@ -20,6 +24,48 @@ export function PoolDetail() {
       assumedPrice: ""
    })
 
+   /**
+    * Hydration: Initialize default ±10% range on first load.
+    * Runs once when hourlyData becomes available, respecting early token selection.
+    * Flag prevent re-hydration if user manually clears inputs (intentional blank state).
+    */
+   useEffect(() => {
+      if (hasHydrated.current) return
+      if (rangeInputs.minPrice !== "" || rangeInputs.maxPrice !== "") return
+      if (!hourlyData) return
+
+      const currentPrice = parseFloat(hourlyData[0].token0Price)
+      const basePrice = selectedTokenIdx === 0 ? currentPrice : 1 / currentPrice
+
+      setRangeInputs(prev => ({
+         ...prev,
+         minPrice: basePrice * 0.9,
+         maxPrice: basePrice * 1.1,
+         assumedPrice: basePrice
+      }))
+
+      hasHydrated.current = true
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [hourlyData, selectedTokenIdx])
+   // Justification: rangeInputs.minPrice/maxPrice are guards, not triggers.
+   // Including them would cause unnecessary effect re-runs on every input change.
+
+   const handleTokenChange = useCallback((newIdx) => {
+      const invertedPrices = invertPriceRange({
+         minPrice: rangeInputs.minPrice,
+         maxPrice: rangeInputs.maxPrice,
+         assumedPrice: rangeInputs.assumedPrice,
+         fullRange: rangeInputs.fullRange
+      })
+
+      setSelectedTokenIdx(newIdx)
+
+      if (invertedPrices) {
+         setRangeInputs(prev => ({ ...prev, ...invertedPrices }))
+      }
+   }, [rangeInputs])
+
    // Event Management: Scroll to top on route entry
    useEffect(() => {
       window.scrollTo(0, 0)
@@ -27,7 +73,7 @@ export function PoolDetail() {
 
    // Domain Logic: Price inversion and token symbol
    const tokenSymbols = [pool.token0.symbol, pool.token1.symbol]
-   
+
    /**
     * Math: Resolve relative price
     * Uniswap price is usually token0/token1. If user selects token1 as base,
@@ -77,7 +123,7 @@ export function PoolDetail() {
                </div>
 
                <div className="flex-gap-2">
-                  <a 
+                  <a
                      href={`https://etherscan.io/address/${pool.id}`}
                      target="_blank"
                      rel="noopener noreferrer"
@@ -92,48 +138,52 @@ export function PoolDetail() {
 
          {/* Grid: Key Performance Indicators */}
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <StatCard 
+            <StatCard
                label="TVL"
                value={formatCurrency(latestSnapshot.tvlUSD)}
                color="text-primary"
             />
-            <StatCard 
+            <StatCard
                label="Volume (24h)"
                value={formatCurrency(latestSnapshot.volumeUSD)}
                color="text-secondary"
             />
-            <StatCard 
+            <StatCard
                label="Avg APY (7d)"
                value={`${avgAPY.toFixed(2)}%`}
                color="text-success"
             />
-            <StatCard 
+            <StatCard
                label="Pool Age"
                value={`${Math.floor(poolAgeDays)} days`}
                color="text-info"
             />
          </div>
-         
+
          {/* Main Interface: Simulator vs History */}
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
-               <RangeCalculator 
+               <RangeCalculator
                   pool={pool}
                   selectedTokenIdx={selectedTokenIdx}
                   inputs={rangeInputs}
                   onInputsChange={setRangeInputs}
+                  hourlyData={hourlyData}
+                  isLoading={isLoading}
+                  fetchError={fetchError}
+                  ethPriceUSD={ethPriceUSD}
                />
             </div>
             <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
                <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
                <div className="grid gap-4 mb-4">
-                  <TokenInfoBlock 
+                  <TokenInfoBlock
                      pool={pool}
                      selectedTokenIdx={selectedTokenIdx}
-                     onTokenChange={setSelectedTokenIdx}
+                     onTokenChange={handleTokenChange}
                   />
                </div>
-               <PoolCharts 
+               <PoolCharts
                   history={history}
                   selectedTokenIdx={selectedTokenIdx}
                   tokenSymbols={tokenSymbols}
@@ -161,9 +211,11 @@ function StatCard({ label, value, color = "text-base-content" }) {
    )
 }
 
-
-// ===== Utility Functions =====
-
+/**
+ * Stats-optimized currency formatter (vs formatCompactCurrency in charts).
+ * Precision: .toFixed(2) for KPI cards where extra decimal improves clarity.
+ * Scope: Local to PoolDetail (if reused in 3+ components → refactor to utils).
+ */
 function formatCurrency(value) {
    if (!value || value === 0) return "$0"
    if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`
