@@ -1,16 +1,16 @@
-import { useCallback, useState } from "react"
+import { useCallback, useState } from 'react'
 
 /**
  * Custom Hook: Centralized Filter State Manager
- * 
+ *
  * Architecture: Single source of truth for all pool discovery filters instead of
  * prop drilling through PoolsContent → PoolFilters → individual inputs. Uses memoized
  * handlers to prevent child component re-renders when parent state changes.
- * 
+ *
  * Design Decision: Separate togglePlatform() instead of generic updateFilter()
  * because multi-select dropdowns need array manipulation (add/remove), while other
  * filters are simple value replacements. This keeps child components clean.
- * 
+ *
  * Performance: useCallback with empty deps ensures stable references for input
  * onChange handlers. Without this, PoolFilters would re-render on every keystroke
  * in search input (unnecessary diffing of 40+ table rows below).
@@ -29,25 +29,25 @@ import { useCallback, useState } from "react"
  * @property {Function} updateFilter - Generic setter: (key: string, value: string) => void
  * @property {Function} togglePlatform - Multi-select handler: (platformId: string) => void
  * @property {Function} clearFilters - Reset to factory defaults: () => void
- * 
+ *
  * @example
  * // Typical usage in PoolsContent orchestrator
  * function PoolsContent({ pools }) {
  *   const { filters, updateFilter, togglePlatform, clearFilters } = usePoolFilters()
- *   
+ *
  *   // Extract unique platforms from API data
- *   const availablePlatforms = useMemo(() => 
+ *   const availablePlatforms = useMemo(() =>
  *     extractUniquePlatforms(pools), [pools]
  *   )
- *   
+ *
  *   // Apply filter pipeline before pagination
- *   const filteredPools = useMemo(() => 
+ *   const filteredPools = useMemo(() =>
  *     filterPools(pools, filters), [pools, filters]
  *   )
- *   
+ *
  *   return (
  *     <>
- *       <PoolFilters 
+ *       <PoolFilters
  *         filters={filters}
  *         updateFilter={updateFilter}
  *         togglePlatform={togglePlatform}
@@ -60,44 +60,44 @@ import { useCallback, useState } from "react"
  * }
  */
 export function usePoolFilters() {
-   const [filters, setFilters] = useState({
-      search: "",
+  const [filters, setFilters] = useState({
+    search: '',
+    platforms: [],
+    tvlUsd: '',
+    volumeUsd1d: '',
+    riskLevel: '',
+  })
+
+  // Stable reference for input handlers (prevents PoolFilters re-renders)
+  const updateFilter = useCallback((key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }))
+  }, [])
+
+  // Immutable toggle: creates a new array instead of mutating existing
+  const togglePlatform = useCallback((platform) => {
+    setFilters((prev) => ({
+      ...prev,
+      platforms: prev.platforms.includes(platform)
+        ? prev.platforms.filter((p) => p !== platform) // Remove if present
+        : [...prev.platforms, platform], // Add if absent
+    }))
+  }, [])
+
+  // Reset to initial state (matches useState defaults above)
+  const clearFilters = useCallback(() => {
+    setFilters({
+      search: '',
       platforms: [],
-      tvlUsd: "",
-      volumeUsd1d: "",
-      riskLevel: ""
-   })
+      tvlUsd: '',
+      volumeUsd1d: '',
+      riskLevel: '',
+    })
+  }, [])
 
-   // Stable reference for input handlers (prevents PoolFilters re-renders)
-   const updateFilter = useCallback((key, value) => {
-      setFilters(prev => ({ ...prev, [key]: value }))
-   }, [])
-
-   // Immutable toggle: creates a new array instead of mutating existing
-   const togglePlatform = useCallback((platform) => {
-      setFilters(prev => ({
-         ...prev,
-         platforms: prev.platforms.includes(platform)
-            ? prev.platforms.filter(p => p !== platform)  // Remove if present
-            : [...prev.platforms, platform]               // Add if absent
-      }))
-   }, [])
-
-   // Reset to initial state (matches useState defaults above)
-   const clearFilters = useCallback(() => {
-      setFilters({
-         search: "",
-         platforms: [],
-         tvlUsd: "",
-         volumeUsd1d: "",
-         riskLevel: ""
-      })
-   }, [])
-
-   return {
-      filters,
-      updateFilter,
-      togglePlatform,
-      clearFilters
-   }
+  return {
+    filters,
+    updateFilter,
+    togglePlatform,
+    clearFilters,
+  }
 }

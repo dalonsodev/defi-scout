@@ -1,4 +1,4 @@
-import { debugLog } from "./logger"
+import { debugLog } from './logger'
 
 /**
  * Infers USD prices of both tokens from current pool TVL snapshot.
@@ -24,70 +24,75 @@ import { debugLog } from "./logger"
  * @returns {number} [returns.priceToken1InUSD] - Inferred token1 USD price
  */
 export function inferTokenPricesFromTVL({
-   tvlUSD,
-   tvlToken0,
-   tvlToken1,
-   currentPrice
+  tvlUSD,
+  tvlToken0,
+  tvlToken1,
+  currentPrice,
 }) {
-   const isInvalidPrice = (price) => price <= 0 || !isFinite(price)
+  const isInvalidPrice = (price) => price <= 0 || !isFinite(price)
 
-   // Validate all inputs exist
-   if (tvlUSD == null || tvlToken0 == null ||
-      tvlToken1 == null || currentPrice == null) {
-      return {
-         success: false,
-         error: "Pool metadata incomplete. Cannot calculate prices."
-      }
-   }
+  // Validate all inputs exist
+  if (
+    tvlUSD == null ||
+    tvlToken0 == null ||
+    tvlToken1 == null ||
+    currentPrice == null
+  ) {
+    return {
+      success: false,
+      error: 'Pool metadata incomplete. Cannot calculate prices.',
+    }
+  }
 
-   if (isInvalidPrice(currentPrice) || isNaN(currentPrice)) {
-      return {
-         success: false,
-         error: "Invalid current price from hourly data."
-      }
-   }
+  if (isInvalidPrice(currentPrice) || isNaN(currentPrice)) {
+    return {
+      success: false,
+      error: 'Invalid current price from hourly data.',
+    }
+  }
 
-   if (isInvalidPrice(tvlUSD)) {
-      return {
-         success: false,
-         error: "Pool has no liquidity (TVL = $0)."
-      }
-   }
+  if (isInvalidPrice(tvlUSD)) {
+    return {
+      success: false,
+      error: 'Pool has no liquidity (TVL = $0).',
+    }
+  }
 
-   if (isInvalidPrice(tvlToken0) || isInvalidPrice(tvlToken1)) {
-      return {
-         success: false,
-         error: "Pool is imbalanced (one token at 0%). Cannot calculate prices."
-      }
-   }
+  if (isInvalidPrice(tvlToken0) || isInvalidPrice(tvlToken1)) {
+    return {
+      success: false,
+      error: 'Pool is imbalanced (one token at 0%). Cannot calculate prices.',
+    }
+  }
 
-   // Calculate prices using TVL proportions
-   const totalValueInToken1Units = (tvlToken0 * currentPrice) + tvlToken1
-   const priceToken1InUSD = tvlUSD / totalValueInToken1Units
-   const priceToken0InUSD = priceToken1InUSD * currentPrice
+  // Calculate prices using TVL proportions
+  const totalValueInToken1Units = tvlToken0 * currentPrice + tvlToken1
+  const priceToken1InUSD = tvlUSD / totalValueInToken1Units
+  const priceToken0InUSD = priceToken1InUSD * currentPrice
 
-   if (isInvalidPrice(priceToken0InUSD) || isInvalidPrice(priceToken1InUSD)) {
-      return {
-         success: false,
-         error: "Invalid price calculation. Pool data may be corrupted."
-      }
-   }
+  if (isInvalidPrice(priceToken0InUSD) || isInvalidPrice(priceToken1InUSD)) {
+    return {
+      success: false,
+      error: 'Invalid price calculation. Pool data may be corrupted.',
+    }
+  }
 
-   // Sanity check: Sum of (token amounts * prices) should equal total TVL
-   const calculatedTVL = (tvlToken0 * priceToken0InUSD) + (tvlToken1 * priceToken1InUSD)
-   const errorPercent = Math.abs((calculatedTVL - tvlUSD) / tvlUSD * 100)
+  // Sanity check: Sum of (token amounts * prices) should equal total TVL
+  const calculatedTVL =
+    tvlToken0 * priceToken0InUSD + tvlToken1 * priceToken1InUSD
+  const errorPercent = Math.abs(((calculatedTVL - tvlUSD) / tvlUSD) * 100)
 
-   debugLog('Price Inference:', {
-      token0Price: `$${priceToken0InUSD.toFixed(4)}`,
-      token1Price: `$${priceToken1InUSD.toFixed(4)}`,
-      calculatedTVL: `$${calculatedTVL.toFixed(2)}`,
-      actualTVL: `$${tvlUSD.toFixed(2)}`,
-      error: `${errorPercent.toFixed(2)}%`
-   })
+  debugLog('Price Inference:', {
+    token0Price: `$${priceToken0InUSD.toFixed(4)}`,
+    token1Price: `$${priceToken1InUSD.toFixed(4)}`,
+    calculatedTVL: `$${calculatedTVL.toFixed(2)}`,
+    actualTVL: `$${tvlUSD.toFixed(2)}`,
+    error: `${errorPercent.toFixed(2)}%`,
+  })
 
-   return {
-      success: true,
-      priceToken0InUSD,
-      priceToken1InUSD
-   }
+  return {
+    success: true,
+    priceToken0InUSD,
+    priceToken1InUSD,
+  }
 }

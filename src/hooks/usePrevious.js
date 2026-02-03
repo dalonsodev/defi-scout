@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect } from 'react'
 
 /**
  * Custom Hook: Returns the previous value of a variable from the last render.
@@ -16,11 +16,11 @@ import { useRef, useEffect } from "react"
  * const changed = prevFilters !== filters // Compares by reference
  */
 export function usePrevious(value) {
-   const ref = useRef()
+  const ref = useRef()
 
-   useEffect(() => {
-      ref.current = value // Update after render commits
-   })
+  useEffect(() => {
+    ref.current = value // Update after render commits
+  })
 
-   return ref.current // Return OLD value during render
+  return ref.current // Return OLD value during render
 }

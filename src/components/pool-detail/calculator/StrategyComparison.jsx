@@ -1,4 +1,4 @@
-import { debugLog } from "../../../utils/logger"
+import { debugLog } from '../../../utils/logger'
 
 /**
  * UI: Strategy Comparison Dashboard
@@ -29,32 +29,32 @@ import { debugLog } from "../../../utils/logger"
  * />
  */
 export function StrategyComparison({
-   hodlStrategy,
-   lpStrategy,
-   isCalculating
+  hodlStrategy,
+  lpStrategy,
+  isCalculating,
 }) {
-   // Architecture: Winner determined by absolute PNL (not ROI%)
-   // Edge Case: Both strategies can be negative (shows lesser loss)
-   const winner = lpStrategy?.pnl > hodlStrategy?.pnl ? "lp" : "hodl"
+  // Architecture: Winner determined by absolute PNL (not ROI%)
+  // Edge Case: Both strategies can be negative (shows lesser loss)
+  const winner = lpStrategy?.pnl > hodlStrategy?.pnl ? 'lp' : 'hodl'
 
-   debugLog("Simulation Results:", { hodlStrategy, lpStrategy })
+  debugLog('Simulation Results:', { hodlStrategy, lpStrategy })
 
-   return (
-      <div className="grid gap-4">
-         <StrategyCard
-            title="Strategy A: HODL"
-            isWinner={winner === "hodl"}
-            data={hodlStrategy}
-            isCalculating={isCalculating}
-         />
-         <StrategyCard
-            title="Strategy B: Uniswap V3"
-            isWinner={winner === "lp"}
-            data={lpStrategy}
-            isCalculating={isCalculating}
-         />
-      </div>
-   )
+  return (
+    <div className="grid gap-4">
+      <StrategyCard
+        title="Strategy A: HODL"
+        isWinner={winner === 'hodl'}
+        data={hodlStrategy}
+        isCalculating={isCalculating}
+      />
+      <StrategyCard
+        title="Strategy B: Uniswap V3"
+        isWinner={winner === 'lp'}
+        data={lpStrategy}
+        isCalculating={isCalculating}
+      />
+    </div>
+  )
 }
 
 /**
@@ -83,65 +83,71 @@ export function StrategyComparison({
  * @returns {JSX.Element} Financial metrics card with conditional LP data
  */
 function StrategyCard({ title, isWinner, data, isCalculating }) {
-   return (
-      <div
-         className={`
+  return (
+    <div
+      className={`
             card bg-base-300 rounded-2xl p-4 mb-4
-            ${isWinner ? "ring-2 ring-success" : ""}
-      `}>
-         <div className="flex justify-between items-center mb-4">
-            <h4 className="font-semibold">{title}</h4>
-            {isWinner && (
-               <span className="badge badge-success">Best</span>
-            )}
-         </div>
-
-         {isCalculating || !data ? (
-            <div className="skeleton h-32" />
-         ) : (
-            <div className="space-y-2">
-               {/* Asset Breakdown: Token balances after price movement/rebalancing */}
-               <div className="text-sm">
-                  <div className="flex justify-between">
-                     <span className="text-base-content/60">{data.token0Symbol}</span>
-                     <span>{data.amount0.toFixed(4)} ({data.token0Percent}%)</span>
-                  </div>
-                  <div className="flex justify-between">
-                     <span className="text-base-content/60">{data.token1Symbol}</span>
-                     <span>{data.amount1.toFixed(4)} ({data.token1Percent}%)</span>
-                  </div>
-               </div>
-
-               <div className="divider my-2" />
-
-               {/* Performance Metrics: P&L and Portfolio Valuation */}
-               <div className="flex justify-between font-bold">
-                  <span>Value</span>
-                  <span>${data.totalValue.toFixed(2)}</span>
-               </div>
-
-               <div className="flex justify-between">
-                  <span>P&L</span>
-                  <span className={data.pnl >= 0 ? "text-success" : "text-error"}>
-                     {data.pnl >= 0 ? "+" : ""}${data.pnl.toFixed(2)} ({data.pnlPercent}%)
-                  </span>
-               </div>
-
-               {/* Domain Logic: LP-specific metrics (IL and Fees) only for Uniswap V3 */}
-               {data.feesEarned !== undefined && (
-                  <>
-                     <div className="flex justify-between text-sm">
-                        <span className="text-base-content/60">Fees Earned</span>
-                        <span className="text-success">+${data.feesEarned.toFixed(2)}</span>
-                     </div>
-                     <div className="flex justify-between text-sm">
-                        <span className="text-base-content/60">Impermanent Loss</span>
-                        <span className="text-error">{data.ilPercent}%</span>
-                     </div>
-                  </>
-               )}
-            </div>
-         )}
+            ${isWinner ? 'ring-2 ring-success' : ''}
+      `}
+    >
+      <div className="flex justify-between items-center mb-4">
+        <h4 className="font-semibold">{title}</h4>
+        {isWinner && <span className="badge badge-success">Best</span>}
       </div>
-   )
+
+      {isCalculating || !data ? (
+        <div className="skeleton h-32" />
+      ) : (
+        <div className="space-y-2">
+          {/* Asset Breakdown: Token balances after price movement/rebalancing */}
+          <div className="text-sm">
+            <div className="flex justify-between">
+              <span className="text-base-content/60">{data.token0Symbol}</span>
+              <span>
+                {data.amount0.toFixed(4)} ({data.token0Percent}%)
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-base-content/60">{data.token1Symbol}</span>
+              <span>
+                {data.amount1.toFixed(4)} ({data.token1Percent}%)
+              </span>
+            </div>
+          </div>
+
+          <div className="divider my-2" />
+
+          {/* Performance Metrics: P&L and Portfolio Valuation */}
+          <div className="flex justify-between font-bold">
+            <span>Value</span>
+            <span>${data.totalValue.toFixed(2)}</span>
+          </div>
+
+          <div className="flex justify-between">
+            <span>P&L</span>
+            <span className={data.pnl >= 0 ? 'text-success' : 'text-error'}>
+              {data.pnl >= 0 ? '+' : ''}${data.pnl.toFixed(2)} (
+              {data.pnlPercent}%)
+            </span>
+          </div>
+
+          {/* Domain Logic: LP-specific metrics (IL and Fees) only for Uniswap V3 */}
+          {data.feesEarned !== undefined && (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="text-base-content/60">Fees Earned</span>
+                <span className="text-success">
+                  +${data.feesEarned.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-base-content/60">Impermanent Loss</span>
+                <span className="text-error">{data.ilPercent}%</span>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  )
 }

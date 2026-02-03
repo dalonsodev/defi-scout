@@ -1,7 +1,7 @@
-import { PriceInputSection } from "./PriceInputSection"
-import { TimeLineControl } from "./TimeLineControl"
-import { StrategyComparison } from "./StrategyComparison"
-import { useProjectionCalculator } from "./hooks/useProjectionCalculator"
+import { PriceInputSection } from './PriceInputSection'
+import { TimeLineControl } from './TimeLineControl'
+import { StrategyComparison } from './StrategyComparison'
+import { useProjectionCalculator } from './hooks/useProjectionCalculator'
 
 /**
  * UI: IL (Impermanent Loss) vs HODL Strategy Simulator
@@ -22,81 +22,73 @@ import { useProjectionCalculator } from "./hooks/useProjectionCalculator"
  * @returns {JSX.Element}
  */
 export function ILProjectionModal({
-   isOpen,
-   onClose,
-   poolData,
-   rangeInputs,
-   results,
-   ethPriceUSD
+  isOpen,
+  onClose,
+  poolData,
+  rangeInputs,
+  results,
+  ethPriceUSD,
 }) {
-   // Hook Orchestration: Manages complex IL math + debounced recalculation.
-   // Simulates AMM rebalancing at each price move, calculates cumulative fees,
-   // and compares final LP value vs simple HODL (buy-and-hold).
-   const {
-      hodlStrategy,
-      lpStrategy,
-      isCalculating, // True during debounce window (prevents UI flash)
-      currentToken0PriceUSD,
-      currentToken1PriceUSD,
-      futureToken0Price,
-      futureToken1Price,
-      projectionDays,
-      setFutureToken0Price,
-      setFutureToken1Price,
-      setProjectionDays,
-      daysToBreakEven
-   } = useProjectionCalculator(poolData, rangeInputs, results, ethPriceUSD)
+  // Hook Orchestration: Manages complex IL math + debounced recalculation.
+  // Simulates AMM rebalancing at each price move, calculates cumulative fees,
+  // and compares final LP value vs simple HODL (buy-and-hold).
+  const {
+    hodlStrategy,
+    lpStrategy,
+    isCalculating, // True during debounce window (prevents UI flash)
+    currentToken0PriceUSD,
+    currentToken1PriceUSD,
+    futureToken0Price,
+    futureToken1Price,
+    projectionDays,
+    setFutureToken0Price,
+    setFutureToken1Price,
+    setProjectionDays,
+    daysToBreakEven,
+  } = useProjectionCalculator(poolData, rangeInputs, results, ethPriceUSD)
 
-   return (
-      <dialog className={`modal ${isOpen ? "modal-open" : ""}`}>
-         <div className="modal-box max-w-xl bg-base-200">
+  return (
+    <dialog className={`modal ${isOpen ? 'modal-open' : ''}`}>
+      <div className="modal-box max-w-xl bg-base-200">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-2xl font-bold">Simulate Position Performance</h3>
+          <button onClick={onClose} className="btn btn-sm btn-circle btn-ghost">
+            x
+          </button>
+        </div>
 
-            {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-               <h3 className="text-2xl font-bold">Simulate Position Performance</h3>
-               <button
-                  onClick={onClose}
-                  className="btn btn-sm btn-circle btn-ghost"
-               >
-                  x
-               </button>
-            </div>
+        {/* Strategy Comparison Cards */}
+        <StrategyComparison
+          hodlStrategy={hodlStrategy}
+          lpStrategy={lpStrategy}
+          isCalculating={isCalculating}
+        />
 
-            {/* Strategy Comparison Cards */}
-            <StrategyComparison
-               hodlStrategy={hodlStrategy}
-               lpStrategy={lpStrategy}
-               isCalculating={isCalculating}
-            />
+        {/* Simulation Controls */}
+        <div className="space-y-6">
+          <PriceInputSection
+            token0Symbol={poolData.token0.symbol}
+            token1Symbol={poolData.token1.symbol}
+            currentToken0PriceUSD={currentToken0PriceUSD}
+            currentToken1PriceUSD={currentToken1PriceUSD}
+            futureToken0PriceUSD={futureToken0Price}
+            futureToken1PriceUSD={futureToken1Price}
+            onToken0PriceChange={setFutureToken0Price}
+            onToken1PriceChange={setFutureToken1Price}
+          />
+          <TimeLineControl
+            days={projectionDays}
+            onDaysChange={setProjectionDays}
+            daysToBreakEven={daysToBreakEven}
+          />
+        </div>
+      </div>
 
-            {/* Simulation Controls */}
-            <div className="space-y-6">
-               <PriceInputSection
-                  token0Symbol={poolData.token0.symbol}
-                  token1Symbol={poolData.token1.symbol}
-                  currentToken0PriceUSD={currentToken0PriceUSD}
-                  currentToken1PriceUSD={currentToken1PriceUSD}
-                  futureToken0PriceUSD={futureToken0Price}
-                  futureToken1PriceUSD={futureToken1Price}
-                  onToken0PriceChange={setFutureToken0Price}
-                  onToken1PriceChange={setFutureToken1Price}
-               />
-               <TimeLineControl
-                  days={projectionDays}
-                  onDaysChange={setProjectionDays}
-                  daysToBreakEven={daysToBreakEven}
-               />
-            </div>
-         </div>
-
-         {/* Backdrop: Click-outside-to-close */}
-         <form
-            method="dialog"
-            onClick={onClose}
-            className="modal-backdrop"
-         >
-            <button>close</button>
-         </form>
-      </dialog>
-   )
+      {/* Backdrop: Click-outside-to-close */}
+      <form method="dialog" onClick={onClose} className="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+  )
 }

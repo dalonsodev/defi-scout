@@ -1,5 +1,5 @@
-import { fetchPoolHistory } from "../services/theGraphClient"
-import { formatPoolHistory } from "./utils/formatPoolHistory"
+import { fetchPoolHistory } from '../services/theGraphClient'
+import { formatPoolHistory } from './utils/formatPoolHistory'
 
 /**
  * Loader: Pool Detail Page Data Fetcher
@@ -23,33 +23,35 @@ import { formatPoolHistory } from "./utils/formatPoolHistory"
  */
 
 export async function poolDetailLoader({ params }) {
-   const { poolId } = params
+  const { poolId } = params
 
-   // TheGraph uses Unix timestamps in seconds (not milliseconds like Date.now())
-   const thirtyDaysAgo = Math.floor(Date.now() / 1000) - (30 * 86400) // In seconds, not ms
+  // TheGraph uses Unix timestamps in seconds (not milliseconds like Date.now())
+  const thirtyDaysAgo = Math.floor(Date.now() / 1000) - 30 * 86400 // In seconds, not ms
 
-   try {
-      const { pool, history, ethPriceUSD } = await fetchPoolHistory(poolId, thirtyDaysAgo)
+  try {
+    const { pool, history, ethPriceUSD } = await fetchPoolHistory(
+      poolId,
+      thirtyDaysAgo,
+    )
 
-      // Edge Case: Pool exists but has no daily snapshots (new pool, or indexing lag)
-      if (!history || history.length === 0) {
-         return {
-            poolId,
-            history: [],
-            error: "No historical data found for this pool"
-         }
-      }
-
+    // Edge Case: Pool exists but has no daily snapshots (new pool, or indexing lag)
+    if (!history || history.length === 0) {
       return {
-         pool,
-         history: formatPoolHistory(history),
-         ethPriceUSD
+        poolId,
+        history: [],
+        error: 'No historical data found for this pool',
       }
+    }
 
-   } catch (error) {
-      console.error("Pool detail loader error:", error)
+    return {
+      pool,
+      history: formatPoolHistory(history),
+      ethPriceUSD,
+    }
+  } catch (error) {
+    console.error('Pool detail loader error:', error)
 
-      // React Router error boundary: Renders ErrorBoundary component instead of detail page
-      throw new Response("Failed to load pool data", { status: 500 })
-   }
+    // React Router error boundary: Renders ErrorBoundary component instead of detail page
+    throw new Response('Failed to load pool data', { status: 500 })
+  }
 }

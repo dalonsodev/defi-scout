@@ -1,3 +1,3 @@
 export async function watchlistLoader() {
-   return { favorites: [] }
+  return { favorites: [] }
 }
