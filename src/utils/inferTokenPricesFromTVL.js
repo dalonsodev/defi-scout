@@ -62,9 +62,9 @@ export function inferTokenPricesFromTVL({
    }
 
    // Calculate prices using TVL proportions
-   const totalValueInToken1Units = tvlToken0 / currentPrice + tvlToken1
+   const totalValueInToken1Units = (tvlToken0 * currentPrice) + tvlToken1
    const priceToken1InUSD = tvlUSD / totalValueInToken1Units
-   const priceToken0InUSD = priceToken1InUSD / currentPrice
+   const priceToken0InUSD = priceToken1InUSD * currentPrice
 
    if (isInvalidPrice(priceToken0InUSD) || isInvalidPrice(priceToken1InUSD)) {
       return {

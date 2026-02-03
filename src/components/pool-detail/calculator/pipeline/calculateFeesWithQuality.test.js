@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { calculateFeesWithQuality } from "./calcululateFeesWithQuality"
+import { calculateFeesWithQuality } from "./calculateFeesWithQuality"
 
 describe("calculateFeesWithQuality", () => {
    it("returns success with accumulated fees", () => {
