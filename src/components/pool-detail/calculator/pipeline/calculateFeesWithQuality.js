@@ -49,7 +49,7 @@ export function calculateFeesWithQuality({
    let hoursSkipped = 0
 
    if (debug) {
-      debugLog(`Fee Calculation Setup:`, {
+      debugLog("Fee Calculation Setup:", {
          totalHours: hourlyData.length,
          L_user: L_user.toExponential(2),
          priceRange: `${effectiveMin.toFixed(6)} - ${effectiveMax.toFixed(6)}`
@@ -70,13 +70,6 @@ export function calculateFeesWithQuality({
 
       if (!priceInRange) continue
 
-      // Debug first in-range hour to verify scale alignment
-      if (hoursInRange === 0 && debug) {
-         console.log('\n💰 ========== FIRST IN-RANGE HOUR ==========')
-         console.log('L_user (RAW):', L_user.toExponential(3))
-         console.log('L_pool (RAW):', Number(BigInt(hour.liquidity)).toExponential(3))
-      }
-
       // Parse pool liquidity (BigInt string from TheGraph)
       let L_pool_bigint
       try {
@@ -93,7 +86,7 @@ export function calculateFeesWithQuality({
 
       // Log first fee calculation for verification
       if (hoursInRange === 0 && debug) {
-         debugLog(`Fee Share Calculation:`, {
+         debugLog("Fee Share Calculation:", {
             feeShare: `${(feeShare * 100).toFixed(6)}%`,
             hourFeesUSD: hourFeesUSD.toFixed(2),
             userFeesThisHour: (hourFeesUSD * feeShare).toFixed(4)

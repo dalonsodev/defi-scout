@@ -62,7 +62,6 @@ export function calculateComposition({
       feeTier
    } = poolState
 
-   // ===== INPUT VALIDATION =====
    if (!feeTier) {
       return {
          success: false,
@@ -178,8 +177,8 @@ export function calculateComposition({
    const effectiveMax = normalizedMaxPrice
 
    // Debug output (only in dev mode, see logger.js)
-   debugLog('Composition Calculated:', {
-      mode: 'CONCENTRATED',
+   debugLog("Composition Calculated:", {
+      mode: "CONCENTRATED",
       token0Percent,
       token1Percent,
       capital0USD: capital0USD.toFixed(2),
