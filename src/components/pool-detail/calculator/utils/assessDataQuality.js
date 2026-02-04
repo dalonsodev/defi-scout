@@ -34,8 +34,8 @@ export function assessDataQuality(hourlyData) {
     return {
       quality: 'INSUFFICIENT',
       warnings: [
-        'Sample size too small (< 7 days). Projections are speculative.',
-      ],
+        'Sample size too small (< 7 days). Projections are speculative.'
+      ]
     }
   }
 
@@ -44,8 +44,8 @@ export function assessDataQuality(hourlyData) {
     return {
       quality: 'LIMITED',
       warnings: [
-        'Less than 14 days of data. Weekly volatility may skew results',
-      ],
+        'Less than 14 days of data. Weekly volatility may skew results'
+      ]
     }
   }
 
@@ -54,13 +54,13 @@ export function assessDataQuality(hourlyData) {
   if (hours < ONE_MONTH) {
     return {
       quality: 'RELIABLE',
-      warnings: [],
+      warnings: []
     }
   }
 
   // 4. Optimal: +30 days accounts for monthly market cycles (options expiry, rebalancing)
   return {
     quality: 'EXCELLENT',
-    warnings: [],
+    warnings: []
   }
 }

@@ -41,7 +41,7 @@ export function calculateFeesWithQuality({
   effectiveMax,
   L_user,
   initialQuality,
-  debug = true,
+  debug = true
 }) {
   const warnings = []
   let totalFeesUSD = 0
@@ -52,7 +52,7 @@ export function calculateFeesWithQuality({
     debugLog('Fee Calculation Setup:', {
       totalHours: hourlyData.length,
       L_user: L_user.toExponential(2),
-      priceRange: `${effectiveMin.toFixed(6)} - ${effectiveMax.toFixed(6)}`,
+      priceRange: `${effectiveMin.toFixed(6)} - ${effectiveMax.toFixed(6)}`
     })
   }
 
@@ -89,7 +89,7 @@ export function calculateFeesWithQuality({
       debugLog('Fee Share Calculation:', {
         feeShare: `${(feeShare * 100).toFixed(6)}%`,
         hourFeesUSD: hourFeesUSD.toFixed(2),
-        userFeesThisHour: (hourFeesUSD * feeShare).toFixed(4),
+        userFeesThisHour: (hourFeesUSD * feeShare).toFixed(4)
       })
     }
 
@@ -101,13 +101,13 @@ export function calculateFeesWithQuality({
   if (hoursInRange === 0) {
     const actualPriceRange = {
       min: Math.min(...hourlyData.map((h) => parseFloat(h.token0Price))),
-      max: Math.max(...hourlyData.map((h) => parseFloat(h.token0Price))),
+      max: Math.max(...hourlyData.map((h) => parseFloat(h.token0Price)))
     }
 
     return {
       success: false,
       error: `Price never entered range (${effectiveMin.toFixed(6)}-${effectiveMax.toFixed(6)}). Actual: ${actualPriceRange.min.toFixed(6)}-${actualPriceRange.max.toFixed(6)}.`,
-      dataQuality: initialQuality,
+      dataQuality: initialQuality
     }
   }
 
@@ -132,7 +132,7 @@ export function calculateFeesWithQuality({
 
   if (finalQuality !== initialQuality) {
     warnings.unshift(
-      `⚠️ Quality downgraded to ${finalQuality} (${hoursSkipped} anomalies)`,
+      `⚠️ Quality downgraded to ${finalQuality} (${hoursSkipped} anomalies)`
     )
   }
 
@@ -142,6 +142,6 @@ export function calculateFeesWithQuality({
     hoursInRange,
     percentInRange,
     finalQuality,
-    warnings,
+    warnings
   }
 }

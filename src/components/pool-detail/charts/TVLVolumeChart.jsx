@@ -8,7 +8,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
+  ResponsiveContainer
 } from 'recharts'
 import { CustomTooltip } from './CustomTooltip'
 import { CHART_COLORS } from '../../../constants/chartColors'
@@ -29,7 +29,7 @@ export function TVLVolumeChart({ history }) {
 
     return history.map((day) => ({
       ...day,
-      volumeToTvlRatio: day.tvlUSD > 0 ? day.volumeUSD / day.tvlUSD : 0,
+      volumeToTvlRatio: day.tvlUSD > 0 ? day.volumeUSD / day.tvlUSD : 0
     }))
   }, [history])
 

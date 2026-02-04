@@ -19,7 +19,7 @@ export function validateInputs({
   fullRange,
   assumedPrice,
   selectedTokenIdx,
-  hourlyData,
+  hourlyData
 }) {
   if (typeof capitalUSD !== 'number' || isNaN(capitalUSD) || capitalUSD < 10) {
     return { success: false, error: 'Capital must be at least $10' }
@@ -35,7 +35,7 @@ export function validateInputs({
     if (isEmpty(minPrice) || isEmpty(maxPrice)) {
       return {
         success: false,
-        error: 'Price range required when Full Range is off',
+        error: 'Price range required when Full Range is off'
       }
     }
 
@@ -45,19 +45,19 @@ export function validateInputs({
     if (!isFinite(minNum) || !isFinite(maxNum) || minNum <= 0 || maxNum <= 0) {
       return {
         success: false,
-        error: 'Prices must be positive',
+        error: 'Prices must be positive'
       }
     }
     if (minNum >= maxNum) {
       return {
         success: false,
-        error: 'Min Price must be lower than Max Price',
+        error: 'Min Price must be lower than Max Price'
       }
     }
     if (assumedPrice === '' || assumedPrice == null) {
       return {
         success: false,
-        error: 'Assumed Entry Price required when full range is off',
+        error: 'Assumed Entry Price required when full range is off'
       }
     }
 
@@ -65,7 +65,7 @@ export function validateInputs({
     if (!isFinite(assumedNum) || assumedNum <= 0) {
       return {
         success: false,
-        error: 'Assumed Entry Price must be positive',
+        error: 'Assumed Entry Price must be positive'
       }
     }
   }

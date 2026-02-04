@@ -6,7 +6,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  ReferenceLine,
+  ReferenceLine
 } from 'recharts'
 import { CustomPriceTooltip } from './CustomPriceTooltip'
 import { CHART_COLORS } from '../../../constants/chartColors'
@@ -28,7 +28,7 @@ export function PriceChart({
   selectedTokenIdx,
   tokenSymbols,
   rangeInputs,
-  currentPrice,
+  currentPrice
 }) {
   const dataKey = selectedTokenIdx === 0 ? 'token0Price' : 'token1Price'
   const selectedSymbol = tokenSymbols[selectedTokenIdx]

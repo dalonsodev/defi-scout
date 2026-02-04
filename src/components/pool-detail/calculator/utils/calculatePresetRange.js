@@ -28,7 +28,7 @@ export function calculatePresetRange(assumedPrice, presetType) {
   const MULTIPLIERS = {
     '±10%': { min: 0.9, max: 1.1 }, // Low-risk: Stablecoin pairs
     '±15%': { min: 0.85, max: 1.15 }, // Medium: Major pairs (ETH/USDC)
-    '±20%': { min: 0.8, max: 1.2 }, // High-risk: Volatile altcoins
+    '±20%': { min: 0.8, max: 1.2 } // High-risk: Volatile altcoins
   }
 
   const { min, max } = MULTIPLIERS[presetType]

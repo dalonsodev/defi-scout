@@ -17,7 +17,7 @@ async function fetchUniswapPools() {
       orderBy: 'totalValueLockedUSD',
       orderDirection: 'desc',
       minTVL: '0',
-      minVol: '0',
+      minVol: '0'
     })
 
     // Post-proocessing: Converts BigInt strings from GraphQL into JS numbers and schema

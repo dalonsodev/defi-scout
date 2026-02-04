@@ -24,7 +24,7 @@ export function CalculatorInputs({
   priceLabel,
   token0Symbol,
   token1Symbol,
-  composition,
+  composition
 }) {
   const token0Amount = composition?.amount0
   const token1Amount = composition?.amount1

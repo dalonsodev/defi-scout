@@ -32,7 +32,7 @@ export const CHART_COLORS = {
     ratio: '#06b6d4', // cyan-500 - Vol/TVL ratio line
     fees: '#06b6d4', // cyan-500 - fees line
     apy: '#01d390', // Secondary - APY line (positive = green psychology)
-    price: '#f59e0b', // amber-500 - price line (warning tone for volatility)
+    price: '#f59e0b' // amber-500 - price line (warning tone for volatility)
   },
 
   // Tooltip styling
@@ -40,6 +40,6 @@ export const CHART_COLORS = {
   tooltip: {
     bg: '#1f2937', // gray-800
     border: '#374151', // gray-700
-    text: '#f9fafb', // gray-50
-  },
+    text: '#f9fafb' // gray-50
+  }
 }

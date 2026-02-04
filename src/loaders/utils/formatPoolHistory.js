@@ -41,7 +41,7 @@ export function formatPoolHistory(rawHistory) {
       feesUSD,
       token0Price: parseFloat(day.token0Price) || 0,
       token1Price: parseFloat(day.token1Price) || 0,
-      apy: isFinite(apy) ? apy : 0, // Safety: Prevent infinity values if TVL = 0
+      apy: isFinite(apy) ? apy : 0 // Safety: Prevent infinity values if TVL = 0
     }
   })
 }

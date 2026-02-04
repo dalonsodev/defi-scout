@@ -8,8 +8,8 @@ const API_KEY = import.meta.env.VITE_THEGRAPH_API_KEY
 
 const client = new GraphQLClient(SUBGRAPH_URL, {
   headers: {
-    Authorization: `Bearer ${API_KEY}`,
-  },
+    Authorization: `Bearer ${API_KEY}`
+  }
 })
 
 // ===== QUERY DEFINITIONS =====
@@ -188,12 +188,12 @@ export async function fetchPoolHistory(poolId, startDate) {
     // TheGraph indexes addresses in lowercase (checksummed addresses return null)
     poolId: normalizedId,
     poolIdString: normalizedId,
-    startDate,
+    startDate
   })
   return {
     pool: data.pool,
     history: data.poolDayDatas,
-    ethPriceUSD: parseFloat(data.bundle?.ethPriceUSD || 0),
+    ethPriceUSD: parseFloat(data.bundle?.ethPriceUSD || 0)
   }
 }
 
@@ -208,7 +208,7 @@ export async function fetchPoolHistory(poolId, startDate) {
 export async function fetchPoolHourData(poolId, startTime) {
   const data = await client.request(GET_POOL_HOUR_DATAS_QUERY, {
     poolId: poolId.toLowerCase(),
-    startTime,
+    startTime
   })
   return data.poolHourDatas
 }

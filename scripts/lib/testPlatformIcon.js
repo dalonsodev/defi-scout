@@ -5,24 +5,24 @@
  * @returns {Promise<"jpg"|"png"|"null">} The available extension or null if not found/timeout
  */
 export async function testPlatformIcon(platform) {
-  const urlJpg = `https://icons.llama.fi/${platform}.jpg`
-  const urlPng = `https://icons.llama.fi/${platform}.png`
+  const urlJpg = `https://icons.llama.fi/${platform}.jpg`;
+  const urlPng = `https://icons.llama.fi/${platform}.png`;
 
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 10000)
-  const signal = controller.signal
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  const signal = controller.signal;
 
   try {
-    const res = await fetch(urlJpg, { method: 'HEAD', signal })
-    if (res.ok) return 'jpg'
+    const res = await fetch(urlJpg, { method: "HEAD", signal });
+    if (res.ok) return "jpg";
 
-    const resPng = await fetch(urlPng, { method: 'HEAD', signal })
-    if (resPng.ok) return 'png'
+    const resPng = await fetch(urlPng, { method: "HEAD", signal });
+    if (resPng.ok) return "png";
 
-    return null
+    return null;
   } catch {
-    return null
+    return null;
   } finally {
-    clearTimeout(timeoutId)
+    clearTimeout(timeoutId);
   }
 }

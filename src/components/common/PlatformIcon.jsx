@@ -30,7 +30,7 @@ export function PlatformIcon({ platform, size = 'md' }) {
   const SIZE_CLASSES = {
     sm: 'w-5 h-5',
     md: 'w-6 h-6',
-    lg: 'w-8 h-8',
+    lg: 'w-8 h-8'
   }
 
   /**

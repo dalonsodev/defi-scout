@@ -44,7 +44,7 @@ import { debugLog } from '../../../../utils/logger'
 export function calculateComposition({
   userInputs,
   poolState,
-  historicalPrices,
+  historicalPrices
 }) {
   const {
     capitalUSD,
@@ -52,7 +52,7 @@ export function calculateComposition({
     maxPrice,
     fullRange,
     assumedPrice,
-    selectedTokenIdx,
+    selectedTokenIdx
   } = userInputs
 
   const { currentPrice, priceToken0InUSD, priceToken1InUSD, feeTier } =
@@ -61,28 +61,28 @@ export function calculateComposition({
   if (!feeTier) {
     return {
       success: false,
-      error: 'No fee tier available. Pool data may be corrupted.',
+      error: 'No fee tier available. Pool data may be corrupted.'
     }
   }
 
   if (selectedTokenIdx !== 0 && selectedTokenIdx !== 1) {
     return {
       success: false,
-      error: 'You must select a token.',
+      error: 'You must select a token.'
     }
   }
 
   if (capitalUSD <= 0 || minPrice <= 0 || maxPrice <= 0 || assumedPrice <= 0) {
     return {
       success: false,
-      error: 'Values must be positive.',
+      error: 'Values must be positive.'
     }
   }
 
   if (currentPrice <= 0 || priceToken0InUSD <= 0 || priceToken1InUSD <= 0) {
     return {
       success: false,
-      error: 'Prices must be positive.',
+      error: 'Prices must be positive.'
     }
   }
 
@@ -114,16 +114,16 @@ export function calculateComposition({
         token0Percent,
         token1Percent,
         amount0,
-        amount1,
+        amount1
       },
       capitalAllocation: {
         capital0USD,
-        capital1USD,
+        capital1USD
       },
       effectiveRange: {
         min: effectiveMin,
-        max: effectiveMax,
-      },
+        max: effectiveMax
+      }
     }
   }
 
@@ -153,7 +153,7 @@ export function calculateComposition({
     normalizedAssumedPrice,
     normalizedMinPrice,
     normalizedMaxPrice,
-    feeTier,
+    feeTier
   )
 
   const token0Percent = ratioResult.token0Percent
@@ -179,7 +179,7 @@ export function calculateComposition({
     capital0USD: capital0USD.toFixed(2),
     capital1USD: capital1USD.toFixed(2),
     effectiveMin: effectiveMin.toFixed(8),
-    effectiveMax: effectiveMax.toFixed(8),
+    effectiveMax: effectiveMax.toFixed(8)
   })
 
   return {
@@ -188,15 +188,15 @@ export function calculateComposition({
       token0Percent,
       token1Percent,
       amount0,
-      amount1,
+      amount1
     },
     capitalAllocation: {
       capital0USD,
-      capital1USD,
+      capital1USD
     },
     effectiveRange: {
       min: effectiveMin,
-      max: effectiveMax,
-    },
+      max: effectiveMax
+    }
   }
 }

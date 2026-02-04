@@ -22,7 +22,7 @@ export function calculateTokenPrices(
   token0,
   token1,
   ethPriceUSD,
-  currentPrice,
+  currentPrice
 ) {
   // Parse oracle data
   const derivedETH0 = parseFloat(token0.derivedETH || 0)
@@ -32,7 +32,7 @@ export function calculateTokenPrices(
   if (derivedETH0 > 0 && derivedETH1 > 0 && ethPriceUSD > 0) {
     return {
       token0PriceUSD: derivedETH0 * ethPriceUSD,
-      token1PriceUSD: derivedETH1 * ethPriceUSD,
+      token1PriceUSD: derivedETH1 * ethPriceUSD
     }
   }
 
@@ -44,14 +44,14 @@ export function calculateTokenPrices(
   if (token1IsStable && currentPrice > 0) {
     return {
       token0PriceUSD: currentPrice,
-      token1PriceUSD: 1,
+      token1PriceUSD: 1
     }
   }
 
   if (token0IsStable && currentPrice > 0) {
     return {
       token0PriceUSD: 1,
-      token1PriceUSD: 1 / currentPrice,
+      token1PriceUSD: 1 / currentPrice
     }
   }
 
@@ -61,7 +61,7 @@ export function calculateTokenPrices(
     token1: token1.symbol,
     derivedETH0,
     derivedETH1,
-    ethPriceUSD,
+    ethPriceUSD
   })
 
   return { token0PriceUSD: 0, token1PriceUSD: 0 }

@@ -4,7 +4,7 @@ import {
   tickToPrice,
   getTickSpacing,
   alignTickToSpacing,
-  incrementPriceByTick,
+  incrementPriceByTick
 } from './uniswapV3Ticks.js'
 
 const MIN_TICK = -887272

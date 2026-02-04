@@ -33,7 +33,7 @@ export function CustomPriceTooltip({
   payload,
   label,
   tokenSymbols,
-  selectedTokenIdx,
+  selectedTokenIdx
 }) {
   if (!active || !payload?.length) return null
 
@@ -55,7 +55,7 @@ export function CustomPriceTooltip({
       style={{
         backgroundColor: CHART_COLORS.tooltip.bg,
         borderColor: CHART_COLORS.tooltip.border,
-        color: CHART_COLORS.tooltip.text,
+        color: CHART_COLORS.tooltip.text
       }}
     >
       <p className="font-semibold mb-2">{label}</p>

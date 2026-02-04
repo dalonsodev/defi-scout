@@ -29,7 +29,7 @@ export function useSparklines({
   visiblePoolIds,
   queueRequest,
   cancelPendingRequests,
-  currentPage,
+  currentPage
 }) {
   // Local Cache: Prevents re-fetching data for the same pool during the session life-cycle
   const cache = useRef({})
@@ -74,7 +74,7 @@ export function useSparklines({
               }
               throw err
             }
-          },
+          }
         })
 
         // Extract last 7 days of base APY (excludes reward APY for cleaner trends)

@@ -43,7 +43,7 @@ export function CustomTooltip({ active, payload, label }) {
       style={{
         backgroundColor: CHART_COLORS.tooltip.bg,
         borderColor: CHART_COLORS.tooltip.border,
-        color: CHART_COLORS.tooltip.text,
+        color: CHART_COLORS.tooltip.text
       }}
     >
       {/* Date header */}

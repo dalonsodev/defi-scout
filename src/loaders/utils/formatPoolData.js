@@ -45,7 +45,7 @@ export function formatPoolData(rawPools) {
     volumeUSD,
     feeTier,
     poolAgeDays,
-    totalValueLockedUSD,
+    totalValueLockedUSD
   ) {
     // Safety Checks: Avoid division by zero and handle nascent pools
     if (poolAgeDays < 1) return 0
@@ -92,7 +92,7 @@ export function formatPoolData(rawPools) {
       volumeUsd1d,
       feeTier,
       poolAgeDays,
-      tvlUsd,
+      tvlUsd
     )
 
     return {
@@ -135,7 +135,7 @@ export function formatPoolData(rawPools) {
       token1Vol: token1Vol || 0,
       token1VolFormatted: formatNumber(token1Vol),
       token1feesUSD: token1feesUSD || 0,
-      token1feesUSDFormatted: formatNumber(token1feesUSD),
+      token1feesUSDFormatted: formatNumber(token1feesUSD)
     }
   })
 }

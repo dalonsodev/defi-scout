@@ -7,7 +7,7 @@ describe('calculateComposition', () => {
     currentPrice: 0.0003,
     priceToken0InUSD: 3000,
     priceToken1InUSD: 1,
-    feeTier: 3000,
+    feeTier: 3000
   }
 
   const validUserInputs = {
@@ -16,7 +16,7 @@ describe('calculateComposition', () => {
     maxPrice: 0.0004,
     fullRange: false,
     assumedPrice: 0.0003,
-    selectedTokenIdx: 0,
+    selectedTokenIdx: 0
   }
 
   const validHistoricalPrices = [0.00025, 0.0003, 0.00035]
@@ -34,7 +34,7 @@ describe('calculateComposition', () => {
       const result = calculateComposition({
         userInputs: inputs,
         poolState,
-        historicalPrices: history,
+        historicalPrices: history
       })
 
       // Assert: Specific error verification
@@ -47,7 +47,7 @@ describe('calculateComposition', () => {
       const result = calculateComposition({
         userInputs: inputs,
         poolState: validPoolState,
-        historicalPrices: validHistoricalPrices,
+        historicalPrices: validHistoricalPrices
       })
 
       expect(result.success).toBe(false)
@@ -59,7 +59,7 @@ describe('calculateComposition', () => {
       const result = calculateComposition({
         userInputs: inputs,
         poolState: validPoolState,
-        historicalPrices: validHistoricalPrices,
+        historicalPrices: validHistoricalPrices
       })
 
       expect(result.success).toBe(false)
@@ -75,7 +75,7 @@ describe('calculateComposition', () => {
       const result = calculateComposition({
         userInputs: inputs,
         poolState: validPoolState,
-        historicalPrices: validHistoricalPrices,
+        historicalPrices: validHistoricalPrices
       })
 
       // Verify split
@@ -93,7 +93,7 @@ describe('calculateComposition', () => {
       const result = calculateComposition({
         userInputs: inputs,
         poolState: validPoolState,
-        historicalPrices: validHistoricalPrices,
+        historicalPrices: validHistoricalPrices
       })
 
       // amount0 = $5000 / $3000 = 1.666... WETH
@@ -109,7 +109,7 @@ describe('calculateComposition', () => {
       const result = calculateComposition({
         userInputs: inputs,
         poolState: validPoolState,
-        historicalPrices: history,
+        historicalPrices: history
       })
 
       // Buffer = 50% (because volatility 0.4)
@@ -127,7 +127,7 @@ describe('calculateComposition', () => {
       const result = calculateComposition({
         userInputs: inputs,
         poolState: validPoolState,
-        historicalPrices: history,
+        historicalPrices: history
       })
 
       // Expected: 100% buffer (volatility > 0.5)
@@ -148,13 +148,13 @@ describe('calculateComposition', () => {
         selectedTokenIdx: 0,
         minPrice: 0.0002,
         maxPrice: 0.0004,
-        assumedPrice: 0.0003,
+        assumedPrice: 0.0003
       }
 
       const result = calculateComposition({
         userInputs: inputs,
         poolState: validPoolState,
-        historicalPrices: validHistoricalPrices,
+        historicalPrices: validHistoricalPrices
       })
 
       // Effective range must be equal to user inputs
@@ -168,13 +168,13 @@ describe('calculateComposition', () => {
         selectedTokenIdx: 1,
         minPrice: 2500, // "USDT per WETH" perspective
         maxPrice: 5000,
-        assumedPrice: 3333,
+        assumedPrice: 3333
       }
 
       const result = calculateComposition({
         userInputs: inputs,
         poolState: validPoolState,
-        historicalPrices: validHistoricalPrices,
+        historicalPrices: validHistoricalPrices
       })
 
       // Normalized min: 1 / 5000 = 0.0002, max = 1 / 2500 = 0.0004
@@ -191,7 +191,7 @@ describe('calculateComposition', () => {
       const result = calculateComposition({
         userInputs: validUserInputs,
         poolState: validPoolState,
-        historicalPrices: validHistoricalPrices,
+        historicalPrices: validHistoricalPrices
       })
 
       expect(result.success).toBe(true)
@@ -211,7 +211,7 @@ describe('calculateComposition', () => {
       const result = calculateComposition({
         userInputs: inputs,
         poolState: validPoolState,
-        historicalPrices: validHistoricalPrices,
+        historicalPrices: validHistoricalPrices
       })
 
       const { capital0USD, capital1USD } = result.capitalAllocation

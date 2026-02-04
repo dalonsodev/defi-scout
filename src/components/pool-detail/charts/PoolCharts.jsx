@@ -19,7 +19,7 @@ export function PoolCharts({
   selectedTokenIdx,
   tokenSymbols,
   rangeInputs,
-  currentPrice,
+  currentPrice
 }) {
   // UI/UX: Empty state
   if (!history || history.length === 0) {

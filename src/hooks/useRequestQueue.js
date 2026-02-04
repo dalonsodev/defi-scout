@@ -27,7 +27,7 @@ async function processBatchWithConcurrencyLimit(batch, concurrencyLimit) {
     // Detection: If a 429 is found, we stop immediately to protect the API key
     const has429InChunk = chunkResults.some(
       (result) =>
-        result.status === 'rejected' && result.reason?.isHttpError === true,
+        result.status === 'rejected' && result.reason?.isHttpError === true
     )
 
     if (has429InChunk) {
@@ -74,7 +74,7 @@ async function processBatchWithConcurrencyLimit(batch, concurrencyLimit) {
 export function useRequestQueue({
   maxTokens,
   refillRate,
-  concurrencyLimit = 10,
+  concurrencyLimit = 10
 }) {
   // Use refs for scheduling state to avoid re-renders during high-frequency networking
   const queueRef = useRef([])
@@ -140,15 +140,15 @@ export function useRequestQueue({
         if (has429) {
           // Global State Lock: Halt all networking and flush queue to trigger Pro UI
           console.warn(
-            `[Queue] Rate limit reached - switching to Pro upgrade mode`,
+            `[Queue] Rate limit reached - switching to Pro upgrade mode`
           )
           isRateLimitedRef.current = true
 
           remaining.forEach((item) =>
-            item.reject({ status: 429, isHttpError: true }),
+            item.reject({ status: 429, isHttpError: true })
           )
           queueRef.current.forEach((item) =>
-            item.reject({ status: 429, isHttpError: true }),
+            item.reject({ status: 429, isHttpError: true })
           )
           queueRef.current = []
 
@@ -182,7 +182,7 @@ export function useRequestQueue({
 
   const cancelPendingRequests = useCallback(() => {
     queueRef.current.forEach((item) =>
-      item.reject(new CancellationError('Request cancelled')),
+      item.reject(new CancellationError('Request cancelled'))
     )
     queueRef.current = []
   }, [])
@@ -190,6 +190,6 @@ export function useRequestQueue({
   return {
     queueRequest,
     cancelPendingRequests,
-    isRateLimited: isRateLimitedRef.current,
+    isRateLimited: isRateLimitedRef.current
   }
 }

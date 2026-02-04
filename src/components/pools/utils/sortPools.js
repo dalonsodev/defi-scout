@@ -37,7 +37,7 @@ const RISK_RANK = {
   // Sink values: Push missing/invalid risks to end (better UX than showing errors)
   '': 999,
   undefined: 999,
-  null: 999,
+  null: 999
 }
 
 /**

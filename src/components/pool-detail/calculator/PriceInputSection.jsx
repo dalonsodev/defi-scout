@@ -25,7 +25,7 @@ export function PriceInputSection({
   futureToken0PriceUSD,
   futureToken1PriceUSD,
   onToken0PriceChange,
-  onToken1PriceChange,
+  onToken1PriceChange
 }) {
   // Percentages Deviation: Convert absolute price delta to % for display
   const token0ChangePercent =

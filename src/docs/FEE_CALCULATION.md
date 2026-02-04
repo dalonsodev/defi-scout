@@ -104,7 +104,7 @@ const L_user = calculateLiquidity(
   amount1,
   currentPrice,
   effectiveMin,
-  effectiveMax,
+  effectiveMax
 )
 ```
 

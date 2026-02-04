@@ -17,7 +17,7 @@ export function formatPoolHourData(rawData) {
     liquidity: parseFloat(hour.liquidity),
     tvlUSD: parseFloat(hour.tvlUSD),
     sqrtPrice: hour.sqrtPrice, // Keep as string (Q64.96 format, rarely needed)
-    tick: parseInt(hour.tick),
+    tick: parseInt(hour.tick)
   }))
 
   const stats = {
@@ -28,7 +28,7 @@ export function formatPoolHourData(rawData) {
     minPrice: Math.min(...hourlyData.map((h) => h.token0Price)),
     maxPrice: Math.max(...hourlyData.map((h) => h.token1Price)),
     medianPrice: calculateMedian(hourlyData.map((h) => h.token0Price)),
-    totalFeesUSD: hourlyData.reduce((acc, curr) => acc + curr.feesUSD, 0),
+    totalFeesUSD: hourlyData.reduce((acc, curr) => acc + curr.feesUSD, 0)
   }
 
   return { hourlyData, stats }
