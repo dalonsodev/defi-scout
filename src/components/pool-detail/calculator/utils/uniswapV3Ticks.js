@@ -40,7 +40,7 @@ const FEE_TIER_TO_TICK_SPACING = {
   200: 4, // 0.02% fee -> Spacing 4
   500: 10, // 0.05% fee -> Spacing 10
   3000: 60, // 0.30% fee -> Spacing 60
-  10000: 200, // 1.00% fee -> Spacing 200
+  10000: 200 // 1.00% fee -> Spacing 200
 }
 
 /**

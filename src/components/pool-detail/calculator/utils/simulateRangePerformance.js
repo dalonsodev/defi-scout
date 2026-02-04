@@ -52,7 +52,7 @@ export function simulateRangePerformance({
   assumedPrice,
   selectedTokenIdx,
   hourlyData,
-  pool,
+  pool
 }) {
   // ===== STAGE 1: INPUT VALIDATION =====
   const validation = validateInputs({
@@ -62,7 +62,7 @@ export function simulateRangePerformance({
     fullRange,
     assumedPrice,
     selectedTokenIdx,
-    hourlyData,
+    hourlyData
   })
 
   if (!validation.success) return validation
@@ -75,7 +75,7 @@ export function simulateRangePerformance({
     return {
       success: false,
       error: 'Pool needs 7+ days of data for reliable projections',
-      quality,
+      quality
     }
   }
 
@@ -84,7 +84,7 @@ export function simulateRangePerformance({
     return {
       success: false,
       error: 'Pool metadata incomplete. Cannot calculate liquidity.',
-      dataQuality: quality,
+      dataQuality: quality
     }
   }
 
@@ -92,7 +92,7 @@ export function simulateRangePerformance({
     return {
       success: false,
       error: 'Token decimals missing. Cannot normalize liquidity.',
-      dataQuality: quality,
+      dataQuality: quality
     }
   }
 
@@ -103,14 +103,14 @@ export function simulateRangePerformance({
     tvlUSD: parseFloat(pool.totalValueLockedUSD),
     tvlToken0: parseFloat(pool.totalValueLockedToken0),
     tvlToken1: parseFloat(pool.totalValueLockedToken1),
-    currentPrice,
+    currentPrice
   })
 
   if (!priceInferenceResult.success) {
     return {
       success: false,
       error: priceInferenceResult.error,
-      dataQuality: quality,
+      dataQuality: quality
     }
   }
 
@@ -125,22 +125,22 @@ export function simulateRangePerformance({
       maxPrice,
       fullRange,
       assumedPrice,
-      selectedTokenIdx,
+      selectedTokenIdx
     },
     poolState: {
       currentPrice,
       priceToken0InUSD,
       priceToken1InUSD,
-      feeTier: pool.feeTier,
+      feeTier: pool.feeTier
     },
-    historicalPrices: allPrices,
+    historicalPrices: allPrices
   })
 
   if (!compositionResult.success) {
     return {
       success: false,
       error: compositionResult.error,
-      dataQuality: quality,
+      dataQuality: quality
     }
   }
 
@@ -152,7 +152,7 @@ export function simulateRangePerformance({
   debugLog('Position Composition:', {
     capital: `$${capitalUSD.toLocaleString()}`,
     split: `${token0Percent}% / ${token1Percent}%`,
-    range: `${effectiveMin.toFixed(4)} - ${effectiveMax.toFixed(4)}`,
+    range: `${effectiveMin.toFixed(4)} - ${effectiveMax.toFixed(4)}`
   })
 
   // ===== STAGE 6: LIQUIDITY CALCULATION =====
@@ -173,7 +173,7 @@ export function simulateRangePerformance({
       amount1,
       currentPrice,
       effectiveMin,
-      effectiveMax,
+      effectiveMax
     )
   }
 
@@ -181,7 +181,7 @@ export function simulateRangePerformance({
     return {
       success: false,
       error: 'Invalid liquidity calculation. Check range parameters.',
-      dataQuality: quality,
+      dataQuality: quality
     }
   }
 
@@ -196,7 +196,7 @@ export function simulateRangePerformance({
     L_user: L_user.toExponential(3),
     L_pool: L_pool_first.toExponential(3),
     feeShare: `${feeSharePercent.toFixed(6)}%`,
-    expected: fullRange ? '0.0001% - 0.001%' : '0.001% - 0.1%',
+    expected: fullRange ? '0.0001% - 0.001%' : '0.001% - 0.1%'
   })
 
   if (feeSharePercent > 100) {
@@ -210,14 +210,14 @@ export function simulateRangePerformance({
     effectiveMax,
     L_user,
     initialQuality: quality,
-    debug: false,
+    debug: false
   })
 
   if (!feeResult.success) {
     return {
       success: false,
       error: feeResult.error,
-      dataQuality: quality,
+      dataQuality: quality
     }
   }
 
@@ -226,7 +226,7 @@ export function simulateRangePerformance({
     hoursInRange,
     percentInRange,
     finalQuality,
-    warnings: feeWarnings,
+    warnings: feeWarnings
   } = feeResult
 
   const allWarnings = [...warnings, ...feeWarnings]
@@ -239,7 +239,7 @@ export function simulateRangePerformance({
   debugLog('Final Metrics:', {
     totalFees: `$${totalFeesUSD.toFixed(2)}`,
     APR: `${APR.toFixed(2)}%`,
-    inRange: `${percentInRange.toFixed(1)}%`,
+    inRange: `${percentInRange.toFixed(1)}%`
   })
 
   return {
@@ -257,9 +257,9 @@ export function simulateRangePerformance({
       capital0USD,
       capital1USD,
       amount0,
-      amount1,
+      amount1
     },
     dataQuality: finalQuality,
-    warnings: allWarnings.slice(0, 5),
+    warnings: allWarnings.slice(0, 5)
   }
 }

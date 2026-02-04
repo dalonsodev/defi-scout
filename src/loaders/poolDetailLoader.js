@@ -31,7 +31,7 @@ export async function poolDetailLoader({ params }) {
   try {
     const { pool, history, ethPriceUSD } = await fetchPoolHistory(
       poolId,
-      thirtyDaysAgo,
+      thirtyDaysAgo
     )
 
     // Edge Case: Pool exists but has no daily snapshots (new pool, or indexing lag)
@@ -39,14 +39,14 @@ export async function poolDetailLoader({ params }) {
       return {
         poolId,
         history: [],
-        error: 'No historical data found for this pool',
+        error: 'No historical data found for this pool'
       }
     }
 
     return {
       pool,
       history: formatPoolHistory(history),
-      ethPriceUSD,
+      ethPriceUSD
     }
   } catch (error) {
     console.error('Pool detail loader error:', error)

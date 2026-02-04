@@ -1,7 +1,7 @@
 import {
   createBrowserRouter,
   createRoutesFromElements,
-  Route,
+  Route
 } from 'react-router-dom'
 import Pools from './pages/Pools'
 import Watchlist from './pages/Watchlist'
@@ -44,6 +44,6 @@ export const router = createBrowserRouter(
         element={<Watchlist />}
         loader={watchlistLoader}
       />
-    </Route>,
-  ),
+    </Route>
+  )
 )

@@ -29,7 +29,7 @@ export function RangeCalculator({
   hourlyData,
   isLoading,
   fetchError,
-  ethPriceUSD,
+  ethPriceUSD
 }) {
   debugLog('Inputs:', inputs)
 
@@ -54,7 +54,7 @@ export function RangeCalculator({
       pool.token0,
       pool.token1,
       ethPriceUSD,
-      currentPrice,
+      currentPrice
     )
   }, [hourlyData, pool, ethPriceUSD])
 
@@ -68,7 +68,7 @@ export function RangeCalculator({
     (field, value) => {
       onInputsChange((prev) => ({ ...prev, [field]: value }))
     },
-    [onInputsChange],
+    [onInputsChange]
   )
 
   /**
@@ -84,7 +84,7 @@ export function RangeCalculator({
       const newValue = incrementPriceByTick(currentValue, pool.feeTier, delta)
       onInputsChange((prev) => ({ ...prev, [field]: newValue }))
     },
-    [inputs, pool.feeTier, onInputsChange],
+    [inputs, pool.feeTier, onInputsChange]
   )
 
   const handlePresetClick = useCallback(
@@ -92,11 +92,11 @@ export function RangeCalculator({
       const assumedPrice = displayPrice
       const { minPrice, maxPrice } = calculatePresetRange(
         assumedPrice,
-        presetType,
+        presetType
       )
       onInputsChange((prev) => ({ ...prev, minPrice, maxPrice }))
     },
-    [displayPrice, onInputsChange],
+    [displayPrice, onInputsChange]
   )
 
   /**
@@ -120,7 +120,7 @@ export function RangeCalculator({
       selectedTokenIdx,
       hourlyData,
       pool,
-      ethPriceUSD,
+      ethPriceUSD
     })
   }, [inputs, selectedTokenIdx, hourlyData, pool, ethPriceUSD])
 

@@ -44,6 +44,6 @@ export function invertPriceRange(inputs) {
   return {
     minPrice: newMin.toFixed(8),
     maxPrice: newMax.toFixed(8),
-    assumedPrice: newAssumed.toFixed(8),
+    assumedPrice: newAssumed.toFixed(8)
   }
 }

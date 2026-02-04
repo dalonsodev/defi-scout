@@ -27,7 +27,7 @@ export function CalculatorStats({
   fetchError,
   poolData,
   rangeInputs,
-  ethPriceUSD,
+  ethPriceUSD
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 

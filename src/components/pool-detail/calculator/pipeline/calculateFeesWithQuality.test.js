@@ -8,19 +8,19 @@ describe('calculateFeesWithQuality', () => {
         {
           token0Price: '3000',
           liquidity: '1000000000000000000000000',
-          feesUSD: '100',
+          feesUSD: '100'
         },
         {
           token0Price: '3100',
           liquidity: '1000000000000000000000000',
-          feesUSD: '150',
-        },
+          feesUSD: '150'
+        }
       ],
       effectiveMin: 2500,
       effectiveMax: 3500,
       L_user: 1e12,
       liquidityExponent: 12,
-      initialQuality: 'EXCELLENT',
+      initialQuality: 'EXCELLENT'
     })
 
     expect(result.success).toBe(true)
@@ -34,29 +34,29 @@ describe('calculateFeesWithQuality', () => {
         {
           token0Price: '3000',
           liquidity: '1000000000000000000000000',
-          feesUSD: '100',
+          feesUSD: '100'
         },
         {
           token0Price: 'NaN',
           liquidity: '1000000000000000000000000',
-          feesUSD: '100',
+          feesUSD: '100'
         }, // Corrupt
         {
           token0Price: 'NaN',
           liquidity: '1000000000000000000000000',
-          feesUSD: '100',
+          feesUSD: '100'
         }, // Corrupt
         {
           token0Price: '3100',
           liquidity: '1000000000000000000000000',
-          feesUSD: '100',
-        },
+          feesUSD: '100'
+        }
       ],
       effectiveMin: 2500,
       effectiveMax: 3500,
       L_user: 1e12,
       liquidityExponent: 12,
-      initialQuality: 'EXCELLENT',
+      initialQuality: 'EXCELLENT'
     })
 
     expect(result.finalQuality).toBe('RELIABLE') // Downgraded (2/4 = 50% anomaly)

@@ -27,7 +27,7 @@ export function calculateLiquidity(
   amount1,
   price,
   minPrice,
-  maxPrice,
+  maxPrice
 ) {
   // Invert to Uniswap V3 convention (P = token1/token0)
   const P = 1 / price
@@ -42,14 +42,14 @@ export function calculateLiquidity(
     amount0,
     amount1,
     currentPrice: price.toFixed(4),
-    range: `${minPrice.toFixed(4)} - ${maxPrice.toFixed(4)}`,
+    range: `${minPrice.toFixed(4)} - ${maxPrice.toFixed(4)}`
   })
 
   debugLog('After Price Inversion:', {
     P: P.toFixed(8),
     P_low: P_low.toFixed(8),
     P_high: P_high.toFixed(8),
-    sqrtP: sqrtP.toFixed(6),
+    sqrtP: sqrtP.toFixed(6)
   })
 
   let liquidity
@@ -74,13 +74,13 @@ export function calculateLiquidity(
     debugLog('In-Range Calculation:', {
       liq0: liq0.toExponential(3),
       liq1: liq1.toExponential(3),
-      final: liquidity.toExponential(3),
+      final: liquidity.toExponential(3)
     })
   }
 
   debugLog('Calculated Liquidity:', {
     state: positionState,
-    L_user: liquidity.toExponential(6),
+    L_user: liquidity.toExponential(6)
   })
 
   return liquidity

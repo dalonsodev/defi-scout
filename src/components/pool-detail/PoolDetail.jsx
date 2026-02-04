@@ -21,7 +21,7 @@ export function PoolDetail() {
     fullRange: false,
     minPrice: '',
     maxPrice: '',
-    assumedPrice: '',
+    assumedPrice: ''
   })
 
   /**
@@ -41,7 +41,7 @@ export function PoolDetail() {
       ...prev,
       minPrice: basePrice * 0.9,
       maxPrice: basePrice * 1.1,
-      assumedPrice: basePrice,
+      assumedPrice: basePrice
     }))
 
     hasHydrated.current = true
@@ -57,7 +57,7 @@ export function PoolDetail() {
         minPrice: rangeInputs.minPrice,
         maxPrice: rangeInputs.maxPrice,
         assumedPrice: rangeInputs.assumedPrice,
-        fullRange: rangeInputs.fullRange,
+        fullRange: rangeInputs.fullRange
       })
 
       setSelectedTokenIdx(newIdx)
@@ -66,7 +66,7 @@ export function PoolDetail() {
         setRangeInputs((prev) => ({ ...prev, ...invertedPrices }))
       }
     },
-    [rangeInputs],
+    [rangeInputs]
   )
 
   // Event Management: Scroll to top on route entry

@@ -23,7 +23,7 @@ export function PoolFilters({
   updateFilter,
   togglePlatform,
   clearFilters,
-  availablePlatforms,
+  availablePlatforms
 }) {
   return (
     <div className="flex flex-wrap gap-2 mb-4 p-4 bg-base-100">

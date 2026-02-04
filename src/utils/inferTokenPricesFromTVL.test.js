@@ -9,12 +9,12 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: null,
         tvlToken0: 200_000,
         tvlToken1: 350_000,
-        currentPrice: 3200,
+        currentPrice: 3200
       })
 
       expect(result.success).toBe(false)
       expect(result.error).toContain(
-        'Pool metadata incomplete. Cannot calculate prices.',
+        'Pool metadata incomplete. Cannot calculate prices.'
       )
     })
 
@@ -23,12 +23,12 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 550_000,
         tvlToken0: undefined,
         tvlToken1: 350_000,
-        currentPrice: 3200,
+        currentPrice: 3200
       })
 
       expect(result.success).toBe(false)
       expect(result.error).toContain(
-        'Pool metadata incomplete. Cannot calculate prices.',
+        'Pool metadata incomplete. Cannot calculate prices.'
       )
     })
 
@@ -37,12 +37,12 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 550_000,
         tvlToken0: 200_000,
         tvlToken1: 350_000,
-        currentPrice: null,
+        currentPrice: null
       })
 
       expect(result.success).toBe(false)
       expect(result.error).toContain(
-        'Pool metadata incomplete. Cannot calculate prices.',
+        'Pool metadata incomplete. Cannot calculate prices.'
       )
     })
   })
@@ -54,7 +54,7 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 550_000,
         tvlToken0: 200_000,
         tvlToken1: 350_000,
-        currentPrice: NaN,
+        currentPrice: NaN
       })
 
       expect(result.success).toBe(false)
@@ -66,7 +66,7 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 550_000,
         tvlToken0: 200_000,
         tvlToken1: 350_000,
-        currentPrice: Infinity,
+        currentPrice: Infinity
       })
 
       expect(result.success).toBe(false)
@@ -78,7 +78,7 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 550_000,
         tvlToken0: 1e-20,
         tvlToken1: 1e-20,
-        currentPrice: 3200,
+        currentPrice: 3200
       })
 
       expect(result.success).toBe(true)
@@ -94,7 +94,7 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 0,
         tvlToken0: 200_000,
         tvlToken1: 350_000,
-        currentPrice: 3200,
+        currentPrice: 3200
       })
 
       expect(result.success).toBe(false)
@@ -106,12 +106,12 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 550_000,
         tvlToken0: -20_000,
         tvlToken1: 350_000,
-        currentPrice: 3200,
+        currentPrice: 3200
       })
 
       expect(result.success).toBe(false)
       expect(result.error).toContain(
-        'Pool is imbalanced (one token at 0%). Cannot calculate prices.',
+        'Pool is imbalanced (one token at 0%). Cannot calculate prices.'
       )
     })
 
@@ -120,12 +120,12 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 550_000,
         tvlToken0: 200_000,
         tvlToken1: 0,
-        currentPrice: 3200,
+        currentPrice: 3200
       })
 
       expect(result.success).toBe(false)
       expect(result.error).toContain(
-        'Pool is imbalanced (one token at 0%). Cannot calculate prices.',
+        'Pool is imbalanced (one token at 0%). Cannot calculate prices.'
       )
     })
   })
@@ -143,7 +143,7 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 1_000_000,
         tvlToken0: 100, // ETH amount
         tvlToken1: 700_000, // USDC amount
-        currentPrice: 3000, // USDC per ETH
+        currentPrice: 3000 // USDC per ETH
       })
 
       // ASSERT

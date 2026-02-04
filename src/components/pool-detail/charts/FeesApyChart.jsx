@@ -5,7 +5,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
+  ResponsiveContainer
 } from 'recharts'
 import { CustomTooltip } from './CustomTooltip'
 import { CHART_COLORS } from '../../../constants/chartColors'

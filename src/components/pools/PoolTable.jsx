@@ -4,7 +4,7 @@ import {
   useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
-  flexRender,
+  flexRender
 } from '@tanstack/react-table'
 import { baseColumns } from '../../data/tableColumns'
 import { SparklineCell } from './cells/SparklineCell'
@@ -45,7 +45,7 @@ import { useIntersection } from '../../hooks/useIntersection'
 const PoolTable = forwardRef(
   (
     { pools, sparklineData, onVisiblePoolsChange, sorting, onSortingChange },
-    ref,
+    ref
   ) => {
     const { isDesktop } = useBreakpoint()
     const navigate = useNavigate()
@@ -56,7 +56,7 @@ const PoolTable = forwardRef(
 
     const visiblePoolIds = useIntersection(rowRefs, {
       threshold: 0.1,
-      rootMargin: '200px',
+      rootMargin: '200px'
     })
 
     useEffect(() => {
@@ -85,7 +85,7 @@ const PoolTable = forwardRef(
                   </div>
                 </div>
               </Link>
-            ),
+            )
           }
         }
 
@@ -96,7 +96,7 @@ const PoolTable = forwardRef(
               <div className="text-right font-semibold text-green-600">
                 {Number(row.original.apyBase || 0).toFixed(2)}%
               </div>
-            ),
+            )
           }
         }
 
@@ -107,7 +107,7 @@ const PoolTable = forwardRef(
               <div className="text-right text-base-content">
                 ${row.original.tvlFormatted}
               </div>
-            ),
+            )
           }
         }
 
@@ -118,7 +118,7 @@ const PoolTable = forwardRef(
               <div className="text-right text-base-content">
                 ${row.original.volumeFormatted}
               </div>
-            ),
+            )
           }
         }
 
@@ -130,7 +130,7 @@ const PoolTable = forwardRef(
                 poolId={row.original.id}
                 sparklineData={sparklineData}
               />
-            ),
+            )
           }
         }
 
@@ -141,7 +141,7 @@ const PoolTable = forwardRef(
               <span className="badge badge-primary badge-sm rounded-l-lg">
                 {row.original.chain}
               </span>
-            ),
+            )
           }
         }
 
@@ -150,7 +150,7 @@ const PoolTable = forwardRef(
             ...col,
             cell: ({ row }) => (
               <PlatformIcon platform={row.original.project} size="md" />
-            ),
+            )
           }
         }
 
@@ -164,7 +164,7 @@ const PoolTable = forwardRef(
                   {row.original.platformName}
                 </span>
               </div>
-            ),
+            )
           }
         }
 
@@ -193,7 +193,7 @@ const PoolTable = forwardRef(
       getFilteredRowModel: getFilteredRowModel(),
       state: { sorting },
       onSortingChange: onSortingChange,
-      manualSorting: true,
+      manualSorting: true
     })
 
     /**
@@ -217,7 +217,7 @@ const PoolTable = forwardRef(
               >
                 {flexRender(
                   header.column.columnDef.header,
-                  header.getContext(),
+                  header.getContext()
                 )}
                 {header.column.getIsSorted() && (
                   <span className="ml-1">
@@ -294,7 +294,7 @@ const PoolTable = forwardRef(
         </table>
       </div>
     )
-  },
+  }
 )
 
 PoolTable.displayName = 'PoolTable'

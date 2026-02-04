@@ -1,7 +1,7 @@
 import {
   priceToTick,
   getTickSpacing,
-  alignTickToSpacing,
+  alignTickToSpacing
 } from './uniswapV3Ticks'
 
 /**

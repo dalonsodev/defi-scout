@@ -12,7 +12,7 @@ describe('validateHourSnapshot', () => {
       const hour = {
         token0Price: '2500.50',
         liquidity: '1000000',
-        feesUSD: '123.45',
+        feesUSD: '123.45'
       }
       expect(validateHourSnapshot(hour)).toBe(true)
     })

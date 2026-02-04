@@ -58,7 +58,7 @@ export function useProjectionCalculator(
   poolData,
   rangeInputs,
   results,
-  ethPriceUSD,
+  ethPriceUSD
 ) {
   // Price Inference: Calculate current USD prices from pool's token0Price
   const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
@@ -67,7 +67,7 @@ export function useProjectionCalculator(
       poolData.token0,
       poolData.token1,
       ethPriceUSD,
-      currentPrice,
+      currentPrice
     )
   }, [poolData, ethPriceUSD])
 
@@ -135,8 +135,8 @@ export function useProjectionCalculator(
       totalValue: hodlFutureValue,
       pnl: hodlFutureValue - capitalUSD,
       pnlPercent: (((hodlFutureValue - capitalUSD) / capitalUSD) * 100).toFixed(
-        2,
-      ),
+        2
+      )
     }
 
     // ===== STRATEGY B: LP (Uniswap V3) =====
@@ -180,10 +180,10 @@ export function useProjectionCalculator(
       totalValue: lpFutureValue,
       pnl: lpFutureValue - capitalUSD,
       pnlPercent: (((lpFutureValue - capitalUSD) / capitalUSD) * 100).toFixed(
-        2,
+        2
       ),
       feesEarned: projectedFees,
-      ilPercent: IL_percent,
+      ilPercent: IL_percent
     }
 
     console.log('💣 Composition Debug:', {
@@ -192,7 +192,7 @@ export function useProjectionCalculator(
       token0Decimals: poolData.token0.decimals,
       token1Decimals: poolData.token1.decimals,
       expectedAmount1: (500 / token1PriceUSD).toFixed(6), // 50% del capital en token1
-      actualVsExpected: amount1 / (500 / token1PriceUSD),
+      actualVsExpected: amount1 / (500 / token1PriceUSD)
     })
 
     // ===== BREAKEVEN ANALYSIS =====
@@ -213,7 +213,7 @@ export function useProjectionCalculator(
     rangeInputs.capitalUSD,
     token0PriceUSD,
     token1PriceUSD,
-    poolData,
+    poolData
   ])
 
   const isCalculating = !hodlStrategy || !lpStrategy
@@ -237,6 +237,6 @@ export function useProjectionCalculator(
     // Handlers
     setFutureToken0Price,
     setFutureToken1Price,
-    setProjectionDays,
+    setProjectionDays
   }
 }

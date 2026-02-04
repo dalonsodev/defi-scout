@@ -25,7 +25,7 @@ export function PoolsContent({
   filters,
   updateFilter,
   togglePlatform,
-  clearFilters,
+  clearFilters
 }) {
   // Platform dropdown options (sorted alphabetically)
   const availablePlatforms = useMemo(() => {
@@ -37,7 +37,7 @@ export function PoolsContent({
       .map((project) => ({
         value: project,
         display:
-          pools.find((p) => p.project === project)?.platformName || project,
+          pools.find((p) => p.project === project)?.platformName || project
       }))
       .sort((a, b) => a.display.localeCompare(b.display))
   }, [pools])
@@ -96,7 +96,7 @@ export function PoolsContent({
       tableScrollRef.current.scrollTop = 0
       tableRef.current.scrollIntoView({
         behavior: 'smooth',
-        block: 'start',
+        block: 'start'
       })
     }
   }, [])
@@ -120,7 +120,7 @@ export function PoolsContent({
       tableRef.current.setAttribute('aria-live', 'polite')
       tableRef.current.setAttribute(
         'aria-label',
-        `Showing page ${pageIndex + 1} of ${totalPages}`,
+        `Showing page ${pageIndex + 1} of ${totalPages}`
       )
     }
   }, [pageIndex, totalPages, scrollToTableTop])
@@ -128,14 +128,14 @@ export function PoolsContent({
   const { queueRequest, cancelPendingRequests } = useRequestQueue({
     maxTokens: 20,
     refillRate: 1.2,
-    concurrencyLimit: 10,
+    concurrencyLimit: 10
   })
 
   const { sparklineData } = useSparklines({
     visiblePoolIds,
     queueRequest,
     cancelPendingRequests,
-    currentPage: pageIndex + 1,
+    currentPage: pageIndex + 1
   })
 
   return (

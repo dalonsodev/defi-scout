@@ -27,7 +27,7 @@ export function inferTokenPricesFromTVL({
   tvlUSD,
   tvlToken0,
   tvlToken1,
-  currentPrice,
+  currentPrice
 }) {
   const isInvalidPrice = (price) => price <= 0 || !isFinite(price)
 
@@ -40,28 +40,28 @@ export function inferTokenPricesFromTVL({
   ) {
     return {
       success: false,
-      error: 'Pool metadata incomplete. Cannot calculate prices.',
+      error: 'Pool metadata incomplete. Cannot calculate prices.'
     }
   }
 
   if (isInvalidPrice(currentPrice) || isNaN(currentPrice)) {
     return {
       success: false,
-      error: 'Invalid current price from hourly data.',
+      error: 'Invalid current price from hourly data.'
     }
   }
 
   if (isInvalidPrice(tvlUSD)) {
     return {
       success: false,
-      error: 'Pool has no liquidity (TVL = $0).',
+      error: 'Pool has no liquidity (TVL = $0).'
     }
   }
 
   if (isInvalidPrice(tvlToken0) || isInvalidPrice(tvlToken1)) {
     return {
       success: false,
-      error: 'Pool is imbalanced (one token at 0%). Cannot calculate prices.',
+      error: 'Pool is imbalanced (one token at 0%). Cannot calculate prices.'
     }
   }
 
@@ -73,7 +73,7 @@ export function inferTokenPricesFromTVL({
   if (isInvalidPrice(priceToken0InUSD) || isInvalidPrice(priceToken1InUSD)) {
     return {
       success: false,
-      error: 'Invalid price calculation. Pool data may be corrupted.',
+      error: 'Invalid price calculation. Pool data may be corrupted.'
     }
   }
 
@@ -87,12 +87,12 @@ export function inferTokenPricesFromTVL({
     token1Price: `$${priceToken1InUSD.toFixed(4)}`,
     calculatedTVL: `$${calculatedTVL.toFixed(2)}`,
     actualTVL: `$${tvlUSD.toFixed(2)}`,
-    error: `${errorPercent.toFixed(2)}%`,
+    error: `${errorPercent.toFixed(2)}%`
   })
 
   return {
     success: true,
     priceToken0InUSD,
-    priceToken1InUSD,
+    priceToken1InUSD
   }
 }

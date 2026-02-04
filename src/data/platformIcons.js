@@ -62,5 +62,5 @@ export const PLATFORM_ICONS = {
   'uniswap-v3': 'png',
   'yuzu-finance': 'jpg',
   zealousswap: 'jpg',
-  'zyberswap-amm': 'jpg',
+  'zyberswap-amm': 'jpg'
 }

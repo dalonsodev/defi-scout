@@ -65,7 +65,7 @@ export function usePoolFilters() {
     platforms: [],
     tvlUsd: '',
     volumeUsd1d: '',
-    riskLevel: '',
+    riskLevel: ''
   })
 
   // Stable reference for input handlers (prevents PoolFilters re-renders)
@@ -79,7 +79,7 @@ export function usePoolFilters() {
       ...prev,
       platforms: prev.platforms.includes(platform)
         ? prev.platforms.filter((p) => p !== platform) // Remove if present
-        : [...prev.platforms, platform], // Add if absent
+        : [...prev.platforms, platform] // Add if absent
     }))
   }, [])
 
@@ -90,7 +90,7 @@ export function usePoolFilters() {
       platforms: [],
       tvlUsd: '',
       volumeUsd1d: '',
-      riskLevel: '',
+      riskLevel: ''
     })
   }, [])
 
@@ -98,6 +98,6 @@ export function usePoolFilters() {
     filters,
     updateFilter,
     togglePlatform,
-    clearFilters,
+    clearFilters
   }
 }

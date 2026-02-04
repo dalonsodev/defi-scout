@@ -29,13 +29,13 @@ export function TokenInfoBlock({ pool, selectedTokenIdx, onTokenChange }) {
 
     return [
       { name: pool.token0.symbol, value: tvl0 },
-      { name: pool.token1.symbol, value: tvl1 },
+      { name: pool.token1.symbol, value: tvl1 }
     ]
   }, [
     pool.totalValueLockedToken0,
     pool.totalValueLockedToken1,
     pool.token0.symbol,
-    pool.token1.symbol,
+    pool.token1.symbol
   ])
 
   const totalValue = useMemo(() => {

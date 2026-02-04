@@ -31,7 +31,7 @@ import { debugLog } from '../../../utils/logger'
 export function StrategyComparison({
   hodlStrategy,
   lpStrategy,
-  isCalculating,
+  isCalculating
 }) {
   // Architecture: Winner determined by absolute PNL (not ROI%)
   // Edge Case: Both strategies can be negative (shows lesser loss)

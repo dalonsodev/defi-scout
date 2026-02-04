@@ -10,7 +10,7 @@ describe('validateInputs - Edge Cases', () => {
       fullRange: false,
       assumedPrice: 75,
       selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({}),
+      hourlyData: new Array(168).fill({})
     })
     expect(result.success).toBe(false)
     expect(result.error.toLowerCase()).toContain('min price')
@@ -24,7 +24,7 @@ describe('validateInputs - Edge Cases', () => {
       fullRange: false,
       assumedPrice: 75,
       selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({}),
+      hourlyData: new Array(168).fill({})
     })
     expect(result.success).toBe(true)
   })
@@ -38,7 +38,7 @@ describe('validateInputs - Edge Cases', () => {
       fullRange: false,
       assumedPrice: 75,
       selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({}),
+      hourlyData: new Array(168).fill({})
     })
     expect(result.success).toBe(false)
     expect(result.error).toContain('$10')
@@ -52,7 +52,7 @@ describe('validateInputs - Edge Cases', () => {
       fullRange: false,
       assumedPrice: 75,
       selectedTokenIdx: 5, // Invalid
-      hourlyData: new Array(168).fill({}),
+      hourlyData: new Array(168).fill({})
     })
     expect(result.success).toBe(false)
     expect(result.error).toContain('select a token')
@@ -66,7 +66,7 @@ describe('validateInputs - Edge Cases', () => {
       fullRange: false,
       assumedPrice: 75,
       selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({}),
+      hourlyData: new Array(168).fill({})
     })
     expect(result.success).toBe(false)
     expect(result.error).toContain('Price range required')
@@ -80,7 +80,7 @@ describe('validateInputs - Edge Cases', () => {
       fullRange: false,
       assumedPrice: 75,
       selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({}),
+      hourlyData: new Array(168).fill({})
     })
     expect(result.success).toBe(false)
     expect(result.error).toContain('positive')
@@ -94,7 +94,7 @@ describe('validateInputs - Edge Cases', () => {
       fullRange: false,
       assumedPrice: '',
       selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({}),
+      hourlyData: new Array(168).fill({})
     })
     expect(result.success).toBe(false)
     expect(result.error).toContain('Assumed Entry Price required')
@@ -108,7 +108,7 @@ describe('validateInputs - Edge Cases', () => {
       fullRange: false,
       assumedPrice: 75,
       selectedTokenIdx: 0,
-      hourlyData: new Array(50).fill({}), // Less than 168
+      hourlyData: new Array(50).fill({}) // Less than 168
     })
     expect(result.success).toBe(false)
     expect(result.error).toContain('No hourly data')
@@ -122,7 +122,7 @@ describe('validateInputs - Edge Cases', () => {
       fullRange: true,
       assumedPrice: '',
       selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({}),
+      hourlyData: new Array(168).fill({})
     })
     expect(result.success).toBe(true)
   })
