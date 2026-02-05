@@ -1,4 +1,6 @@
-import { useCallback, useState } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useCallback } from 'react'
+import { parseSearchParams, updateSearchParams } from "../utils/urlState"
 
 /**
  * Custom Hook: Centralized Filter State Manager
@@ -60,44 +62,38 @@ import { useCallback, useState } from 'react'
  * }
  */
 export function usePoolFilters() {
-  const [filters, setFilters] = useState({
-    search: '',
-    platforms: [],
-    tvlUsd: '',
-    volumeUsd1d: '',
-    riskLevel: ''
-  })
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
 
-  // Stable reference for input handlers (prevents PoolFilters re-renders)
-  const updateFilter = useCallback((key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
-  }, [])
-
-  // Immutable toggle: creates a new array instead of mutating existing
-  const togglePlatform = useCallback((platform) => {
-    setFilters((prev) => ({
-      ...prev,
-      platforms: prev.platforms.includes(platform)
-        ? prev.platforms.filter((p) => p !== platform) // Remove if present
-        : [...prev.platforms, platform] // Add if absent
-    }))
-  }, [])
-
-  // Reset to initial state (matches useState defaults above)
-  const clearFilters = useCallback(() => {
-    setFilters({
-      search: '',
-      platforms: [],
-      tvlUsd: '',
-      volumeUsd1d: '',
-      riskLevel: ''
-    })
-  }, [])
-
-  return {
-    filters,
-    updateFilter,
-    togglePlatform,
-    clearFilters
+  // Derived filters (parses full URL, but we only use filters)
+  const allState = parseSearchParams(searchParams)
+  const filters = {
+    search: allState.search,
+    platforms: allState.platforms,
+    tvlUsd: allState.tvlUsd,
+    volumeUsd1d: allState.volumeUsd1d
   }
+
+  // Generic updater
+  const updateFilter = useCallback((key, value) => {
+    updateSearchParams(navigate, searchParams, { [key]: value })
+  }, [navigate, searchParams])
+
+  // 3. Platform toggle (custom array logic)
+  const togglePlatform = useCallback((platform) => {
+  const currentPlatforms = searchParams.get('platforms')?.split(',').filter(Boolean) || []
+
+  const newPlatforms = currentPlatforms.includes(platform)
+    ? currentPlatforms.filter((p) => p !== platform)
+    : [...currentPlatforms, platform]
+
+    updateSearchParams(navigate, searchParams, { platforms: newPlatforms })
+  }, [navigate, searchParams])
+
+  // Clear all filters
+  const clearFilters = useCallback(() => {
+    navigate(window.location.pathname, { replace: true })
+  }, [navigate])
+
+  return { filters, updateFilter, togglePlatform, clearFilters }
 }
