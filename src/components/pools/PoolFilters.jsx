@@ -1,20 +1,26 @@
+import { useDebouncedFilterInputs } from '../../hooks/useDebouncedFilterInputs'
 import { Dropdown } from '../common/Dropdown'
 
 /**
  * UI: Client-Side Pool Filtering Interface
  *
- * Architecture Decision: All filtering logic runs in-browser instead of API queries
- * because DeFiLlama's endpoint doesn't support query params (returns full +8k dataset).
- * Trade-off: Instant filtering UX vs initial 1.2s load time.
+ * Architecture: Presentational component with local state for debounced inputs.
+ * Uses useDebouncedFilterInputs hook to maintain responsive UX while preventing
+ * expensive re-filtering of 8k pools on every keystroke.
  *
- * Filter Pipeline: Search (text match) => Platform (multi-select) => TVL/Volume (numeric threshold)
- * Triggers re-render in parent (PoolsContent) via updateFilter callback.
+ * State Management:
+ * - Text/Number inputs: Local state (instant visual feedback) → 500ms debounce → URL update
+ * - Platform dropdown: Direct URL update (no debounce needed for single clicks)
+ * - URL as SSOT: Browser back/forward syncs local state via useDebouncedFilterInputs
+ *
+ * Filter Pipeline (executed in parent PoolsContent):
+ * Search (text match) → Platform (multi-select) → TVL/Volume (numeric threshold)
  *
  * @param {Object} props
- * @param {Object} props.filters - Active filter state (search, platforms, tvlUSD, volumeUsd1d)
- * @param {Function} props.updateFilter - Setter for individual filter keys (debounced in parent)
- * @param {Function} props.togglePlatform - Multi-select handler for platform dropdown
- * @param {Function} props.clearFilters - Reset all filters to default values
+ * @param {Object} props.filters - Current filter state from URL (search, platforms, tvlUsd, volumeUsd1d)
+ * @param {Function} props.updateFilter - URL updater from usePoolFilters (not directly debounced)
+ * @param {Function} props.togglePlatform - Platform multi-select handler
+ * @param {Function} props.clearFilters - Reset all filters to defaults
  * @param {Array<{value: string, display: string}>} props.availablePlatforms - Platform options from pool data
  * @returns {JSX.Element}
  */
@@ -25,6 +31,8 @@ export function PoolFilters({
   clearFilters,
   availablePlatforms
 }) {
+  const { localFilters, updateLocalFilter } = useDebouncedFilterInputs(filters, updateFilter)
+
   return (
     <div className="flex flex-wrap gap-2 mb-4 p-4 bg-base-100">
       <label className="form-control max-w-xs">
@@ -34,9 +42,9 @@ export function PoolFilters({
         <input
           type="text"
           placeholder="SOL or SOL/USDC"
-          value={filters.search}
+          value={localFilters.search}
           className="input input-bordered input-sm rounded-xl"
-          onChange={(e) => updateFilter('search', e.target.value)}
+          onChange={(e) => updateLocalFilter('search', e.target.value)}
         />
       </label>
 
@@ -56,9 +64,9 @@ export function PoolFilters({
         <input
           type="number"
           placeholder="Min TVL ($)"
-          value={filters.tvlUsd}
+          value={localFilters.tvlUsd}
           className="input input-bordered input-sm rounded-xl"
-          onChange={(e) => updateFilter('tvlUsd', e.target.value)}
+          onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
         />
       </label>
 
@@ -67,9 +75,9 @@ export function PoolFilters({
         <input
           type="number"
           placeholder="Min 24h Vol ($)"
-          value={filters.volumeUsd1d}
+          value={localFilters.volumeUsd1d}
           className="input input-bordered input-sm rounded-xl"
-          onChange={(e) => updateFilter('volumeUsd1d', e.target.value)}
+          onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
         />
       </label>
 

@@ -65,7 +65,7 @@ export function usePoolFilters() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  // Derived filters (parses full URL, but we only use filters)
+  // Derived filters from URL (read-only)
   const allState = parseSearchParams(searchParams)
   const filters = {
     search: allState.search,
@@ -74,18 +74,18 @@ export function usePoolFilters() {
     volumeUsd1d: allState.volumeUsd1d
   }
 
-  // Generic updater
+  // Simple updater (debouncing handled by useDebouncedFilterInputs)
   const updateFilter = useCallback((key, value) => {
     updateSearchParams(navigate, searchParams, { [key]: value })
   }, [navigate, searchParams])
 
-  // 3. Platform toggle (custom array logic)
+  // Platform toggle (custom array logic)
   const togglePlatform = useCallback((platform) => {
-  const currentPlatforms = searchParams.get('platforms')?.split(',').filter(Boolean) || []
+    const currentPlatforms = searchParams.get('platforms')?.split(',').filter(Boolean) || []
 
-  const newPlatforms = currentPlatforms.includes(platform)
-    ? currentPlatforms.filter((p) => p !== platform)
-    : [...currentPlatforms, platform]
+    const newPlatforms = currentPlatforms.includes(platform)
+      ? currentPlatforms.filter((p) => p !== platform)
+      : [...currentPlatforms, platform]
 
     updateSearchParams(navigate, searchParams, { platforms: newPlatforms })
   }, [navigate, searchParams])
