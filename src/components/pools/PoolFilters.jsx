@@ -31,7 +31,18 @@ export function PoolFilters({
   clearFilters,
   availablePlatforms
 }) {
-  const { localFilters, updateLocalFilter } = useDebouncedFilterInputs(filters, updateFilter)
+  const {
+    localFilters,
+    updateLocalFilter,
+    resetLocalFilters
+  } = useDebouncedFilterInputs(filters, updateFilter)
+
+  // Coordinated reset: Clear local state first (sets guard flag), then URL
+  // Order matters: prevents debounced values from restoring after URL clear
+  const handleClearFilters = () => {
+    resetLocalFilters() // 1. Set isResetting=true + clear local state
+    clearFilters()      // 2. Clear URL (Effect 1 will skip one cycle)
+  }
 
   return (
     <div className="flex flex-wrap gap-2 mb-4 p-4 bg-base-100">
@@ -82,7 +93,7 @@ export function PoolFilters({
       </label>
 
       <div className="flex items-end">
-        <button onClick={clearFilters} className="btn btn-sm btn-ghost">
+        <button onClick={handleClearFilters} className="btn btn-sm btn-ghost">
           Clear
         </button>
       </div>
