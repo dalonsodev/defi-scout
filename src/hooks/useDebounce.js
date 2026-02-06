@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 /**
  * Custom Hook: Debounced Value (Leading Edge)
  *
- * Delays the propagation of a value to prevent excesive re-renders or API calls
+ * Delays the propagation of a value to prevent excessive re-renders or API calls
  * during rapid state changes (e.g. search input, slider dragging)
  *
  * Implementation Detail: Skips debouncing on initial mount to allow hydration
