@@ -13,7 +13,7 @@
  * @param {string[]} [filters.platforms=[]] - Array of DEX protocol IDs (e.g. ["uniswap-v3", "curve"])
  * @param {number|string} [filters.tvlUsd] - Minimum TVL threshold (USD)
  * @param {number|string} [filters.volumeUsd1d] - Minimum 24h volume threshold (USD)
- * @returns {Object[]} Filtered subset of pools (mantains original order)
+ * @returns {Object[]} Filtered subset of pools (maintains original order)
  *
  * @example
  * // Filter for Uniswap V3 ETH pools with $1M+ TVL

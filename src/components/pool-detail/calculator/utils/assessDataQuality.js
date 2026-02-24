@@ -23,7 +23,7 @@ export function assessDataQuality(hourlyData) {
   const hours = hourlyData.length
 
   // Time Constants: Explicitly defined for maintainability (hours per period)
-  const ONE_WEEK = 24 * 7 // 168h - Minumum to capture weekly volatility patterns
+  const ONE_WEEK = 24 * 7 // 168h - Minimum to capture weekly volatility patterns
   const TWO_WEEKS = 24 * 14 // 336h - Captures bi-weekly rebalancing events
   const ONE_MONTH = 24 * 30 // 720h - Industry standard for LP projection tools
 

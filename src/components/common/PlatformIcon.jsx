@@ -4,7 +4,7 @@ import { PLATFORM_ICONS } from '../../data/platformIcons'
 /**
  * UI: Platform Brand Identity Renderer.
  *
- * Architecture: Lazy-loads logos from DefiLlama CDN instead of bundling locally.
+ * Architecture: Lazy-loads logos from DeFiLlama CDN instead of bundling locally.
  * Trade-off: Faster initial load (no 43 icons in bundle) but depends on external
  * CDN uptime. Fallback initials ensure UI never breaks on 404 errors.
  *
@@ -36,7 +36,7 @@ export function PlatformIcon({ platform, size = 'md' }) {
   /**
    * String Utility: Extract 2-character initials from platform slug
    * Splits by common separators (dashes, underscores) to grab meaningful words.
-   * @param {string} platformSlug - DefiLlama platform identifier
+   * @param {string} platformSlug - DeFiLlama platform identifier
    * @returns {string} Uppercase 2-char string (e.g. "UV" for "uniswap-v3")
    */
   const getInitials = (platformSlug) => {

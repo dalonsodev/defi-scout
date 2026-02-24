@@ -23,7 +23,7 @@ export function Navbar() {
       <div className="flex-1">
         {/* Brand: Larger text-xl for visual hierarchy */}
         <Link to="/" className="btn btn-ghost text-xl">
-          Defi Scout
+          DeFi Scout
         </Link>
       </div>
       <div className="flex-none">

@@ -52,7 +52,7 @@ const PLATFORMS = [
 /**
  * Build-time script utility: Platform Icon Discovery & Mapping
  * Generate a static mapping of platform identifiers to their available icon formats.
- * It iterates through the PLATFORMS list, probes DefiLlama's CDN for .jpg/.png files,
+ * It iterates through the PLATFORMS list, probes DeFiLlama's CDN for .jpg/.png files,
  * and writes the resulting map to "src/data/platformIcons.js"
  * @async
  * @function buildIconMap
