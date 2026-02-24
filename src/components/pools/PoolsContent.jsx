@@ -1,22 +1,24 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
-import { PoolFilters } from './PoolFilters'
-import { PoolTable } from './PoolTable'
-import { PaginationControls } from '../common/PaginationControls'
-import { useSparklines } from '../../hooks/useSparklines'
-import { useRequestQueue } from '../../hooks/useRequestQueue'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { usePrevious } from '../../hooks/usePrevious'
+import { useRequestQueue } from '../../hooks/useRequestQueue'
+import { useSparklines } from '../../hooks/useSparklines'
+import { parseSearchParams, updateSearchParams } from '../../utils/urlState'
 import { filterPools } from './utils/filterPools'
 import { sortPools } from './utils/sortPools'
+import { PaginationControls } from '../common/PaginationControls'
+import { PoolFilters } from './PoolFilters'
+import { PoolTable } from './PoolTable'
 
 /**
  * Component: Pool Data Pipeline Orchestrator
  *
  * Architecture: Client-side pipeline (Filter → Sort → Paginate → Render)
  *
- * Refactored State Management (4 effects → 2 effects):
- * - pageIndex: Derived from userPageIndex + dirty checking (eliminates 2 sync effects)
- * - visiblePoolIds: Reset via effect when pageIndex changes (legitimate cache prep)
- * - Scroll: Effect for UI side effect (not state synchronization)
+ * State Management:
+ * - Filters/Sorting/Pagination: URL as SSOT (useSearchParams + derived values)
+ * - visiblePoolIds: Local state for sparkline intersection observer cache
+ * - Reset logic: Derived (pageIndex = 0 when filters change, avoids race conditions)
  *
  * Performance: JSON.stringify comparison runs once per filter/sort change (~<1ms)
  */
@@ -48,31 +50,54 @@ export function PoolsContent({
     return filterPools(pools, filters)
   }, [pools, filters])
 
-  // User-driven state
-  const [userPageIndex, setUserPageIndex] = useState(0)
+  // 1. Get URL state management tools
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+
+  // 2. Parse full URL state (sortBy, sortDir, page)
+  const urlState = parseSearchParams(searchParams)
+
+  // 3. Convert URL state to component format
+  const sorting = useMemo(() => [{
+    id: urlState.sortBy,
+    desc: urlState.sortDir === 'desc'
+  }], [urlState.sortBy, urlState.sortDir])
+
+  // 4. Local state still needs useState
   const [visiblePoolIds, setVisiblePoolIds] = useState(new Set())
-  const [sorting, setSorting] = useState([{ id: 'tvlUsd', desc: true }])
+
+  // 5. Dirty checking for filters (to detect resets)
+  const filtersKey = JSON.stringify(filters)
+  const prevFiltersKey = usePrevious(filtersKey)
+  const filtersChanged = prevFiltersKey !== undefined && prevFiltersKey !== filtersKey
+
+  // 6. Derive pageIndex with reset logic
+  const pageIndex = filtersChanged ? 0 : urlState.page
 
   const tableRef = useRef(null)
   const tableScrollRef = useRef(null)
   const isFirstRender = useRef(true)
 
-  // Dirty checking: Detect when filters/sorting change by comparing serialized keys
-  const filtersKey = JSON.stringify(filters)
-  const sortingKey = JSON.stringify(sorting)
+  const handlePageChange = (newPage) => {
+    updateSearchParams(navigate, searchParams, { page: newPage - 1 })
+  }
 
-  const prevFiltersKey = usePrevious(filtersKey)
-  const prevSortingKey = usePrevious(sortingKey)
+  const handleSortingChange = (updaterOrValue) => {
+    const newSorting = typeof updaterOrValue === 'function'
+      ? updaterOrValue(sorting)
+      : updaterOrValue
 
-  // Check undefined to skip comparison on first render
-  const filtersChanged =
-    prevFiltersKey !== undefined && prevFiltersKey !== filtersKey
-  const sortingChanged =
-    prevSortingKey !== undefined && prevSortingKey !== sortingKey
-  const shouldResetPage = filtersChanged || sortingChanged
+    if (!newSorting || newSorting.length === 0) {
+      updateSearchParams(navigate, searchParams, {
+        sortBy: 'tvlUsd',
+        sortDir: 'desc'
+      })
+    }
 
-  // Derived pageIndex: Reset to 0 when filters/sorting change, else respect user navigation
-  const pageIndex = shouldResetPage ? 0 : userPageIndex
+    const sortBy = newSorting[0].id
+    const sortDir = newSorting[0].desc ? 'desc' : 'asc'
+    updateSearchParams(navigate, searchParams, { sortBy, sortDir })
+  }
 
   const pageSize = 40
   const totalPages = Math.ceil(filteredPools.length / pageSize)
@@ -86,10 +111,6 @@ export function PoolsContent({
     const end = start + pageSize
     return sortedPools.slice(start, end)
   }, [sortedPools, pageIndex, pageSize])
-
-  const handlePageChange = (newPage) => {
-    setUserPageIndex(newPage - 1)
-  }
 
   const scrollToTableTop = useCallback(() => {
     if (tableScrollRef.current && tableRef.current) {
@@ -172,7 +193,7 @@ export function PoolsContent({
             onVisiblePoolsChange={setVisiblePoolIds}
             currentPage={pageIndex + 1}
             sorting={sorting}
-            onSortingChange={setSorting}
+            onSortingChange={handleSortingChange}
           />
           <div className="py-4">
             <PaginationControls
