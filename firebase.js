@@ -1,5 +1,5 @@
 /**
- * Security Model: API keys are safe to expose in clien-side code (Firebase
+ * Security Model: API keys are safe to expose in client-side code (Firebase
  * restricts access via domain whitelist + Firestore Security Rules). For
  * production, consider moving to environment variables (import.meta.env.VITE_*).
  *

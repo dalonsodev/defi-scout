@@ -2,7 +2,7 @@ import { Outlet, useNavigation } from 'react-router-dom'
 import { Navbar } from './Navbar'
 
 /**
- * Architecture: Global Application Aayout Wrapper.
+ * Architecture: Global Application Layout Wrapper.
  *
  * Design Decision: Centralized loading state using React Router's useNavigation
  * instead of per-component loaders. This provides a consistent UX across all
@@ -14,7 +14,7 @@ import { Navbar } from './Navbar'
  *
  * UI Constraints:
  * - max-w-5xl: Optimal line length for financial data tables (prevents horizontal
- * eye strain on ultrawide monitors, follows Nielsen Norman Group guidelines)
+ * eye strain on ultra-wide monitors, follows Nielsen Norman Group guidelines)
  * - Fixed spinner (top-right): Non-blocking, doesn't shift layout on show/hide
  *
  * @returns {JSX.Element} Global site structure: navbar + route outlet + loading indicator

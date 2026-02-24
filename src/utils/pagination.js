@@ -1,5 +1,5 @@
 /**
- * Utility: Generates an inclusive integer secuence [start, end].
+ * Utility: Generates an inclusive integer sequence [start, end].
  * Helper for range-based UI components (pagination, sliders).
  * @param {number} start - First integer in sequence
  * @param {number} end - Last integer in sequence (inclusive)
@@ -14,7 +14,7 @@ export function range(start, end) {
 }
 
 /**
- * Utility: Generate vivible page numbers with ellipsis truncation.
+ * Utility: Generate visible page numbers with ellipsis truncation.
  *
  * Design Decision: Uses delta=2 (shows 5 pages around current) following
  * industry patterns (Stripe, GitHub). Trade-off: More pages = less ellipsis

@@ -83,7 +83,7 @@ export function PriceChart({
 
           {/* Concentrated Liquidity Bounds:
                   Visualizes the "ticks" where the user's capital is active
-                  Hidden if "full range" is active as boundaries woud be effectively [0, ∞]
+                  Hidden if "full range" is active as boundaries would be effectively [0, ∞]
                */}
           {!rangeInputs.fullRange && (
             <>

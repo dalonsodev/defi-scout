@@ -22,7 +22,7 @@ export const CHART_COLORS = {
 
   // Neutral colors for    grid/axes
   grid: '#374151', // gray-700 - subtle grid lines
-  axis: '#f9fafb', // gray-50 - subtle axis lables (high contrast)
+  axis: '#f9fafb', // gray-50 - subtle axis labels (high contrast)
 
   // Data visualization palette
   // Design: Each metric gets distinct hue to prevent confusion in multi-line charts

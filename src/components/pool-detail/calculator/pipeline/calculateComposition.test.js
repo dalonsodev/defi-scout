@@ -25,7 +25,7 @@ describe('calculateComposition', () => {
 
   describe('Validations', () => {
     it('rejects feeTier null', () => {
-      // Arrange: Setup con feeTier inválido
+      // Arrange: Invalid feeTier setup
       const inputs = { ...validUserInputs }
       const poolState = { ...validPoolState, feeTier: null }
       const history = validHistoricalPrices

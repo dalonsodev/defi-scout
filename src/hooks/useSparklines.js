@@ -90,7 +90,7 @@ export function useSparklines({
       }
     })
 
-    // Cleanup: Cancell all pending requests if the user scrolls away or changes page
+    // Cleanup: Cancel all pending requests if the user scrolls away or changes page
     return () => cancelPendingRequests()
   }, [visiblePoolIds, queueRequest, cancelPendingRequests, currentPage])
 

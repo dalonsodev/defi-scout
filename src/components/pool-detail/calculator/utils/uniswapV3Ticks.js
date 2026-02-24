@@ -16,7 +16,7 @@
  * @module uniswapV3Ticks
  */
 
-// Domain Constants: Harcoded in UniswapV3Pool.sol (smart contract)
+// Domain Constants: Hardcoded in UniswapV3Pool.sol (smart contract)
 // Range corresponds to prices between ~1.0001^-887272 ≈ 0 and 1.0001^887272 = ∞
 // These bounds prevent overflow in on-chain sqrt calculations (X96 fixed-point math)
 const MIN_TICK = -887272

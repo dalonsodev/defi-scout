@@ -8,7 +8,7 @@
  * 3. UI Formatting: Generates human-readable strings (K, M, B) for financial dashboards.
  * @param {Array<Object>} rawPools - Collection of pool objects from the API
  * @param {string} rawPools[].id - Deployment address of the pool
- * @param {string} rawPools[].totalValueLockedUSD - TVL in strig format
+ * @param {string} rawPools[].totalValueLockedUSD - TVL in string format
  * @param {string} rawPools[].createdAtTimestamp - Unix timestamp of pool creation
  * @param {Object} rawPools[].token0 - Metadata for the first token in the pair
  * @returns {Array<Object>} Normalized pool objects with "formatted" sufixes and calculated apyBase

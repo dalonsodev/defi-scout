@@ -8,7 +8,7 @@ import { getVisiblePages } from '../../utils/pagination'
  * - Desktop: Full page numbers with smart ellipsis (industry standard, e.g. YieldSamurai)
  *
  * Ellipsis Logic: Handled by getVisiblePages utility (shows first, last, current ±2 pages).
- * Exampe: [1, "...", 4, 5, 6, "...", 10] when currentPage=5, totalPages=10
+ * Example: [1, "...", 4, 5, 6, "...", 10] when currentPage=5, totalPages=10
  *
  * @param {Object} props
  * @param {number} props.currentPage - Active page index (1-based)

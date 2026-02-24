@@ -19,10 +19,10 @@ import { watchlistLoader } from './loaders/watchlistLoader'
  * to enable render-as-you-fetch pattern (eliminates waterfall delays)
  *
  * Key Patterns:
- * - defer() in poolsLoader: Returns promise immediately, strams data during render
+ * - defer() in poolsLoader: Returns promise immediately, streams data during render
  *   (prevents blocking initial page paint for 8k pool dataset)
  * - Scoped error boundaries: poolDetailLoader has dedicated errorElement to isolate
- *   GrapQL failures (keeps navigation functional when detail page breaks)
+ *   GraphQL failures (keeps navigation functional when detail page breaks)
  * - Index route: No errorElement (bubbles to Layout's root boundary for consistency)
  *
  * Performance: Loaders execute in parallel with component code splitting (Vite),

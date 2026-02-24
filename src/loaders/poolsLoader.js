@@ -20,7 +20,7 @@ async function fetchUniswapPools() {
       minVol: '0'
     })
 
-    // Post-proocessing: Converts BigInt strings from GraphQL into JS numbers and schema
+    // Post-processing: Converts BigInt strings from GraphQL into JS numbers and schema
     return formatPoolData(rawPools)
   } catch (err) {
     // Defensive Logic: Logs the error for debugging but returns an empty array,
