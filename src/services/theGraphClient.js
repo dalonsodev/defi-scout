@@ -148,6 +148,114 @@ const GET_POOL_HOUR_DATAS_QUERY = gql`
   }
 `
 
+/**
+ * Batch Sparkline Query: Fetches 14-day trend data for multiple pools.
+ *
+ * Schema Note: poolDayDatas is a root-level entity (not nested under Pool).
+ * We query all daily snapshots matching the pool list, then group client-side.
+ *
+ * Performance: 40 pools × 14 days = 560 poolDayData entities (under 1000 limit).
+ *
+ * @param {string[]} $poolIds - Array of pool contract addresses
+ * @param {number} $startDate - Unix timestamp (14 days ago)
+ * @returns {Object[]} Flat array of poolDayData entities with pool reference
+ */
+const GET_POOL_SPARKLINES_QUERY = gql`
+  query GetPoolSparklines($poolIds: [String!]!, $startDate: Int!) {
+    poolDayDatas(
+      where: {
+        pool_in: $poolIds
+        date_gte: $startDate
+      }
+      orderBy: date
+      orderDirection: asc
+      first: 1000
+    ) {
+      pool {
+        id
+      }
+      date
+      feesUSD
+      tvlUSD
+    }
+  }
+`
+
+/**
+ * Service: Batch-fetches 14-day historical data for sparkline rendering.
+ *
+ * @param {string[]} poolAddresses - Array of pool contract addresses
+ * @returns {Promise<Array>} Dictionary: { poolId: [poolDayDatas, ...] }
+ *
+ * @example
+ * const data = await fetchPoolSparklines([
+ *  "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+ *  "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640"
+ * ])
+ * // => {
+ * //   "0x8ad...": [{ date: 123, feesUSD: "456", tvlUSD: "789" }, ...],
+ * //   "0x88e...": [...]
+ * // }
+ */
+export async function fetchPoolSparklines(poolAddresses) {
+  // Calculate 14 days ago (Unix timestamp in seconds)
+  const startDate = Math.floor(Date.now() / 1000) - 14 * 86400
+
+  const data = await client.request(GET_POOL_SPARKLINES_QUERY, {
+    poolIds: poolAddresses.map(addr => addr.toLowerCase()),
+    startDate
+  })
+
+  // Group flat array by pool ID (TheGraph returns all poolDayDatas in one array)
+  const grouped = {}
+
+  data.poolDayDatas.forEach(dayData => {
+    const poolId = dayData.pool.id
+
+    if (!grouped[poolId]) {
+      grouped[poolId] = []
+    }
+
+    grouped[poolId].push(dayData)
+  })
+
+  return grouped
+}
+
+/**
+ * Utility: Converts raw poolDayDatas into APY percentage array for sparkline rendering.
+ *
+ * Calculation: APY = (Daily Fees / TVL) * 365 * 100
+ * This matches the formula used in formatPoolHistory.js for consistency.
+ *
+ * @param {Array} poolDayDatas - Array of daily snapshots from TheGraph
+ * @returns {number[]} Array of APY percentages (up to 14 values)
+ *
+ * @example
+ * const apyArray = formatSparklineData([
+ *  { date: 19800, feesUSD: "1000", tlvUSD: "50000" },
+ *  { date: 19801, feesUSD: "1200", tlvUSD: "52000" },
+ * ])
+ * // => [7.30, 8.42] (APY percentages)
+ */
+export function formatSparklineData(poolDayDatas) {
+  if (!poolDayDatas || poolDayDatas.length === 0) return []
+
+  return poolDayDatas.map(snapshot => {
+    const feesUSD = parseFloat(snapshot.feesUSD)
+    const tvlUSD = parseFloat(snapshot.tvlUSD)
+
+    // Safety check: Avoid division by zero
+    if (!tvlUSD || tvlUSD === 0) return 0
+
+    // APY calculation: (daily fees / TVL) * 365 days * 100 for percentage
+    const dailyRate = feesUSD / tvlUSD
+    const apy = dailyRate * 365 * 100
+
+    return apy
+  })
+}
+
 // ===== SERVICE LAYER =====
 
 /**
