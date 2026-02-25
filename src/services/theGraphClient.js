@@ -202,7 +202,7 @@ export async function fetchPoolSparklines(poolAddresses) {
   const startDate = Math.floor(Date.now() / 1000) - 14 * 86400
 
   const data = await client.request(GET_POOL_SPARKLINES_QUERY, {
-    poolIds: poolAddresses.map(addr => addr.toLowerCase()),
+    poolIds: poolAddresses.filter(Boolean).map((addr) => addr.toLowerCase()),
     startDate
   })
 
