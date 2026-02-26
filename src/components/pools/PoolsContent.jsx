@@ -1,7 +1,6 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { usePrevious } from '../../hooks/usePrevious'
-import { useRequestQueue } from '../../hooks/useRequestQueue'
 import { useSparklines } from '../../hooks/useSparklines'
 import { parseSearchParams, updateSearchParams } from '../../utils/urlState'
 import { filterPools } from './utils/filterPools'
@@ -9,6 +8,7 @@ import { sortPools } from './utils/sortPools'
 import { PaginationControls } from '../common/PaginationControls'
 import { PoolFilters } from './PoolFilters'
 import { PoolTable } from './PoolTable'
+
 
 /**
  * Component: Pool Data Pipeline Orchestrator
@@ -146,16 +146,14 @@ export function PoolsContent({
     }
   }, [pageIndex, totalPages, scrollToTableTop])
 
-  const { queueRequest, cancelPendingRequests } = useRequestQueue({
-    maxTokens: 20,
-    refillRate: 1.2,
-    concurrencyLimit: 10
-  })
+  // Derive Set<Object> from visible IDs + paginated data
+  // useMemo prevents new Set() reference on every render (would re-trigger useSparklines effect)
+  const visiblePools = useMemo(() => {
+    return new Set(paginatedPools.filter((pool) => visiblePoolIds.has(pool.id)))
+  }, [paginatedPools, visiblePoolIds])
 
   const { sparklineData } = useSparklines({
-    visiblePoolIds,
-    queueRequest,
-    cancelPendingRequests,
+    visiblePools,
     currentPage: pageIndex + 1
   })
 
