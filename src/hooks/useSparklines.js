@@ -20,7 +20,7 @@ import {
  *        -> cache.current (session-persistent)
  *
  * @param {Object} params
- * @param {Set<Object>} params.visiblePoolIds - Set of full pool objects in viewport
+ * @param {Set<Object>} params.visiblePools - Set of full pool objects in viewport
  * @param {number} params.currentPage - Freemium gate: only page 1 fetches data
  *
  * @returns {{ sparklineData: Object }} Dictionary: poolId -> 14-day APY array
@@ -32,7 +32,7 @@ import {
  * })
  * // sparklineData = { "0xabc...": [3.1, 3.4, 2.9, ...] }
  */
-export function useSparklines({ visiblePoolIds, currentPage }) {
+export function useSparklines({ visiblePools, currentPage }) {
   // Local Cache: Prevents re-fetching data for the same pool during the session life-cycle
   const cache = useRef({})
 
@@ -43,7 +43,7 @@ export function useSparklines({ visiblePoolIds, currentPage }) {
     // Freemium Gate: Pages 2+ handled by SparklineCell (shows "Upgrade to Pro" tooltip)
     if (currentPage > 1) return
 
-    if (!visiblePoolIds || visiblePoolIds.size === 0) return
+    if (!visiblePools || visiblePools.size === 0) return
 
     // Prevents setState after component unmounts during async fetch
     let isMounted = true
@@ -51,7 +51,7 @@ export function useSparklines({ visiblePoolIds, currentPage }) {
     const fetchData = async () => {
       try {
         // Differential Update: Only request pools missing from session cache
-        const missingAddresses = Array.from(visiblePoolIds)
+        const missingAddresses = Array.from(visiblePools)
           .map((pool) => pool.id)
           .filter((id) => id && !cache.current[id])
 
@@ -79,7 +79,7 @@ export function useSparklines({ visiblePoolIds, currentPage }) {
       isMounted = false
     }
 
-  }, [visiblePoolIds, currentPage])
+  }, [visiblePools, currentPage])
 
   return { sparklineData: cache.current }
 }
