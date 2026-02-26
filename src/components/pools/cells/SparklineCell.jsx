@@ -1,7 +1,7 @@
 import { MiniSparkline } from '../../common/MiniSparkline'
 
 /**
- * SparklineCell - Renders 7-day APY sparkline with freemium fallback
+ * SparklineCell - Renders 14-day APY sparkline with freemium fallback
  *
  * @param {string} poolId - Pool identifier for cache lookup
  * @param {Object<string, number[]>} sparklineData - Global cache (poolId → APY history)
