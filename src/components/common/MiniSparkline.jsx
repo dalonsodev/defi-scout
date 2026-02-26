@@ -3,7 +3,7 @@
  *
  * Architecture: Pure SVG approach for simplicity over Canvas.
  * Trade-offs: SVG polyline to maintain/debug but Canvas would render faster
- * for >100 points (not needed for our 7-day datasets).
+ * for >100 points (not needed for our 14-day datasets).
  *
  * Color Coding: Green (bullish), Red (bearish), Gray (neutral) follows universal
  * financial charting conventions (Bloomberg, Yahoo Finance, DeFiLlama)
@@ -15,8 +15,8 @@
  * @returns {JSX.Element} Inline SVG or fallback state (loading skeleton / "No data")
  *
  * @example
- * // 7-day APY trend
- * <MiniSparkline data={[12.5, 13.1, 12.8, 14.2, 13.9, 14.5, 15.1]} width={100} />
+ * // 14-day APY trend
+ * <MiniSparkline data={[12.5, 13.1, 12.8, 14.2, 13.9, 14.5, 15.1 ...]} width={80} />
  */
 export function MiniSparkline({ data, width = 80, height = 40 }) {
   if (!data)
@@ -64,7 +64,7 @@ export function MiniSparkline({ data, width = 80, height = 40 }) {
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
-      className="inline-block"
+      className="block mx-auto"
       preserveAspectRatio="none"
     >
       <polyline
