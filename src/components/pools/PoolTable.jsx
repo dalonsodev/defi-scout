@@ -76,13 +76,21 @@ const PoolTable = forwardRef(
                 className="block"
                 aria-label={`View details for ${row.original.name} pool`}
               >
-                <div
-                  className="tooltip tooltip-right"
-                  data-tip={row.original.name}
-                >
-                  <div className="font-medium text-base-content max-w-[120px] truncate">
-                    {row.original.name}
+                <div className="flex items-center gap-2">
+
+                  <div
+                    className="tooltip tooltip-right"
+                    data-tip={row.original.name}
+                  >
+                    <div className="font-medium text-base-content max-w-[120px] truncate">
+                      {row.original.name}
+                    </div>
                   </div>
+
+                  <span className="badge badge-sm text-base-content/50 border border-base-content/20">
+                    {row.original.feeTierFormatted}
+                  </span>
+
                 </div>
               </Link>
             )
@@ -211,8 +219,9 @@ const PoolTable = forwardRef(
               <th
                 key={header.id}
                 onClick={header.column.getToggleSortingHandler()}
-                className={`sticky top-0 z-10 bg-base-300 px-6 py-4 text-left text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
-                        ${isSticky ? 'left-0 z-11 sticky-column-shadow' : ''}
+                style={{ width: header.column.getSize() }}
+                className={`sticky top-0 z-10 bg-base-300 px-6 py-4 text-center text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
+                        ${isSticky ? 'left-0 z-11 pl-4 text-left sticky-column-shadow' : ''}
                      `.trim()}
               >
                 {flexRender(
@@ -261,13 +270,14 @@ const PoolTable = forwardRef(
             data-pool-id={row.original.id}
             onClick={handleRowClick}
             className="group hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
-          >
+            >
             {row.getVisibleCells().map((cell) => {
               const isSticky = cell.column.columnDef.meta?.isSticky
 
               return (
                 <td
                   key={cell.id}
+                  style={{ width: cell.column.getSize() }}
                   className={`px-4 py-6 whitespace-nowrap text-sm
                            ${isSticky ? 'sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150' : ''}
                         `.trim()}
