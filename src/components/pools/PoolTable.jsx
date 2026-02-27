@@ -221,11 +221,13 @@ const PoolTable = forwardRef(
                 key={header.id}
                 onClick={header.column.getToggleSortingHandler()}
                 style={{ width: header.column.getSize() }}
-                className={`sticky top-0 z-10 bg-base-300 px-6 py-4 text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
+                className={`sticky top-0 z-10 has-[.tooltip:hover]:z-20 bg-base-300 px-6 py-4 text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
                   ${isSticky ? 'left-0 z-11 pl-4 text-left sticky-column-shadow' : ''}
                 `.trim()}
               >
-                <div className={`flex items-center gap-1 ${isSticky ? 'justify-start' : 'justify-center'}`}>
+                <div className={`flex items-center gap-1 whitespace-nowrap
+                  ${isSticky ? 'justify-start' : 'justify-center'}`}
+                >
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext()
