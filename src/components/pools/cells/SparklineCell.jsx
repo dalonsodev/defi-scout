@@ -14,7 +14,7 @@ export function SparklineCell({ poolId, sparklineData }) {
     return (
       <div className="flex justify-center">
         <div
-          className="tooltip tooltip-left cursor-help py-2.5"
+          className="tooltip tooltip-left cursor-help"
           data-tip="Upgrade to Pro for unlimited sparklines"
         >
           <span className="text-xs text-base-content/40 font-medium min-h-10">

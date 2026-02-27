@@ -18,7 +18,7 @@
  * // 14-day APY trend
  * <MiniSparkline data={[12.5, 13.1, 12.8, 14.2, 13.9, 14.5, 15.1 ...]} width={80} />
  */
-export function MiniSparkline({ data, width = 80, height = 40 }) {
+export function MiniSparkline({ data, width = 80, height = 20 }) {
   if (!data)
     return <div className="w-20 h-10 bg-base-300 rounded animate-pulse" />
 
