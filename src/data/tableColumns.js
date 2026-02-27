@@ -20,6 +20,7 @@
 export const baseColumns = [
   {
     accessorKey: 'name',
+    size: 160,
     header: 'Pool',
     meta: { showOn: 'both', isSticky: true }
   },
