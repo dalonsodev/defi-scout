@@ -41,7 +41,7 @@ export const baseColumns = [
   },
   {
     accessorKey: 'sparklineIn7d',
-    header: 'APY (7d)',
+    header: 'APY (14d)',
     meta: { showOn: 'both' }
   },
   {
