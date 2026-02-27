@@ -214,25 +214,39 @@ const PoolTable = forwardRef(
         <tr key={hg.id}>
           {hg.headers.map((header) => {
             const isSticky = header.column.columnDef.meta?.isSticky
+            const tooltipText = header.column.columnDef.meta?.tooltip
 
             return (
               <th
                 key={header.id}
                 onClick={header.column.getToggleSortingHandler()}
                 style={{ width: header.column.getSize() }}
-                className={`sticky top-0 z-10 bg-base-300 px-6 py-4 text-center text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
-                        ${isSticky ? 'left-0 z-11 pl-4 text-left sticky-column-shadow' : ''}
-                     `.trim()}
+                className={`sticky top-0 z-10 bg-base-300 px-6 py-4 text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
+                  ${isSticky ? 'left-0 z-11 pl-4 text-left sticky-column-shadow' : ''}
+                `.trim()}
               >
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext()
-                )}
-                {header.column.getIsSorted() && (
-                  <span className="ml-1">
-                    {header.column.getIsSorted() === 'desc' ? '↓' : '↑'}
-                  </span>
-                )}
+                <div className={`flex items-center gap-1 ${isSticky ? 'justify-start' : 'justify-center'}`}>
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+
+                  {header.column.getIsSorted() && (
+                    <span>
+                      {header.column.getIsSorted() === 'desc' ? '↓' : '↑'}
+                    </span>
+                  )}
+
+                  {tooltipText &&
+                    <span
+                      className="tooltip tooltip-bottom text-sm text-base-content/50"
+                      data-tip={tooltipText}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      ⓘ
+                    </span>
+                  }
+                </div>
               </th>
             )
           })}
