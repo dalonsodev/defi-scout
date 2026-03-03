@@ -45,58 +45,39 @@ export function PoolFilters({
   }
 
   return (
-    <div className="flex flex-wrap gap-2 mb-4 p-4 bg-base-100">
-      <label className="form-control max-w-xs">
-        <div className="label">
-          <span className="label-text">Coin/Pair</span>
-        </div>
-        <input
-          type="text"
-          placeholder="SOL or SOL/USDC"
-          value={localFilters.search}
-          className="input input-bordered input-sm rounded-xl"
-          onChange={(e) => updateLocalFilter('search', e.target.value)}
-        />
-      </label>
-
-      <label className="form-control w-full max-w-xs">
-        <div className="label">
-          <span className="label-text">Platform</span>
-        </div>
+    <div className="flex flex-col md:flex-row gap-2 mb-4 p-4 bg-base-100">
+      {/* TODO: mobile toggle — commit 3 */}
+      <input
+        type="text"
+        placeholder="SOL or SOL/USDC"
+        value={localFilters.search}
+        className="input input-bordered input-sm rounded-xl"
+        onChange={(e) => updateLocalFilter('search', e.target.value)}
+      />
+      <div className="hidden md:flex whitespace-nowrap">
         <Dropdown
           selected={filters.platforms}
           onToggle={togglePlatform}
           options={availablePlatforms}
         />
-      </label>
-
-      <label className="form-control w-full max-w-xs">
-        TVL
-        <input
-          type="number"
-          placeholder="Min TVL ($)"
-          value={localFilters.tvlUsd}
-          className="input input-bordered input-sm rounded-xl"
-          onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
-        />
-      </label>
-
-      <label className="form-control w-full max-w-xs">
-        Vol (24h)
-        <input
-          type="number"
-          placeholder="Min 24h Vol ($)"
-          value={localFilters.volumeUsd1d}
-          className="input input-bordered input-sm rounded-xl"
-          onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
-        />
-      </label>
-
-      <div className="flex items-end">
-        <button onClick={handleClearFilters} className="btn btn-sm btn-ghost">
-          Clear
-        </button>
       </div>
+      <input
+        type="number"
+        placeholder="Min TVL ($)"
+        value={localFilters.tvlUsd}
+        className="hidden md:block input input-bordered input-sm rounded-xl"
+        onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
+      />
+      <input
+        type="number"
+        placeholder="Min Vol 24h ($)"
+        value={localFilters.volumeUsd1d}
+        className="hidden md:block input input-bordered input-sm rounded-xl"
+        onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
+      />
+      <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-ghost">
+        Clear
+      </button>
     </div>
   )
 }
