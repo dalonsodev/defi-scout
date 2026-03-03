@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useDebouncedFilterInputs } from '../../hooks/useDebouncedFilterInputs'
 import { Dropdown } from '../common/Dropdown'
 
@@ -31,6 +32,8 @@ export function PoolFilters({
   clearFilters,
   availablePlatforms
 }) {
+  const [isOpen, setIsOpen] = useState(false)
+
   const {
     localFilters,
     updateLocalFilter,
@@ -46,14 +49,48 @@ export function PoolFilters({
 
   return (
     <div className="flex flex-col md:flex-row gap-2 mb-4 p-4 bg-base-100">
-      {/* TODO: mobile toggle — commit 3 */}
-      <input
-        type="text"
-        placeholder="SOL or SOL/USDC"
-        value={localFilters.search}
-        className="input input-bordered input-sm rounded-xl"
-        onChange={(e) => updateLocalFilter('search', e.target.value)}
+      {/* Mobile row: search + toggle */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          placeholder="SOL or SOL/USDC"
+          value={localFilters.search}
+          className="input input-bordered input-sm rounded-xl flex-1"
+          onChange={(e) => updateLocalFilter('search', e.target.value)}
+        />
+        <button
+          onClick={() => {setIsOpen(true)}}
+          className="btn btn-sm btn-outline md:hidden rounded-xl"
+        >
+          Filters
+        </button>
+      </div>
+
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300
+          ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => {setIsOpen(false)}}
       />
+
+      {/* Bottom sheet */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 md:hidden bg-base-100
+          rounded-t-2xl transition-transform duration-300 ease-out
+          ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+      >
+        <div className="p-4">
+          <div className="w-12 h-1 bg-base-300 rounded-full mx-auto mb-4" />
+          <button
+            className="btn btn-ghost absolute top-4 right-4"
+            onClick={() => {setIsOpen(false)}}
+          >
+            ✕
+          </button>
+        </div>
+        {/* TODO: filters — commit 4 */}
+      </div>
+
       <div className="hidden md:flex whitespace-nowrap">
         <Dropdown
           selected={filters.platforms}
@@ -61,6 +98,7 @@ export function PoolFilters({
           options={availablePlatforms}
         />
       </div>
+
       <input
         type="number"
         placeholder="Min TVL ($)"
@@ -68,6 +106,7 @@ export function PoolFilters({
         className="hidden md:block input input-bordered input-sm rounded-xl"
         onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
       />
+
       <input
         type="number"
         placeholder="Min Vol 24h ($)"
@@ -75,8 +114,9 @@ export function PoolFilters({
         className="hidden md:block input input-bordered input-sm rounded-xl"
         onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
       />
+
       <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-ghost">
-        Clear
+        Clear filters
       </button>
     </div>
   )
