@@ -47,10 +47,17 @@ export function PoolFilters({
     clearFilters()      // 2. Clear URL (Effect 1 will skip one cycle)
   }
 
+  const activeCount = [
+    filters.search !== '',
+    filters.platforms.length > 0,
+    filters.tvlUsd !== '',
+    filters.volumeUsd1d !== ''
+  ].filter(Boolean).length
+
   return (
     <div className="flex flex-col md:flex-row gap-2 mb-4 p-4 bg-base-100">
       {/* Mobile row: search + toggle */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 grow">
         <input
           type="text"
           placeholder="SOL or SOL/USDC"
@@ -63,6 +70,11 @@ export function PoolFilters({
           className="btn btn-sm btn-outline md:hidden rounded-xl"
         >
           Filters
+          <span
+            className={`${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}
+          >
+            {activeCount}
+          </span>
         </button>
       </div>
 
@@ -76,19 +88,50 @@ export function PoolFilters({
       {/* Bottom sheet */}
       <div
         className={`fixed bottom-0 left-0 right-0 z-50 md:hidden bg-base-100
-          rounded-t-2xl transition-transform duration-300 ease-out
+          rounded-t-4xl transition-transform duration-300 ease-out
           ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
       >
         <div className="p-4">
           <div className="w-12 h-1 bg-base-300 rounded-full mx-auto mb-4" />
           <button
-            className="btn btn-ghost absolute top-4 right-4"
+            className="btn btn-ghost absolute top-4 right-4 mb-4"
             onClick={() => {setIsOpen(false)}}
           >
             ✕
           </button>
+
+          {/* Desktop row: dropdown + tvl + vol + clear */}
+            <div className="whitespace-nowrap mt-10 p-2">
+              <Dropdown
+                selected={filters.platforms}
+                onToggle={togglePlatform}
+                options={availablePlatforms}
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row flex-wrap flex-1 p-2 gap-6 sm:gap-4 my-2">
+              <input
+                type="number"
+                placeholder="Min TVL ($)"
+                value={localFilters.tvlUsd}
+                className="input sm:flex-1 w-full input-bordered input-sm rounded-xl"
+                onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
+              />
+
+              <input
+                type="number"
+                placeholder="Min Vol 24h ($)"
+                value={localFilters.volumeUsd1d}
+                className="input sm:flex-1 w-full input-bordered input-sm rounded-xl"
+                onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
+              />
+
+              <button onClick={handleClearFilters} className="btn btn-sm btn-ghost">
+                Clear filters
+              </button>
+            </div>
+
         </div>
-        {/* TODO: filters — commit 4 */}
       </div>
 
       <div className="hidden md:flex whitespace-nowrap">
@@ -98,25 +141,27 @@ export function PoolFilters({
           options={availablePlatforms}
         />
       </div>
-
       <input
         type="number"
         placeholder="Min TVL ($)"
         value={localFilters.tvlUsd}
-        className="hidden md:block input input-bordered input-sm rounded-xl"
+        className="hidden md:block input input-bordered input-sm rounded-xl w-36"
         onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
       />
-
       <input
         type="number"
         placeholder="Min Vol 24h ($)"
         value={localFilters.volumeUsd1d}
-        className="hidden md:block input input-bordered input-sm rounded-xl"
+        className="hidden md:block input input-bordered input-sm rounded-xl w-36"
         onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
       />
-
       <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-ghost">
         Clear filters
+        <span
+          className={`ml-2 ${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}
+        >
+          {activeCount}
+        </span>
       </button>
     </div>
   )
