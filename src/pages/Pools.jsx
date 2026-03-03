@@ -20,10 +20,7 @@ export default function Pools() {
     <div className="mx-auto max-w-7xl">
       {/* SECTION: Header and context */}
       <header className="p-4">
-        <h1 className="text-3xl font-bold">Top LP Pools</h1>
-        <p className="text-gray-600">
-          Liquidity pools with real volume and APY history
-        </p>
+        <h1 className="text-3xl font-bold">Explore Pools</h1>
       </header>
 
       {/* SECTION: Data orchestration */}
