@@ -72,6 +72,7 @@ const GET_POOL_HISTORY_QUERY = gql`
     pool(id: $poolId) {
       id
       feeTier
+      tick
       totalValueLockedToken0
       totalValueLockedToken1
       totalValueLockedUSD
@@ -149,16 +150,41 @@ const GET_POOL_HOUR_DATAS_QUERY = gql`
 `
 
 /**
+ * Analytical Query: Pool ticks for display in Liquidity Distribution chart
+ *
+ * Note: TheGraph uses BigInt! type for $minTick and $maxTick. However, we pass
+ * the values as integers and let the client handle serialization.
+ */
+const GET_POOL_TICKS_QUERY = gql`
+  query GetPoolTicks(
+    $poolId: ID!,
+    $minTick: BigInt!,
+    $maxTick: BigInt!
+  ) {
+    pool(id: $poolId) {
+      tick                    # Current active tick (integer)
+      liquidity
+      ticks(
+        where: { tickIdx_gte: $minTick, tickIdx_lte: $maxTick }
+        orderBy: tickIdx
+        orderDirection: asc
+        first: 1000
+      ) {
+        tickIdx
+        liquidityNet          # Delta when price crosses this tick upward
+        liquidityGross        # Total liquidity referencing this tick
+      }
+    }
+  }
+`
+
+/**
  * Batch Sparkline Query: Fetches 14-day trend data for multiple pools.
  *
  * Schema Note: poolDayDatas is a root-level entity (not nested under Pool).
  * We query all daily snapshots matching the pool list, then group client-side.
  *
  * Performance: 40 pools × 14 days = 560 poolDayData entities (under 1000 limit).
- *
- * @param {string[]} $poolIds - Array of pool contract addresses
- * @param {number} $startDate - Unix timestamp (14 days ago)
- * @returns {Object[]} Flat array of poolDayData entities with pool reference
  */
 const GET_POOL_SPARKLINES_QUERY = gql`
   query GetPoolSparklines($poolIds: [String!]!, $startDate: Int!) {
@@ -319,4 +345,25 @@ export async function fetchPoolHourData(poolId, startTime) {
     startTime
   })
   return data.poolHourDatas
+}
+
+/**
+ * Service: Fetches pool ticks for Liquidity Distribution chart in PoolCharts
+ *
+ * @param {string} poolId - Pool contract address (case-insensitive)
+ * @param {number} minTick - Lower tick
+ * @param {number} maxTick - Upper tick
+ *
+ * @returns {Promise<Object>} result
+ * @returns {number} result.tick - Current active tick
+ * @returns {string} result.liquidity - Active liquidity at current tick (BigInt as string)
+ * @returns {Object[]} result.ticks - Ordered tick array (up to 1000 items)
+ */
+export async function fetchPoolTicks(poolId, minTick, maxTick) {
+  const data = await client.request(GET_POOL_TICKS_QUERY, {
+    poolId: poolId.toLowerCase(),
+    minTick,
+    maxTick
+  })
+  return data.pool
 }
