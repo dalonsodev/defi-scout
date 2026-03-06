@@ -182,6 +182,7 @@ export function PoolDetail() {
             />
           </div>
           <PoolCharts
+            pool={pool}
             history={history}
             selectedTokenIdx={selectedTokenIdx}
             tokenSymbols={tokenSymbols}
