@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react'
 import { fetchPoolTicks } from '../../../../services/theGraphClient'
-import {
-  tickToPrice,
-  priceToTick,
-  getTickSpacing,
-  alignTickToSpacing
-} from '../../calculator/utils/uniswapV3Ticks'
 
 /**
  * Custom Hook: Fetch and cache TheGraph liquidity data.
@@ -35,18 +29,7 @@ export function usePoolTickData(poolId, currentTick, feeTier) {
 
     async function loadTickData() {
       try {
-        const currentPrice = tickToPrice(currentTick)
-
-        const minPrice = currentPrice * 0.25
-        const maxPrice = currentPrice * 4
-        const rawMinTick = priceToTick(minPrice)
-        const rawMaxTick = priceToTick(maxPrice)
-
-        const tickSpacing = getTickSpacing(feeTier)
-        const alignedMinTick = alignTickToSpacing(rawMinTick, tickSpacing)
-        const alignedMaxTick = alignTickToSpacing(rawMaxTick, tickSpacing)
-
-        const data = await fetchPoolTicks(poolId, alignedMinTick, alignedMaxTick)
+        const data = await fetchPoolTicks(poolId, currentTick)
 
         if (!cancelled) {
           setTickData(data)

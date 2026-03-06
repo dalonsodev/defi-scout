@@ -152,27 +152,41 @@ const GET_POOL_HOUR_DATAS_QUERY = gql`
 /**
  * Analytical Query: Pool ticks for display in Liquidity Distribution chart
  *
- * Note: TheGraph uses BigInt! type for $minTick and $maxTick. However, we pass
- * the values as integers and let the client handle serialization.
+ * Note: TheGraph uses BigInt! type for $currentTick. However, we pass
+ * the value as integer and let the client handle serialization.
+ *
+ * Architectural Decision: Instead of using a window for displaying ticks in
+ * LiquidityChart, we split the query in ticks 'below' and ticks 'above' current
+ * tick. This way, we avoid returning a small quantity of bars in scenarios with
+ * sparse pool liquidity.
  */
 const GET_POOL_TICKS_QUERY = gql`
   query GetPoolTicks(
     $poolId: ID!,
-    $minTick: BigInt!,
-    $maxTick: BigInt!
+    $currentTick: BigInt!,
   ) {
     pool(id: $poolId) {
       tick                    # Current active tick (integer)
       liquidity
-      ticks(
-        where: { tickIdx_gte: $minTick, tickIdx_lte: $maxTick }
+      ticksBelow: ticks(
+        first: 500
+        where: { tickIdx_lt: $currentTick }
         orderBy: tickIdx
-        orderDirection: asc
-        first: 1000
+        orderDirection: desc
       ) {
         tickIdx
         liquidityNet          # Delta when price crosses this tick upward
         liquidityGross        # Total liquidity referencing this tick
+      }
+      ticksAbove: ticks(
+        first: 500
+        where: { tickIdx_gte: $currentTick }
+        orderBy: tickIdx
+        orderDirection: asc
+      ) {
+        tickIdx
+        liquidityNet
+        liquidityGross
       }
     }
   }
@@ -351,19 +365,21 @@ export async function fetchPoolHourData(poolId, startTime) {
  * Service: Fetches pool ticks for Liquidity Distribution chart in PoolCharts
  *
  * @param {string} poolId - Pool contract address (case-insensitive)
- * @param {number} minTick - Lower tick
- * @param {number} maxTick - Upper tick
+ * @param {number} currentTick - Current active tick
  *
  * @returns {Promise<Object>} result
  * @returns {number} result.tick - Current active tick
  * @returns {string} result.liquidity - Active liquidity at current tick (BigInt as string)
  * @returns {Object[]} result.ticks - Ordered tick array (up to 1000 items)
  */
-export async function fetchPoolTicks(poolId, minTick, maxTick) {
+export async function fetchPoolTicks(poolId, currentTick) {
   const data = await client.request(GET_POOL_TICKS_QUERY, {
     poolId: poolId.toLowerCase(),
-    minTick,
-    maxTick
+    currentTick
   })
-  return data.pool
+  const tick = data.pool.tick
+  const liquidity = data.pool.liquidity
+  const ticks = [...data.pool.ticksBelow.reverse(), ...data.pool.ticksAbove]
+
+  return { tick, liquidity, ticks }
 }
