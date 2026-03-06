@@ -13,7 +13,12 @@ import { tickToPrice } from "../../calculator/utils/uniswapV3Ticks"
  * @returns {number} result.price - Price at midpoint of each tick range
  * @returns {number} result.liquidity - Active liquidity for each individual bar's range
  */
-export function processTickData(tickData, selectedTokenIdx) {
+export function processTickData(
+  tickData,
+  selectedTokenIdx,
+  token0Decimals,
+  token1Decimals
+) {
   if (!tickData || !tickData.ticks || tickData.ticks.length < 2) return []
 
   const { tick: currentTick, liquidity: poolLiquidity, ticks } = tickData
@@ -43,7 +48,8 @@ export function processTickData(tickData, selectedTokenIdx) {
   for (let i = 0; i < ticks.length - 1; i++) {
     const midTick = (Number(ticks[i].tickIdx) + Number(ticks[i + 1].tickIdx)) / 2
     const rawPrice = tickToPrice(midTick)
-    const price = selectedTokenIdx === 0 ? rawPrice : 1 / rawPrice
+    const humanPrice = rawPrice * Math.pow(10, token0Decimals - token1Decimals)
+    const price = selectedTokenIdx === 0 ? humanPrice : 1 / humanPrice
     const liquidity = Math.max(0, liquidities[i])   // clamp float precision errors
 
     result.push({ price, liquidity })
@@ -53,5 +59,9 @@ export function processTickData(tickData, selectedTokenIdx) {
   // Natural order is ascending for token0; inversion makes it descending -> re-sort
   result.sort((a, b) => a.price - b.price)
 
-  return result
+  const firstNonZero = result.findIndex((item) => item.liquidity > 0)
+  if (firstNonZero === -1) return []
+  const lastNonZero = result.findLastIndex((item) => item.liquidity > 0)
+
+  return result.slice(firstNonZero, lastNonZero + 1)
 }
