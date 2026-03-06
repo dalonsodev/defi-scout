@@ -1,5 +1,6 @@
-import { TVLVolumeChart } from './TVLVolumeChart'
+import { LiquidityChart } from './LiquidityChart'
 import { PriceChart } from './PriceChart'
+import { TVLVolumeChart } from './TVLVolumeChart'
 import { FeesApyChart } from './FeesApyChart'
 
 /**
@@ -15,6 +16,7 @@ import { FeesApyChart } from './FeesApyChart'
  * @returns {JSX.Element}
  */
 export function PoolCharts({
+  pool,
   history,
   selectedTokenIdx,
   tokenSymbols,
@@ -32,6 +34,17 @@ export function PoolCharts({
 
   return (
     <div className="grid grid-cols-1 gap-4">
+      <LiquidityChart
+        poolId={pool.id}
+        currentTick={pool.tick}
+        feeTier={pool.feeTier}
+        selectedTokenIdx={selectedTokenIdx}
+        tokenSymbols={tokenSymbols}
+        token0Decimals={pool.token0.decimals}
+        token1Decimals={pool.token1.decimals}
+        rangeInputs={rangeInputs}
+        currentPrice={currentPrice}
+      />
       <PriceChart
         history={history}
         selectedTokenIdx={selectedTokenIdx}

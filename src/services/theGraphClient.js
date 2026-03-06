@@ -72,6 +72,7 @@ const GET_POOL_HISTORY_QUERY = gql`
     pool(id: $poolId) {
       id
       feeTier
+      tick
       totalValueLockedToken0
       totalValueLockedToken1
       totalValueLockedUSD
@@ -149,16 +150,55 @@ const GET_POOL_HOUR_DATAS_QUERY = gql`
 `
 
 /**
+ * Analytical Query: Pool ticks for display in Liquidity Distribution chart
+ *
+ * Note: TheGraph uses BigInt! type for $currentTick. However, we pass
+ * the value as integer and let the client handle serialization.
+ *
+ * Architectural Decision: Instead of using a window for displaying ticks in
+ * LiquidityChart, we split the query in ticks 'below' and ticks 'above' current
+ * tick. This way, we avoid returning a small quantity of bars in scenarios with
+ * sparse pool liquidity.
+ */
+const GET_POOL_TICKS_QUERY = gql`
+  query GetPoolTicks(
+    $poolId: ID!,
+    $currentTick: BigInt!,
+  ) {
+    pool(id: $poolId) {
+      tick                    # Current active tick (integer)
+      liquidity
+      ticksBelow: ticks(
+        first: 500
+        where: { tickIdx_lt: $currentTick }
+        orderBy: tickIdx
+        orderDirection: desc
+      ) {
+        tickIdx
+        liquidityNet          # Delta when price crosses this tick upward
+        liquidityGross        # Total liquidity referencing this tick
+      }
+      ticksAbove: ticks(
+        first: 500
+        where: { tickIdx_gte: $currentTick }
+        orderBy: tickIdx
+        orderDirection: asc
+      ) {
+        tickIdx
+        liquidityNet
+        liquidityGross
+      }
+    }
+  }
+`
+
+/**
  * Batch Sparkline Query: Fetches 14-day trend data for multiple pools.
  *
  * Schema Note: poolDayDatas is a root-level entity (not nested under Pool).
  * We query all daily snapshots matching the pool list, then group client-side.
  *
  * Performance: 40 pools × 14 days = 560 poolDayData entities (under 1000 limit).
- *
- * @param {string[]} $poolIds - Array of pool contract addresses
- * @param {number} $startDate - Unix timestamp (14 days ago)
- * @returns {Object[]} Flat array of poolDayData entities with pool reference
  */
 const GET_POOL_SPARKLINES_QUERY = gql`
   query GetPoolSparklines($poolIds: [String!]!, $startDate: Int!) {
@@ -319,4 +359,27 @@ export async function fetchPoolHourData(poolId, startTime) {
     startTime
   })
   return data.poolHourDatas
+}
+
+/**
+ * Service: Fetches pool ticks for Liquidity Distribution chart in PoolCharts
+ *
+ * @param {string} poolId - Pool contract address (case-insensitive)
+ * @param {number} currentTick - Current active tick
+ *
+ * @returns {Promise<Object>} result
+ * @returns {number} result.tick - Current active tick
+ * @returns {string} result.liquidity - Active liquidity at current tick (BigInt as string)
+ * @returns {Object[]} result.ticks - Ordered tick array (up to 1000 items)
+ */
+export async function fetchPoolTicks(poolId, currentTick) {
+  const data = await client.request(GET_POOL_TICKS_QUERY, {
+    poolId: poolId.toLowerCase(),
+    currentTick
+  })
+  const tick = data.pool.tick
+  const liquidity = data.pool.liquidity
+  const ticks = [...data.pool.ticksBelow.reverse(), ...data.pool.ticksAbove]
+
+  return { tick, liquidity, ticks }
 }
