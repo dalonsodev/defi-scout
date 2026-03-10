@@ -184,6 +184,7 @@ export function PoolDetail() {
           <PoolCharts
             pool={pool}
             history={history}
+            hourlyData={hourlyData}
             selectedTokenIdx={selectedTokenIdx}
             tokenSymbols={tokenSymbols}
             rangeInputs={rangeInputs}

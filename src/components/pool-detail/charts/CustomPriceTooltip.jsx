@@ -33,7 +33,8 @@ export function CustomPriceTooltip({
   payload,
   label,
   tokenSymbols,
-  selectedTokenIdx
+  selectedTokenIdx,
+  dateShortMap
 }) {
   if (!active || !payload?.length) return null
 
@@ -49,6 +50,8 @@ export function CustomPriceTooltip({
   // Precision: 8 decimals for micro-prices (<$1), 2 for readability (≥$1)
   const formattedPrice = price < 1 ? price.toFixed(8) : price.toFixed(2)
 
+  const displayLabel = dateShortMap?.get(label) ?? label
+
   return (
     <div
       className="rounded-lg p-3 shadow-lg border"
@@ -58,7 +61,7 @@ export function CustomPriceTooltip({
         color: CHART_COLORS.tooltip.text
       }}
     >
-      <p className="font-semibold mb-2">{label}</p>
+      <p className="font-semibold mb-2">{displayLabel}</p>
 
       <div className="flex items-center gap-2">
         <div
