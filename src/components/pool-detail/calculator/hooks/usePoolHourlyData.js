@@ -21,7 +21,7 @@ import { fetchPoolHourData } from '../../../../services/theGraphClient'
  * @returns {{
  *    hourlyData: PoolHourDatas[],
  *    isLoading: boolean,
- *    error: Error|null
+ *    fetchError: string|null
  * }}
  */
 export function usePoolHourlyData(poolId, daysLookback = 7) {
