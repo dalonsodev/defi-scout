@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react'
+import { formatHourlyData } from '../../../../loaders/utils/formatHourlyData'
 import { fetchPoolHourData } from '../../../../services/theGraphClient'
 
 /**
  * @typedef {Object} PoolHourDatas
- * @property {number} periodStartUnix - Timestamp of period start
- * @property {string} token0Price - Current token0 price
- * @property {string} token1Price - Current token1 price
- * @property {string} feesUSD - Accumulated fees from pool
- * @property {string} sqrtPrice - Square root of price (X96 format)
- * @property {string} liquidity - Total liquidity in pool
- * @property {string} tvlUSD - Total value locked
- * @property {string} tick - Current pool tick
+ * @property {number} periodStartUnix - Timestamp of period start (Unix seconds)
+ * @property {string} token0Price - Current token0 price (parsed float)
+ * @property {string} token1Price - Current token1 price (parsed float)
+ * @property {string} feesUSD - Accumulated fees is USD
+ * @property {string} liquidity - Total liquidity (precision loss acceptable)
+ * @property {string} tvlUSD - Total value locked in USD
+ * @property {string} dateShort - Tooltip label (e.g. "Feb 10 - 14:00")
+ * @property {string} dayLabel - Axis label: day number or month name at boundaries
  */
 
 /**
@@ -47,7 +48,8 @@ export function usePoolHourlyData(poolId, daysLookback = 7) {
       try {
         const startTime =
           Math.floor(Date.now() / 1000) - daysLookback * 24 * 60 * 60
-        const data = await fetchPoolHourData(poolId, startTime)
+        const rawData = await fetchPoolHourData(poolId, startTime)
+        const data = formatHourlyData(rawData)
 
         if (!cancelled) {
           setHourlyData(data)
