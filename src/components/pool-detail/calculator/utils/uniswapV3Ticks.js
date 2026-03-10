@@ -125,7 +125,7 @@ export function alignTickToSpacing(tick, tickSpacing) {
  * each step respects protocol tick spacing (prevents invalid positions)
  *
  * @param {number} currentPrice - Reference price (token1/token0)
- * @param {number} feeTier - Pool fee tier (100, 500, 30000, 10000 bps)
+ * @param {number} feeTier - Pool fee tier (100, 500, 3000, 10000 bps)
  * @param {number} direction - 1 for increment, -1 for decrement
  * @returns {number} Adjusted price (guaranteed to be on valid tick grid)
  *
