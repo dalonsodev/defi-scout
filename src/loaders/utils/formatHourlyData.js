@@ -26,6 +26,7 @@ export function formatHourlyData(rawHourlyData) {
       token0Price: parseFloat(record.token0Price) || null,
       token1Price: parseFloat(record.token1Price) || null,
       periodStartUnix: parseInt(record.periodStartUnix),
+      liquidity: parseFloat(record.liquidity),
       tvlUSD: parseFloat(record.tvlUSD) || 0,
       feesUSD: parseFloat(record.feesUSD) || 0
     }
