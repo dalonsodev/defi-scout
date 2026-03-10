@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
   LineChart,
   Line,
@@ -10,7 +11,6 @@ import {
 } from 'recharts'
 import { CustomPriceTooltip } from './CustomPriceTooltip'
 import { CHART_COLORS } from '../../../constants/chartColors'
-import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
 
 /**
  * UI: Strategic Price & Range Chart.
@@ -24,7 +24,7 @@ import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
  * @returns {JSX.Element}
  */
 export function PriceChart({
-  history,
+  hourlyData,
   selectedTokenIdx,
   tokenSymbols,
   rangeInputs,
@@ -32,6 +32,23 @@ export function PriceChart({
 }) {
   const dataKey = selectedTokenIdx === 0 ? 'token0Price' : 'token1Price'
   const selectedSymbol = tokenSymbols[selectedTokenIdx]
+
+  const dailyTicks = useMemo(() => {
+    if (!hourlyData?.length) return []
+    return hourlyData.filter((_, i) => i % 24 === 0)
+  }, [hourlyData])
+
+  const tickLabelMap = useMemo(() => {
+    if (!hourlyData?.length) return []
+    return new Map(dailyTicks.map((d) => [d.periodStartUnix, d.dayLabel]))
+  }, [hourlyData, dailyTicks])
+
+  const dateShortMap = useMemo(() => {
+    if (!hourlyData?.length) return []
+    return new Map(hourlyData.map((h) => [h.periodStartUnix, h.dateShort]))
+  }, [hourlyData])
+
+  if (!hourlyData?.length) return null
 
   return (
     <div className="card bg-base-200 rounded-2xl">
@@ -41,25 +58,24 @@ export function PriceChart({
         width="100%"
         height={window.innerWidth < 768 ? 200 : 300}
       >
-        <LineChart data={history}>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
+        <LineChart data={hourlyData}>
 
           <XAxis
-            dataKey="dateShort"
-            stroke={CHART_COLORS.axis}
-            style={{ fontSize: '10px' }}
-            angle={-45}
+            dataKey="periodStartUnix"
+            axisLine={false}
+            ticks={dailyTicks.map((d) => d.periodStartUnix)}
+            tickFormatter={(v) => tickLabelMap.get(v) ?? ''}
+            tickLine={false}
+            style={{ fontSize: '12px' }}
             textAnchor="end"
             height={60}
           />
 
           <YAxis
+            hide
             stroke={CHART_COLORS.axis}
             style={{ fontSize: '11px' }}
             domain={[(dataMin) => dataMin * 0.9, (dataMax) => dataMax * 1.1]}
-            tickFormatter={(value) =>
-              value > 1 ? formatCompactCurrency(value) : value.toFixed(6)
-            }
           />
 
           <Line
@@ -105,6 +121,7 @@ export function PriceChart({
               <CustomPriceTooltip
                 tokenSymbols={tokenSymbols}
                 selectedTokenIdx={selectedTokenIdx}
+                dateShortMap={dateShortMap}
               />
             }
           />
