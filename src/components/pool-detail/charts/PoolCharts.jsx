@@ -18,6 +18,7 @@ import { FeesApyChart } from './FeesApyChart'
 export function PoolCharts({
   pool,
   history,
+  hourlyData,
   selectedTokenIdx,
   tokenSymbols,
   rangeInputs,
@@ -46,7 +47,7 @@ export function PoolCharts({
         currentPrice={currentPrice}
       />
       <PriceChart
-        history={history}
+        hourlyData={hourlyData}
         selectedTokenIdx={selectedTokenIdx}
         tokenSymbols={tokenSymbols}
         rangeInputs={rangeInputs}
