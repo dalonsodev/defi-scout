@@ -367,10 +367,10 @@ export async function fetchPoolHourData(poolId, startTime) {
  * @param {string} poolId - Pool contract address (case-insensitive)
  * @param {number} currentTick - Current active tick
  *
- * @returns {Promise<Object>} result
- * @returns {number} result.tick - Current active tick
- * @returns {string} result.liquidity - Active liquidity at current tick (BigInt as string)
- * @returns {Object[]} result.ticks - Ordered tick array (up to 1000 items)
+ * @returns {Promise<Object>} pool
+ * @returns {number} pool.tick - Current active tick
+ * @returns {string} pool.liquidity - Active liquidity at current tick (BigInt as string)
+ * @returns {Object[]} pool.ticks - Ordered tick array (up to 1000 items)
  */
 export async function fetchPoolTicks(poolId, currentTick) {
   const data = await client.request(GET_POOL_TICKS_QUERY, {
