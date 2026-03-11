@@ -13,7 +13,7 @@ export function formatHourlyData(rawHourlyData) {
     const date = new Date(record.periodStartUnix * 1000)
 
     const month = date.toLocaleString('en-US', { month: 'short' })
-    const day = date.getDate().toString().padStart(2, '0')
+    const day = date.getDate().toString()
     const hour = date.getHours().toString().padStart(2, '0')
 
     // Month Boundary: show "Mar" instead of "01" when day rolls over
