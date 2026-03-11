@@ -20,6 +20,9 @@ export function formatPoolHistory(rawHistory) {
     // Normalization: Extract ISO date for consistent data key mapping
     const date = new Date(day.date * 1000)
     const dateString = date.toISOString().split('T')[0]
+    const month = date.toLocaleString('en-US', { month: 'short' })
+    const dayNum = date.getDate()
+    const dayLabel = dayNum === 1 ? month : dayNum.toString()
 
     const tvlUSD = parseFloat(day.tvlUSD)
     const feesUSD = parseFloat(day.feesUSD)
@@ -35,7 +38,10 @@ export function formatPoolHistory(rawHistory) {
     return {
       date: dateString, /// Standard ISO format for filtering (e.g. "2024-01-01")
       dateTimestamp: day.date,
+      // Note: formatDateShort creates its own Date object internally.
+      // Refactor opportunity if performance becomes a concern.
       dateShort: formatDateShort(day.date),
+      dayLabel,
       volumeUSD: parseFloat(day.volumeUSD) || 0,
       tvlUSD,
       feesUSD,
