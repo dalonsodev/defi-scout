@@ -11,7 +11,8 @@ import { formatCompactCurrency } from "../../../utils/formatCompactCurrency"
  * Design Decision: Rechart auto-injects "payload" array with all active data
  * series at cursor position. Each entry has: { name, value, color, datakey }
  *
- * Note: Fees row is not in "payload", so we read the data object directly.
+ * Note: Fees row and volumeToTvlRatio are not in "payload", so we read both
+ * data objects directly.
  *
  * @param {Object} props - Rechart tooltip props (auto-injected)
  * @param {boolean} props.active - Visibility state (mouse hover)
@@ -30,7 +31,6 @@ import { formatCompactCurrency } from "../../../utils/formatCompactCurrency"
  * // [
  * //   { name: "TVL", value: 1234567, color: "#8b5cf6", dataKey: "tvlUSD" },
  * //   { name: "Volume", value: 89000, color: "#3b82f6", dataKey: "volumeUSD" },
- * //   { name: "Vol/TVL", value: 0.072, color: "#10b981", dataKey: "volumeToTvlRatio" }
  * // ]
  */
 export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
@@ -38,6 +38,7 @@ export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
 
   const displayLabel = dateShortMap.get(label) ?? label
   const feesUSD = payload[0]?.payload?.feesUSD
+  const volumeToTvlRatio = payload[0]?.payload?.volumeToTvlRatio
 
   return (
     <div
@@ -53,16 +54,7 @@ export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
 
       {/* Metric rows with context-aware formatting */}
       {payload.map((entry, index) => {
-        let formattedValue
-
-        // Format logic: dataKey determines display style
-        if (entry.dataKey === 'volumeToTvlRatio') {
-          // Ratio: Show clean decimal (0.5x not $0.50)
-          formattedValue = `${entry.value.toFixed(1)}x`
-        } else {
-          // Currency: Compact format ($1.2M not $1,200,000)
-          formattedValue = formatCompactCurrency(entry.value)
-        }
+        const formattedValue = formatCompactCurrency(entry.value)
 
         return (
           // Note: Using index as key (React anti-pattern) because payload order
@@ -80,21 +72,26 @@ export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
           </div>
         )
       })}
+      <div className="border-t border-base-content/20 my-2" />
 
-      {/* Fees row with formatting */}
+      {/* Tooltip-only metrics with formatting */}
+      {volumeToTvlRatio != null && (
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">Vol/TVL Ratio:</span>
+          </div>
+          <span className="text-sm font-semibold">{volumeToTvlRatio.toFixed(1) + 'x'}</span>
+        </div>
+      )}
+
       {feesUSD != null && (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: CHART_COLORS.dataViz.apy }}
-            />
             <span className="text-sm">Fees:</span>
           </div>
           <span className="text-sm font-semibold">{formatCompactCurrency(feesUSD)}</span>
         </div>
       )}
-
     </div>
   )
 }

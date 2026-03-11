@@ -3,7 +3,6 @@ import {
   ComposedChart,
   Area,
   Bar,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -56,6 +55,7 @@ export function TVLVolumeChart({ history }) {
 
           <XAxis
             dataKey="dateTimestamp"
+            tick={{ dy: 5 }}
             ticks={weeklyTicks.map((d) => d.dateTimestamp)}
             tickFormatter={(v) => tickLabelMap.get(v) ?? ''}
             axisLine={false}
@@ -93,24 +93,13 @@ export function TVLVolumeChart({ history }) {
             name="TVL"
           />
 
-          {/* Middle: Volume represents the "activity" */}
+          {/* Foreground: Volume represents the "activity" */}
           <Bar
             yAxisId="right"
             dataKey="volumeUSD"
             fill={CHART_COLORS.dataViz.volume}
             opacity={0.7}
             name="Volume"
-          />
-
-          {/* Foreground: Efficiency Ratio (The most important trend) */}
-          <Line
-            yAxisId="right"
-            type="monotone"
-            dataKey="volumeToTvlRatio"
-            stroke={CHART_COLORS.dataViz.ratio}
-            dot={false}
-            strokeWidth={2}
-            name="Vol/TVL ratio"
           />
 
           <Tooltip content={
