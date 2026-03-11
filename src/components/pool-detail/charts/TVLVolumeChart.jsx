@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts'
-import { CustomTooltip } from './CustomTooltip'
+import { CustomTVLTooltip } from './CustomTVLTooltip'
 import { CHART_COLORS } from '../../../constants/chartColors'
 import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
 
@@ -39,6 +39,10 @@ export function TVLVolumeChart({ history }) {
   const tickLabelMap = useMemo(() => {
     return new Map(weeklyTicks.map((d) => [d.dateTimestamp, d.dayLabel]))
   }, [weeklyTicks])
+
+  const dateShortMap = useMemo(() => {
+    return new Map(historyWithRatio.map((d) => [d.dateTimestamp, d.dateShort]))
+  }, [historyWithRatio])
 
   return (
     <div className="card bg-base-200 rounded-2xl">
@@ -109,7 +113,9 @@ export function TVLVolumeChart({ history }) {
             name="Vol/TVL ratio"
           />
 
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={
+            <CustomTVLTooltip dateShortMap={dateShortMap} />
+          } />
         </ComposedChart>
       </ResponsiveContainer>
     </div>
