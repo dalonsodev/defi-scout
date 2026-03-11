@@ -68,7 +68,6 @@ export function PriceChart({
             tickLine={false}
             style={{ fontSize: '12px' }}
             textAnchor="end"
-            height={60}
           />
 
           <YAxis
