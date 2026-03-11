@@ -6,7 +6,6 @@ import {
   Line,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer
 } from 'recharts'
@@ -33,6 +32,14 @@ export function TVLVolumeChart({ history }) {
     }))
   }, [history])
 
+  const weeklyTicks = useMemo(() => {
+    return historyWithRatio.filter((_, i) => i % 7 === 0)
+  }, [historyWithRatio])
+
+  const tickLabelMap = useMemo(() => {
+    return new Map(weeklyTicks.map((d) => [d.dateTimestamp, d.dayLabel]))
+  }, [weeklyTicks])
+
   return (
     <div className="card bg-base-200 rounded-2xl">
       <h3 className="text-lg font-semibold mb-4">TVL & Volume</h3>
@@ -42,32 +49,33 @@ export function TVLVolumeChart({ history }) {
         height={window.innerWidth < 768 ? 200 : 300}
       >
         <ComposedChart data={historyWithRatio}>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
 
           <XAxis
-            dataKey="dateShort"
-            stroke={CHART_COLORS.axis}
-            style={{ fontSize: '10px' }}
-            angle={-45}
-            textAnchor="end"
-            height={60}
+            dataKey="dateTimestamp"
+            ticks={weeklyTicks.map((d) => d.dateTimestamp)}
+            tickFormatter={(v) => tickLabelMap.get(v) ?? ''}
+            axisLine={false}
+            tickLine={false}
+            style={{ fontSize: '12px' }}
           />
 
           {/* Axis Left: TVL & Volume (USD Denominated) */}
           <YAxis
             yAxisId="left"
-            stroke={CHART_COLORS.axis}
             style={{ fontSize: '11px' }}
             tickFormatter={(value) => formatCompactCurrency(value)}
+            axisLine={false}
+            tickLine={false}
           />
 
           {/* Axis Right: Efficiency Ratio (Decimal) */}
           <YAxis
             yAxisId="right"
             orientation="right"
-            stroke={CHART_COLORS.axis}
             style={{ fontSize: '11px' }}
             tickFormatter={(value) => formatCompactCurrency(value)}
+            axisLine={false}
+            tickLine={false}
           />
 
           {/* Background: TVL represents the "depth" of the pool */}

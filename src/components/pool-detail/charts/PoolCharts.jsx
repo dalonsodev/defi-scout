@@ -1,7 +1,6 @@
 import { LiquidityChart } from './LiquidityChart'
 import { PriceChart } from './PriceChart'
 import { TVLVolumeChart } from './TVLVolumeChart'
-import { FeesApyChart } from './FeesApyChart'
 
 /**
  * UI: Pool Analytics Dashboard.
@@ -54,7 +53,6 @@ export function PoolCharts({
         currentPrice={currentPrice}
       />
       <TVLVolumeChart history={history} />
-      <FeesApyChart history={history} />
     </div>
   )
 }
