@@ -62,9 +62,8 @@ export function LiquidityChart({
     if (!processedData?.length) return {}
 
     const nearest = (target) => {
-      const scaledTarget = 1 / target
       return processedData.reduce((best, item) =>
-        Math.abs(item.price - scaledTarget) < Math.abs(best.price - scaledTarget)
+        Math.abs(item.price - target) < Math.abs(best.price - target)
         ? item
         : best
       ).price
