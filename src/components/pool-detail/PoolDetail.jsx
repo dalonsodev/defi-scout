@@ -34,20 +34,19 @@ export function PoolDetail() {
     if (rangeInputs.minPrice !== '' || rangeInputs.maxPrice !== '') return
     if (!hourlyData) return
 
-    const currentPrice = parseFloat(hourlyData[0].token0Price)
-    const basePrice = selectedTokenIdx === 0 ? currentPrice : 1 / currentPrice
+    const currentPrice = selectedTokenIdx === 0 ? pool.token0Price || 0 : pool.token1Price || 0
 
     setRangeInputs((prev) => ({
       ...prev,
-      minPrice: basePrice * 0.9,
-      maxPrice: basePrice * 1.1,
-      assumedPrice: basePrice
+      minPrice: currentPrice * 0.9,
+      maxPrice: currentPrice * 1.1,
+      assumedPrice: currentPrice
     }))
 
     hasHydrated.current = true
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hourlyData, selectedTokenIdx])
+  }, [hourlyData, selectedTokenIdx, pool.token0Price, pool.token1Price])
   // Justification: rangeInputs.minPrice/maxPrice are guards, not triggers.
   // Including them would cause unnecessary effect re-runs on every input change.
 
