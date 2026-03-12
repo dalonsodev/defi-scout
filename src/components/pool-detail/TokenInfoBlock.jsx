@@ -1,16 +1,10 @@
 import { useMemo } from 'react'
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
-
-const COLORS = ['#605dff', '#01d390']
 
 /**
  * UI: Token Composition Analyzer
  *
  * Architecture: Extracted from PoolDetail to isolate TVL distribution logic
  * and enable reuse in watchlist comparisons (future feature).
- *
- * Design Decision: PieChart over stacked bars for instant visual ratio recognition
- * (critical for risk assessment: 90/10 splits indicate impermanent loss risk).
  *
  * @param {Object} props
  * @param {Object} props.pool - Pool entity with token metadata and TVL snapshots
@@ -19,28 +13,6 @@ const COLORS = ['#605dff', '#01d390']
  * @returns {JSX.Element}
  */
 export function TokenInfoBlock({ pool, selectedTokenIdx, onTokenChange }) {
-  const pieData = useMemo(() => {
-    const tvl0 = parseFloat(pool.totalValueLockedToken0)
-    const tvl1 = parseFloat(pool.totalValueLockedToken1)
-
-    if (tvl0 === 0 && tvl1 === 0) {
-      return []
-    }
-
-    return [
-      { name: pool.token0.symbol, value: tvl0 },
-      { name: pool.token1.symbol, value: tvl1 }
-    ]
-  }, [
-    pool.totalValueLockedToken0,
-    pool.totalValueLockedToken1,
-    pool.token0.symbol,
-    pool.token1.symbol
-  ])
-
-  const totalValue = useMemo(() => {
-    return pieData.reduce((acc, curr) => acc + curr.value, 0)
-  }, [pieData])
 
   // Trade-off: useMemo for price instead of inline calculation
   // Prevents re-computation on unrelated state changes (e.g. scroll position)
@@ -114,35 +86,6 @@ export function TokenInfoBlock({ pool, selectedTokenIdx, onTokenChange }) {
         <TokenLink token={pool.token0} />
         <TokenLink token={pool.token1} />
       </div>
-
-      {pieData.length > 0 && (
-        <div className="mt-4">
-          <ResponsiveContainer width="100%" height={160}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={60}
-                label={(entry) => {
-                  const percent = ((entry.value / totalValue) * 100).toFixed(1)
-                  return `${entry.name} - ${percent}%`
-                }}
-                labelLine={false}
-              >
-                {pieData.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]} // Modulo to avoid out-of-bounds
-                  />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      )}
     </div>
   )
 }
