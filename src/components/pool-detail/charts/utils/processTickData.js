@@ -49,7 +49,7 @@ export function processTickData(
     const midTick = (Number(ticks[i].tickIdx) + Number(ticks[i + 1].tickIdx)) / 2
     const rawPrice = tickToPrice(midTick)
     const humanPrice = rawPrice * Math.pow(10, token0Decimals - token1Decimals)
-    const price = selectedTokenIdx === 0 ? humanPrice : 1 / humanPrice
+    const price = selectedTokenIdx === 0 ? 1 / humanPrice : humanPrice
     const liquidity = Math.max(0, liquidities[i])   // clamp float precision errors
 
     result.push({ price, liquidity })
