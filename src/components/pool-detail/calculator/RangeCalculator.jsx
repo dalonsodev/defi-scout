@@ -127,7 +127,7 @@ export function RangeCalculator({
   return (
     <div className="grid gap-6">
       <div className="flex flex-col gap-6">
-        <div className="card rounded-2xl bg-base-200">
+        <div className="card rounded-2xl bg-base-200 p-4">
           <CalculatorStats
             results={results}
             isLoading={isLoading}
@@ -140,7 +140,7 @@ export function RangeCalculator({
           />
         </div>
 
-        <div className="card rounded-2xl bg-base-200">
+        <div className="card rounded-2xl bg-base-200 p-4">
           <CalculatorInputs
             inputs={inputs}
             onChange={handleInputChange}
