@@ -119,7 +119,6 @@ export function CalculatorStats({
         )}
 
         <div className="flex gap-2">
-          <button className="btn btn-sm btn-outline">Compare Pools</button>
           <button
             onClick={() => setIsModalOpen(true)}
             className="btn btn-sm btn-outline flex-1"
