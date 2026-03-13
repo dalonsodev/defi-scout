@@ -51,7 +51,7 @@ export function PriceChart({
   if (!hourlyData?.length) return null
 
   return (
-    <div className="card bg-base-200 rounded-2xl">
+    <div className="card bg-base-200 rounded-2xl p-4">
       <h3 className="text-lg font-semibold mb-4">Price - {selectedSymbol}</h3>
 
       <ResponsiveContainer
