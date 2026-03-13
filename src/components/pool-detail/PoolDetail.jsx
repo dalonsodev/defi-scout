@@ -1,6 +1,7 @@
 import { useLoaderData, Link } from 'react-router-dom'
 import { useCallback, useEffect, useState, useRef } from 'react'
-import { TokenInfoBlock } from './TokenInfoBlock'
+import { ContractLinks } from './ContractLinks'
+import { CurrentPriceCard } from './CurrentPriceCard'
 import { PoolCharts } from './charts/PoolCharts'
 import { RangeCalculator } from './calculator/RangeCalculator'
 import { invertPriceRange } from './calculator/utils/invertPriceRange'
@@ -160,6 +161,11 @@ export function PoolDetail() {
       {/* Main Interface: Simulator vs History */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
+          <CurrentPriceCard
+            pool={pool}
+            selectedTokenIdx={selectedTokenIdx}
+            onTokenChange={handleTokenChange}
+          />
           <RangeCalculator
             pool={pool}
             selectedTokenIdx={selectedTokenIdx}
@@ -170,16 +176,12 @@ export function PoolDetail() {
             fetchError={fetchError}
             ethPriceUSD={ethPriceUSD}
           />
+          <ContractLinks
+            pool={pool}
+          />
         </div>
         <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
-          <div className="grid gap-4 mb-4">
-            <TokenInfoBlock
-              pool={pool}
-              selectedTokenIdx={selectedTokenIdx}
-              onTokenChange={handleTokenChange}
-            />
-          </div>
           <PoolCharts
             pool={pool}
             history={history}
