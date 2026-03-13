@@ -185,32 +185,26 @@ export function PoolDetail() {
       </div>
 
       {/* Grid: Key Performance Indicators */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <StatCard
-          label="TVL"
-          value={formatCurrency(latestSnapshot.tvlUSD)}
-          color="text-primary"
-        />
-        <StatCard
-          label="Volume (24h)"
-          value={formatCurrency(latestSnapshot.volumeUSD)}
-          color="text-secondary"
-        />
-        <StatCard
-          label="Avg APY (7d)"
-          value={`${avgAPY.toFixed(2)}%`}
-          color="text-success"
-        />
-        <StatCard
-          label="Pool Age"
-          value={`${Math.floor(poolAgeDays)} days`}
-          color="text-info"
-        />
-      </div>
+      <div className="flex flex-col md:grid md:grid-cols-5 gap-4">
+        <div className="md:col-start-3 md:col-span-3 md:row-start-1">
+          <div className="grid grid-cols-3 gap-4">
+            <StatCard
+              label="TVL"
+              value={formatCurrency(latestSnapshot.tvlUSD)}
+            />
+            <StatCard
+              label="Volume (24h)"
+              value={formatCurrency(latestSnapshot.volumeUSD)}
+            />
+            <StatCard
+              label="Avg APY (7d)"
+              value={`${avgAPY.toFixed(2)}%`}
+            />
+          </div>
+        </div>
 
-      {/* Main Interface: Simulator vs History */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
+        {/* Main Interface: Simulator vs History */}
+        <div className="md:col-start-1 md:col-span-2 md:row-start-1 md:row-span-2 flex flex-col gap-4">
           <CurrentPriceCard
             pool={pool}
             selectedTokenIdx={selectedTokenIdx}
@@ -230,8 +224,8 @@ export function PoolDetail() {
             pool={pool}
           />
         </div>
-        <div className="bg-base-200 rounded-3xl p-6 shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">Historical Data</h2>
+
+        <div className="md:col-start-3 md:col-span-3 md:row-start-2">
           <PoolCharts
             pool={pool}
             history={history}
@@ -249,13 +243,13 @@ export function PoolDetail() {
 
 // ===== Helper Components =====
 
-function StatCard({ label, value, color = 'text-base-content' }) {
+function StatCard({ label, value }) {
   return (
-    <div className="bg-base-200 rounded-2xl p-4 shadow">
+    <div className="bg-base-200 rounded-2xl p-3 shadow">
       <div className="text-xs text-base-content/60 uppercase tracking-wide mb-1">
         {label}
       </div>
-      <div className={`text-xl md:text-2xl font-bold ${color}`}>{value}</div>
+      <div className="text-base font-semibold text-primary/75">{value}</div>
     </div>
   )
 }
