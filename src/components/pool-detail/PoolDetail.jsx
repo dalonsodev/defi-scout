@@ -4,8 +4,9 @@ import { ContractLinks } from './ContractLinks'
 import { CurrentPriceCard } from './CurrentPriceCard'
 import { PoolCharts } from './charts/PoolCharts'
 import { RangeCalculator } from './calculator/RangeCalculator'
-import { invertPriceRange } from './calculator/utils/invertPriceRange'
 import { usePoolHourlyData } from './calculator/hooks/usePoolHourlyData'
+import { usePoolTickData } from './charts/hooks/usePoolTickData'
+import { invertPriceRange } from './calculator/utils/invertPriceRange'
 
 const DexScreenLogo = () => (
   <svg width="1.5em" height="1.5em" viewBox="0 0 252 300"
@@ -33,6 +34,10 @@ const BlockExplorerIcon = () => (
 export function PoolDetail() {
   const { pool, history, ethPriceUSD } = useLoaderData()
   const { hourlyData, isLoading, fetchError } = usePoolHourlyData(pool.id)
+  const {
+    tickData,
+    fetchError: tickError
+  } = usePoolTickData(pool.id, pool.tick, pool.feeTier)
   const hasHydrated = useRef(false)
   const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
   const [rangeInputs, setRangeInputs] = useState({
@@ -234,6 +239,8 @@ export function PoolDetail() {
             tokenSymbols={tokenSymbols}
             rangeInputs={rangeInputs}
             currentPrice={currentPrice}
+            tickData={tickData}
+            tickError={tickError}
           />
         </div>
       </div>

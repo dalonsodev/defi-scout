@@ -21,7 +21,9 @@ export function PoolCharts({
   selectedTokenIdx,
   tokenSymbols,
   rangeInputs,
-  currentPrice
+  currentPrice,
+  tickData,
+  tickError
 }) {
   // UI/UX: Empty state
   if (!history || history.length === 0) {
@@ -35,15 +37,14 @@ export function PoolCharts({
   return (
     <div className="grid grid-cols-1 gap-4">
       <LiquidityChart
-        poolId={pool.id}
-        currentTick={pool.tick}
-        feeTier={pool.feeTier}
         selectedTokenIdx={selectedTokenIdx}
         tokenSymbols={tokenSymbols}
         token0Decimals={pool.token0.decimals}
         token1Decimals={pool.token1.decimals}
         rangeInputs={rangeInputs}
         currentPrice={currentPrice}
+        tickData={tickData}
+        tickError={tickError}
       />
       <PriceChart
         hourlyData={hourlyData}
