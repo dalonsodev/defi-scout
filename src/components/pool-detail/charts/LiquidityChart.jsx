@@ -9,7 +9,6 @@ import {
   ReferenceLine
 } from 'recharts'
 import { CustomLiquidityTooltip } from './CustomLiquidityTooltip'
-import { usePoolTickData } from './hooks/usePoolTickData'
 import { processTickData } from './utils/processTickData'
 import { CHART_COLORS } from '../../../constants/chartColors'
 
@@ -29,25 +28,18 @@ import { CHART_COLORS } from '../../../constants/chartColors'
  * @returns {JSX.Element}
  */
 export function LiquidityChart({
-  poolId,
-  currentTick,
-  feeTier,
   selectedTokenIdx,
   tokenSymbols,
   token0Decimals,
   token1Decimals,
   rangeInputs,
-  currentPrice
+  currentPrice,
+  tickData,
+  tickError
 }) {
-  const { tickData: data, fetchError } = usePoolTickData(
-    poolId,
-    currentTick,
-    feeTier
-  )
-
   const processedData = useMemo(() => {
-    return processTickData(data, selectedTokenIdx, token0Decimals, token1Decimals)
-  }, [data, selectedTokenIdx, token0Decimals, token1Decimals])
+    return processTickData(tickData, selectedTokenIdx, token0Decimals, token1Decimals)
+  }, [tickData, selectedTokenIdx, token0Decimals, token1Decimals])
 
   const yDomain = useMemo(() => {
     if (!processedData?.length) return [0, 'auto']
@@ -76,7 +68,7 @@ export function LiquidityChart({
     }
   }, [processedData, rangeInputs, currentPrice])
 
-  if (fetchError || !processedData?.length) return null
+  if (tickError || !processedData?.length) return null
 
   return (
     <div className="card bg-base-200 rounded-2xl p-4">
