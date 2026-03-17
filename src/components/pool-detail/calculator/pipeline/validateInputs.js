@@ -62,10 +62,17 @@ export function validateInputs({
     }
 
     const assumedNum = Number(assumedPrice)
+
     if (!isFinite(assumedNum) || assumedNum <= 0) {
       return {
         success: false,
         error: 'Assumed Entry Price must be positive'
+      }
+    }
+    if (assumedNum < minNum || assumedNum > maxNum) {
+      return {
+        success: false,
+        error: 'Assumed Entry Price must be within the min/max price range.'
       }
     }
   }
