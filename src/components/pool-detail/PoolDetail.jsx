@@ -4,8 +4,11 @@ import { ContractLinks } from './ContractLinks'
 import { CurrentPriceCard } from './CurrentPriceCard'
 import { PoolCharts } from './charts/PoolCharts'
 import { RangeCalculator } from './calculator/RangeCalculator'
-import { invertPriceRange } from './calculator/utils/invertPriceRange'
 import { usePoolHourlyData } from './calculator/hooks/usePoolHourlyData'
+import { usePoolTickData } from './charts/hooks/usePoolTickData'
+import { processTickData } from './charts/utils/processTickData'
+import { invertPriceRange } from './calculator/utils/invertPriceRange'
+import { inferRangeFromLiquidity } from './calculator/utils/inferRangeFromLiquidity'
 
 const DexScreenLogo = () => (
   <svg width="1.5em" height="1.5em" viewBox="0 0 252 300"
@@ -33,6 +36,10 @@ const BlockExplorerIcon = () => (
 export function PoolDetail() {
   const { pool, history, ethPriceUSD } = useLoaderData()
   const { hourlyData, isLoading, fetchError } = usePoolHourlyData(pool.id)
+  const {
+    tickData,
+    fetchError: tickError
+  } = usePoolTickData(pool.id, pool.tick, pool.feeTier)
   const hasHydrated = useRef(false)
   const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
   const [rangeInputs, setRangeInputs] = useState({
@@ -44,28 +51,74 @@ export function PoolDetail() {
   })
 
   /**
-   * Hydration: Initialize default ±10% range on first load.
-   * Runs once when hourlyData becomes available, respecting early token selection.
-   * Flag prevent re-hydration if user manually clears inputs (intentional blank state).
+   * Hydration: Initializes price range from on-chain liquidity distribution.
+   * Runs once when both hourlyData and tickData are available.
+   *
+   * Design Decision:
+   * 1. Infer cluster width from 90th-percentile tick liquidity distribution
+   * 2. If currentPrice is outside the cluster, slide the range so the
+   *    nearest boundary aligns with currentPrice (width preserved)
+   * 3. Adds 0.1% epsilon buffer on the anchored bound to prevent
+   *    division-by-zero in calculateLiquidity at exact boundary conditions
+   * 4. Falls back to ±10% if tick inference returns null
+   *
+   * hasHydrated flag prevents re-hydration after manual user edits.
    */
   useEffect(() => {
     if (hasHydrated.current) return
     if (rangeInputs.minPrice !== '' || rangeInputs.maxPrice !== '') return
-    if (!hourlyData) return
+    if (!hourlyData || !tickData) return
 
     const currentPrice = selectedTokenIdx === 0 ? pool.token0Price || 0 : pool.token1Price || 0
+    const processedTicks = processTickData(
+      tickData,
+      selectedTokenIdx,
+      pool.token0.decimals,
+      pool.token1.decimals
+    )
 
-    setRangeInputs((prev) => ({
-      ...prev,
-      minPrice: currentPrice * 0.9,
-      maxPrice: currentPrice * 1.1,
-      assumedPrice: currentPrice
-    }))
+    const inferredRange = inferRangeFromLiquidity(processedTicks)
+
+
+    if (!inferredRange) {
+      setRangeInputs((prev) => ({
+        ...prev,
+        minPrice: currentPrice * 0.9,
+        maxPrice: currentPrice * 1.1,
+        assumedPrice: currentPrice
+      }))
+    } else {
+      let minPrice = inferredRange.minPrice
+      let maxPrice = inferredRange.maxPrice
+      let assumedPrice = currentPrice
+      const width = maxPrice - minPrice
+
+      if (assumedPrice < maxPrice && assumedPrice > minPrice) {
+        assumedPrice = currentPrice
+      }
+
+      if (assumedPrice > maxPrice) {
+        maxPrice = assumedPrice * 1.001
+        minPrice = assumedPrice - width
+      }
+
+      if (assumedPrice < minPrice) {
+        minPrice = assumedPrice * 0.999
+        maxPrice = assumedPrice + width
+      }
+
+      setRangeInputs((prev) => ({
+        ...prev,
+        minPrice,
+        maxPrice,
+        assumedPrice
+      }))
+    }
 
     hasHydrated.current = true
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hourlyData, selectedTokenIdx, pool.token0Price, pool.token1Price])
+  }, [hourlyData, tickData, selectedTokenIdx, pool.token0Price, pool.token1Price])
   // Justification: rangeInputs.minPrice/maxPrice are guards, not triggers.
   // Including them would cause unnecessary effect re-runs on every input change.
 
@@ -234,6 +287,8 @@ export function PoolDetail() {
             tokenSymbols={tokenSymbols}
             rangeInputs={rangeInputs}
             currentPrice={currentPrice}
+            tickData={tickData}
+            tickError={tickError}
           />
         </div>
       </div>
