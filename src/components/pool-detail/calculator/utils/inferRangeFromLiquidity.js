@@ -13,7 +13,7 @@
  * @param {number} [targetPct=0.9] - Target depth to capture (0.0 to 1.0)
  * @returns {{ minPrice: number|null, maxPrice: number|null }|null}
  */
-export function inferRangeFromLiquidity(processedTicks, targetPct = 0.9) {
+export function inferRangeFromLiquidity(processedTicks, targetPct = 0.6) {
   if (processedTicks.length < 2) return null
 
   const total = processedTicks.reduce((acc, curr) => acc + curr.liquidity, 0)
