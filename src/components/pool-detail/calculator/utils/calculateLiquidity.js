@@ -68,7 +68,12 @@ export function calculateLiquidity(
     const liq0 = (amount0 * (sqrtP * sqrtPHigh)) / (sqrtPHigh - sqrtP)
     const liq1 = amount1 / (sqrtP - sqrtPLow)
 
-    liquidity = Math.min(liq0, liq1)
+    if (liq0 !== 0 && liq1 !== 0) {
+      liquidity = Math.min(liq0, liq1)
+    } else {
+      liquidity = liq0 || liq1
+    }
+
     positionState = `IN_RANGE (binding: ${liq0 < liq1 ? 'token0' : 'token1'})`
 
     debugLog('In-Range Calculation:', {
