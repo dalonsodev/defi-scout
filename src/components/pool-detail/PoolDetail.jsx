@@ -97,12 +97,12 @@ export function PoolDetail() {
         assumedPrice = currentPrice
       }
 
-      if (assumedPrice > maxPrice) {
+      if (assumedPrice >= maxPrice) {
         maxPrice = assumedPrice * 1.001
         minPrice = assumedPrice - width
       }
 
-      if (assumedPrice < minPrice) {
+      if (assumedPrice <= minPrice) {
         minPrice = assumedPrice * 0.999
         maxPrice = assumedPrice + width
       }
