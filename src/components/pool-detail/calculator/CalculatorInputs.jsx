@@ -1,3 +1,5 @@
+import { formatPriceInput } from "../../../utils/formatPriceInput"
+
 /**
  * UI: LP Position Parameter Controls.
  * Manages capital allocation, price range boundaries (tick-aligned), and token composition.
@@ -97,7 +99,7 @@ export function CalculatorInputs({
         </div>
 
         {/* Volatility Presets
-                Disabled when fullRange=true (liquidity spans 0 to ∞, no discrete bounds) */}
+          Disabled when fullRange=true (liquidity spans 0 to ∞, no discrete bounds) */}
         <div className="flex gap-2 mb-3">
           <button
             type="button"
@@ -154,7 +156,7 @@ export function CalculatorInputs({
 
             <input
               type="number"
-              value={inputs.fullRange ? '' : inputs.minPrice}
+              value={inputs.fullRange ? '' : formatPriceInput(inputs.minPrice)}
               onChange={(e) => onChange('minPrice', e.target.value)}
               disabled={inputs.fullRange}
               placeholder="0"
@@ -194,7 +196,7 @@ export function CalculatorInputs({
 
             <input
               type="number"
-              value={inputs.fullRange ? '' : inputs.maxPrice}
+              value={inputs.fullRange ? '' : formatPriceInput(inputs.maxPrice)}
               onChange={(e) => onChange('maxPrice', e.target.value)}
               disabled={inputs.fullRange}
               placeholder="∞"
@@ -249,7 +251,7 @@ export function CalculatorInputs({
 
           <input
             type="number"
-            value={inputs.fullRange ? '' : inputs.assumedPrice}
+            value={inputs.fullRange ? '' : formatPriceInput(inputs.assumedPrice)}
             onChange={(e) => onChange('assumedPrice', Number(e.target.value))}
             disabled={inputs.fullRange}
             placeholder={inputs.fullRange ? '50/50 split' : ''}
