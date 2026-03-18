@@ -69,16 +69,17 @@ export function PoolDetail() {
     if (rangeInputs.minPrice !== '' || rangeInputs.maxPrice !== '') return
     if (!hourlyData || !tickData) return
 
-    const currentPrice = selectedTokenIdx === 0 ? pool.token0Price || 0 : pool.token1Price || 0
+    const currentPrice = parseFloat(
+      selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price
+    ) || 0
+
     const processedTicks = processTickData(
       tickData,
       selectedTokenIdx,
       pool.token0.decimals,
       pool.token1.decimals
     )
-
     const inferredRange = inferRangeFromLiquidity(processedTicks)
-
 
     if (!inferredRange) {
       setRangeInputs((prev) => ({
@@ -153,8 +154,9 @@ export function PoolDetail() {
    * Uniswap price is usually token0/token1. If user selects token1 as base,
    * we may need to handle the reciprocal price depending on the calculator's logic.
    */
-  const currentPrice =
-    selectedTokenIdx === 0 ? pool.token0Price || 0 : pool.token1Price || 0
+  const currentPrice = parseFloat(
+    selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price
+  ) || 0
 
   // Stats: Derived metrics from historical snapshots
   const latestSnapshot = history[history.length - 1] || {}
