@@ -217,7 +217,7 @@ export function CalculatorInputs({
               </span>
               <button className="btn btn-circle btn-xs">
                 <div
-                  className="tooltip tooltip-right"
+                  className="tooltip tooltip-bottom"
                   data-tip="It first populates with the most recent price for the pool. You can adjust your desired entry price for the range calculator."
                 >
                   <div className="font-medium text-base-content max-w-[120px] truncate">

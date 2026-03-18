@@ -167,7 +167,7 @@ export function PoolDetail() {
   const avgAPY = calculateAverageAPY(last7Days, latestSnapshot.tvlUSD)
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 pt-4 max-w-7xl">
       {/* NAVIGATION: Contextual return */}
       <Link to="/" className="btn btn-ghost btn-sm mb-6 gap-2">
         <span>←</span>
