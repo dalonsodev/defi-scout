@@ -1,3 +1,5 @@
+import { formatPriceInput } from "../../../../utils/formatPriceInput"
+
 /**
  * Utility: Inverts Uniswap V3 range prices for token base flip
  *
@@ -42,8 +44,8 @@ export function invertPriceRange(inputs) {
   const newAssumed = 1 / oldAssumed
 
   return {
-    minPrice: newMin.toFixed(8),
-    maxPrice: newMax.toFixed(8),
-    assumedPrice: newAssumed.toFixed(8)
+    minPrice: formatPriceInput(newMin),
+    maxPrice: formatPriceInput(newMax),
+    assumedPrice: formatPriceInput(newAssumed)
   }
 }
