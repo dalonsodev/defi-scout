@@ -4,7 +4,6 @@ import {
   Line,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   ReferenceLine
@@ -16,7 +15,7 @@ import { CHART_COLORS } from '../../../constants/chartColors'
  * UI: Strategic Price & Range Chart.
  * Visualizes asset price trends against liquidity provider boundaries.
  * @param {Object} props
- * @param {Array<Object>} props.history - Timeseries data from the pool API
+ * @param {Array<Object>} props.hourlyData - Timeseries data from the pool API
  * @param {number} props.selectedTokenIdx - Index of the token used as base price (0 or 1)
  * @param {string[]} props.tokenSymbols - Tuple of token symbols [Symbol0, Symbol1]
  * @param {Object} props.rangeInputs - Current simulation range (minPrice, maxPrice, assumedPrice)
@@ -32,6 +31,10 @@ export function PriceChart({
 }) {
   const dataKey = selectedTokenIdx === 0 ? 'token0Price' : 'token1Price'
   const selectedSymbol = tokenSymbols[selectedTokenIdx]
+  const [baseToken, quoteToken] = tokenSymbols
+  const poolPriceLabel = selectedTokenIdx === 0
+    ? `${baseToken} / ${quoteToken}`
+    : `${quoteToken} / ${baseToken}`
 
   const dailyTicks = useMemo(() => {
     if (!hourlyData?.length) return []
@@ -48,11 +51,24 @@ export function PriceChart({
     return new Map(hourlyData.map((h) => [h.periodStartUnix, h.dateShort]))
   }, [hourlyData])
 
+  const yDomain = useMemo(() => {
+    if (!hourlyData?.length) return ['auto', 'auto']
+    const prices = hourlyData.map((h) => h[dataKey]).filter(Boolean)
+    const min = Math.min(...prices)
+    const max = Math.max(...prices)
+    const range = max - min
+
+    if (range === 0) return [min * 0.9, max * 1.15]
+    return [min - range * 0.15, max + range * 0.15]
+  }, [hourlyData, dataKey])
+
   if (!hourlyData?.length) return null
 
   return (
     <div className="card bg-base-200 rounded-2xl p-4">
-      <h3 className="text-lg font-semibold mb-4">Price - {selectedSymbol}</h3>
+      <h3 className="text-lg font-semibold mb-4">
+        {poolPriceLabel + ' Pool Price'}
+      </h3>
 
       <ResponsiveContainer
         width="100%"
@@ -74,7 +90,7 @@ export function PriceChart({
             hide
             stroke={CHART_COLORS.axis}
             style={{ fontSize: '11px' }}
-            domain={[(dataMin) => dataMin * 0.9, (dataMax) => dataMax * 1.1]}
+            domain={yDomain}
           />
 
           <Line
