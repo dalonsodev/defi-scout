@@ -4,7 +4,6 @@ import {
   Line,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   ReferenceLine
@@ -16,7 +15,7 @@ import { CHART_COLORS } from '../../../constants/chartColors'
  * UI: Strategic Price & Range Chart.
  * Visualizes asset price trends against liquidity provider boundaries.
  * @param {Object} props
- * @param {Array<Object>} props.history - Timeseries data from the pool API
+ * @param {Array<Object>} props.hourlyData - Timeseries data from the pool API
  * @param {number} props.selectedTokenIdx - Index of the token used as base price (0 or 1)
  * @param {string[]} props.tokenSymbols - Tuple of token symbols [Symbol0, Symbol1]
  * @param {Object} props.rangeInputs - Current simulation range (minPrice, maxPrice, assumedPrice)
@@ -48,6 +47,17 @@ export function PriceChart({
     return new Map(hourlyData.map((h) => [h.periodStartUnix, h.dateShort]))
   }, [hourlyData])
 
+  const yDomain = useMemo(() => {
+    if (!hourlyData?.length) return ['auto', 'auto']
+    const prices = hourlyData.map((h) => h[dataKey]).filter(Boolean)
+    const min = Math.min(...prices)
+    const max = Math.max(...prices)
+    const range = max - min
+
+    if (range === 0) return [min * 0.9, max * 1.15]
+    return [min - range * 0.15, max + range * 0.15]
+  }, [hourlyData, dataKey])
+
   if (!hourlyData?.length) return null
 
   return (
@@ -74,7 +84,7 @@ export function PriceChart({
             hide
             stroke={CHART_COLORS.axis}
             style={{ fontSize: '11px' }}
-            domain={[(dataMin) => dataMin * 0.9, (dataMax) => dataMax * 1.1]}
+            domain={yDomain}
           />
 
           <Line
