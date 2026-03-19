@@ -151,6 +151,7 @@ export function RangeCalculator({
             token0Symbol={pool.token0.symbol}
             token1Symbol={pool.token1.symbol}
             composition={results?.composition || null}
+            selectedTokenIdx={selectedTokenIdx}
           />
         </div>
       </div>
