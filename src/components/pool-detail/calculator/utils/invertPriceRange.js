@@ -1,4 +1,4 @@
-import { formatPriceInput } from "../../../../utils/formatPriceInput"
+import { formatPriceInput } from "../../../../utils/priceInputUtils"
 
 /**
  * Utility: Inverts Uniswap V3 range prices for token base flip

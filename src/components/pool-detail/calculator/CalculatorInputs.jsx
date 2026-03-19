@@ -1,4 +1,4 @@
-import { formatPriceInput } from "../../../utils/formatPriceInput"
+import { formatPriceInput, getPriceStep } from "../../../utils/priceInputUtils"
 
 /**
  * UI: LP Position Parameter Controls.
@@ -161,7 +161,7 @@ export function CalculatorInputs({
               disabled={inputs.fullRange}
               placeholder="0"
               className="input input-md w-full text-lg text-center bg-base-300"
-              step="0.0001"
+              step={getPriceStep(inputs.minPrice)}
             />
 
             <p className="text-xs text-center text-base-content/50 mt-2">
@@ -201,7 +201,7 @@ export function CalculatorInputs({
               disabled={inputs.fullRange}
               placeholder="∞"
               className="input input-md w-full text-lg text-center bg-base-300"
-              step="0.0001"
+              step={getPriceStep(inputs.maxPrice)}
             />
 
             <p className="text-xs text-center text-base-content/50 mt-2">
@@ -256,6 +256,7 @@ export function CalculatorInputs({
             disabled={inputs.fullRange}
             placeholder={inputs.fullRange ? '50/50 split' : ''}
             className="input input-md w-full text-lg text-center bg-base-300"
+            step={getPriceStep(inputs.assumedPrice)}
           />
 
           <p className="text-xs text-center text-base-content/50 mt-2">
