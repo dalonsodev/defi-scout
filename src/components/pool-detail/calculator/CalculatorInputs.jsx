@@ -26,12 +26,21 @@ export function CalculatorInputs({
   priceLabel,
   token0Symbol,
   token1Symbol,
-  composition
+  composition,
+  selectedTokenIdx
 }) {
   const token0Amount = composition?.amount0
   const token1Amount = composition?.amount1
   const capital0 = composition?.capital0USD
   const capital1 = composition?.capital1USD
+
+  const primary = selectedTokenIdx === 0
+    ? { symbol: token0Symbol, amount: token0Amount, capital: capital0 }
+    : { symbol: token1Symbol, amount: token1Amount, capital: capital1 }
+
+  const secondary = selectedTokenIdx === 0
+    ? { symbol: token1Symbol, amount: token1Amount, capital: capital1 }
+    : { symbol: token0Symbol, amount: token0Amount, capital: capital0 }
 
   return (
     <div>
@@ -58,12 +67,12 @@ export function CalculatorInputs({
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-primary"></span>
-              {token0Symbol}:
+              {primary.symbol}:
             </span>
             <span>
-              {token0Amount > 0 ? token0Amount.toFixed(6) : '--'}
+              {primary.amount > 0 ? primary.amount.toFixed(6) : '--'}
               <span className="text-base-content/60 ml-2">
-                ${capital0?.toFixed(2) ?? '--'}
+                ${primary.capital?.toFixed(2) ?? '--'}
               </span>
             </span>
           </div>
@@ -71,12 +80,12 @@ export function CalculatorInputs({
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-secondary"></span>
-              {token1Symbol}:
+              {secondary.symbol}:
             </span>
             <span>
-              {token1Amount > 0 ? token1Amount.toFixed(6) : '--'}
+              {secondary.amount > 0 ? secondary.amount.toFixed(6) : '--'}
               <span className="text-base-content/60 ml-2">
-                ${capital1?.toFixed(2) ?? '--'}
+                ${secondary.capital?.toFixed(2) ?? '--'}
               </span>
             </span>
           </div>
