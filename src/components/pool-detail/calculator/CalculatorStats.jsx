@@ -26,8 +26,7 @@ export function CalculatorStats({
   isLoading,
   fetchError,
   poolData,
-  rangeInputs,
-  ethPriceUSD
+  rangeInputs
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -134,7 +133,6 @@ export function CalculatorStats({
         poolData={poolData}
         rangeInputs={rangeInputs}
         results={results}
-        ethPriceUSD={ethPriceUSD}
       />
     </>
   )

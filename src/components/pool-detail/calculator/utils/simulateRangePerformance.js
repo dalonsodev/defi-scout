@@ -259,6 +259,8 @@ export function simulateRangePerformance({
       amount0,
       amount1
     },
+    token0PriceUSD: priceToken0InUSD,
+    token1PriceUSD: priceToken1InUSD,
     dataQuality: finalQuality,
     warnings: allWarnings.slice(0, 5)
   }
