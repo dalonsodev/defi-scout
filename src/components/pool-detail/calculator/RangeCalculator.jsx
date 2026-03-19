@@ -35,20 +35,21 @@ export function RangeCalculator({
 
   // Derived State: Display price adapts to selected base token
   const displayPrice = useMemo(() => {
-    if (!hourlyData) return 0
+    if (!pool) return 0
 
-    const currentPrice = parseFloat(hourlyData[0].token0Price)
+    // const currentPrice = parseFloat(hourlyData[0].token0Price)
+    const currentPrice = parseFloat(pool?.token0Price)
 
     return selectedTokenIdx === 0
       ? currentPrice // Token0 per Token1
       : 1 / currentPrice // Token1 per Token0 (reciprocal)
-  }, [selectedTokenIdx, hourlyData])
+  }, [selectedTokenIdx, pool])
 
   // Token Price Normalization: Convert pool prices to USD for display
   const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
-    const currentPrice = hourlyData?.[0]?.token0Price
-      ? parseFloat(hourlyData[0].token0Price)
-      : parseFloat(pool.token0Price)
+    const currentPrice = parseFloat(pool?.token0Price)
+      || parseFloat(hourlyData?.[0]?.token0Price)
+      || 0
 
     return calculateTokenPrices(
       pool.token0,
