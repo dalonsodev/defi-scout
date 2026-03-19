@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { calculateTokenPrices } from '../utils/calculateTokenPrices'
 import { calculateIL } from '../utils/calculateIL'
 
 /**
@@ -57,19 +56,10 @@ import { calculateIL } from '../utils/calculateIL'
 export function useProjectionCalculator(
   poolData,
   rangeInputs,
-  results,
-  ethPriceUSD
+  results
 ) {
-  // Price Inference: Calculate current USD prices from pool's token0Price
-  const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
-    const currentPrice = parseFloat(poolData.token0Price)
-    return calculateTokenPrices(
-      poolData.token0,
-      poolData.token1,
-      ethPriceUSD,
-      currentPrice
-    )
-  }, [poolData, ethPriceUSD])
+  const token0PriceUSD = results?.token0PriceUSD ?? 0
+  const token1PriceUSD = results?.token1PriceUSD ?? 0
 
   // User Inputs: Future price scenario and time horizon
   const hasHydrated = useRef(false)
