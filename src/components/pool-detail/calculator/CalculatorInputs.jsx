@@ -1,3 +1,5 @@
+import { formatPriceInput, getPriceStep } from "../../../utils/priceInputUtils"
+
 /**
  * UI: LP Position Parameter Controls.
  * Manages capital allocation, price range boundaries (tick-aligned), and token composition.
@@ -24,12 +26,21 @@ export function CalculatorInputs({
   priceLabel,
   token0Symbol,
   token1Symbol,
-  composition
+  composition,
+  selectedTokenIdx
 }) {
   const token0Amount = composition?.amount0
   const token1Amount = composition?.amount1
   const capital0 = composition?.capital0USD
   const capital1 = composition?.capital1USD
+
+  const primary = selectedTokenIdx === 0
+    ? { symbol: token0Symbol, amount: token0Amount, capital: capital0 }
+    : { symbol: token1Symbol, amount: token1Amount, capital: capital1 }
+
+  const secondary = selectedTokenIdx === 0
+    ? { symbol: token1Symbol, amount: token1Amount, capital: capital1 }
+    : { symbol: token0Symbol, amount: token0Amount, capital: capital0 }
 
   return (
     <div>
@@ -56,12 +67,17 @@ export function CalculatorInputs({
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-primary"></span>
-              {token0Symbol}:
+              {primary.symbol}
+              {composition && (
+                <span className="text-base-content/60">
+                  ({composition.token0Percent.toFixed(1)}%)
+                </span>
+              )}
             </span>
             <span>
-              {token0Amount > 0 ? token0Amount.toFixed(6) : '--'}
+              {primary.amount > 0 ? primary.amount.toFixed(6) : '--'}
               <span className="text-base-content/60 ml-2">
-                ${capital0?.toFixed(2) ?? '--'}
+                ${primary.capital?.toFixed(2) ?? '--'}
               </span>
             </span>
           </div>
@@ -69,12 +85,17 @@ export function CalculatorInputs({
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-secondary"></span>
-              {token1Symbol}:
+              {secondary.symbol}
+              {composition && (
+                <span className="text-base-content/60">
+                  ({composition.token1Percent.toFixed(1)}%)
+                </span>
+              )}
             </span>
             <span>
-              {token1Amount > 0 ? token1Amount.toFixed(6) : '--'}
+              {secondary.amount > 0 ? secondary.amount.toFixed(6) : '--'}
               <span className="text-base-content/60 ml-2">
-                ${capital1?.toFixed(2) ?? '--'}
+                ${secondary.capital?.toFixed(2) ?? '--'}
               </span>
             </span>
           </div>
@@ -97,7 +118,7 @@ export function CalculatorInputs({
         </div>
 
         {/* Volatility Presets
-                Disabled when fullRange=true (liquidity spans 0 to ∞, no discrete bounds) */}
+          Disabled when fullRange=true (liquidity spans 0 to ∞, no discrete bounds) */}
         <div className="flex gap-2 mb-3">
           <button
             type="button"
@@ -154,12 +175,12 @@ export function CalculatorInputs({
 
             <input
               type="number"
-              value={inputs.fullRange ? '' : inputs.minPrice}
+              value={inputs.fullRange ? '' : formatPriceInput(inputs.minPrice)}
               onChange={(e) => onChange('minPrice', e.target.value)}
               disabled={inputs.fullRange}
               placeholder="0"
               className="input input-md w-full text-lg text-center bg-base-300"
-              step="0.0001"
+              step={getPriceStep(inputs.minPrice)}
             />
 
             <p className="text-xs text-center text-base-content/50 mt-2">
@@ -194,12 +215,12 @@ export function CalculatorInputs({
 
             <input
               type="number"
-              value={inputs.fullRange ? '' : inputs.maxPrice}
+              value={inputs.fullRange ? '' : formatPriceInput(inputs.maxPrice)}
               onChange={(e) => onChange('maxPrice', e.target.value)}
               disabled={inputs.fullRange}
               placeholder="∞"
               className="input input-md w-full text-lg text-center bg-base-300"
-              step="0.0001"
+              step={getPriceStep(inputs.maxPrice)}
             />
 
             <p className="text-xs text-center text-base-content/50 mt-2">
@@ -249,11 +270,12 @@ export function CalculatorInputs({
 
           <input
             type="number"
-            value={inputs.fullRange ? '' : inputs.assumedPrice}
+            value={inputs.fullRange ? '' : formatPriceInput(inputs.assumedPrice)}
             onChange={(e) => onChange('assumedPrice', Number(e.target.value))}
             disabled={inputs.fullRange}
             placeholder={inputs.fullRange ? '50/50 split' : ''}
             className="input input-md w-full text-lg text-center bg-base-300"
+            step={getPriceStep(inputs.assumedPrice)}
           />
 
           <p className="text-xs text-center text-base-content/50 mt-2">

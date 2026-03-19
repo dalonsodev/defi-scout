@@ -69,16 +69,17 @@ export function PoolDetail() {
     if (rangeInputs.minPrice !== '' || rangeInputs.maxPrice !== '') return
     if (!hourlyData || !tickData) return
 
-    const currentPrice = selectedTokenIdx === 0 ? pool.token0Price || 0 : pool.token1Price || 0
+    const currentPrice = parseFloat(
+      selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price
+    ) || 0
+
     const processedTicks = processTickData(
       tickData,
       selectedTokenIdx,
       pool.token0.decimals,
       pool.token1.decimals
     )
-
     const inferredRange = inferRangeFromLiquidity(processedTicks)
-
 
     if (!inferredRange) {
       setRangeInputs((prev) => ({
@@ -147,14 +148,21 @@ export function PoolDetail() {
 
   // Domain Logic: Price inversion and token symbol
   const tokenSymbols = [pool.token0.symbol, pool.token1.symbol]
+  const primary = selectedTokenIdx === 0
+    ? { symbol: pool.token0.symbol, name: pool.token0.name }
+    : { symbol: pool.token1.symbol, name: pool.token1.name }
+  const secondary = selectedTokenIdx === 0
+    ? { symbol: pool.token1.symbol, name: pool.token1.name }
+    : { symbol: pool.token0.symbol, name: pool.token0.name }
 
   /**
    * Math: Resolve relative price
    * Uniswap price is usually token0/token1. If user selects token1 as base,
    * we may need to handle the reciprocal price depending on the calculator's logic.
    */
-  const currentPrice =
-    selectedTokenIdx === 0 ? pool.token0Price || 0 : pool.token1Price || 0
+  const currentPrice = parseFloat(
+    selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price
+  ) || 0
 
   // Stats: Derived metrics from historical snapshots
   const latestSnapshot = history[history.length - 1] || {}
@@ -182,7 +190,7 @@ export function PoolDetail() {
             {/* Row 1: name + fee only */}
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-3xl font-bold">
-                {pool.token0.symbol} / {pool.token1.symbol}
+                {primary.symbol} / {secondary.symbol}
               </h1>
               <span className="badge badge-outline text-primary badge-md">
                 {(pool.feeTier / 10000).toFixed(2)}%
@@ -194,7 +202,7 @@ export function PoolDetail() {
 
             {/* Row 2: full token names */}
             <span className="text-sm text-base-content/60">
-              {pool.token0.name} / {pool.token1.name}
+              {primary.name} / {secondary.name}
             </span>
           </div>
 

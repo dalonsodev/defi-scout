@@ -28,22 +28,14 @@ export function PriceInputSection({
   onToken1PriceChange
 }) {
   // Percentages Deviation: Convert absolute price delta to % for display
-  const token0ChangePercent =
-    currentToken0PriceUSD > 0
-      ? (
-          ((futureToken0PriceUSD - currentToken0PriceUSD) /
-            currentToken0PriceUSD) *
-          100
-        ).toFixed(2)
-      : '0.00'
-  const token1ChangePercent =
-    currentToken1PriceUSD > 0
-      ? (
-          ((futureToken1PriceUSD - currentToken1PriceUSD) /
-            currentToken1PriceUSD) *
-          100
-        ).toFixed(2)
-      : '0.00'
+  const token0ChangePercent = currentToken0PriceUSD > 0
+      ? (((futureToken0PriceUSD - currentToken0PriceUSD) /
+            currentToken0PriceUSD) * 100)
+      : 0
+  const token1ChangePercent = currentToken1PriceUSD > 0
+      ? (((futureToken1PriceUSD - currentToken1PriceUSD) /
+            currentToken1PriceUSD) * 100)
+      : 0
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -79,7 +71,7 @@ export function PriceInputSection({
           <input
             type="number"
             value={futureToken0PriceUSD}
-            onChange={(e) => onToken0PriceChange(e.target.value)}
+            onChange={(e) => onToken0PriceChange(Number(e.target.value))}
             className="flex-1 bg-transparent"
             aria-label="Future Price"
           />
@@ -88,7 +80,7 @@ export function PriceInputSection({
           <span className="label-text-alt mt-2">{token0Symbol} Price</span>
           <span className="label-text-alt mt-2">
             ({token0ChangePercent >= 0 ? '+' : ''}
-            {token0ChangePercent}%)
+            {token0ChangePercent.toFixed(2)}%)
           </span>
         </label>
       </div>
@@ -119,7 +111,7 @@ export function PriceInputSection({
           <input
             type="number"
             value={futureToken1PriceUSD}
-            onChange={(e) => onToken1PriceChange(e.target.value)}
+            onChange={(e) => onToken1PriceChange(Number(e.target.value))}
             className="flex-1 bg-transparent"
             aria-label="Future Price"
           />
@@ -128,7 +120,7 @@ export function PriceInputSection({
           <span className="label-text-alt mt-2">{token1Symbol} Price</span>
           <span className="label-text-alt mt-2">
             ({token1ChangePercent >= 0 ? '+' : ''}
-            {token1ChangePercent}%)
+            {token1ChangePercent.toFixed(2)}%)
           </span>
         </label>
       </div>

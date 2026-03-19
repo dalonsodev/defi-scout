@@ -1,5 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
-import { calculateTokenPrices } from '../utils/calculateTokenPrices'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { calculateIL } from '../utils/calculateIL'
 
 /**
@@ -57,21 +56,13 @@ import { calculateIL } from '../utils/calculateIL'
 export function useProjectionCalculator(
   poolData,
   rangeInputs,
-  results,
-  ethPriceUSD
+  results
 ) {
-  // Price Inference: Calculate current USD prices from pool's token0Price
-  const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
-    const currentPrice = parseFloat(poolData.token0Price)
-    return calculateTokenPrices(
-      poolData.token0,
-      poolData.token1,
-      ethPriceUSD,
-      currentPrice
-    )
-  }, [poolData, ethPriceUSD])
+  const token0PriceUSD = results?.token0PriceUSD ?? 0
+  const token1PriceUSD = results?.token1PriceUSD ?? 0
 
   // User Inputs: Future price scenario and time horizon
+  const hasHydrated = useRef(false)
   const [futureToken0Price, setFutureToken0Price] = useState(token0PriceUSD)
   const [futureToken1Price, setFutureToken1Price] = useState(token1PriceUSD)
   const [projectionDays, setProjectionDays] = useState(0)
@@ -88,8 +79,12 @@ export function useProjectionCalculator(
    * Trade-off: One extra render (mount with 0, then update) vs simpler code.
    */
   useEffect(() => {
+    if (hasHydrated.current) return
+    if (token0PriceUSD <= 0) return
+
     setFutureToken0Price(token0PriceUSD)
     setFutureToken1Price(token1PriceUSD)
+    hasHydrated.current = true
   }, [token0PriceUSD, token1PriceUSD])
 
   // Strategy Simulation: Calculate HODL vs LP outcomes under given scenario
