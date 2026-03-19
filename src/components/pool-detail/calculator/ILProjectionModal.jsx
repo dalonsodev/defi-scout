@@ -26,8 +26,7 @@ export function ILProjectionModal({
   onClose,
   poolData,
   rangeInputs,
-  results,
-  ethPriceUSD
+  results
 }) {
   // Hook Orchestration: Manages complex IL math + debounced recalculation.
   // Simulates AMM rebalancing at each price move, calculates cumulative fees,
@@ -45,7 +44,7 @@ export function ILProjectionModal({
     setFutureToken1Price,
     setProjectionDays,
     daysToBreakEven
-  } = useProjectionCalculator(poolData, rangeInputs, results, ethPriceUSD)
+  } = useProjectionCalculator(poolData, rangeInputs, results)
 
   return (
     <dialog className={`modal ${isOpen ? 'modal-open' : ''}`}>

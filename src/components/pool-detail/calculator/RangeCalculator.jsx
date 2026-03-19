@@ -137,7 +137,6 @@ export function RangeCalculator({
             rangeInputs={inputs}
             token0PriceUSD={token0PriceUSD}
             token1PriceUSD={token1PriceUSD}
-            ethPriceUSD={ethPriceUSD}
           />
         </div>
 
