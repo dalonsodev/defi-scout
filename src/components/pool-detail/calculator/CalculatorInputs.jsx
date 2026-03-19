@@ -67,7 +67,12 @@ export function CalculatorInputs({
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-primary"></span>
-              {primary.symbol}:
+              {primary.symbol}
+              {composition && (
+                <span className="text-base-content/60">
+                  ({composition.token0Percent.toFixed(1)}%)
+                </span>
+              )}
             </span>
             <span>
               {primary.amount > 0 ? primary.amount.toFixed(6) : '--'}
@@ -80,7 +85,12 @@ export function CalculatorInputs({
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-secondary"></span>
-              {secondary.symbol}:
+              {secondary.symbol}
+              {composition && (
+                <span className="text-base-content/60">
+                  ({composition.token1Percent.toFixed(1)}%)
+                </span>
+              )}
             </span>
             <span>
               {secondary.amount > 0 ? secondary.amount.toFixed(6) : '--'}
