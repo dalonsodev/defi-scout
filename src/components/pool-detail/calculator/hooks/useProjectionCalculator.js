@@ -157,7 +157,7 @@ export function useProjectionCalculator(
 
     // Step 2: Calculate LP position value after IL (before fees)
     // IL reduces position value relative to HODL
-    const lpValueAfterIL = capitalUSD * (1 + IL_decimal)
+    const lpValueAfterIL = hodlFutureValue * (1 + IL_decimal)
 
     // Step 3: Add projected fee earnings
     const projectedFees =
