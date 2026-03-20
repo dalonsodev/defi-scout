@@ -1,6 +1,7 @@
 import { assessDataQuality } from './assessDataQuality'
 import { calculateLiquidity } from './calculateLiquidity'
 import { validateInputs } from '../pipeline/validateInputs'
+import { calculateTokenPrices } from './calculateTokenPrices'
 import { calculateComposition } from '../pipeline/calculateComposition'
 import { calculateFeesWithQuality } from '../pipeline/calculateFeesWithQuality'
 import { inferTokenPricesFromTVL } from '../../../../utils/inferTokenPricesFromTVL'
@@ -52,7 +53,8 @@ export function simulateRangePerformance({
   assumedPrice,
   selectedTokenIdx,
   hourlyData,
-  pool
+  pool,
+  ethPriceUSD
 }) {
   // ===== STAGE 1: INPUT VALIDATION =====
   const validation = validateInputs({
@@ -97,24 +99,40 @@ export function simulateRangePerformance({
   }
 
   // ===== STAGE 4: PRICE INFERENCE =====
-  const currentPrice = parseFloat(hourlyData[0].token0Price)
+  const currentPrice = parseFloat(pool.token0Price)
+  let priceToken0InUSD = 0
+  let priceToken1InUSD = 0
 
-  const priceInferenceResult = inferTokenPricesFromTVL({
-    tvlUSD: parseFloat(pool.totalValueLockedUSD),
-    tvlToken0: parseFloat(pool.totalValueLockedToken0),
-    tvlToken1: parseFloat(pool.totalValueLockedToken1),
+  // Primary: oracle-aligned prices
+  const { token0PriceUSD } = calculateTokenPrices(
+    pool.token0,
+    pool.token1,
+    ethPriceUSD,
     currentPrice
-  })
+  )
 
-  if (!priceInferenceResult.success) {
-    return {
-      success: false,
-      error: priceInferenceResult.error,
-      dataQuality: quality
+  if (token0PriceUSD !== 0) {
+    priceToken0InUSD = token0PriceUSD
+    priceToken1InUSD = parseFloat(pool.token0Price) * token0PriceUSD // pool ratio
+  } else {
+    const result = inferTokenPricesFromTVL({
+      tvlUSD: parseFloat(pool.totalValueLockedUSD),
+      tvlToken0: parseFloat(pool.totalValueLockedToken0),
+      tvlToken1: parseFloat(pool.totalValueLockedToken1),
+      currentPrice
+    })
+
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error,
+        dataQuality: quality
+      }
     }
+    priceToken0InUSD = result.priceToken0InUSD
+    priceToken1InUSD = result.priceToken1InUSD
   }
 
-  const { priceToken0InUSD, priceToken1InUSD } = priceInferenceResult
 
   // ===== STAGE 5: COMPOSITION CALCULATION =====
   const allPrices = hourlyData.map((h) => parseFloat(h.token0Price))
