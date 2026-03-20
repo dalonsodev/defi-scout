@@ -28,11 +28,11 @@ export function calculateTokenRatio(assumedPrice, minPrice, maxPrice, feeTier) {
   // Financial Edge Case: Handle boundary conditions where liquidity becomes single-sided
   if (assumedPrice <= minPrice) {
     // Price below range: 100% token0 (cheaper asset), 0% token1
-    return { token0Percent: 100, token1Percent: 0 }
+    return { token0Percent: 0, token1Percent: 100 }
   }
   if (assumedPrice >= maxPrice) {
     // Price above range: 0% token0, 100% token1 (more expensive asset)
-    return { token0Percent: 0, token1Percent: 100 }
+    return { token0Percent: 100, token1Percent: 0 }
   }
   if (minPrice === maxPrice) {
     // Degenerate range: Default to 50/50 (prevents division by zero)
@@ -55,8 +55,8 @@ export function calculateTokenRatio(assumedPrice, minPrice, maxPrice, feeTier) {
   const ratio = (alignedCurrent - alignedUpper) / (alignedLower - alignedUpper)
 
   // Convert to percentages with simple rounding with 2-decimal precision (UI constraint: fits table cells)
-  const token0Percent = Math.round(ratio * 100 * 100) / 100
-  const token1Percent = Math.round((1 - ratio) * 100 * 100) / 100
+  const token0Percent = Math.round((1 - ratio) * 100 * 100) / 100
+  const token1Percent = Math.round(ratio * 100 * 100) / 100
 
   return { token0Percent, token1Percent }
 }
