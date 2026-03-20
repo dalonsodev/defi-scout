@@ -176,7 +176,7 @@ export function CalculatorInputs({
             <input
               type="number"
               value={inputs.fullRange ? '' : formatPriceInput(inputs.minPrice)}
-              onChange={(e) => onChange('minPrice', e.target.value)}
+              onChange={(e) => onChange('minPrice', Number(e.target.value))}
               disabled={inputs.fullRange}
               placeholder="0"
               className="input input-md w-full text-lg text-center bg-base-300"
@@ -216,7 +216,7 @@ export function CalculatorInputs({
             <input
               type="number"
               value={inputs.fullRange ? '' : formatPriceInput(inputs.maxPrice)}
-              onChange={(e) => onChange('maxPrice', e.target.value)}
+              onChange={(e) => onChange('maxPrice', Number(e.target.value))}
               disabled={inputs.fullRange}
               placeholder="∞"
               className="input input-md w-full text-lg text-center bg-base-300"
