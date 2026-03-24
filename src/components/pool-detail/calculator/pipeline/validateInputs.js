@@ -77,8 +77,11 @@ export function validateInputs({
     }
   }
 
-  if (!hourlyData?.length || hourlyData.length < 168) {
-    return { success: false, error: 'No hourly data' }
+  if (!hourlyData?.length) {
+    return { success: false, error: 'No hourly data for this pool' }
+  }
+  if (hourlyData.length < 24) {
+    return { success: false, error: 'Insufficient hourly data (min. 24h required)'}
   }
 
   return { success: true }
