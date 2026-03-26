@@ -1,6 +1,28 @@
 import { useState } from 'react'
 import { ILProjectionModal } from './ILProjectionModal'
 
+function PlaceholderStats({ isPulsing = false }) {
+  const pulseClass = isPulsing ? 'animate-pulse' : ''
+
+  return (
+    <>
+      <div className={`text-4xl font-bold text-success mb-4 ${pulseClass}`}>
+        $--
+      </div>
+      <div className="space-y-2">
+        <div className={`flex justify-between ${pulseClass}`}>
+          <span className="text-base-content/60">MONTHLY:</span>
+          <span>$-- --%</span>
+        </div>
+        <div className={`flex justify-between ${pulseClass}`}>
+          <span className="text-base-content/60">YEARLY (APR):</span>
+          <span>$-- --%</span>
+        </div>
+      </div>
+    </>
+  )
+}
+
 /**
  * UI: Fee Projection Summary Card.
  * Displays estimated returns (daily/monthly/yearly) based on historical fee accrual rates.
@@ -33,44 +55,44 @@ export function CalculatorStats({
   // Early Exit: Network/API failures
   if (fetchError) {
     return (
-      <div className="mb-6">
+      <>
         <p className="text-error text-sm">
           Failed to load pool data: {fetchError}
         </p>
-      </div>
+      </>
     )
   }
 
   // Loading State: Skeleton UI to reduce perceived latency
   if (isLoading || results === null) {
     return (
-      <div className="mb-6">
+      <>
         <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
-        <div className="text-4xl font-bold text-success mb-4 animate-pulse">
-          $--
-        </div>
-        <div className="space-y-2">
-          <div className="flex justify-between animate-pulse">
-            <span className="text-base-content/60">MONTHLY:</span>
-            <span>$-- --%</span>
-          </div>
-          <div className="flex justify-between animate-pulse">
-            <span className="text-base-content/60">YEARLY (APR):</span>
-            <span>$-- --%</span>
-          </div>
-        </div>
-      </div>
+        <PlaceholderStats isPulsing />
+      </>
     )
   }
 
   // Validation: Invalid range or zero-liquidity edge cases
   if (!results.success) {
-    return (
-      <div className="mb-6">
+    if (results.warning) {
+      return (
+      <>
         <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
-        <p className="text-error text-sm">{results.error}</p>
-      </div>
+        <PlaceholderStats />
+        <div className="alert alert-warning text-xs font-semibold mt-4">{results.warning}</div>
+      </>
     )
+    } else {
+      return (
+        <>
+          <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
+          <PlaceholderStats />
+          <div className="alert alert-error text-xs font-semibold mt-4">{results.error}</div>
+        </>
+      )
+    }
+
   }
 
   // Linear Extrapolation: Assumes fee velocity ($/day/L) stays constant.
@@ -86,45 +108,44 @@ export function CalculatorStats({
 
   return (
     <>
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
-        <div className="text-4xl font-bold text-success mb-4">
-          ${dailyFees.toFixed(2)}
+      <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
+      <div className="text-4xl font-bold text-success mb-4">
+        ${dailyFees.toFixed(2)}
+      </div>
+
+      <div className="space-y-2 mb-4">
+        <div className="flex justify-between">
+          <span className="text-base-content/60">MONTHLY:</span>
+          <span className="font-semibold">
+            ${monthlyFees.toFixed(2)}{' '}
+            <span className="text-success">{monthlyAPR.toFixed(2)}%</span>
+          </span>
         </div>
 
-        <div className="space-y-2 mb-4">
-          <div className="flex justify-between">
-            <span className="text-base-content/60">MONTHLY:</span>
-            <span className="font-semibold">
-              ${monthlyFees.toFixed(2)}{' '}
-              <span className="text-success">{monthlyAPR.toFixed(2)}%</span>
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-base-content/60">YEARLY (APR):</span>
-            <span className="font-semibold">
-              ${yearlyFees.toFixed(2)}{' '}
-              <span className="text-success">{yearlyAPR.toFixed(2)}%</span>
-            </span>
-          </div>
+        <div className="flex justify-between">
+          <span className="text-base-content/60">YEARLY (APR):</span>
+          <span className="font-semibold">
+            ${yearlyFees.toFixed(2)}{' '}
+            <span className="text-success">{yearlyAPR.toFixed(2)}%</span>
+          </span>
         </div>
+      </div>
 
-        {/* Data Quality Warning: Low sample size increases projection variance */}
-        {hasLimitedData && (
-          <div className="alert alert-warning text-xs mb-4">
-            ⚠️ Based on {results.daysOfData.toFixed(1)} days. Projections may
-            vary.
-          </div>
-        )}
-
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="btn btn-sm btn-outline flex-1"
-          >
-            Simulate Position Performance
-          </button>
+      {/* Data Quality Warning: Low sample size increases projection variance */}
+      {hasLimitedData && (
+        <div className="alert alert-warning text-xs mb-4">
+          ⚠️ Based on {results.daysOfData.toFixed(1)} days. Projections may
+          vary.
         </div>
+      )}
+
+      <div className="flex gap-2">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="btn btn-sm btn-outline flex-1"
+        >
+          Simulate Position Performance
+        </button>
       </div>
 
       <ILProjectionModal
