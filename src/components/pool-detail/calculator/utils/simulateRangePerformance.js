@@ -76,7 +76,7 @@ export function simulateRangePerformance({
   if (quality === 'INSUFFICIENT') {
     return {
       success: false,
-      error: 'Pool needs 7+ days of data for reliable projections',
+      warning: 'Pool needs 7+ days of data for reliable projections',
       quality
     }
   }
