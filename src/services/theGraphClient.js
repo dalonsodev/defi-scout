@@ -222,6 +222,68 @@ const GET_POOL_SPARKLINES_QUERY = gql`
 `
 
 /**
+ * Query: Fetches a specific set of pools by ID from TheGraph.
+ * Used by the watchlist loader to retrieve fresh data for user-saved pools.
+ *
+ * Variable: $ids [ID!] - Array of pool contract addresses
+ * Ordered by TVL descending (highest liquidity pools surface first)
+ */
+const GET_WATCHED_POOLS_QUERY = gql`
+  query GetWatchedPools($ids: [ID!]) {
+    pools(
+      where: { id_in: $ids }
+      orderBy: totalValueLockedUSD
+      orderDirection: desc
+    ) {
+      id
+      feeTier
+      liquidity
+      totalValueLockedUSD
+      totalValueLockedToken0
+      totalValueLockedToken1
+      volumeUSD
+      volumeToken0
+      volumeToken1
+      collectedFeesUSD
+      collectedFeesToken0
+      collectedFeesToken1
+      token0Price
+      token1Price
+      createdAtTimestamp
+      token0 {
+        id
+        symbol
+        name
+      }
+      token1 {
+        id
+        symbol
+        name
+      }
+    }
+  }
+`
+
+/**
+ * Service: Batch-fetches live pool data for a user's watchlist.
+ * Returns the same shape as fetchPools() - compatible with PoolTable rendering.
+ *
+ * @param {string[]} poolIds - Pool contract addresses from Firestore favorites
+ * @returns {Promise<Array>} Fresh pool objects ordered by TVL desc
+ *
+ * @example
+ * const pools = await fetchWatchedPools([
+ *  "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+ *  "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640"
+ * ])
+ * // => [{ id, feeTier, totalValueLockedUSD, token0, token1, ... }]
+ */
+export async function fetchWatchedPools(poolIds) {
+  const data = await client.request(GET_WATCHED_POOLS_QUERY, { ids: poolIds })
+  return data.pools
+}
+
+/**
  * Service: Batch-fetches 14-day historical data for sparkline rendering.
  *
  * @param {string[]} poolAddresses - Array of pool contract addresses
