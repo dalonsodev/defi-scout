@@ -12,6 +12,20 @@ import { PlatformIcon } from '../common/PlatformIcon'
 import { useBreakpoint } from '../../hooks/useBreakpoint'
 import { useIntersection } from '../../hooks/useIntersection'
 
+const OutlinedStarIcon = () => (
+  <svg className="w-4 h-4 text-base-content/60" fill="none" viewBox="0 0 24 24"
+    strokeWidth={1.5} stroke="currentColor" xmlns="http://www.w3.org/2000/svg" >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
+  </svg>
+)
+
+const FilledStarIcon = () => (
+  <svg className="w-4 h-4 text-warning" fill="currentColor" viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg">
+    <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" />
+  </svg>
+)
+
 /**
  * Z-INDEX HIERARCHY (Critical for sticky positioning):
  * z-2: Body cells (sticky first column on horizontal scroll)
@@ -40,11 +54,21 @@ import { useIntersection } from '../../hooks/useIntersection'
  * @param {Array<id: string, desc: boolean>} props.sorting - TanStack sorting state
  * @param {Function} props.onSortingChange - Handler to update sorting criteria
  * @param {React.ForwardedRef<HTMLDivElement[lang="en"]>} ref - Ref to internal scroll container (for auto-scroll)
+ * @param {Set<string>} props.favoriteIds - Favorited pool IDs; used for O(1) isFavorited lookup
+ * @param {(poolId: string) => Promise<void>} props.toggleFavorite - Toggles favorite; opens auth modal if unauthenticated
  * @returns {JSX.Element}
  */
 const PoolTable = forwardRef(
   (
-    { pools, sparklineData, onVisiblePoolsChange, sorting, onSortingChange },
+    {
+      pools,
+      sparklineData,
+      onVisiblePoolsChange,
+      sorting,
+      onSortingChange,
+      favoriteIds,
+      toggleFavorite
+    },
     ref
   ) => {
     const { isDesktop } = useBreakpoint()
@@ -70,30 +94,42 @@ const PoolTable = forwardRef(
         if (col.accessorKey === 'name') {
           return {
             ...col,
-            cell: ({ row }) => (
-              <Link
-                to={`/pools/${row.original.id}`}
-                className="block"
-                aria-label={`View details for ${row.original.name} pool`}
-              >
+            cell: ({ row }) => {
+              const isFavorited = favoriteIds.has(row.original.id)
+
+              return (
                 <div className="flex items-center gap-2">
-
-                  <div
-                    className="tooltip tooltip-right"
-                    data-tip={row.original.name}
+                  <button
+                    className="btn btn-ghost btn-circle btn-sm"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      toggleFavorite(row.original.id)
+                    }}
                   >
-                    <div className="font-medium text-base-content max-w-[120px] truncate">
-                      {row.original.name}
+                    {isFavorited ? <FilledStarIcon /> : <OutlinedStarIcon />}
+                  </button>
+
+                  <Link
+                    to={`/pools/${row.original.id}`}
+                    className="flex items-center gap-2"
+                    aria-label={`View details for ${row.original.name} pool`}
+                  >
+                    <div
+                      className="tooltip tooltip-right"
+                      data-tip={row.original.name}
+                    >
+                      <div className="font-medium text-base-content max-w-[120px] truncate">
+                        {row.original.name}
+                      </div>
                     </div>
-                  </div>
 
-                  <span className="badge badge-sm text-base-content/50 border border-base-content/20">
-                    {row.original.feeTierFormatted}
-                  </span>
-
+                    <span className="badge badge-sm text-base-content/50 border border-base-content/20">
+                      {row.original.feeTierFormatted}
+                    </span>
+                  </Link>
                 </div>
-              </Link>
-            )
+              )
+            }
           }
         }
 

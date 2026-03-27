@@ -27,7 +27,9 @@ export function PoolsContent({
   filters,
   updateFilter,
   togglePlatform,
-  clearFilters
+  clearFilters,
+  favoriteIds,
+  toggleFavorite
 }) {
   // Platform dropdown options (sorted alphabetically)
   const availablePlatforms = useMemo(() => {
@@ -192,6 +194,8 @@ export function PoolsContent({
             currentPage={pageIndex + 1}
             sorting={sorting}
             onSortingChange={handleSortingChange}
+            favoriteIds={favoriteIds}
+            toggleFavorite={toggleFavorite}
           />
           <div className="py-4">
             <PaginationControls
