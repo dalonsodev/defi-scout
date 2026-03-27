@@ -6,6 +6,7 @@ import {
 import Pools from './pages/Pools'
 import Watchlist from './pages/Watchlist'
 import { Layout } from './components/layout/Layout'
+import { FavoritesLayout } from './components/layout/FavoritesLayout'
 import { PoolDetail } from './components/pool-detail/PoolDetail'
 import { Error } from './components/common/Error'
 import { poolsLoader } from './loaders/poolsLoader'
@@ -32,18 +33,20 @@ import { watchlistLoader } from './loaders/watchlistLoader'
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
-      <Route
-        path="pools/:poolId"
-        element={<PoolDetail />}
-        loader={poolDetailLoader}
-        errorElement={<Error />}
-      />
-      <Route index element={<Pools />} loader={poolsLoader} />
-      <Route
-        path="watchlist"
-        element={<Watchlist />}
-        loader={watchlistLoader}
-      />
+      <Route element={<FavoritesLayout />}>
+        <Route
+          path="pools/:poolId"
+          element={<PoolDetail />}
+          loader={poolDetailLoader}
+          errorElement={<Error />}
+        />
+        <Route index element={<Pools />} loader={poolsLoader} />
+        <Route
+          path="watchlist"
+          element={<Watchlist />}
+          loader={watchlistLoader}
+        />
+      </Route>
     </Route>
   )
 )

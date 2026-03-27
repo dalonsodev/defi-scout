@@ -1,4 +1,4 @@
-import { useLoaderData } from 'react-router-dom'
+import { useLoaderData, useOutletContext } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import { usePoolFilters } from '../hooks/usePoolFIlters'
 import { PoolsContent } from '../components/pools/PoolsContent'
@@ -13,8 +13,8 @@ export default function Pools() {
   const { pools } = useLoaderData()
   const isDesktop = useMediaQuery({ minWidth: 769 })
 
-  const { filters, updateFilter, togglePlatform, clearFilters } =
-    usePoolFilters()
+  const { filters, updateFilter, togglePlatform, clearFilters } = usePoolFilters()
+  const { favoriteIds, toggleFavorite } = useOutletContext()
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -31,6 +31,8 @@ export default function Pools() {
         togglePlatform={togglePlatform}
         clearFilters={clearFilters}
         isDesktop={isDesktop}
+        favoriteIds={favoriteIds}
+        toggleFavorite={toggleFavorite}
       />
     </div>
   )
