@@ -1,4 +1,4 @@
-import { useLoaderData, Link } from 'react-router-dom'
+import { useLoaderData, Link, useOutletContext } from 'react-router-dom'
 import { useCallback, useEffect, useState, useRef } from 'react'
 import { ContractLinks } from './ContractLinks'
 import { CurrentPriceCard } from './CurrentPriceCard'
@@ -9,6 +9,7 @@ import { usePoolTickData } from './charts/hooks/usePoolTickData'
 import { processTickData } from './charts/utils/processTickData'
 import { invertPriceRange } from './calculator/utils/invertPriceRange'
 import { inferRangeFromLiquidity } from './calculator/utils/inferRangeFromLiquidity'
+import { OutlinedStarIcon, FilledStarIcon } from '../common/StarIcons'
 
 const DexScreenLogo = () => (
   <svg width="1.5em" height="1.5em" viewBox="0 0 252 300"
@@ -40,6 +41,7 @@ export function PoolDetail() {
     tickData,
     fetchError: tickError
   } = usePoolTickData(pool.id, pool.tick, pool.feeTier)
+  const { favoriteIds, toggleFavorite } = useOutletContext()
   const hasHydrated = useRef(false)
   const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
   const [rangeInputs, setRangeInputs] = useState({
@@ -174,6 +176,9 @@ export function PoolDetail() {
   const last7Days = history.slice(-7)
   const avgAPY = calculateAverageAPY(last7Days, latestSnapshot.tvlUSD)
 
+  // Check if pool is in the user's watchlist
+  const isFavorited = favoriteIds.has(pool.id)
+
   return (
     <div className="container mx-auto px-4 pt-4 max-w-7xl">
       {/* NAVIGATION: Contextual return */}
@@ -222,7 +227,7 @@ export function PoolDetail() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <button className="btn btn-ghost btn-sm">
+                  <button className="btn btn-ghost btn-circle btn-sm">
                     <DexScreenLogo />
                   </button>
                 </a>
@@ -234,10 +239,22 @@ export function PoolDetail() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <button className="btn btn-ghost btn-sm">
+                  <button className="btn btn-ghost btn-circle btn-sm">
                     <BlockExplorerIcon />
                   </button>
                 </a>
+              </div>
+
+              <div
+                className="tooltip"
+                data-tip={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
+              >
+                <button
+                  className="btn btn-ghost btn-circle btn-sm"
+                  onClick={() => toggleFavorite(pool.id)}
+                >
+                  {isFavorited ? <FilledStarIcon /> : <OutlinedStarIcon />}
+                </button>
               </div>
             </div>
           </div>

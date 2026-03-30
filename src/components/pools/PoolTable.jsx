@@ -9,6 +9,7 @@ import {
 import { baseColumns } from '../../data/tableColumns'
 import { SparklineCell } from './cells/SparklineCell'
 import { PlatformIcon } from '../common/PlatformIcon'
+import { OutlinedStarIcon, FilledStarIcon } from '../common/StarIcons'
 import { useBreakpoint } from '../../hooks/useBreakpoint'
 import { useIntersection } from '../../hooks/useIntersection'
 
@@ -40,11 +41,21 @@ import { useIntersection } from '../../hooks/useIntersection'
  * @param {Array<id: string, desc: boolean>} props.sorting - TanStack sorting state
  * @param {Function} props.onSortingChange - Handler to update sorting criteria
  * @param {React.ForwardedRef<HTMLDivElement[lang="en"]>} ref - Ref to internal scroll container (for auto-scroll)
+ * @param {Set<string>} props.favoriteIds - Favorited pool IDs; used for O(1) isFavorited lookup
+ * @param {(poolId: string) => Promise<void>} props.toggleFavorite - Toggles favorite; opens auth modal if unauthenticated
  * @returns {JSX.Element}
  */
 const PoolTable = forwardRef(
   (
-    { pools, sparklineData, onVisiblePoolsChange, sorting, onSortingChange },
+    {
+      pools,
+      sparklineData,
+      onVisiblePoolsChange,
+      sorting,
+      onSortingChange,
+      favoriteIds,
+      toggleFavorite
+    },
     ref
   ) => {
     const { isDesktop } = useBreakpoint()
@@ -70,30 +81,47 @@ const PoolTable = forwardRef(
         if (col.accessorKey === 'name') {
           return {
             ...col,
-            cell: ({ row }) => (
-              <Link
-                to={`/pools/${row.original.id}`}
-                className="block"
-                aria-label={`View details for ${row.original.name} pool`}
-              >
-                <div className="flex items-center gap-2">
+            cell: ({ row }) => {
+              const isFavorited = favoriteIds.has(row.original.id)
 
+              return (
+                <div className="flex items-center gap-2">
                   <div
                     className="tooltip tooltip-right"
-                    data-tip={row.original.name}
+                    data-tip={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
                   >
-                    <div className="font-medium text-base-content max-w-[120px] truncate">
-                      {row.original.name}
-                    </div>
+                    <button
+                      className="btn btn-ghost btn-circle btn-sm"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleFavorite(row.original.id)
+                      }}
+                    >
+                      {isFavorited ? <FilledStarIcon /> : <OutlinedStarIcon />}
+                    </button>
                   </div>
 
-                  <span className="badge badge-sm text-base-content/50 border border-base-content/20">
-                    {row.original.feeTierFormatted}
-                  </span>
+                  <Link
+                    to={`/pools/${row.original.id}`}
+                    className="flex items-center gap-2"
+                    aria-label={`View details for ${row.original.name} pool`}
+                  >
+                    <div
+                      className="tooltip tooltip-right"
+                      data-tip={row.original.name}
+                    >
+                      <div className="font-medium text-base-content max-w-[120px] truncate">
+                        {row.original.name}
+                      </div>
+                    </div>
 
+                    <span className="badge badge-sm text-base-content/50 border border-base-content/20">
+                      {row.original.feeTierFormatted}
+                    </span>
+                  </Link>
                 </div>
-              </Link>
-            )
+              )
+            }
           }
         }
 
@@ -178,7 +206,7 @@ const PoolTable = forwardRef(
 
         return col
       })
-    }, [sparklineData])
+    }, [sparklineData, favoriteIds, toggleFavorite])
 
     const visibleColumns = useMemo(() => {
       return columns.filter((col) => {
