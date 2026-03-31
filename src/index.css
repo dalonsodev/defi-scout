@@ -86,5 +86,39 @@
   .sticky-column-shadow {
     box-shadow: 5px 0 20px -10px rgba(0, 0, 0, 0.3);
   }
+  .blob-1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 700px;
+    height: 700px;
+    transform: translate(-30%, -30%);
+    background: #6366f1;
+    border-radius: 50%;
+    opacity: 0.12;
+    filter: blur(120px);
+  }
+  .blob-2 {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 600px;
+    height: 600px;
+    transform: translate(30%, 30%);
+    background: #db2777;
+    opacity: 0.09;
+    filter: blur(100px);
+  }
+  .blob-3 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    height: 400px;
+    transform: translate(-50%, -50%);
+    background: #7c3aed;
+    opacity: 0.06;
+    filter: blur(140px);
+  }
 }
 

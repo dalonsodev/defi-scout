@@ -36,7 +36,7 @@ export function Navbar() {
 
 
   return (
-    <header className="navbar bg-base-100 shadow px-0 sm:px-2 md:px-2">
+    <header className="navbar glass-surface sticky top-0 z-50 px-0 sm:px-2 md:px-2">
       <div className="flex-1">
         {/* Brand: Larger text-xl for visual hierarchy */}
         <Link to="/" className="btn btn-ghost text-xl">
@@ -55,7 +55,7 @@ export function Navbar() {
 
         {currentUser === false && (
           <button
-            className="btn btn-sm  btn-primary rounded-xl mr-2"
+            className="btn btn-sm btn-primary mr-2"
             onClick={() => {
               openAuthModal()
             }}
@@ -87,7 +87,7 @@ export function Navbar() {
               </button>
 
               {isOpen && (
-                <div className="absolute flex flex-col items-center z-50 right-0 top-full bg-base-200 shadow-lg border border-base-content/20 rounded-xl gap-2 md:gap-0 p-4 md:p-2 mt-2">
+                <div className="absolute flex flex-col items-center z-50 right-0 top-full glass-overlay rounded-xl gap-2 md:gap-0 p-4 md:p-2 mt-2">
                   <Link
                     to="/watchlist"
                     className="btn btn-ghost text-lg md:text-sm"

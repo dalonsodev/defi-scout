@@ -55,7 +55,7 @@ export function PoolFilters({
   ].filter(Boolean).length
 
   return (
-    <div className="flex flex-col md:flex-row gap-2 mb-4 p-4 bg-base-100">
+    <div className="flex flex-col md:flex-row gap-2 mb-4 p-4">
       {/* Mobile row: search + toggle */}
       <div className="flex gap-2 grow">
         <input
