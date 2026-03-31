@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from '../../firebase'
 
 const AuthContext = createContext(null)
@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   const openAuthModal = () => setIsAuthModalOpen(true)
   const closeAuthModal = () => setIsAuthModalOpen(false)
+  const logout = () => signOut(auth)
 
   return (
     <AuthContext.Provider
@@ -25,7 +26,8 @@ export const AuthProvider = ({ children }) => {
         currentUser,
         openAuthModal,
         closeAuthModal,
-        isAuthModalOpen
+        isAuthModalOpen,
+        logout
       }}
     >
       {children}
