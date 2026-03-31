@@ -40,6 +40,42 @@
   --color-neutral-content: oklch(0.70 0.02 265);
 }
 
+:root {
+  /* GLASS SURFACES (backdrop + bg color + border) */
+  --glass-bg-surface: rgba(19, 24, 42, 0.55);
+  --glass-bg-overlay: rgba(30, 36, 58, 0.75);
+  --glass-bg-input: rgba(40, 46, 70, 0.80);
+
+  /* Text Hierarchy */
+  --text-primary: oklch(0.91 0.01 265);
+  --text-secondary: oklch(0.70 0.02 265);
+  --text-muted: oklch(0.40 0.02 265);
+
+  /* Borders */
+  --border-subtle: oklch(1 0 0 / 7%);
+  --border-medium: oklch(1 0 0 / 12%);
+  --border-accent: oklch(0.56 0.22 264 / 35%);
+}
+
+@layer components {
+  .glass-surface {
+    background: var(--glass-bg-surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+  }
+  .glass-overlay {
+    background: var(--glass-bg-overlay);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-medium);
+  }
+  .glass-input {
+    background: var(--glass-bg-input);
+    border: 1px solid var(--border-subtle);
+  }
+}
+
 @layer utilities {
   .scrollbar-hide {
     scrollbar-width: none;
