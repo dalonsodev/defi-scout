@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { PriceInputSection } from './PriceInputSection'
 import { TimeLineControl } from './TimeLineControl'
 import { StrategyComparison } from './StrategyComparison'
@@ -46,9 +47,9 @@ export function ILProjectionModal({
     daysToBreakEven
   } = useProjectionCalculator(poolData, rangeInputs, results)
 
-  return (
+  return createPortal(
     <dialog className={`modal ${isOpen ? 'modal-open' : ''}`}>
-      <div className="modal-box max-w-xl glass-overlay">
+      <div className="modal-box max-w-xl glass-overlay rounded-2xl">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-2xl font-bold">Simulate Position Performance</h3>
@@ -88,6 +89,7 @@ export function ILProjectionModal({
       <form method="dialog" onClick={onClose} className="modal-backdrop">
         <button>close</button>
       </form>
-    </dialog>
+    </dialog>,
+    document.body
   )
 }
