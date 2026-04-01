@@ -326,7 +326,7 @@ export function PoolDetail() {
 function StatCard({ label, value }) {
   return (
     <div className="glass-surface rounded-2xl p-3 shadow">
-      <div className="text-xs text-base-content/60 uppercase tracking-wide mb-1">
+      <div className="text-xs text-base-content/60 uppercase tracking-wide mb-1 whitespace-nowrap">
         {label}
       </div>
       <div className="text-base font-semibold text-primary/75">{value}</div>
