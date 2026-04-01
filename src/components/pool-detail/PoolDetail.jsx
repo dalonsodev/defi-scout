@@ -246,7 +246,7 @@ export function PoolDetail() {
               </div>
 
               <div
-                className="tooltip"
+                className="tooltip tooltip-left"
                 data-tip={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
               >
                 <button
