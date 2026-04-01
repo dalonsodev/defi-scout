@@ -89,7 +89,7 @@ export function TVLVolumeChart({ history }) {
             dataKey="tvlUSD"
             fill={CHART_COLORS.dataViz.tvl}
             stroke={CHART_COLORS.dataViz.tvl}
-            fillOpacity={0.6}
+            fillOpacity={0.3}
             name="TVL"
           />
 
@@ -98,7 +98,7 @@ export function TVLVolumeChart({ history }) {
             yAxisId="right"
             dataKey="volumeUSD"
             fill={CHART_COLORS.dataViz.volume}
-            opacity={0.7}
+            opacity={0.8}
             name="Volume"
           />
 
