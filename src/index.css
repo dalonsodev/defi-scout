@@ -45,6 +45,11 @@
   --glass-bg-surface: rgba(19, 24, 42, 0.55);
   --glass-bg-overlay: rgba(30, 36, 58, 0.75);
   --glass-bg-input: rgba(40, 46, 70, 0.80);
+  --glass-bg-modal: oklch(0.24 0.04 265 / 95%);
+  --glass-bg-btn: rgba(255, 255, 255, 0.05);
+  --glass-bg-btn-hover: rgba(255, 255, 255, 0.10);
+  --glass-bg-btn-ghost-hover: rgba(255, 255, 255, 0.08);
+  --glass-bg-btn-active: rgba(var(--color-primary), 0.2);
 
   /* Text Hierarchy */
   --text-primary: oklch(0.91 0.01 265);
@@ -55,9 +60,28 @@
   --border-subtle: oklch(1 0 0 / 7%);
   --border-medium: oklch(1 0 0 / 12%);
   --border-accent: oklch(0.56 0.22 264 / 35%);
+  --border-btn-active: rgba(var(--color-primary), 0.5);
+
+  /* TABLE SURFACES */
+  --table-header-bg: rgba(10, 14, 28, 0.85);
+  --table-body-bg: rgba(16, 20, 38, 0.50);
+  --table-sticky-bg: rgba(12, 16, 32, 0.97);
+  --table-sticky-hover-bg: rgba(24, 30, 52, 0.97);
+  --table-divider: rgba(255, 255, 255, 0.06);
 }
 
-@layer components {
+@layer utilities {
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .sticky-column-shadow {
+    box-shadow: 5px 0 20px -10px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Glass Surfaces */
   .glass-surface {
     background: var(--glass-bg-surface);
     backdrop-filter: blur(12px);
@@ -74,18 +98,34 @@
     background: var(--glass-bg-input);
     border: 1px solid var(--border-subtle);
   }
-}
+  .glass-modal {
+    background: var(--glass-bg-modal);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 8px rgba(0, 0, 0, 0.5);
+  }
+  .btn-glass {
+    background: var(--glass-bg-btn);
+    border: 1px solid var(--border-subtle);
+  }
+  .btn-glass:hover {
+    background: var(--glass-bg-btn-hover);
+    border: 1px solid var(--border-medium);
+  }
+  .btn-active {
+    background: var(--glass-bg-btn-active);
+    border: 1px solid var(--border-medium);
+    color: inherit;
+  }
+  .btn-ghost:hover {
+    background: var(--glass-bg-btn-ghost-hover);
+  }
+  [data-tip]::before {
+    background: var(--glass-bg-modal);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+  }
 
-@layer utilities {
-  .scrollbar-hide {
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .sticky-column-shadow {
-    box-shadow: 5px 0 20px -10px rgba(0, 0, 0, 0.3);
-  }
+  /* Colored Blobs */
   .blob-1 {
     position: absolute;
     top: 0;
