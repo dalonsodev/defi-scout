@@ -49,7 +49,7 @@ export function ContractLinks({ pool, chain = "ethereum" }) {
   }
 
   return (
-    <div className="rounded-2xl bg-base-200 p-4">
+    <div className="rounded-2xl glass-surface p-4">
       <div className="text-xs text-base-content/60 mb-1">CONTRACTS</div>
       {items.map((item) => (
         <div key={item.id} className="flex items-center justify-between gap-2 mt-1">

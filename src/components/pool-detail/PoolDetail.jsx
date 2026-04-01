@@ -188,7 +188,7 @@ export function PoolDetail() {
       </Link>
 
       {/* Header: Identity and protocol info */}
-      <div className="bg-base-200 rounded-3xl p-6 mb-6 shadow-lg">
+      <div className="glass-surface rounded-3xl p-6 mb-6 shadow-lg">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 md:gap-4">
 
           <div>
@@ -200,7 +200,7 @@ export function PoolDetail() {
               <span className="badge badge-outline text-primary badge-md">
                 {(pool.feeTier / 10000).toFixed(2)}%
               </span>
-              <span className="badge badge-soft badge-md text-base-content/60 hidden md:inline-flex">
+              <span className="badge badge-soft badge-md text-base-content/60 hidden md:inline-flex glass-surface">
                 Ethereum
               </span>
             </div>
@@ -325,7 +325,7 @@ export function PoolDetail() {
 
 function StatCard({ label, value }) {
   return (
-    <div className="bg-base-200 rounded-2xl p-3 shadow">
+    <div className="glass-surface rounded-2xl p-3 shadow">
       <div className="text-xs text-base-content/60 uppercase tracking-wide mb-1">
         {label}
       </div>
