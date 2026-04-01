@@ -1,4 +1,14 @@
 /**
+ * Utility: Normalizes pool names for comparison against filters search
+ *
+ * @param {string} str - Any pool or search string to normalize
+ * @returns {string} Whitespace-free, uppercased, token-order-independent string (e.g. "WETH / USDC" -> "USDC/WETH")
+ */
+function normalizeSearch(str) {
+  return str.replace(/\s+/g, '').toUpperCase().split("/").sort().join("/")
+}
+
+/**
  * Utility: Multi-criteria filtering for liquidity pools.
  *
  * Architecture: Client-side filtering (API doesn't support server-side queries).
@@ -9,7 +19,7 @@
  *
  * @param {Object[]} pools - Raw pool array from TheGraph
  * @param {Object} filters - Active filter state from UI
- * @param {string} [filters.search=""] - Case-insensitive substring match on pool name
+ * @param {string} [filters.search=""] - Order-insensitive, case-insensitive substring match on pool name
  * @param {string[]} [filters.platforms=[]] - Array of DEX protocol IDs (e.g. ["uniswap-v3", "curve"])
  * @param {number|string} [filters.tvlUsd] - Minimum TVL threshold (USD)
  * @param {number|string} [filters.volumeUsd1d] - Minimum 24h volume threshold (USD)
@@ -25,6 +35,7 @@
  * })
  * // => [{ name: "ETH/USDC", tvlUsd: 1500000, ... }, ...]
  */
+
 export function filterPools(pools, filters) {
   if (!pools || !Array.isArray(pools)) return []
 
@@ -32,7 +43,7 @@ export function filterPools(pools, filters) {
     // 1. Text Search: Case-insensitive substring match on pool name
     if (
       filters.search &&
-      !pool.name.toLowerCase().includes(filters.search.toLocaleLowerCase())
+      !normalizeSearch(pool.name).includes(normalizeSearch(filters.search))
     )
       return false
 
