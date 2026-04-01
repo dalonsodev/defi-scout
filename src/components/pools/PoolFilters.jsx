@@ -55,19 +55,24 @@ export function PoolFilters({
   ].filter(Boolean).length
 
   return (
-    <div className="flex flex-col md:flex-row gap-2 mb-4 p-4 bg-base-100">
+    <div className="flex flex-col md:flex-row gap-2 mb-4 p-4">
       {/* Mobile row: search + toggle */}
-      <div className="flex gap-2 grow">
+      <div className="relative flex flex-1 gap-2">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
+          <svg className="w-4 h-4" viewBox="0 0 20 20">
+            <path fill="currentColor" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9z" />
+          </svg>
+        </span>
         <input
           type="text"
-          placeholder="SOL or SOL/USDC"
+          placeholder="WETH or WETH/USDC"
           value={localFilters.search}
-          className="input input-bordered input-sm rounded-xl flex-1"
+          className="input glass-input input-sm rounded-xl pl-8 w-full"
           onChange={(e) => updateLocalFilter('search', e.target.value)}
         />
         <button
           onClick={() => {setIsOpen(true)}}
-          className="btn btn-sm btn-outline md:hidden rounded-xl"
+          className="btn btn-sm btn-outline md:hidden rounded-xl btn-glass"
         >
           Filters
           <span
@@ -87,7 +92,7 @@ export function PoolFilters({
 
       {/* Bottom sheet */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-50 md:hidden bg-base-100
+        className={`fixed bottom-0 left-0 right-0 z-50 md:hidden glass-modal
           rounded-t-4xl transition-transform duration-300 ease-out
           ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
       >
@@ -114,7 +119,7 @@ export function PoolFilters({
                 type="number"
                 placeholder="Min TVL ($)"
                 value={localFilters.tvlUsd}
-                className="input sm:flex-1 w-full input-bordered input-sm rounded-xl"
+                className="input sm:flex-1 w-full glass-input input-sm rounded-xl"
                 onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
               />
 
@@ -122,7 +127,7 @@ export function PoolFilters({
                 type="number"
                 placeholder="Min Vol 24h ($)"
                 value={localFilters.volumeUsd1d}
-                className="input sm:flex-1 w-full input-bordered input-sm rounded-xl"
+                className="input sm:flex-1 w-full glass-input input-sm rounded-xl"
                 onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
               />
 
@@ -145,17 +150,17 @@ export function PoolFilters({
         type="number"
         placeholder="Min TVL ($)"
         value={localFilters.tvlUsd}
-        className="hidden md:block input input-bordered input-sm rounded-xl w-36"
+        className="hidden md:block input glass-input input-sm rounded-xl w-36"
         onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
       />
       <input
         type="number"
         placeholder="Min Vol 24h ($)"
         value={localFilters.volumeUsd1d}
-        className="hidden md:block input input-bordered input-sm rounded-xl w-36"
+        className="hidden md:block input glass-input input-sm rounded-xl w-36"
         onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
       />
-      <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-ghost">
+      <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-glass rounded-xl">
         Clear filters
         <span
           className={`ml-2 ${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}

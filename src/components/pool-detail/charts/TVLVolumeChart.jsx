@@ -44,7 +44,7 @@ export function TVLVolumeChart({ history }) {
   }, [historyWithRatio])
 
   return (
-    <div className="card bg-base-200 rounded-2xl p-4">
+    <div className="card glass-surface rounded-2xl p-4">
       <h3 className="text-lg font-semibold mb-4">TVL & Volume</h3>
 
       <ResponsiveContainer
@@ -89,7 +89,7 @@ export function TVLVolumeChart({ history }) {
             dataKey="tvlUSD"
             fill={CHART_COLORS.dataViz.tvl}
             stroke={CHART_COLORS.dataViz.tvl}
-            fillOpacity={0.6}
+            fillOpacity={0.3}
             name="TVL"
           />
 
@@ -98,7 +98,7 @@ export function TVLVolumeChart({ history }) {
             yAxisId="right"
             dataKey="volumeUSD"
             fill={CHART_COLORS.dataViz.volume}
-            opacity={0.7}
+            opacity={0.8}
             name="Volume"
           />
 

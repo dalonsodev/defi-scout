@@ -44,7 +44,7 @@ export function PriceInputSection({
         <label className="label">
           <span className="label-text mb-2 font-semibold">Current Price</span>
         </label>
-        <div className="input input-bordered bg-base-300 flex items-center">
+        <div className="input input-bordered glass-input bg-base-300 flex items-center rounded-xl">
           <span className="text-base-content/60">$</span>
           <input
             type="number"
@@ -66,7 +66,7 @@ export function PriceInputSection({
         <label className="label">
           <span className="label mb-2 font-semibold">Future Price</span>
         </label>
-        <div className="input input-bordered flex items-center">
+        <div className="input input-bordered glass-input flex items-center rounded-xl">
           <span>$</span>
           <input
             type="number"
@@ -87,7 +87,7 @@ export function PriceInputSection({
 
       {/* Current Price: Token1 (Read-only, API-sourced) */}
       <div className="form-control">
-        <div className="input input-bordered bg-base-300 flex items-center">
+        <div className="input input-bordered glass-input bg-base-300 flex items-center rounded-xl">
           <span className="text-base-content/60">$</span>
           <input
             type="number"
@@ -106,7 +106,7 @@ export function PriceInputSection({
 
       {/* Future Price: Token1 (User Projection) */}
       <div className="form-control">
-        <div className="input input-bordered flex items-center">
+        <div className="input input-bordered glass-input flex items-center rounded-xl">
           <span>$</span>
           <input
             type="number"
