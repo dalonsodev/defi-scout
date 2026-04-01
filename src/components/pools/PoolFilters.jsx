@@ -160,7 +160,7 @@ export function PoolFilters({
         className="hidden md:block input glass-input input-sm rounded-xl w-36"
         onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
       />
-      <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-ghost">
+      <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-glass rounded-xl">
         Clear filters
         <span
           className={`ml-2 ${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}
