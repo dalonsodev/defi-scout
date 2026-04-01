@@ -115,7 +115,7 @@ const PoolTable = forwardRef(
                       </div>
                     </div>
 
-                    <span className="badge badge-sm text-base-content/50 border border-base-content/20">
+                    <span className="badge badge-sm text-base-content/50 btn-glass">
                       {row.original.feeTierFormatted}
                     </span>
                   </Link>
@@ -174,7 +174,7 @@ const PoolTable = forwardRef(
           return {
             ...col,
             cell: ({ row }) => (
-              <span className="badge badge-primary badge-sm rounded-l-lg">
+              <span className="badge glass-surface text-primary border-0">
                 {row.original.chain}
               </span>
             )
@@ -249,7 +249,7 @@ const PoolTable = forwardRef(
                 key={header.id}
                 onClick={header.column.getToggleSortingHandler()}
                 style={{ width: header.column.getSize() }}
-                className={`sticky top-0 z-10 has-[.tooltip:hover]:z-20 bg-base-300 px-6 py-4 text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer hover:bg-base-300 transition
+                className={`sticky top-0 z-10 has-[.tooltip:hover]:z-20 bg-(--table-header-bg) hover:bg-(--table-header-bg) px-6 py-4 text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer transition
                   ${isSticky ? 'left-0 z-11 pl-4 text-left sticky-column-shadow' : ''}
                 `.trim()}
               >
@@ -313,7 +313,7 @@ const PoolTable = forwardRef(
             ref={rowRefs[i]}
             data-pool-id={row.original.id}
             onClick={handleRowClick}
-            className="group hover:bg-base-300/30 transition-colors duration-150 cursor-pointer"
+            className="group hover:bg-white/4 transition-colors duration-150 cursor-pointer"
             >
             {row.getVisibleCells().map((cell) => {
               const isSticky = cell.column.columnDef.meta?.isSticky
@@ -323,7 +323,7 @@ const PoolTable = forwardRef(
                   key={cell.id}
                   style={{ width: cell.column.getSize() }}
                   className={`px-4 py-6 whitespace-nowrap text-sm
-                           ${isSticky ? 'sticky left-0 bg-base-200 sticky-column-shadow group-hover:bg-base-200/20 z-2 transition-colors duration-150' : ''}
+                           ${isSticky ? 'sticky left-0 bg-(--table-sticky-bg) sticky-column-shadow group-hover:bg-(--table-sticky-hover-bg) z-2 transition-colors duration-150' : ''}
                         `.trim()}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -341,8 +341,8 @@ const PoolTable = forwardRef(
         className="overflow-x-auto scrollbar-hide rounded-t-3xl max-h-[592px] md:max-h-[840px]"
       >
         <table className="min-w-full divide-y divide-base-300 border-separate border-spacing-0">
-          <thead className="bg-base-300">{renderHeaders()}</thead>
-          <tbody className="bg-base-200 divide-y divide-base-300">
+          <thead className="bg-(--table-header-bg)">{renderHeaders()}</thead>
+          <tbody className="bg-(--table-body-bg) divide-y divide-(--table-divider)">
             {renderRows()}
           </tbody>
         </table>

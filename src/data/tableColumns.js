@@ -28,6 +28,7 @@ export const baseColumns = [
   {
     accessorKey: 'apyBase',
     header: 'APY',
+    size: 100,
     meta: {
       showOn: 'both',
       tooltip: "Annualized Yield based on generated fees in the last 24h"
@@ -36,6 +37,7 @@ export const baseColumns = [
   {
     accessorKey: 'tvlUsd',
     header: 'TVL',
+    size: 130,
     meta: {
       showOn: 'both',
       tooltip: "Total Value Locked - Total liquidity accumulated in the pool"
@@ -44,6 +46,7 @@ export const baseColumns = [
   {
     accessorKey: 'volumeUsd1d',
     header: 'Vol (24h)',
+    size: 130,
     meta: {
       showOn: 'both',
       tooltip: "Total swap volume for the pool in the last 24 hours"
@@ -52,11 +55,13 @@ export const baseColumns = [
   {
     accessorKey: 'sparklineIn7d',
     header: 'APY (14d)',
+    size: 130,
     meta: { showOn: 'both' }
   },
   {
     accessorKey: 'chain',
     header: 'Chain',
+    size: 110,
     meta: { showOn: 'desktop' }
   },
   {
@@ -67,6 +72,7 @@ export const baseColumns = [
   {
     accessorKey: 'platformName',
     header: 'Platform',
+    size: 160,
     meta: { showOn: 'desktop' }
   }
 ]

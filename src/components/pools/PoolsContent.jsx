@@ -184,7 +184,7 @@ export function PoolsContent({
       ) : (
         <div
           ref={tableRef}
-          className="bg-base-200 mx-0 sm:-mx-2 md:mx-0 rounded-3xl shadow-lg"
+          className="glass-surface mx-0 sm:-mx-2 md:mx-0 rounded-3xl"
         >
           <PoolTable
             ref={tableScrollRef}

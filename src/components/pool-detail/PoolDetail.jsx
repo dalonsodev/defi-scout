@@ -188,7 +188,7 @@ export function PoolDetail() {
       </Link>
 
       {/* Header: Identity and protocol info */}
-      <div className="bg-base-200 rounded-3xl p-6 mb-6 shadow-lg">
+      <div className="glass-surface rounded-3xl p-6 mb-6 shadow-lg">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 md:gap-4">
 
           <div>
@@ -197,10 +197,10 @@ export function PoolDetail() {
               <h1 className="text-3xl font-bold">
                 {primary.symbol} / {secondary.symbol}
               </h1>
-              <span className="badge badge-outline text-primary badge-md">
+              <span className="badge badge-outline text-primary badge-md rounded-full">
                 {(pool.feeTier / 10000).toFixed(2)}%
               </span>
-              <span className="badge badge-soft badge-md text-base-content/60 hidden md:inline-flex">
+              <span className="badge badge-soft badge-md text-base-content/60 hidden md:inline-flex glass-overlay rounded-full">
                 Ethereum
               </span>
             </div>
@@ -212,7 +212,7 @@ export function PoolDetail() {
           </div>
 
           {/* Row 3: chain badge - mobile only */}
-          <span className="badge badge-soft badge-md text-base-content/60 md:hidden mt-1">
+          <span className="badge badge-soft badge-md text-base-content/60 md:hidden mt-1 glass-overlay rounded-full">
             Ethereum
           </span>
 
@@ -246,7 +246,7 @@ export function PoolDetail() {
               </div>
 
               <div
-                className="tooltip"
+                className="tooltip tooltip-left"
                 data-tip={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
               >
                 <button
@@ -325,8 +325,8 @@ export function PoolDetail() {
 
 function StatCard({ label, value }) {
   return (
-    <div className="bg-base-200 rounded-2xl p-3 shadow">
-      <div className="text-xs text-base-content/60 uppercase tracking-wide mb-1">
+    <div className="glass-surface rounded-2xl p-3 shadow">
+      <div className="text-xs text-base-content/60 uppercase tracking-wide mb-1 whitespace-nowrap">
         {label}
       </div>
       <div className="text-base font-semibold text-primary/75">{value}</div>

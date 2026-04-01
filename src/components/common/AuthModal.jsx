@@ -90,9 +90,9 @@ export function AuthModal() {
 
   return (
     <dialog className={`modal ${isAuthModalOpen ? 'modal-open' : ''}`}>
-      <div className="modal-box max-w-xl bg-base-200">
+      <div className="modal-box max-w-xl glass-modal rounded-2xl">
         <button
-          className="btn btn-ghost btn-sm btn-circle absolute right-2 top-2"
+          className="btn btn-ghost btn-sm btn-circle btn-glass absolute right-2 top-2"
           onClick={handleClose}
         >
           ✕
@@ -133,7 +133,7 @@ export function AuthModal() {
               <input
                 id="email"
                 type="email"
-                className="input input-bordered w-full mt-1"
+                className="input glass-input w-full mt-1 rounded-xl"
                 aria-label="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -162,7 +162,7 @@ export function AuthModal() {
                   <input
                     id="password"
                     type="password"
-                    className="input input-bordered w-full mt-1"
+                    className="input glass-input w-full mt-1 rounded-xl"
                     aria-label="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -176,7 +176,11 @@ export function AuthModal() {
                 </div>
               )}
 
-              <button type="submit" className="btn btn-primary w-full mt-4" disabled={isLoading}>
+              <button
+                type="submit"
+                className="btn btn-primary w-full mt-4 rounded-xl"
+                disabled={isLoading}
+              >
                 {isLoading && <span className="loading loading-spinner loading-sm" />}
                 {mode === MODE.LOGIN
                   ? 'Log In'
@@ -202,7 +206,7 @@ export function AuthModal() {
 
                   <button
                     type="button"
-                    className="btn btn-outline w-full mb-2"
+                    className="btn btn-outline w-full mb-2 btn-glass rounded-xl"
                     onClick={handleGoogleSignIn}
                     disabled={isLoading}
                   >
@@ -217,7 +221,7 @@ export function AuthModal() {
 
                   <button
                     type="button"
-                    className="btn btn-ghost text-sm text-base-content/60 mt-4 block mx-auto"
+                    className="btn btn-ghost btn-glass rounded-xl text-sm text-base-content/60 mt-4 block mx-auto"
                     onClick={() => {
                       setMode(mode === MODE.LOGIN ? MODE.SIGNUP : MODE.LOGIN)
                       setError(null)
