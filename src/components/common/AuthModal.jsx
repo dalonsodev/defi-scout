@@ -90,7 +90,7 @@ export function AuthModal() {
 
   return (
     <dialog className={`modal ${isAuthModalOpen ? 'modal-open' : ''}`}>
-      <div className="modal-box max-w-xl bg-base-200">
+      <div className="modal-box max-w-xl glass-modal">
         <button
           className="btn btn-ghost btn-sm btn-circle absolute right-2 top-2"
           onClick={handleClose}
@@ -133,7 +133,7 @@ export function AuthModal() {
               <input
                 id="email"
                 type="email"
-                className="input input-bordered w-full mt-1"
+                className="input glass-input w-full mt-1"
                 aria-label="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -162,7 +162,7 @@ export function AuthModal() {
                   <input
                     id="password"
                     type="password"
-                    className="input input-bordered w-full mt-1"
+                    className="input glass-input w-full mt-1"
                     aria-label="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

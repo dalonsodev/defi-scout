@@ -48,7 +48,7 @@ export function ILProjectionModal({
 
   return (
     <dialog className={`modal ${isOpen ? 'modal-open' : ''}`}>
-      <div className="modal-box max-w-xl bg-base-200">
+      <div className="modal-box max-w-xl glass-overlay">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-2xl font-bold">Simulate Position Performance</h3>

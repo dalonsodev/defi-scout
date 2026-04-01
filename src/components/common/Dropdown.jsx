@@ -36,7 +36,7 @@ export function Dropdown({ selected, onToggle, options }) {
       {/* Trigger: Toggle button with dynamic label based on selection state */}
       <button
         type="button"
-        className="btn btn-sm w-full justify-between rounded-xl"
+        className="btn btn-sm w-full justify-between rounded-xl glass-input"
         onClick={() => setIsOpen(!isOpen)}
       >
         {selected.length > 0
@@ -59,7 +59,7 @@ export function Dropdown({ selected, onToggle, options }) {
 
       {/* Menu: Floating list of checkboxes */}
       {isOpen && (
-        <ul className="absolute z-20 mt-2 menu p-2 shadow bg-base-100 rounded-3xl w-52">
+        <ul className="absolute z-20 mt-2 menu p-2 glass-overlay rounded-3xl w-52">
           {options.map((option) => (
             <li key={option.value}>
               <label className="label cursor-pointer">
