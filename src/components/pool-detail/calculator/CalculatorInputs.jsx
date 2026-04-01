@@ -285,7 +285,7 @@ export function CalculatorInputs({
       </div>
 
       {/* Protocol deep-link */}
-      <button className="btn btn-primary w-full rounded-xl">
+      <button className="btn btn-error text-base-content w-full rounded-xl">
         Create Position on Uniswap →
       </button>
     </div>

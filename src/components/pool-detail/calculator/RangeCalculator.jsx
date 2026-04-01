@@ -127,7 +127,7 @@ export function RangeCalculator({
 
   return (
     <div className="grid gap-6">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <div className="card rounded-2xl glass-surface p-4">
           <CalculatorStats
             results={results}
