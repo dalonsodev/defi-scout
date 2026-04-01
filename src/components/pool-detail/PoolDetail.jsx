@@ -197,10 +197,10 @@ export function PoolDetail() {
               <h1 className="text-3xl font-bold">
                 {primary.symbol} / {secondary.symbol}
               </h1>
-              <span className="badge badge-outline text-primary badge-md">
+              <span className="badge badge-outline text-primary badge-md rounded-full">
                 {(pool.feeTier / 10000).toFixed(2)}%
               </span>
-              <span className="badge badge-soft badge-md text-base-content/60 hidden md:inline-flex glass-surface">
+              <span className="badge badge-soft badge-md text-base-content/60 hidden md:inline-flex glass-overlay rounded-full">
                 Ethereum
               </span>
             </div>
@@ -212,7 +212,7 @@ export function PoolDetail() {
           </div>
 
           {/* Row 3: chain badge - mobile only */}
-          <span className="badge badge-soft badge-md text-base-content/60 md:hidden mt-1">
+          <span className="badge badge-soft badge-md text-base-content/60 md:hidden mt-1 glass-overlay rounded-full">
             Ethereum
           </span>
 

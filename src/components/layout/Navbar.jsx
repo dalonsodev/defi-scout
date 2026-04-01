@@ -36,7 +36,7 @@ export function Navbar() {
 
 
   return (
-    <header className="navbar glass-surface sticky top-0 z-50 px-0 sm:px-2 md:px-2">
+    <header className="navbar glass-surface sticky top-0 z-50 px-0 sm:px-2 md:px-2 md:rounded-b-3xl">
       <div className="flex-1">
         {/* Brand: Larger text-xl for visual hierarchy */}
         <Link to="/" className="btn btn-ghost text-xl">

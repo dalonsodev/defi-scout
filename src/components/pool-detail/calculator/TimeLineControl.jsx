@@ -60,7 +60,7 @@ export function TimeLineControl({ days, onDaysChange, daysToBreakEven }) {
           <button
             type="button"
             onClick={decrement}
-            className="btn btn-circle btn-sm"
+            className="btn btn-circle btn-sm btn-glass"
           >
             −
           </button>
@@ -79,14 +79,14 @@ export function TimeLineControl({ days, onDaysChange, daysToBreakEven }) {
             }}
             min="0"
             max="365"
-            className="input input-bordered text-center"
+            className="input input-bordered glass-input text-center rounded-xl"
             aria-label="Days of active position."
           />
 
           <button
             type="button"
             onClick={increment}
-            className="btn btn-circle btn-sm"
+            className="btn btn-circle btn-sm btn-glass"
           >
             +
           </button>

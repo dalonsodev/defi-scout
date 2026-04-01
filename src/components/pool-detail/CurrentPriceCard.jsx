@@ -41,13 +41,13 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
 
       <div className="join">
         <button
-          className={`btn btn-glass join-item ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
+          className={`btn btn-glass rounded-l-xl join-item ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
           onClick={() => {onTokenChange(0)}}
         >
           {pool.token0.symbol}
         </button>
         <button
-          className={`btn btn-glass join-item ${selectedTokenIdx === 1 ? 'btn-active' : ''}`}
+          className={`btn btn-glass rounded-r-xl join-item ${selectedTokenIdx === 1 ? 'btn-active' : ''}`}
           onClick={() => {onTokenChange(1)}}
         >
           {pool.token1.symbol}
