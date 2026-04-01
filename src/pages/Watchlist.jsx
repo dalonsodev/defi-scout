@@ -46,7 +46,7 @@ export default function Watchlist() {
       <h1 className="text-2xl font-bold text-base-content mb-6">My Watchlist</h1>
       <div
         ref={tableRef}
-        className="bg-base-200 -mx-4 sm:-mx-6 md:-mx-4 rounded-3xl shadow-lg"
+        className="glass-surface -mx-4 sm:-mx-6 md:-mx-4 rounded-3xl shadow-lg"
       >
         <PoolTable
           ref={tableScrollRef}
