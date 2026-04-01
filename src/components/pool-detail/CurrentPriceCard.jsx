@@ -20,9 +20,9 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
   }, [pool.token0Price, pool.token1Price, selectedTokenIdx])
 
   return (
-    <div className="rounded-2xl bg-base-200 p-4">
+    <div className="rounded-2xl glass-surface p-4">
       {currentPrice && (
-        <div className="bg-base-300 rounded-lg p-3">
+        <div className="glass-surface rounded-lg p-3">
           <div className="text-xs text-base-content/60 mb-1">Current Price</div>
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold">
@@ -41,13 +41,13 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
 
       <div className="join">
         <button
-          className={`btn join-item ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
+          className={`btn btn-glass join-item ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
           onClick={() => {onTokenChange(0)}}
         >
           {pool.token0.symbol}
         </button>
         <button
-          className={`btn join-item ${selectedTokenIdx === 1 ? 'btn-active' : ''}`}
+          className={`btn btn-glass join-item ${selectedTokenIdx === 1 ? 'btn-active' : ''}`}
           onClick={() => {onTokenChange(1)}}
         >
           {pool.token1.symbol}
