@@ -24,13 +24,14 @@
   --color-base-content: oklch(0.91 0.01 265);
 
   /* INTERACTIVE */
-  --color-primary: oklch(0.56 0.22 264);
+  /* --color-primary: oklch(0.56 0.22 264); */
+  --color-primary: oklch(0.5854 0.2041 277.12);
   --color-primary-content: oklch(1 0 0);
   --color-secondary: oklch(0.50 0.26 280);
   --color-secondary-content: oklch(1 0 0);
 
   /* SEMANTIC */
-  --color-success: oklch(0.67 0.18 162);
+  --color-success: oklch(0.7273 0.1429 170.56);
   --color-warning: oklch(0.75 0.18 80);
   --color-error: oklch(0.63 0.22 15);
   --color-info: oklch(0.56 0.22 264);
