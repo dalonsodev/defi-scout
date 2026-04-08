@@ -150,7 +150,7 @@ export function AuthModal() {
                       {mode === MODE.LOGIN && (
                         <button
                           type="button"
-                          className="link-primary -mb-2"
+                          className="link-primary -mb-2 cursor-pointer"
                           onClick={() => setMode(MODE.FORGOT)}
                         >
                           Forgot password?
@@ -192,7 +192,7 @@ export function AuthModal() {
               {mode === MODE.FORGOT ? (
                 <button
                   type="button"
-                  className="btn btn-ghost text-sm text-base-content/60 mt-4 block mx-auto"
+                  className="text-sm text-base-content/60 hover:text-base-content/80 transition-colors mt-6 block mx-auto cursor-pointer"
                   onClick={() => {
                     setMode(MODE.LOGIN)
                     setResetSent(false)
