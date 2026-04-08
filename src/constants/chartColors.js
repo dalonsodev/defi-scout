@@ -9,7 +9,6 @@
  * - primary   -> --color-error   (assumed price reference line)
  * - secondary -> --color-success (range boundary reference lines)
  * - dataViz.tvl / .volume / .price -> --color-primary
- * - dataViz.fees                   -> --color-success
  *
  * @constant {Object} CHART_COLORS
  * @property {string} primary - Assumed price reference line color
@@ -20,22 +19,28 @@
  * @property {Object} tooltip - Tooltip container styling
  */
 export const CHART_COLORS = {
-  primary:   'oklch(0.63 0.22 15)',    // --color-error
-  secondary: 'oklch(0.67 0.18 162)',   // --color-success
+  primary:   'oklch(0.63 0.22 15)',           // --color-error
+  secondary: 'oklch(0.7273 0.1429 170.56)',   // --color-success
 
-  grid: '#1a2035',
-  axis: '#94a3b8',
+  grid: 'oklch(0.2486 0.041 271.04)',
+  axis: 'oklch(0.7107 0.0351 256.79)',
 
   dataViz: {
-    tvl:    'oklch(0.56 0.22 264)',    // --color-primary
-    volume: 'oklch(0.56 0.22 264)',    // --color-primary
-    fees:   'oklch(0.67 0.18 162)',    // --color-success
-    price:  'oklch(0.56 0.22 264)',    // --color-primary
+    liquidity: 'oklch(0.50 0.26 280)',           // --color-secondary
+    tvl:       'oklch(0.5854 0.2041 277.12)',    // --color-primary
+    volume:    'oklch(0.5854 0.2041 277.12)',    // --color-primary
+    price:     'oklch(0.5854 0.2041 277.12)',    // --color-primary
+  },
+
+  trend: {
+    up:   'oklch(0.7273 0.1429 170.56)',  // --color-success
+    down: 'oklch(0.63 0.22 15)',          // --color-error
+    flat: 'oklch(0.5544 0.0407 257.42)'   // neutral gray
   },
 
   tooltip: {
-    bg:     '#0f1628',
-    border: '#1e2a45',
-    text:   '#e2e8f0'
+    bg:     'oklch(0.2035 0.0377 266.94)',
+    border: 'oklch(0.2882 0.0525 265.09)',
+    text:   'oklch(0.9288 0.0126 255.51)'
   }
 }

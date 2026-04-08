@@ -129,7 +129,7 @@ const PoolTable = forwardRef(
           return {
             ...col,
             cell: ({ row }) => (
-              <div className="text-right font-semibold text-green-600">
+              <div className="text-right font-semibold text-success">
                 {Number(row.original.apyBase || 0).toFixed(2)}%
               </div>
             )
