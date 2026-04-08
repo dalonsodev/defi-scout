@@ -56,7 +56,7 @@ export function ContractLinks({ pool, chain = "ethereum" }) {
           <span className="text-sm">{item.label}</span>
           <div>
             <button
-              className="btn btn-ghost btn-xs"
+              className="btn btn-ghost btn-xs btn-circle"
               onClick={() => {handleCopy(item.id, item.address)}}
             >
               {copiedId === item.id ? <CheckIcon /> : <CopyIcon />}
