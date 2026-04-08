@@ -39,7 +39,7 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
         </div>
       )}
 
-      <div className="join">
+      <div className="join mt-4">
         <button
           className={`btn btn-glass rounded-l-xl join-item ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
           onClick={() => {onTokenChange(0)}}
