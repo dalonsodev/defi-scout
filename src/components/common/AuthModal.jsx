@@ -92,7 +92,7 @@ export function AuthModal() {
     <dialog className={`modal ${isAuthModalOpen ? 'modal-open' : ''}`}>
       <div className="modal-box max-w-xl glass-modal rounded-2xl">
         <button
-          className="btn btn-ghost btn-sm btn-circle btn-glass absolute right-2 top-2"
+          className="btn btn-sm btn-circle btn-glass absolute right-2 top-2 text-sm"
           onClick={handleClose}
         >
           ✕

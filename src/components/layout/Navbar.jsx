@@ -39,7 +39,7 @@ export function Navbar() {
     <header className="navbar glass-surface sticky top-0 z-50 px-0 sm:px-2 md:px-2 md:rounded-b-3xl">
       <div className="flex-1">
         {/* Brand: Larger text-xl for visual hierarchy */}
-        <Link to="/" className="btn btn-ghost text-xl rounded-xl">
+        <Link to="/" className="btn btn-ghost text-xl rounded-xl ml-3">
           DeFi Scout
         </Link>
       </div>
@@ -55,7 +55,7 @@ export function Navbar() {
 
         {currentUser === false && (
           <button
-            className="btn btn-sm btn-primary mr-2 rounded-xl"
+            className="btn btn-sm btn-primary mr-1 rounded-xl"
             onClick={() => {
               openAuthModal()
             }}

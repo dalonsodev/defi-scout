@@ -99,7 +99,7 @@ export function PoolFilters({
         <div className="p-4">
           <div className="w-12 h-1 bg-base-300 rounded-full mx-auto mb-4" />
           <button
-            className="btn btn-ghost absolute top-4 right-4 mb-4"
+            className="btn btn-sm btn-circle btn-glass absolute top-4 right-4 mb-4 text-sm"
             onClick={() => {setIsOpen(false)}}
           >
             ✕
@@ -131,7 +131,7 @@ export function PoolFilters({
                 onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
               />
 
-              <button onClick={handleClearFilters} className="btn btn-sm btn-ghost rounded-xl">
+              <button onClick={handleClearFilters} className="btn btn-sm btn-glass rounded-xl">
                 Clear filters
               </button>
             </div>
@@ -160,7 +160,7 @@ export function PoolFilters({
         className="hidden md:block input glass-input input-sm rounded-xl w-36"
         onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
       />
-      <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-glass">
+      <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-glass rounded-xl">
         Clear filters
         <span
           className={`ml-2 ${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}
