@@ -81,6 +81,9 @@
   .sticky-column-shadow {
     box-shadow: 5px 0 20px -10px rgba(0, 0, 0, 0.3);
   }
+  .tooltip::before {
+    border-radius: 0.75rem; /* rounded-xl */
+  }
 
   /* Glass Surfaces */
   .glass-surface {
