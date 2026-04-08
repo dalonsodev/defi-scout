@@ -221,7 +221,7 @@ export function AuthModal() {
 
                   <button
                     type="button"
-                    className="btn btn-ghost btn-glass rounded-xl text-sm text-base-content/60 mt-4 block mx-auto"
+                    className="text-sm text-base-content/60 hover:text-base-content/80 transition-colors my-6 block mx-auto cursor-pointer"
                     onClick={() => {
                       setMode(mode === MODE.LOGIN ? MODE.SIGNUP : MODE.LOGIN)
                       setError(null)
