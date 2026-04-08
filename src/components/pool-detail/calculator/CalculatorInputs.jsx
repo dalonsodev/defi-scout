@@ -248,7 +248,7 @@ export function CalculatorInputs({
               </button>
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center gap-1">
               <button
                 type="button"
                 onClick={() => onIncrement('assumedPrice', -1)}
