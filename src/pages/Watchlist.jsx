@@ -57,6 +57,7 @@ export default function Watchlist() {
           sorting={sorting}
           onSortingChange={setSorting}
           onVisiblePoolsChange={setVisiblePoolIds}
+          from="watchlist"
         />
           <div className="py-4">
             <PaginationControls
