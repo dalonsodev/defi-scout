@@ -36,7 +36,7 @@ export function Layout() {
       </main>
       <footer className="glass-surface border-t-(--border-subtle) w-full md:rounded-t-3xl">
         <div className="flex flex-col md:flex-row items-center justify-between py-4 px-6">
-          <Link to="/" className="btn btn-ghost text-sm text-primary">
+          <Link to="/" className="btn btn-ghost text-sm text-primary rounded-xl">
             DeFi Scout
           </Link>
           <div className="flex gap-6 items-center">

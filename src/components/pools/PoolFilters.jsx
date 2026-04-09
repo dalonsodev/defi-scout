@@ -94,12 +94,12 @@ export function PoolFilters({
       <div
         className={`fixed bottom-0 left-0 right-0 z-50 md:hidden glass-modal
           rounded-t-4xl transition-transform duration-300 ease-out
-          ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+          ${isOpen ? 'translate-y-0' : 'translate-y-[140%]'}`}
       >
         <div className="p-4">
           <div className="w-12 h-1 bg-base-300 rounded-full mx-auto mb-4" />
           <button
-            className="btn btn-ghost absolute top-4 right-4 mb-4"
+            className="btn btn-sm btn-circle btn-glass absolute top-4 right-4 mb-4 text-sm"
             onClick={() => {setIsOpen(false)}}
           >
             ✕
@@ -131,7 +131,7 @@ export function PoolFilters({
                 onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
               />
 
-              <button onClick={handleClearFilters} className="btn btn-sm btn-ghost">
+              <button onClick={handleClearFilters} className="btn btn-sm btn-glass rounded-xl">
                 Clear filters
               </button>
             </div>

@@ -1,3 +1,5 @@
+import { CHART_COLORS } from '../../constants/chartColors'
+
 /**
  * UI: Lightweight Trend Visualizer (Sparkline).
  *
@@ -34,8 +36,11 @@ export function MiniSparkline({ data, width = 80, height = 20 }) {
   const last = values[values.length - 1]
 
   // Financial convention: Green (gains), Red (losses), Gray (flat)
-  const strokeColor =
-    last > first ? '#10b981' : last < first ? '#ef4444' : '#6b7280'
+  const strokeColor = last > first
+    ? CHART_COLORS.trend.up
+    : last < first
+      ? CHART_COLORS.trend.down
+      : CHART_COLORS.trend.flat
 
   /**
    * Geometry: Map a numeric value to an SVG Y-coordinate.
