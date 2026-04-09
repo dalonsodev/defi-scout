@@ -298,9 +298,11 @@ export function PoolDetail() {
             fetchError={fetchError}
             ethPriceUSD={ethPriceUSD}
           />
-          <ContractLinks
-            pool={pool}
-          />
+          <div className="hidden md:block mb-4">
+            <ContractLinks
+              pool={pool}
+            />
+          </div>
         </div>
 
         <div className="md:col-start-3 md:col-span-3 md:row-start-2">
@@ -314,6 +316,11 @@ export function PoolDetail() {
             currentPrice={currentPrice}
             tickData={tickData}
             tickError={tickError}
+          />
+        </div>
+        <div className="md:hidden mb-4">
+          <ContractLinks
+            pool={pool}
           />
         </div>
       </div>
