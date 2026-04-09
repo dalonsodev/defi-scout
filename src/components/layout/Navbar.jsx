@@ -41,10 +41,10 @@ export function Navbar() {
       sm:px-2
       md:w-full md:mx-0 md:mt-0 md:px-2 md:rounded-none md:rounded-b-3xl"
     >
-      <div className="flex-1">
-        {/* Brand: Larger text-xl for visual hierarchy */}
-        <Link to="/" className="btn btn-ghost text-xl rounded-xl">
-          DeFi Scout
+      <div className="flex-1 ml-3.5 md:ml-2">
+        {/* Brand: Site logo */}
+        <Link to="/" className="rounded-full md:rounded-xl md:ml-0 hover:opacity-80 transition-opacity">
+          <img src="/defi-scout-logo.svg" alt="DeFiScout logo" width="130" height="50" />
         </Link>
       </div>
       <div className="flex flex-none items-center gap-2 pr-2">
