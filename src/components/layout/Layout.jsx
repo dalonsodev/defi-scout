@@ -34,12 +34,12 @@ export function Layout() {
         )}
         <Outlet />
       </main>
-      <footer className="glass-surface border-t-(--border-subtle) w-full md:rounded-t-3xl">
-        <div className="flex flex-col md:flex-row items-center justify-between py-4 px-6">
-          <Link to="/" className="btn btn-ghost text-sm text-primary rounded-xl">
-            DeFi Scout
+      <footer className="glass-surface border-t-(--border-subtle) w-full rounded-t-3xl">
+        <div className="flex flex-col md:flex-row items-center justify-between pt-6 pb-4 px-6">
+          <Link to="/" className="rounded-full md:rounded-xl pl-0 mb-6 mt-4 md:my-0 hover:opacity-80 transition-opacity">
+            <img src="/defi-scout-logo.svg" alt="DeFiScout logo" width="100" height="50" />
           </Link>
-          <div className="flex gap-6 items-center">
+          <div className="flex gap-6 items-center mb-2">
             <a
               href="https://thegraph.com/"
               className="text-xs text-muted hover:text-primary transition"
