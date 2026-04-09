@@ -1,4 +1,4 @@
-import { useLoaderData, Link, useOutletContext } from 'react-router-dom'
+import { useLoaderData, Link, useOutletContext, useLocation } from 'react-router-dom'
 import { useCallback, useEffect, useState, useRef } from 'react'
 import { ContractLinks } from './ContractLinks'
 import { CurrentPriceCard } from './CurrentPriceCard'
@@ -51,6 +51,7 @@ export function PoolDetail() {
     maxPrice: '',
     assumedPrice: ''
   })
+  const { state } = useLocation()
 
   /**
    * Hydration: Initializes price range from on-chain liquidity distribution.
@@ -179,12 +180,18 @@ export function PoolDetail() {
   // Check if pool is in the user's watchlist
   const isFavorited = favoriteIds.has(pool.id)
 
+  // Check if user comes from watchlist
+  const fromWatchlist = state?.from === 'watchlist'
+
   return (
     <div className="container mx-auto px-4 pt-4 max-w-7xl">
       {/* NAVIGATION: Contextual return */}
-      <Link to="/" className="btn btn-ghost btn-sm mb-6 gap-2 rounded-xl">
+      <Link
+        to={fromWatchlist ? '/watchlist' : '/'}
+        className="btn btn-ghost btn-sm mb-6 gap-2 rounded-xl"
+      >
         <span>←</span>
-        <span>Back to Pools</span>
+        <span>{`Back to ${fromWatchlist ? 'Watchlist' : 'Pools'}`}</span>
       </Link>
 
       {/* Header: Identity and protocol info */}
