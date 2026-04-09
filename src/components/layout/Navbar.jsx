@@ -36,11 +36,15 @@ export function Navbar() {
 
 
   return (
-    <header className="navbar glass-surface sticky top-0 z-50 px-0 sm:px-2 md:px-2 md:rounded-b-3xl">
-      <div className="flex-1">
-        {/* Brand: Larger text-xl for visual hierarchy */}
-        <Link to="/" className="btn btn-ghost text-xl rounded-xl ml-3">
-          DeFi Scout
+    <header className="navbar glass-surface sticky top-2 md:top-0 z-50
+      w-auto mx-2 mt-2 px-0 rounded-full
+      sm:px-2
+      md:w-full md:mx-0 md:mt-0 md:px-2 md:rounded-none md:rounded-b-3xl"
+    >
+      <div className="flex-1 ml-3.5 md:ml-2">
+        {/* Brand: Site logo */}
+        <Link to="/" className="rounded-full md:rounded-xl md:ml-0 hover:opacity-80 transition-opacity">
+          <img src="/defi-scout-logo.svg" alt="DeFiScout logo" width="130" height="50" />
         </Link>
       </div>
       <div className="flex flex-none items-center gap-2 pr-2">
@@ -55,7 +59,7 @@ export function Navbar() {
 
         {currentUser === false && (
           <button
-            className="btn btn-sm btn-primary mr-1 rounded-xl"
+            className="btn btn-sm btn-primary mr-1 rounded-full md:rounded-xl"
             onClick={() => {
               openAuthModal()
             }}
