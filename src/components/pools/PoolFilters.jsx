@@ -94,7 +94,7 @@ export function PoolFilters({
       <div
         className={`fixed bottom-0 left-0 right-0 z-50 md:hidden glass-modal
           rounded-t-4xl transition-transform duration-300 ease-out
-          ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+          ${isOpen ? 'translate-y-0' : 'translate-y-[140%]'}`}
       >
         <div className="p-4">
           <div className="w-12 h-1 bg-base-300 rounded-full mx-auto mb-4" />
