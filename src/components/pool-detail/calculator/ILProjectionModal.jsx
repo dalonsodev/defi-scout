@@ -53,7 +53,7 @@ export function ILProjectionModal({
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-2xl font-bold">Simulate Position Performance</h3>
-          <button onClick={onClose} className="btn btn-sm btn-circle btn-ghost">
+          <button onClick={onClose} className="btn btn-sm btn-circle btn-glass">
             x
           </button>
         </div>

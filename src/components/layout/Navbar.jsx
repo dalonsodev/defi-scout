@@ -39,13 +39,13 @@ export function Navbar() {
     <header className="navbar glass-surface sticky top-0 z-50 px-0 sm:px-2 md:px-2 md:rounded-b-3xl">
       <div className="flex-1">
         {/* Brand: Larger text-xl for visual hierarchy */}
-        <Link to="/" className="btn btn-ghost text-xl">
+        <Link to="/" className="btn btn-ghost text-xl rounded-xl ml-3">
           DeFi Scout
         </Link>
       </div>
       <div className="flex flex-none items-center gap-2 pr-2">
         {/* Primary routes: Ghost buttons for understated navigation */}
-        <Link to="/" className="btn btn-ghost">
+        <Link to="/" className="btn btn-ghost rounded-xl">
           Pools
         </Link>
 
@@ -55,7 +55,7 @@ export function Navbar() {
 
         {currentUser === false && (
           <button
-            className="btn btn-sm btn-primary mr-2"
+            className="btn btn-sm btn-primary mr-1 rounded-xl"
             onClick={() => {
               openAuthModal()
             }}
@@ -90,13 +90,13 @@ export function Navbar() {
                 <div className="absolute flex flex-col items-center z-50 right-0 top-full glass-overlay rounded-xl gap-2 md:gap-0 p-4 md:p-2 mt-2">
                   <Link
                     to="/watchlist"
-                    className="btn btn-ghost text-lg md:text-sm"
+                    className="btn btn-ghost text-lg md:text-sm rounded-xl"
                     onClick={() => setIsOpen(false)}
                   >
                     Watchlist
                   </Link>
                   <button
-                    className="btn btn-ghost text-red-500 text-md md:text-xs whitespace-nowrap"
+                    className="btn btn-ghost text-red-500 text-md md:text-xs whitespace-nowrap rounded-xl"
                     onClick={logout}
                   >
                     Log out

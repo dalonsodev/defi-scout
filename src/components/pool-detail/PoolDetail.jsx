@@ -182,7 +182,7 @@ export function PoolDetail() {
   return (
     <div className="container mx-auto px-4 pt-4 max-w-7xl">
       {/* NAVIGATION: Contextual return */}
-      <Link to="/" className="btn btn-ghost btn-sm mb-6 gap-2">
+      <Link to="/" className="btn btn-ghost btn-sm mb-6 gap-2 rounded-xl">
         <span>←</span>
         <span>Back to Pools</span>
       </Link>

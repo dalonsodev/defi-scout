@@ -50,13 +50,13 @@ export function ContractLinks({ pool, chain = "ethereum" }) {
 
   return (
     <div className="rounded-2xl glass-surface p-4">
-      <div className="text-xs text-base-content/60 mb-1">CONTRACTS</div>
+      <div className="text-sm font-semibold mb-1">Contracts</div>
       {items.map((item) => (
         <div key={item.id} className="flex items-center justify-between gap-2 mt-1">
           <span className="text-sm">{item.label}</span>
           <div>
             <button
-              className="btn btn-ghost btn-xs"
+              className="btn btn-glass btn-xs btn-circle mr-2"
               onClick={() => {handleCopy(item.id, item.address)}}
             >
               {copiedId === item.id ? <CheckIcon /> : <CopyIcon />}

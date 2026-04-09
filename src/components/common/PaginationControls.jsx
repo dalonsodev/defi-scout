@@ -29,7 +29,7 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }) {
 
   return (
     <div className="flex items-center justify-center gap-2 py-3">
-      <button onClick={goToPrev} disabled={isFirstPage} className="btn btn-sm btn-glass">
+      <button onClick={goToPrev} disabled={isFirstPage} className="btn btn-sm btn-glass rounded-xl">
         ←
       </button>
 
@@ -56,7 +56,7 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }) {
             <button
               key={page}
               onClick={() => goToPage(page)}
-              className={`btn btn-sm btn-glass ${page === currentPage ? 'btn-active' : ''}`}
+              className={`btn btn-sm btn-glass rounded-xl ${page === currentPage ? 'btn-active' : ''}`}
             >
               {page}
             </button>
@@ -64,7 +64,7 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }) {
         })}
       </div>
 
-      <button onClick={goToNext} disabled={isLastPage} className="btn btn-sm btn-glass">
+      <button onClick={goToNext} disabled={isLastPage} className="btn btn-sm btn-glass rounded-xl">
         →
       </button>
     </div>
