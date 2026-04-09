@@ -27,7 +27,8 @@ export function CalculatorInputs({
   token0Symbol,
   token1Symbol,
   composition,
-  selectedTokenIdx
+  selectedTokenIdx,
+  positionUrl
 }) {
   const token0Amount = composition?.amount0
   const token1Amount = composition?.amount1
@@ -286,9 +287,17 @@ export function CalculatorInputs({
       </div>
 
       {/* Protocol deep-link */}
-      <button className="btn btn-error text-base-content w-full rounded-xl">
-        Create Position on Uniswap →
-      </button>
+      <a
+        href={positionUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn btn-error text-base-content w-full rounded-xl"
+      >
+        Create Position on Uniswap
+        <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 24 24">
+          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M12 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6m-7 1l9-9m-5 0h5v5"/>
+        </svg>
+      </a>
     </div>
   )
 }
