@@ -5,6 +5,7 @@ import { simulateRangePerformance } from './utils/simulateRangePerformance'
 import { calculatePresetRange } from './utils/calculatePresetRange'
 import { calculateTokenPrices } from './utils/calculateTokenPrices'
 import { incrementPriceByTick } from './utils/uniswapV3Ticks'
+import { buildUniswapPositionUrl } from '../../../utils/buildUniswapPositionUrl'
 import { debugLog } from '../../../utils/logger'
 
 /**
@@ -125,6 +126,12 @@ export function RangeCalculator({
     })
   }, [inputs, selectedTokenIdx, hourlyData, pool, ethPriceUSD])
 
+  const composition = results?.composition || null
+  const positionUrl = useMemo(
+    () => buildUniswapPositionUrl(pool, inputs, composition, selectedTokenIdx),
+    [pool, inputs, composition, selectedTokenIdx]
+  )
+
   return (
     <div className="grid gap-6">
       <div className="flex flex-col gap-4">
@@ -150,7 +157,8 @@ export function RangeCalculator({
             priceLabel={priceLabel}
             token0Symbol={pool.token0.symbol}
             token1Symbol={pool.token1.symbol}
-            composition={results?.composition || null}
+            positionUrl={positionUrl}
+            composition={composition}
             selectedTokenIdx={selectedTokenIdx}
           />
         </div>
