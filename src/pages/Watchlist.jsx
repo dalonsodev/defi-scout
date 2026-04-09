@@ -1,4 +1,4 @@
-import { useLoaderData, useOutletContext } from 'react-router-dom'
+import { useLoaderData, useOutletContext, Link } from 'react-router-dom'
 import { useRef, useState, useMemo } from 'react'
 import { PoolTable } from '../components/pools/PoolTable'
 import { PaginationControls } from '../components/common/PaginationControls'
@@ -37,6 +37,8 @@ export default function Watchlist() {
       <div className="flex flex-col items-center justify-center py-32 text-base-content/50">
         <p className="text-lg font-medium">No saved pools yet.</p>
         <p className="text-sm mt-1">Star a pool from the main table to add it here.</p>
+        {/* TODO: update to "/pools" when a landing page is added at "/" */}
+        <Link to="/" className="btn btn-primary rounded-xl mt-4">Explore Pools</Link>
       </div>
     )
   }
