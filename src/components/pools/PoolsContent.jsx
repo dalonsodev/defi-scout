@@ -9,7 +9,6 @@ import { PaginationControls } from '../common/PaginationControls'
 import { PoolFilters } from './PoolFilters'
 import { PoolTable } from './PoolTable'
 
-
 /**
  * Component: Pool Data Pipeline Orchestrator
  *
