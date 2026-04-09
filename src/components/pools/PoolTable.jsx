@@ -54,7 +54,8 @@ const PoolTable = forwardRef(
       sorting,
       onSortingChange,
       favoriteIds,
-      toggleFavorite
+      toggleFavorite,
+      from
     },
     ref
   ) => {
@@ -103,6 +104,7 @@ const PoolTable = forwardRef(
 
                   <Link
                     to={`/pools/${row.original.id}`}
+                    state={{ from }}
                     className="flex items-center gap-2"
                     aria-label={`View details for ${row.original.name} pool`}
                   >
@@ -206,7 +208,7 @@ const PoolTable = forwardRef(
 
         return col
       })
-    }, [sparklineData, favoriteIds, toggleFavorite])
+    }, [sparklineData, favoriteIds, toggleFavorite, from])
 
     const visibleColumns = useMemo(() => {
       return columns.filter((col) => {
@@ -303,7 +305,7 @@ const PoolTable = forwardRef(
           if (e.metaKey || e.ctrlKey) {
             window.open(`/pools/${poolId}`, '_blank')
           } else {
-            navigate(`/pools/${poolId}`)
+            navigate(`/pools/${poolId}`, { state: { from } })
           }
         }
 

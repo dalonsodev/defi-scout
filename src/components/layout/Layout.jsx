@@ -24,9 +24,9 @@ export function Layout() {
   const isLoading = navigation.state === 'loading'
 
   return (
-    <div className="site-wrapper max-w-5xl mx-auto">
+    <div className="site-wrapper min-h-dvh max-w-5xl mx-auto flex flex-col">
       <Navbar />
-      <main className="min-h-screen p-0 sm:px-2 md:p-6">
+      <main className="flex-1 p-0 sm:px-2 md:p-6 mb-4 md:mb-0">
         {isLoading && (
           <div className="fixed top-20 right-4 z-50">
             <span className="loading loading-spinner loading-lg"></span>
