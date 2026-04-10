@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { calculateIL } from '../utils/calculateIL'
+import { debugLog } from '../../../../utils/logger'
 
 /**
  * Custom Hook: LP Strategy Projection Calculation
@@ -181,7 +182,7 @@ export function useProjectionCalculator(
       ilPercent: IL_percent
     }
 
-    console.log('💣 Composition Debug:', {
+    debugLog('💣 Composition Debug:', {
       amount0,
       amount1,
       token0Decimals: poolData.token0.decimals,

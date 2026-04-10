@@ -137,7 +137,7 @@ export function AuthModal() {
                 aria-label="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                autocomplete="email"
+                autoComplete="email"
               />
 
               {(mode === MODE.LOGIN || mode === MODE.SIGNUP) && (
@@ -167,7 +167,7 @@ export function AuthModal() {
                     aria-label="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    autocomplete={mode === MODE.LOGIN ? 'current-password' : 'new-password'}
+                    autoComplete={mode === MODE.LOGIN ? 'current-password' : 'new-password'}
                   />
                 </>
               )}
