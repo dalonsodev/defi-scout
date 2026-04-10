@@ -222,7 +222,7 @@ export function PoolDetail() {
       {/* NAVIGATION: Contextual return */}
       <Link
         to={fromWatchlist ? '/watchlist' : '/'}
-        className="btn btn-ghost btn-sm mb-6 gap-2 rounded-xl"
+        className="btn btn-ghost btn-sm mb-4 md:mb-6 gap-2 rounded-xl"
       >
         <span>←</span>
         <span>{`Back to ${fromWatchlist ? 'Watchlist' : 'Pools'}`}</span>

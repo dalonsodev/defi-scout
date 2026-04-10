@@ -21,7 +21,7 @@ export default function Pools() {
     <div className="mx-auto max-w-7xl">
       <title>Explore DeFi Pools | DeFi Scout</title>
       {/* SECTION: Header and context */}
-      <header className="p-4">
+      <header className="px-4 pt-8 pb-2 md:p-4">
         <h1 className="text-3xl font-bold">Explore Pools</h1>
       </header>
 
