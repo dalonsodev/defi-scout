@@ -161,12 +161,9 @@ const GET_POOL_HOUR_DATAS_QUERY = gql`
  * sparse pool liquidity.
  */
 const GET_POOL_TICKS_QUERY = gql`
-  query GetPoolTicks(
-    $poolId: ID!,
-    $currentTick: BigInt!,
-  ) {
+  query GetPoolTicks($poolId: ID!, $currentTick: BigInt!) {
     pool(id: $poolId) {
-      tick                    # Current active tick (integer)
+      tick # Current active tick (integer)
       liquidity
       ticksBelow: ticks(
         first: 500
@@ -175,8 +172,8 @@ const GET_POOL_TICKS_QUERY = gql`
         orderDirection: desc
       ) {
         tickIdx
-        liquidityNet          # Delta when price crosses this tick upward
-        liquidityGross        # Total liquidity referencing this tick
+        liquidityNet # Delta when price crosses this tick upward
+        liquidityGross # Total liquidity referencing this tick
       }
       ticksAbove: ticks(
         first: 500
@@ -203,10 +200,7 @@ const GET_POOL_TICKS_QUERY = gql`
 const GET_POOL_SPARKLINES_QUERY = gql`
   query GetPoolSparklines($poolIds: [String!]!, $startDate: Int!) {
     poolDayDatas(
-      where: {
-        pool_in: $poolIds
-        date_gte: $startDate
-      }
+      where: { pool_in: $poolIds, date_gte: $startDate }
       orderBy: date
       orderDirection: asc
       first: 1000
@@ -311,7 +305,7 @@ export async function fetchPoolSparklines(poolAddresses) {
   // Group flat array by pool ID (TheGraph returns all poolDayDatas in one array)
   const grouped = {}
 
-  data.poolDayDatas.forEach(dayData => {
+  data.poolDayDatas.forEach((dayData) => {
     const poolId = dayData.pool.id
 
     if (!grouped[poolId]) {
@@ -343,7 +337,7 @@ export async function fetchPoolSparklines(poolAddresses) {
 export function formatSparklineData(poolDayDatas) {
   if (!poolDayDatas || poolDayDatas.length === 0) return []
 
-  return poolDayDatas.map(snapshot => {
+  return poolDayDatas.map((snapshot) => {
     const feesUSD = parseFloat(snapshot.feesUSD)
     const tvlUSD = parseFloat(snapshot.tvlUSD)
 

@@ -31,7 +31,7 @@ export const baseColumns = [
     size: 100,
     meta: {
       showOn: 'both',
-      tooltip: "Annualized Yield based on generated fees in the last 24h"
+      tooltip: 'Annualized Yield based on generated fees in the last 24h'
     }
   },
   {
@@ -40,7 +40,7 @@ export const baseColumns = [
     size: 130,
     meta: {
       showOn: 'both',
-      tooltip: "Total Value Locked - Total liquidity accumulated in the pool"
+      tooltip: 'Total Value Locked - Total liquidity accumulated in the pool'
     }
   },
   {
@@ -49,7 +49,7 @@ export const baseColumns = [
     size: 130,
     meta: {
       showOn: 'both',
-      tooltip: "Total swap volume for the pool in the last 24 hours"
+      tooltip: 'Total swap volume for the pool in the last 24 hours'
     }
   },
   {

@@ -24,7 +24,7 @@ import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
 export function FeesApyChart({ history }) {
   return (
     <div className="card bg-base-200 rounded-2xl">
-      <h3 className="text-lg font-semibold mb-4">Fees & APY</h3>
+      <h3 className="mb-4 text-lg font-semibold">Fees & APY</h3>
 
       <ResponsiveContainer
         width="100%"

@@ -48,9 +48,10 @@ export function RangeCalculator({
 
   // Token Price Normalization: Convert pool prices to USD for display
   const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
-    const currentPrice = parseFloat(pool?.token0Price)
-      || parseFloat(hourlyData?.[0]?.token0Price)
-      || 0
+    const currentPrice =
+      parseFloat(pool?.token0Price) ||
+      parseFloat(hourlyData?.[0]?.token0Price) ||
+      0
 
     return calculateTokenPrices(
       pool.token0,
@@ -135,7 +136,7 @@ export function RangeCalculator({
   return (
     <div className="grid gap-6">
       <div className="flex flex-col gap-4">
-        <div className="card rounded-2xl glass-surface p-4">
+        <div className="card glass-surface rounded-2xl p-4">
           <CalculatorStats
             results={results}
             isLoading={isLoading}
@@ -147,7 +148,7 @@ export function RangeCalculator({
           />
         </div>
 
-        <div className="card rounded-2xl glass-surface p-4">
+        <div className="card glass-surface rounded-2xl p-4">
           <CalculatorInputs
             inputs={inputs}
             onChange={handleInputChange}

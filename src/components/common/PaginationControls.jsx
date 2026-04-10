@@ -29,23 +29,27 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }) {
 
   return (
     <div className="flex items-center justify-center gap-2 py-3">
-      <button onClick={goToPrev} disabled={isFirstPage} className="btn btn-sm btn-glass rounded-xl">
+      <button
+        onClick={goToPrev}
+        disabled={isFirstPage}
+        className="btn btn-sm btn-glass rounded-xl"
+      >
         ←
       </button>
 
       {/* Mobile: Compact counter */}
-      <span className="md:hidden px-4">
+      <span className="px-4 md:hidden">
         {currentPage} / {totalPages}
       </span>
 
       {/* Desktop: Full numeric navigation with ellipsis */}
-      <div className="hidden md:flex gap-1">
+      <div className="hidden gap-1 md:flex">
         {visiblePages.map((page, index) => {
           if (typeof page === 'string') {
             return (
               <span
                 key={`ellipsis-${index}`}
-                className="px-2 flex items-center"
+                className="flex items-center px-2"
               >
                 ...
               </span>
@@ -64,7 +68,11 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }) {
         })}
       </div>
 
-      <button onClick={goToNext} disabled={isLastPage} className="btn btn-sm btn-glass rounded-xl">
+      <button
+        onClick={goToNext}
+        disabled={isLastPage}
+        className="btn btn-sm btn-glass rounded-xl"
+      >
         →
       </button>
     </div>

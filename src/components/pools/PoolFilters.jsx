@@ -34,17 +34,14 @@ export function PoolFilters({
 }) {
   const [isOpen, setIsOpen] = useState(false)
 
-  const {
-    localFilters,
-    updateLocalFilter,
-    resetLocalFilters
-  } = useDebouncedFilterInputs(filters, updateFilter)
+  const { localFilters, updateLocalFilter, resetLocalFilters } =
+    useDebouncedFilterInputs(filters, updateFilter)
 
   // Coordinated reset: Clear local state first (sets guard flag), then URL
   // Order matters: prevents debounced values from restoring after URL clear
   const handleClearFilters = () => {
     resetLocalFilters() // 1. Set isResetting=true + clear local state
-    clearFilters()      // 2. Clear URL (Effect 1 will skip one cycle)
+    clearFilters() // 2. Clear URL (Effect 1 will skip one cycle)
   }
 
   const activeCount = [
@@ -55,24 +52,29 @@ export function PoolFilters({
   ].filter(Boolean).length
 
   return (
-    <div className="flex flex-col md:flex-row gap-2 mb-4 p-4">
+    <div className="mb-4 flex flex-col gap-2 p-4 md:flex-row">
       {/* Mobile row: search + toggle */}
       <div className="relative flex flex-1 gap-2">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
-          <svg className="w-4 h-4" viewBox="0 0 20 20">
-            <path fill="currentColor" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9z" />
+        <span className="text-muted pointer-events-none absolute top-1/2 left-3 -translate-y-1/2">
+          <svg className="h-4 w-4" viewBox="0 0 20 20">
+            <path
+              fill="currentColor"
+              d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9z"
+            />
           </svg>
         </span>
         <input
           type="text"
           placeholder="WETH or WETH/USDC"
           value={localFilters.search}
-          className="input glass-input input-sm rounded-xl pl-8 w-full"
+          className="input glass-input input-sm w-full rounded-xl pl-8"
           onChange={(e) => updateLocalFilter('search', e.target.value)}
         />
         <button
-          onClick={() => {setIsOpen(true)}}
-          className="btn btn-sm btn-outline md:hidden rounded-xl btn-glass"
+          onClick={() => {
+            setIsOpen(true)
+          }}
+          className="btn btn-sm btn-outline btn-glass rounded-xl md:hidden"
         >
           Filters
           <span
@@ -85,61 +87,64 @@ export function PoolFilters({
 
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300
-          ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        onClick={() => {setIsOpen(false)}}
+        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 md:hidden ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+        onClick={() => {
+          setIsOpen(false)
+        }}
       />
 
       {/* Bottom sheet */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-50 md:hidden glass-modal
-          rounded-t-4xl transition-transform duration-300 ease-out
-          ${isOpen ? 'translate-y-0' : 'translate-y-[140%]'}`}
+        className={`glass-modal fixed right-0 bottom-0 left-0 z-50 rounded-t-4xl transition-transform duration-300 ease-out md:hidden ${isOpen ? 'translate-y-0' : 'translate-y-[140%]'}`}
       >
         <div className="p-4">
-          <div className="w-12 h-1 bg-base-300 rounded-full mx-auto mb-4" />
+          <div className="bg-base-300 mx-auto mb-4 h-1 w-12 rounded-full" />
           <button
             className="btn btn-sm btn-circle btn-glass absolute top-4 right-4 mb-4 text-sm"
-            onClick={() => {setIsOpen(false)}}
+            onClick={() => {
+              setIsOpen(false)
+            }}
           >
             ✕
           </button>
 
           {/* Desktop row: dropdown + tvl + vol + clear */}
-            <div className="whitespace-nowrap mt-10 p-2">
-              <Dropdown
-                selected={filters.platforms}
-                onToggle={togglePlatform}
-                options={availablePlatforms}
-              />
-            </div>
+          <div className="mt-10 p-2 whitespace-nowrap">
+            <Dropdown
+              selected={filters.platforms}
+              onToggle={togglePlatform}
+              options={availablePlatforms}
+            />
+          </div>
 
-            <div className="flex flex-col sm:flex-row flex-wrap flex-1 p-2 gap-6 sm:gap-4 my-2">
-              <input
-                type="number"
-                placeholder="Min TVL ($)"
-                value={localFilters.tvlUsd}
-                className="input sm:flex-1 w-full glass-input input-sm rounded-xl"
-                onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
-              />
+          <div className="my-2 flex flex-1 flex-col flex-wrap gap-6 p-2 sm:flex-row sm:gap-4">
+            <input
+              type="number"
+              placeholder="Min TVL ($)"
+              value={localFilters.tvlUsd}
+              className="input glass-input input-sm w-full rounded-xl sm:flex-1"
+              onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
+            />
 
-              <input
-                type="number"
-                placeholder="Min Vol 24h ($)"
-                value={localFilters.volumeUsd1d}
-                className="input sm:flex-1 w-full glass-input input-sm rounded-xl"
-                onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
-              />
+            <input
+              type="number"
+              placeholder="Min Vol 24h ($)"
+              value={localFilters.volumeUsd1d}
+              className="input glass-input input-sm w-full rounded-xl sm:flex-1"
+              onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
+            />
 
-              <button onClick={handleClearFilters} className="btn btn-sm btn-glass rounded-xl">
-                Clear filters
-              </button>
-            </div>
-
+            <button
+              onClick={handleClearFilters}
+              className="btn btn-sm btn-glass rounded-xl"
+            >
+              Clear filters
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="hidden md:flex whitespace-nowrap">
+      <div className="hidden whitespace-nowrap md:flex">
         <Dropdown
           selected={filters.platforms}
           onToggle={togglePlatform}
@@ -150,17 +155,20 @@ export function PoolFilters({
         type="number"
         placeholder="Min TVL ($)"
         value={localFilters.tvlUsd}
-        className="hidden md:block input glass-input input-sm rounded-xl w-36"
+        className="input glass-input input-sm hidden w-36 rounded-xl md:block"
         onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
       />
       <input
         type="number"
         placeholder="Min Vol 24h ($)"
         value={localFilters.volumeUsd1d}
-        className="hidden md:block input glass-input input-sm rounded-xl w-36"
+        className="input glass-input input-sm hidden w-36 rounded-xl md:block"
         onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
       />
-      <button onClick={handleClearFilters} className="hidden md:block btn btn-sm btn-glass rounded-xl">
+      <button
+        onClick={handleClearFilters}
+        className="btn btn-sm btn-glass hidden rounded-xl md:block"
+      >
         Clear filters
         <span
           className={`ml-2 ${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}

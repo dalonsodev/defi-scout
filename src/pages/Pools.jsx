@@ -13,7 +13,8 @@ export default function Pools() {
   const { pools } = useLoaderData()
   const isDesktop = useMediaQuery({ minWidth: 769 })
 
-  const { filters, updateFilter, togglePlatform, clearFilters } = usePoolFilters()
+  const { filters, updateFilter, togglePlatform, clearFilters } =
+    usePoolFilters()
   const { favoriteIds, toggleFavorite } = useOutletContext()
 
   return (

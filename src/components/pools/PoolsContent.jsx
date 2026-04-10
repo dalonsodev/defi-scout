@@ -59,10 +59,15 @@ export function PoolsContent({
   const urlState = parseSearchParams(searchParams)
 
   // 3. Convert URL state to component format
-  const sorting = useMemo(() => [{
-    id: urlState.sortBy,
-    desc: urlState.sortDir === 'desc'
-  }], [urlState.sortBy, urlState.sortDir])
+  const sorting = useMemo(
+    () => [
+      {
+        id: urlState.sortBy,
+        desc: urlState.sortDir === 'desc'
+      }
+    ],
+    [urlState.sortBy, urlState.sortDir]
+  )
 
   // 4. Local state still needs useState
   const [visiblePoolIds, setVisiblePoolIds] = useState(new Set())
@@ -70,7 +75,8 @@ export function PoolsContent({
   // 5. Dirty checking for filters (to detect resets)
   const filtersKey = JSON.stringify(filters)
   const prevFiltersKey = usePrevious(filtersKey)
-  const filtersChanged = prevFiltersKey !== undefined && prevFiltersKey !== filtersKey
+  const filtersChanged =
+    prevFiltersKey !== undefined && prevFiltersKey !== filtersKey
 
   // 6. Derive pageIndex with reset logic
   const pageIndex = filtersChanged ? 0 : urlState.page
@@ -84,9 +90,10 @@ export function PoolsContent({
   }
 
   const handleSortingChange = (updaterOrValue) => {
-    const newSorting = typeof updaterOrValue === 'function'
-      ? updaterOrValue(sorting)
-      : updaterOrValue
+    const newSorting =
+      typeof updaterOrValue === 'function'
+        ? updaterOrValue(sorting)
+        : updaterOrValue
 
     if (!newSorting || newSorting.length === 0) {
       updateSearchParams(navigate, searchParams, {
@@ -169,8 +176,8 @@ export function PoolsContent({
       />
 
       {filteredPools.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg mb-2">
+        <div className="py-12 text-center">
+          <p className="mb-2 text-lg text-gray-500">
             No pools match your filters
           </p>
           <button
@@ -183,7 +190,7 @@ export function PoolsContent({
       ) : (
         <div
           ref={tableRef}
-          className="glass-surface mx-0 sm:-mx-2 md:mx-0 rounded-3xl"
+          className="glass-surface mx-0 rounded-3xl sm:-mx-2 md:mx-0"
         >
           <PoolTable
             ref={tableScrollRef}

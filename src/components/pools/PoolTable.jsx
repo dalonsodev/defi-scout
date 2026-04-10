@@ -113,7 +113,7 @@ const PoolTable = forwardRef(
                       className="tooltip tooltip-right"
                       data-tip={row.original.name}
                     >
-                      <div className="font-medium text-base-content max-w-[120px] truncate">
+                      <div className="text-base-content max-w-[120px] truncate font-medium">
                         {row.original.name}
                       </div>
                     </div>
@@ -132,7 +132,7 @@ const PoolTable = forwardRef(
           return {
             ...col,
             cell: ({ row }) => (
-              <div className="text-right font-semibold text-success">
+              <div className="text-success text-right font-semibold">
                 {Number(row.original.apyBase || 0).toFixed(2)}%
               </div>
             )
@@ -143,7 +143,7 @@ const PoolTable = forwardRef(
           return {
             ...col,
             cell: ({ row }) => (
-              <div className="text-right text-base-content">
+              <div className="text-base-content text-right">
                 ${row.original.tvlFormatted}
               </div>
             )
@@ -154,7 +154,7 @@ const PoolTable = forwardRef(
           return {
             ...col,
             cell: ({ row }) => (
-              <div className="text-right text-base-content">
+              <div className="text-base-content text-right">
                 ${row.original.volumeFormatted}
               </div>
             )
@@ -199,7 +199,7 @@ const PoolTable = forwardRef(
             cell: ({ row }) => (
               <div className="flex items-center gap-2">
                 <PlatformIcon platform={row.original.project} size="md" />
-                <span className="text-sm text-base-content/70">
+                <span className="text-base-content/70 text-sm">
                   {row.original.platformName}
                 </span>
               </div>
@@ -252,12 +252,10 @@ const PoolTable = forwardRef(
                 key={header.id}
                 onClick={header.column.getToggleSortingHandler()}
                 style={{ width: header.column.getSize() }}
-                className={`sticky top-0 z-10 has-[.tooltip:hover]:z-20 bg-(--table-header-bg) hover:bg-(--table-header-bg) px-6 py-4 text-xs font-semibold text-base-content/60 uppercase tracking-wider cursor-pointer transition
-                  ${isSticky ? 'left-0 z-11 pl-4 text-left sticky-column-shadow' : ''}
-                `.trim()}
+                className={`text-base-content/60 sticky top-0 z-10 cursor-pointer bg-(--table-header-bg) px-6 py-4 text-xs font-semibold tracking-wider uppercase transition hover:bg-(--table-header-bg) has-[.tooltip:hover]:z-20 ${isSticky ? 'sticky-column-shadow left-0 z-11 pl-4 text-left' : ''} `.trim()}
               >
-                <div className={`flex items-center gap-1 whitespace-nowrap
-                  ${isSticky ? 'justify-start' : 'justify-center'}`}
+                <div
+                  className={`flex items-center gap-1 whitespace-nowrap ${isSticky ? 'justify-start' : 'justify-center'}`}
                 >
                   {flexRender(
                     header.column.columnDef.header,
@@ -270,15 +268,15 @@ const PoolTable = forwardRef(
                     </span>
                   )}
 
-                  {tooltipText &&
+                  {tooltipText && (
                     <span
-                      className="tooltip tooltip-bottom text-sm text-base-content/60"
+                      className="tooltip tooltip-bottom text-base-content/60 text-sm"
                       data-tip={tooltipText}
                       onClick={(e) => e.stopPropagation()}
                     >
                       ⓘ
                     </span>
-                  }
+                  )}
                 </div>
               </th>
             )
@@ -316,8 +314,8 @@ const PoolTable = forwardRef(
             ref={rowRefs[i]}
             data-pool-id={row.original.id}
             onClick={handleRowClick}
-            className="group hover:bg-white/4 transition-colors duration-150 cursor-pointer"
-            >
+            className="group cursor-pointer transition-colors duration-150 hover:bg-white/4"
+          >
             {row.getVisibleCells().map((cell) => {
               const isSticky = cell.column.columnDef.meta?.isSticky
 
@@ -325,9 +323,7 @@ const PoolTable = forwardRef(
                 <td
                   key={cell.id}
                   style={{ width: cell.column.getSize() }}
-                  className={`px-4 py-6 whitespace-nowrap text-sm
-                           ${isSticky ? 'sticky left-0 bg-(--table-sticky-bg) sticky-column-shadow group-hover:bg-(--table-sticky-hover-bg) z-2 transition-colors duration-150' : ''}
-                        `.trim()}
+                  className={`px-4 py-6 text-sm whitespace-nowrap ${isSticky ? 'sticky-column-shadow sticky left-0 z-2 bg-(--table-sticky-bg) transition-colors duration-150 group-hover:bg-(--table-sticky-hover-bg)' : ''} `.trim()}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
@@ -341,11 +337,11 @@ const PoolTable = forwardRef(
     return (
       <div
         ref={ref}
-        className="overflow-x-auto scrollbar-hide rounded-t-3xl max-h-[592px] md:max-h-[840px]"
+        className="scrollbar-hide max-h-[592px] overflow-x-auto rounded-t-3xl md:max-h-[840px]"
       >
-        <table className="min-w-full divide-y divide-base-300 border-separate border-spacing-0">
+        <table className="divide-base-300 min-w-full border-separate border-spacing-0 divide-y">
           <thead className="bg-(--table-header-bg)">{renderHeaders()}</thead>
-          <tbody className="bg-(--table-body-bg) divide-y divide-(--table-divider)">
+          <tbody className="divide-y divide-(--table-divider) bg-(--table-body-bg)">
             {renderRows()}
           </tbody>
         </table>

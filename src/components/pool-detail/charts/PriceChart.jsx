@@ -32,9 +32,10 @@ export function PriceChart({
   const dataKey = selectedTokenIdx === 0 ? 'token0Price' : 'token1Price'
   const selectedSymbol = tokenSymbols[selectedTokenIdx]
   const [baseToken, quoteToken] = tokenSymbols
-  const poolPriceLabel = selectedTokenIdx === 0
-    ? `${baseToken} / ${quoteToken}`
-    : `${quoteToken} / ${baseToken}`
+  const poolPriceLabel =
+    selectedTokenIdx === 0
+      ? `${baseToken} / ${quoteToken}`
+      : `${quoteToken} / ${baseToken}`
 
   const dailyTicks = useMemo(() => {
     if (!hourlyData?.length) return []
@@ -66,7 +67,7 @@ export function PriceChart({
 
   return (
     <div className="card glass-surface rounded-2xl p-4">
-      <h3 className="text-lg font-semibold mb-4">
+      <h3 className="mb-4 text-lg font-semibold">
         {poolPriceLabel + ' Pool Price'}
       </h3>
 
@@ -75,7 +76,6 @@ export function PriceChart({
         height={window.innerWidth < 768 ? 200 : 300}
       >
         <LineChart data={hourlyData}>
-
           <XAxis
             dataKey="periodStartUnix"
             axisLine={false}

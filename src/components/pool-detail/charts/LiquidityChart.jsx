@@ -38,7 +38,12 @@ export function LiquidityChart({
   tickError
 }) {
   const processedData = useMemo(() => {
-    return processTickData(tickData, selectedTokenIdx, token0Decimals, token1Decimals)
+    return processTickData(
+      tickData,
+      selectedTokenIdx,
+      token0Decimals,
+      token1Decimals
+    )
   }, [tickData, selectedTokenIdx, token0Decimals, token1Decimals])
 
   const yDomain = useMemo(() => {
@@ -56,8 +61,8 @@ export function LiquidityChart({
     const nearest = (target) => {
       return processedData.reduce((best, item) =>
         Math.abs(item.price - target) < Math.abs(best.price - target)
-        ? item
-        : best
+          ? item
+          : best
       ).price
     }
 
@@ -72,7 +77,7 @@ export function LiquidityChart({
 
   return (
     <div className="card glass-surface rounded-2xl p-4">
-      <h3 className="text-lg font-semibold mb-4">Liquidity Distribution</h3>
+      <h3 className="mb-4 text-lg font-semibold">Liquidity Distribution</h3>
 
       <ResponsiveContainer
         width="100%"
@@ -98,12 +103,12 @@ export function LiquidityChart({
               <ReferenceLine
                 x={referencePoints.min}
                 stroke={CHART_COLORS.secondary}
-                strokeDasharray= "5 5"
+                strokeDasharray="5 5"
               />
               <ReferenceLine
                 x={referencePoints.max}
                 stroke={CHART_COLORS.secondary}
-                strokeDasharray= "5 5"
+                strokeDasharray="5 5"
               />
             </>
           )}

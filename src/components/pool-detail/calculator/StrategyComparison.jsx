@@ -85,12 +85,9 @@ export function StrategyComparison({
 function StrategyCard({ title, isWinner, data, isCalculating }) {
   return (
     <div
-      className={`
-            card bg-base-300 rounded-2xl p-4 mb-4
-            ${isWinner ? 'ring-2 ring-success' : ''}
-      `}
+      className={`card bg-base-300 mb-4 rounded-2xl p-4 ${isWinner ? 'ring-success ring-2' : ''} `}
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <h4 className="font-semibold">{title}</h4>
         {isWinner && <span className="badge badge-success">Best</span>}
       </div>

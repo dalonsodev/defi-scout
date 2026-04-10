@@ -79,7 +79,7 @@ export function TimeLineControl({ days, onDaysChange, daysToBreakEven }) {
             }}
             min="0"
             max="365"
-            className="input input-bordered glass-input text-center rounded-xl"
+            className="input input-bordered glass-input rounded-xl text-center"
             aria-label="Days of active position."
           />
 

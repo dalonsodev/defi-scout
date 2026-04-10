@@ -7,10 +7,10 @@
 export function formatPriceInput(value) {
   const parsedValue = parseFloat(value)
 
-  if (!Number.isFinite(parsedValue)) return "0"
+  if (!Number.isFinite(parsedValue)) return '0'
 
   if (parsedValue < 0.0001) return parsedValue.toFixed(12) // exotic tokens (e.g. PEPE/WETH)
-  if (parsedValue < 0.01) return parsedValue.toFixed(10)   // sub-cent range (e.g. WETH/USDC)
+  if (parsedValue < 0.01) return parsedValue.toFixed(10) // sub-cent range (e.g. WETH/USDC)
   if (parsedValue < 1) return parsedValue.toFixed(6)
   if (parsedValue < 1000) return parsedValue.toFixed(4)
 
@@ -37,10 +37,10 @@ export function formatPriceInput(value) {
 export function getPriceStep(value) {
   const parsedValue = parseFloat(value)
 
-  if (!Number.isFinite(parsedValue) || parsedValue <= 0) return 1e-8  // safe minimum
+  if (!Number.isFinite(parsedValue) || parsedValue <= 0) return 1e-8 // safe minimum
 
   const magnitude = Math.floor(Math.log10(parsedValue))
-  const step = Math.pow(10, (magnitude - 3))
+  const step = Math.pow(10, magnitude - 3)
 
   return step
 }

@@ -39,7 +39,7 @@ export function CustomTooltip({ active, payload, label }) {
 
   return (
     <div
-      className="rounded-lg p-3 shadow-lg border"
+      className="rounded-lg border p-3 shadow-lg"
       style={{
         backgroundColor: CHART_COLORS.tooltip.bg,
         borderColor: CHART_COLORS.tooltip.border,
@@ -47,7 +47,7 @@ export function CustomTooltip({ active, payload, label }) {
       }}
     >
       {/* Date header */}
-      <p className="font-semibold mb-2">{label}</p>
+      <p className="mb-2 font-semibold">{label}</p>
 
       {/* Metric rows with context-aware formatting */}
       {payload.map((entry, index) => {
@@ -72,7 +72,7 @@ export function CustomTooltip({ active, payload, label }) {
           <div key={index} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div
-                className="w-3 h-3 rounded-full"
+                className="h-3 w-3 rounded-full"
                 style={{ backgroundColor: entry.color }}
               />
               <span className="text-sm">{entry.name}:</span>

@@ -54,11 +54,7 @@ import { debugLog } from '../../../../utils/logger'
  * console.log(projection.lpStrategy.pnl)    // => -$42.15 (IL dominates)
  * console.log(projection.daysToBreakEven)   // => 45 days (fees need time)
  */
-export function useProjectionCalculator(
-  poolData,
-  rangeInputs,
-  results
-) {
+export function useProjectionCalculator(poolData, rangeInputs, results) {
   const token0PriceUSD = results?.token0PriceUSD ?? 0
   const token1PriceUSD = results?.token1PriceUSD ?? 0
 
