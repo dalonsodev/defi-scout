@@ -7,7 +7,6 @@ import Pools from './pages/Pools'
 import Watchlist from './pages/Watchlist'
 import { Layout } from './components/layout/Layout'
 import { FavoritesLayout } from './components/layout/FavoritesLayout'
-import { PoolDetail } from './components/pool-detail/PoolDetail'
 import { Error } from './components/common/Error'
 import { poolsLoader } from './loaders/poolsLoader'
 import { poolDetailLoader } from './loaders/poolDetailLoader'
@@ -16,19 +15,16 @@ import { watchlistLoader } from './loaders/watchlistLoader'
 /**
  * Application Router: React Router 6.4+ (with loader-based data fetching)
  *
- * Architecture Decision: Uses loaders instead of useEffect for data fetching
- * to enable render-as-you-fetch pattern (eliminates waterfall delays)
+ * Architecture Decision: Uses loaders for data fetching (render-as-you-fetch).
+ * Loaders execute before component rendering, eliminating useEffect waterfalls.
  *
  * Key Patterns:
- * - defer() in poolsLoader: Returns promise immediately, streams data during render
- *   (prevents blocking initial page paint for 8k pool dataset)
+ * - Blocking loaders: Both poolsLoader and poolDetailLoader use await,
+ *   guaranteeing data is ready before first render (no loading skeletons needed)
+ * - Route-level code splitting: PoolDetail loads lazily via lazy(),
+ *   reducing initial bundle size for the /pools entry point
  * - Scoped error boundaries: poolDetailLoader has dedicated errorElement to isolate
- *   GraphQL failures (keeps navigation functional when detail page breaks)
- * - Index route: No errorElement (bubbles to Layout's root boundary for consistency)
- *
- * Performance: Loaders execute in parallel with component code splitting (Vite),
- * reducing time-to-interactive by ~40% vs sequential useEffect chains.
- *
+ *   GraphQL failures without breaking the rest of the app
  */
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,7 +32,10 @@ export const router = createBrowserRouter(
       <Route element={<FavoritesLayout />}>
         <Route
           path="pools/:poolId"
-          element={<PoolDetail />}
+          lazy={async () => {
+            const module = await import('./components/pool-detail/PoolDetail')
+            return { Component: module.PoolDetail }
+          }}
           loader={poolDetailLoader}
           errorElement={<Error />}
         />
