@@ -88,6 +88,11 @@ export function AuthModal() {
     }
   }
 
+  const ghostLinkClasses = `
+    block mx-auto text-sm text-base-content/60
+    hover:text-base-content/80 transition-colors cursor-pointer
+  `
+
   return (
     <dialog className={`modal ${isAuthModalOpen ? 'modal-open' : ''}`}>
       <div className="modal-box max-w-xl glass-modal rounded-2xl">
@@ -109,7 +114,9 @@ export function AuthModal() {
         <form onSubmit={handleSubmit}>
           {resetSent ? (
             <>
-              <div className="alert alert-success text-sm font-semibold mt-4">Check your inbox</div>
+              <div className="alert alert-success text-sm font-semibold mt-4">
+                Check your inbox
+              </div>
               <button
                 type="button"
                 className="btn btn-ghost text-sm text-base-content/60 mt-4 block mx-auto"
@@ -194,7 +201,7 @@ export function AuthModal() {
               {mode === MODE.FORGOT ? (
                 <button
                   type="button"
-                  className="text-sm text-base-content/60 hover:text-base-content/80 transition-colors mt-6 block mx-auto cursor-pointer"
+                  className={`${ghostLinkClasses} mt-6`}
                   onClick={() => {
                     setMode(MODE.LOGIN)
                     setResetSent(false)
@@ -223,7 +230,7 @@ export function AuthModal() {
 
                   <button
                     type="button"
-                    className="text-sm text-base-content/60 hover:text-base-content/80 transition-colors my-6 block mx-auto cursor-pointer"
+                    className={`${ghostLinkClasses} my-6`}
                     onClick={() => {
                       setMode(mode === MODE.LOGIN ? MODE.SIGNUP : MODE.LOGIN)
                       setError(null)
