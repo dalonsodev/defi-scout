@@ -237,7 +237,10 @@ export function PoolDetail() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <button className="btn btn-ghost btn-circle btn-sm">
+                  <button
+                    className="btn btn-ghost btn-circle btn-sm"
+                    aria-label="View on DexScreener"
+                  >
                     <DexScreenLogo />
                   </button>
                 </a>
@@ -249,7 +252,10 @@ export function PoolDetail() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <button className="btn btn-ghost btn-circle btn-sm">
+                  <button
+                    className="btn btn-ghost btn-circle btn-sm"
+                    aria-label="View on Explorer"
+                  >
                     <BlockExplorerIcon />
                   </button>
                 </a>
@@ -262,6 +268,7 @@ export function PoolDetail() {
                 <button
                   className="btn btn-ghost btn-circle btn-sm"
                   onClick={() => toggleFavorite(pool.id)}
+                  aria-label={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
                 >
                   {isFavorited ? <FilledStarIcon /> : <OutlinedStarIcon />}
                 </button>
@@ -346,7 +353,7 @@ function StatCard({ label, value }) {
       <div className="text-xs text-base-content/60 uppercase tracking-wide mb-1 whitespace-nowrap">
         {label}
       </div>
-      <div className="text-base font-semibold text-primary/75">{value}</div>
+      <div className="text-base font-semibold text-primary">{value}</div>
     </div>
   )
 }

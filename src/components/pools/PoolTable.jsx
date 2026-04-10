@@ -93,6 +93,7 @@ const PoolTable = forwardRef(
                   >
                     <button
                       className="btn btn-ghost btn-circle btn-sm"
+                      aria-label={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
                       onClick={(e) => {
                         e.stopPropagation()
                         toggleFavorite(row.original.id)
@@ -117,7 +118,7 @@ const PoolTable = forwardRef(
                       </div>
                     </div>
 
-                    <span className="badge badge-sm text-base-content/50 btn-glass">
+                    <span className="badge badge-sm text-base-content/60 btn-glass">
                       {row.original.feeTierFormatted}
                     </span>
                   </Link>
@@ -251,7 +252,7 @@ const PoolTable = forwardRef(
                 key={header.id}
                 onClick={header.column.getToggleSortingHandler()}
                 style={{ width: header.column.getSize() }}
-                className={`sticky top-0 z-10 has-[.tooltip:hover]:z-20 bg-(--table-header-bg) hover:bg-(--table-header-bg) px-6 py-4 text-xs font-semibold text-base-content/50 uppercase tracking-wider cursor-pointer transition
+                className={`sticky top-0 z-10 has-[.tooltip:hover]:z-20 bg-(--table-header-bg) hover:bg-(--table-header-bg) px-6 py-4 text-xs font-semibold text-base-content/60 uppercase tracking-wider cursor-pointer transition
                   ${isSticky ? 'left-0 z-11 pl-4 text-left sticky-column-shadow' : ''}
                 `.trim()}
               >
@@ -271,7 +272,7 @@ const PoolTable = forwardRef(
 
                   {tooltipText &&
                     <span
-                      className="tooltip tooltip-bottom text-sm text-base-content/50"
+                      className="tooltip tooltip-bottom text-sm text-base-content/60"
                       data-tip={tooltipText}
                       onClick={(e) => e.stopPropagation()}
                     >

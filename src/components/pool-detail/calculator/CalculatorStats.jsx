@@ -67,7 +67,7 @@ export function CalculatorStats({
   if (isLoading || results === null) {
     return (
       <>
-        <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
+        <h2 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h2>
         <PlaceholderStats isPulsing />
       </>
     )
@@ -78,7 +78,7 @@ export function CalculatorStats({
     if (results.warning) {
       return (
       <>
-        <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
+        <h2 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h2>
         <PlaceholderStats />
         <div className="alert alert-warning text-xs font-semibold mt-4">{results.warning}</div>
       </>
@@ -86,7 +86,7 @@ export function CalculatorStats({
     } else {
       return (
         <>
-          <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
+          <h2 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h2>
           <PlaceholderStats />
           <div className="alert alert-error text-xs font-semibold mt-4">{results.error}</div>
         </>
@@ -108,7 +108,7 @@ export function CalculatorStats({
 
   return (
     <>
-      <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
+      <h2 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h2>
       <div className="text-4xl font-bold text-success mb-4">
         ${dailyFees.toFixed(2)}
       </div>

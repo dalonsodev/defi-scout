@@ -58,6 +58,7 @@ export function ContractLinks({ pool, chain = "ethereum" }) {
             <button
               className="btn btn-glass btn-xs btn-circle mr-2"
               onClick={() => {handleCopy(item.id, item.address)}}
+              aria-label="Copy contract address"
             >
               {copiedId === item.id ? <CheckIcon /> : <CopyIcon />}
             </button>

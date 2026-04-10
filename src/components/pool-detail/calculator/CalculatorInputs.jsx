@@ -47,12 +47,13 @@ export function CalculatorInputs({
     <div>
       {/* Capital Input */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold mb-2">
+        <label htmlFor="deposit-amount" className="block text-sm font-semibold mb-2">
           Deposit Amount
         </label>
         <div className="relative">
           <input
             type="number"
+            id="deposit-amount"
             value={inputs.capitalUSD}
             onChange={(e) => onChange('capitalUSD', Number(e.target.value))}
             className="input input-xl w-full pl-10 text-3xl font-bold glass-input rounded-xl"
@@ -184,7 +185,7 @@ export function CalculatorInputs({
               step={getPriceStep(inputs.minPrice)}
             />
 
-            <p className="text-xs text-center text-base-content/50 mt-2">
+            <p className="text-xs text-center text-base-content/60 mt-2">
               {priceLabel}
             </p>
           </div>
@@ -224,7 +225,7 @@ export function CalculatorInputs({
               step={getPriceStep(inputs.maxPrice)}
             />
 
-            <p className="text-xs text-center text-base-content/50 mt-2">
+            <p className="text-xs text-center text-base-content/60 mt-2">
               {priceLabel}
             </p>
           </div>
@@ -244,9 +245,9 @@ export function CalculatorInputs({
               </button>
 
               <div className="flex justify-center flex-1 items-center gap-1">
-                <span className="text-xs text-base-content/60 pr-1">
+                <label htmlFor="assumed-entry-price" className="text-xs text-base-content/60 pr-1">
                   Assumed Entry Price
-                </span>
+                </label>
                 <button className="btn btn-circle btn-glass btn-xs">
                   <div
                     className="tooltip tooltip-top before:max-w-60 before:whitespace-normal"
@@ -272,6 +273,7 @@ export function CalculatorInputs({
 
           <input
             type="number"
+            id="assumed-entry-price"
             value={inputs.fullRange ? '' : formatPriceInput(inputs.assumedPrice)}
             onChange={(e) => onChange('assumedPrice', Number(e.target.value))}
             disabled={inputs.fullRange}
@@ -280,7 +282,7 @@ export function CalculatorInputs({
             step={getPriceStep(inputs.assumedPrice)}
           />
 
-          <p className="text-xs text-center text-base-content/50 mt-2">
+          <p className="text-xs text-center text-base-content/60 mt-2">
             {priceLabel}
           </p>
         </div>
