@@ -81,7 +81,10 @@ export function validateInputs({
     return { success: false, error: 'No hourly data for this pool' }
   }
   if (hourlyData.length < 24) {
-    return { success: false, error: 'Insufficient hourly data (min. 24h required)'}
+    return {
+      success: false,
+      error: 'Insufficient hourly data (min. 24h required)'
+    }
   }
 
   return { success: true }

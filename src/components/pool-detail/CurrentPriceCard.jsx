@@ -19,19 +19,21 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
     return selectedTokenIdx === 0 ? price0 : price1
   }, [pool.token0Price, pool.token1Price, selectedTokenIdx])
 
+  const glassBtnClasses = 'btn btn-glass join-item'
+
   return (
-    <div className="rounded-2xl glass-surface p-4">
+    <div className="glass-surface rounded-2xl p-4">
       {currentPrice && (
         <div className="glass-surface rounded-lg p-3">
-          <div className="text-xs text-base-content/60 mb-1">Current Price</div>
+          <div className="text-base-content/60 mb-1 text-xs">Current Price</div>
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold">
               {currentPrice.toFixed(currentPrice < 1 ? 8 : 2)}
             </span>
-            <span className="text-base text-base-content/70">
+            <span className="text-base-content/70 text-base">
               {selectedTokenIdx === 0 ? pool.token0.symbol : pool.token1.symbol}
             </span>
-            <span className="text-xs text-base-content/50">
+            <span className="text-base-content/60 text-xs">
               per{' '}
               {selectedTokenIdx === 0 ? pool.token1.symbol : pool.token0.symbol}
             </span>
@@ -41,14 +43,18 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
 
       <div className="join mt-4">
         <button
-          className={`btn btn-glass rounded-l-xl join-item ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
-          onClick={() => {onTokenChange(0)}}
+          className={`${glassBtnClasses} rounded-l-xl ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
+          onClick={() => {
+            onTokenChange(0)
+          }}
         >
           {pool.token0.symbol}
         </button>
         <button
-          className={`btn btn-glass rounded-r-xl join-item ${selectedTokenIdx === 1 ? 'btn-active' : ''}`}
-          onClick={() => {onTokenChange(1)}}
+          className={`${glassBtnClasses} rounded-r-xl ${selectedTokenIdx === 1 ? 'btn-active' : ''}`}
+          onClick={() => {
+            onTokenChange(1)
+          }}
         >
           {pool.token1.symbol}
         </button>

@@ -22,11 +22,11 @@ import { CHART_COLORS } from '../../constants/chartColors'
  */
 export function MiniSparkline({ data, width = 80, height = 20 }) {
   if (!data)
-    return <div className="w-20 h-10 bg-base-300 rounded animate-pulse" />
+    return <div className="bg-base-300 h-10 w-20 animate-pulse rounded" />
 
   if (data.length < 2)
     return (
-      <span className="text-xs text-base-content/40 font-medium">No data</span>
+      <span className="text-base-content/50 text-xs font-medium">No data</span>
     )
 
   const values = data
@@ -36,11 +36,12 @@ export function MiniSparkline({ data, width = 80, height = 20 }) {
   const last = values[values.length - 1]
 
   // Financial convention: Green (gains), Red (losses), Gray (flat)
-  const strokeColor = last > first
-    ? CHART_COLORS.trend.up
-    : last < first
-      ? CHART_COLORS.trend.down
-      : CHART_COLORS.trend.flat
+  const strokeColor =
+    last > first
+      ? CHART_COLORS.trend.up
+      : last < first
+        ? CHART_COLORS.trend.down
+        : CHART_COLORS.trend.flat
 
   /**
    * Geometry: Map a numeric value to an SVG Y-coordinate.
@@ -69,7 +70,7 @@ export function MiniSparkline({ data, width = 80, height = 20 }) {
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
-      className="block mx-auto"
+      className="mx-auto block"
       preserveAspectRatio="none"
     >
       <polyline

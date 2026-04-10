@@ -12,22 +12,22 @@
 
 // Map for building URL params from accessorKeys
 const SORT_COLUMN_MAP = {
-  'name': 'name',
-  'apy': 'apyBase',
-  'tvl': 'tvlUsd',
-  'vol': 'volumeUsd1d',
-  'chain': 'chain',
-  'platform': 'platformName'
+  name: 'name',
+  apy: 'apyBase',
+  tvl: 'tvlUsd',
+  vol: 'volumeUsd1d',
+  chain: 'chain',
+  platform: 'platformName'
 }
 
 // Reverse map URL params to TanStack Table accessorKeys
 const COLUMN_TO_URL = {
-  'name': 'name',
-  'apyBase': 'apy',
-  'tvlUsd': 'tvl',
-  'volumeUsd1d': 'vol',
-  'chain': 'chain',
-  'platformName': 'platform'
+  name: 'name',
+  apyBase: 'apy',
+  tvlUsd: 'tvl',
+  volumeUsd1d: 'vol',
+  chain: 'chain',
+  platformName: 'platform'
 }
 
 // Defaults state values (used for validation and clean URL generation)
@@ -76,35 +76,35 @@ export function parseSearchParams(searchParams) {
   // 3. TVL filter (string → validated number → back to string for input compatibility)
   const tvlParam = searchParams.get('tvlUsd')
   const tvlNum = Number(tvlParam)
-  const tvlUsd = tvlParam && !isNaN(tvlNum) && tvlNum > 0
-    ? tvlParam
-    : DEFAULT_STATE.tvlUsd
+  const tvlUsd =
+    tvlParam && !isNaN(tvlNum) && tvlNum > 0 ? tvlParam : DEFAULT_STATE.tvlUsd
 
   // 4. Volume filter (same logic as TVL)
   const volParam = searchParams.get('volumeUsd1d')
   const volNum = Number(volParam)
-  const volumeUsd1d = volParam && !isNaN(volNum) && volNum > 0
-    ? volParam
-    : DEFAULT_STATE.volumeUsd1d
+  const volumeUsd1d =
+    volParam && !isNaN(volNum) && volNum > 0
+      ? volParam
+      : DEFAULT_STATE.volumeUsd1d
 
   // 5. Sort column (validate against allowed columns)
   const sortByParam = searchParams.get('sortBy')
-  const sortBy = sortByParam && SORT_COLUMN_MAP[sortByParam]
-    ? SORT_COLUMN_MAP[sortByParam] // URL 'tvl' → accessorKey 'tvlUsd'
-    : DEFAULT_STATE.sortBy
+  const sortBy =
+    sortByParam && SORT_COLUMN_MAP[sortByParam]
+      ? SORT_COLUMN_MAP[sortByParam] // URL 'tvl' → accessorKey 'tvlUsd'
+      : DEFAULT_STATE.sortBy
 
   // 6. Sort direction (validate enum)
   const sortDirParam = searchParams.get('sortDir')
-  const sortDir = sortDirParam === 'desc' || sortDirParam === 'asc'
-    ? sortDirParam
-    : DEFAULT_STATE.sortDir
+  const sortDir =
+    sortDirParam === 'desc' || sortDirParam === 'asc'
+      ? sortDirParam
+      : DEFAULT_STATE.sortDir
 
   // 7. Page index (number with >= 0 validation)
   const pageParam = searchParams.get('page')
   const pageNum = Number(pageParam)
-  const page = !isNaN(pageNum) && pageNum >= 0
-    ? pageNum
-    : DEFAULT_STATE.page
+  const page = !isNaN(pageNum) && pageNum >= 0 ? pageNum : DEFAULT_STATE.page
 
   return {
     search,

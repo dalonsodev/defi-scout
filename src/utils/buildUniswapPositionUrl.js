@@ -1,4 +1,8 @@
-import { priceToTick, alignTickToSpacing, getTickSpacing } from '../components/pool-detail/calculator/utils/uniswapV3Ticks'
+import {
+  priceToTick,
+  alignTickToSpacing,
+  getTickSpacing
+} from '../components/pool-detail/calculator/utils/uniswapV3Ticks'
 
 const MIN_TICK = -887272
 const MAX_TICK = 887272
@@ -12,7 +16,12 @@ const MAX_TICK = 887272
  * @param {number} selectedTokenIdx - Active token perspective (0=token0, 1=token1)
  * @returns {string} URL to create a Uniswap V3 position
  */
-export function buildUniswapPositionUrl(pool, inputs, composition, selectedTokenIdx) {
+export function buildUniswapPositionUrl(
+  pool,
+  inputs,
+  composition,
+  selectedTokenIdx
+) {
   const token0Address = pool.token0.id.toLowerCase()
   const token1Address = pool.token1.id.toLowerCase()
 
@@ -29,11 +38,19 @@ export function buildUniswapPositionUrl(pool, inputs, composition, selectedToken
     minTick = Math.ceil(MIN_TICK / tickSpacing) * tickSpacing
     maxTick = Math.floor(MAX_TICK / tickSpacing) * tickSpacing
   } else {
-    const canonicalMin = selectedTokenIdx === 1 ? 1 / inputs.maxPrice : inputs.minPrice
-    const canonicalMax = selectedTokenIdx === 1 ? 1 / inputs.minPrice : inputs.maxPrice
+    const canonicalMin =
+      selectedTokenIdx === 1 ? 1 / inputs.maxPrice : inputs.minPrice
+    const canonicalMax =
+      selectedTokenIdx === 1 ? 1 / inputs.minPrice : inputs.maxPrice
 
-    const canonicalMinTick = alignTickToSpacing(priceToTick(decimalAdjustment / canonicalMax), tickSpacing)
-    const canonicalMaxTick = alignTickToSpacing(priceToTick(decimalAdjustment / canonicalMin), tickSpacing)
+    const canonicalMinTick = alignTickToSpacing(
+      priceToTick(decimalAdjustment / canonicalMax),
+      tickSpacing
+    )
+    const canonicalMaxTick = alignTickToSpacing(
+      priceToTick(decimalAdjustment / canonicalMin),
+      tickSpacing
+    )
 
     if (priceInverted) {
       minTick = -canonicalMaxTick
@@ -61,15 +78,22 @@ export function buildUniswapPositionUrl(pool, inputs, composition, selectedToken
   const depositState = JSON.stringify({
     isInternal: false,
     exactField: 'TOKEN0',
-    exactAmounts: composition ? {
-      TOKEN0: isFinite(composition.amount0) ? composition.amount0.toFixed(8) : '0',
-      TOKEN1: isFinite(composition.amount1) ? composition.amount1.toFixed(8) : '0'
-    } : {}
+    exactAmounts: composition
+      ? {
+          TOKEN0: isFinite(composition.amount0)
+            ? composition.amount0.toFixed(8)
+            : '0',
+          TOKEN1: isFinite(composition.amount1)
+            ? composition.amount1.toFixed(8)
+            : '0'
+        }
+      : {}
   })
 
-  const [c0, c1] = token0Address < token1Address
-    ? [token0Address, token1Address]
-    : [token1Address, token0Address]
+  const [c0, c1] =
+    token0Address < token1Address
+      ? [token0Address, token1Address]
+      : [token1Address, token0Address]
 
   const params = new URLSearchParams()
   params.set('currencyA', c0)

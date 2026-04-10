@@ -22,33 +22,38 @@ export default function Watchlist() {
   )
 
   const visiblePools = useMemo(() => {
-    return new Set(
-      pools.filter((p) => visiblePoolIds.has(p.id))
-    )
+    return new Set(pools.filter((p) => visiblePoolIds.has(p.id)))
   }, [pools, visiblePoolIds])
 
   const { sparklineData } = useSparklines({
     visiblePools,
-    currentPage: 1  // No freemium gate on watchlist
+    currentPage: 1 // No freemium gate on watchlist
   })
 
   if (!pools.length) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 text-base-content/50">
+      <div className="text-base-content/50 flex flex-col items-center justify-center py-32">
         <p className="text-lg font-medium">No saved pools yet.</p>
-        <p className="text-sm mt-1">Star a pool from the main table to add it here.</p>
+        <p className="mt-1 text-sm">
+          Star a pool from the main table to add it here.
+        </p>
         {/* TODO: update to "/pools" when a landing page is added at "/" */}
-        <Link to="/" className="btn btn-primary rounded-xl mt-4">Explore Pools</Link>
+        <Link to="/" className="btn btn-primary mt-4 rounded-xl">
+          Explore Pools
+        </Link>
       </div>
     )
   }
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold text-base-content mb-6">My Watchlist</h1>
+      <title>My Watchlist | DeFi Scout</title>
+      <h1 className="text-base-content mb-6 text-2xl font-bold">
+        My Watchlist
+      </h1>
       <div
         ref={tableRef}
-        className="glass-surface -mx-4 sm:-mx-6 md:-mx-4 rounded-3xl shadow-lg"
+        className="glass-surface -mx-4 rounded-3xl shadow-lg sm:-mx-6 md:-mx-4"
       >
         <PoolTable
           ref={tableScrollRef}
@@ -61,13 +66,13 @@ export default function Watchlist() {
           onVisiblePoolsChange={setVisiblePoolIds}
           from="watchlist"
         />
-          <div className="py-4">
-            <PaginationControls
-              totalPages={totalPages}
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-            />
-          </div>
+        <div className="py-4">
+          <PaginationControls
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       </div>
     </div>
   )

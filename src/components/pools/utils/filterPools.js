@@ -5,7 +5,7 @@
  * @returns {string} Whitespace-free, uppercased, token-order-independent string (e.g. "WETH / USDC" -> "USDC/WETH")
  */
 function normalizeSearch(str) {
-  return str.replace(/\s+/g, '').toUpperCase().split("/").sort().join("/")
+  return str.replace(/\s+/g, '').toUpperCase().split('/').sort().join('/')
 }
 
 /**

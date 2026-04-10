@@ -1,4 +1,4 @@
-import { formatPriceInput, getPriceStep } from "../../../utils/priceInputUtils"
+import { formatPriceInput, getPriceStep } from '../../../utils/priceInputUtils'
 
 /**
  * UI: LP Position Parameter Controls.
@@ -35,30 +35,36 @@ export function CalculatorInputs({
   const capital0 = composition?.capital0USD
   const capital1 = composition?.capital1USD
 
-  const primary = selectedTokenIdx === 0
-    ? { symbol: token0Symbol, amount: token0Amount, capital: capital0 }
-    : { symbol: token1Symbol, amount: token1Amount, capital: capital1 }
+  const primary =
+    selectedTokenIdx === 0
+      ? { symbol: token0Symbol, amount: token0Amount, capital: capital0 }
+      : { symbol: token1Symbol, amount: token1Amount, capital: capital1 }
 
-  const secondary = selectedTokenIdx === 0
-    ? { symbol: token1Symbol, amount: token1Amount, capital: capital1 }
-    : { symbol: token0Symbol, amount: token0Amount, capital: capital0 }
+  const secondary =
+    selectedTokenIdx === 0
+      ? { symbol: token1Symbol, amount: token1Amount, capital: capital1 }
+      : { symbol: token0Symbol, amount: token0Amount, capital: capital0 }
 
   return (
     <div>
       {/* Capital Input */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold mb-2">
+        <label
+          htmlFor="deposit-amount"
+          className="mb-2 block text-sm font-semibold"
+        >
           Deposit Amount
         </label>
         <div className="relative">
           <input
             type="number"
+            id="deposit-amount"
             value={inputs.capitalUSD}
             onChange={(e) => onChange('capitalUSD', Number(e.target.value))}
-            className="input input-xl w-full pl-10 text-3xl font-bold glass-input rounded-xl"
+            className="input input-xl glass-input w-full rounded-xl pl-10 text-3xl font-bold"
             min="0"
           />
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl text-base-content/60">
+          <span className="text-base-content/60 absolute top-1/2 left-4 -translate-y-1/2 text-3xl">
             $
           </span>
         </div>
@@ -67,7 +73,7 @@ export function CalculatorInputs({
         <div className="mt-3 space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-primary"></span>
+              <span className="bg-primary h-2 w-2 rounded-full"></span>
               {primary.symbol}
               {composition && (
                 <span className="text-base-content/60">
@@ -85,7 +91,7 @@ export function CalculatorInputs({
 
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-secondary"></span>
+              <span className="bg-secondary h-2 w-2 rounded-full"></span>
               {secondary.symbol}
               {composition && (
                 <span className="text-base-content/60">
@@ -105,9 +111,9 @@ export function CalculatorInputs({
 
       {/* Price Range Configuration */}
       <div className="mb-6">
-        <div className="flex justify-between items-center mb-2 md:mb-4">
+        <div className="mb-2 flex items-center justify-between md:mb-4">
           <label className="text-sm font-semibold">Price Range</label>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex cursor-pointer items-center gap-2">
             <span className="text-sm">Full Range:</span>
             <input
               type="checkbox"
@@ -120,7 +126,7 @@ export function CalculatorInputs({
 
         {/* Volatility Presets
           Disabled when fullRange=true (liquidity spans 0 to ∞, no discrete bounds) */}
-        <div className="flex gap-2 mb-3 md:mb-6">
+        <div className="mb-3 flex gap-2 md:mb-6">
           <button
             type="button"
             onClick={() => onPresetClick('±10%')}
@@ -148,10 +154,10 @@ export function CalculatorInputs({
         </div>
 
         {/* Min/Max Price Boundaries with Tick Adjustment */}
-        <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="mb-3 grid grid-cols-2 gap-3">
           <div className="form-control glass-surface rounded-xl p-3">
-            <div className="flex justify-between items-center mb-1">
-              <div className="flex justify-between flex-1 items-center gap-1 mb-1">
+            <div className="mb-1 flex items-center justify-between">
+              <div className="mb-1 flex flex-1 items-center justify-between gap-1">
                 <button
                   type="button"
                   onClick={() => onIncrement('minPrice', -1)}
@@ -161,7 +167,9 @@ export function CalculatorInputs({
                 >
                   −
                 </button>
-                <label className="text-xs text-base-content/60">Min Price</label>
+                <label className="text-base-content/60 text-xs">
+                  Min Price
+                </label>
                 <button
                   type="button"
                   onClick={() => onIncrement('minPrice', 1)}
@@ -180,18 +188,18 @@ export function CalculatorInputs({
               onChange={(e) => onChange('minPrice', Number(e.target.value))}
               disabled={inputs.fullRange}
               placeholder="0"
-              className="input input-md w-full text-lg text-center glass-input rounded-xl"
+              className="input input-md glass-input w-full rounded-xl text-center text-lg"
               step={getPriceStep(inputs.minPrice)}
             />
 
-            <p className="text-xs text-center text-base-content/50 mt-2">
+            <p className="text-base-content/60 mt-2 text-center text-xs">
               {priceLabel}
             </p>
           </div>
 
           <div className="form-control glass-surface rounded-xl p-3">
-            <div className="flex justify-between items-center mb-1">
-              <div className="flex justify-between flex-1 items-center gap-1 mb-1">
+            <div className="mb-1 flex items-center justify-between">
+              <div className="mb-1 flex flex-1 items-center justify-between gap-1">
                 <button
                   type="button"
                   onClick={() => onIncrement('maxPrice', -1)}
@@ -201,7 +209,9 @@ export function CalculatorInputs({
                 >
                   −
                 </button>
-                <label className="text-xs text-base-content/60">Max Price</label>
+                <label className="text-base-content/60 text-xs">
+                  Max Price
+                </label>
                 <button
                   type="button"
                   onClick={() => onIncrement('maxPrice', 1)}
@@ -220,11 +230,11 @@ export function CalculatorInputs({
               onChange={(e) => onChange('maxPrice', Number(e.target.value))}
               disabled={inputs.fullRange}
               placeholder="∞"
-              className="input input-md w-full text-lg text-center glass-input rounded-xl"
+              className="input input-md glass-input w-full rounded-xl text-center text-lg"
               step={getPriceStep(inputs.maxPrice)}
             />
 
-            <p className="text-xs text-center text-base-content/50 mt-2">
+            <p className="text-base-content/60 mt-2 text-center text-xs">
               {priceLabel}
             </p>
           </div>
@@ -232,8 +242,8 @@ export function CalculatorInputs({
 
         {/* Assumed Entry Price for Simulation */}
         <div className="glass-surface rounded-xl p-3">
-          <div className="flex justify-between items-center mb-2 gap-2">
-            <div className="flex justify-between flex-1 items-center gap-1">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <div className="flex flex-1 items-center justify-between gap-1">
               <button
                 type="button"
                 onClick={() => onIncrement('assumedPrice', -1)}
@@ -243,16 +253,19 @@ export function CalculatorInputs({
                 −
               </button>
 
-              <div className="flex justify-center flex-1 items-center gap-1">
-                <span className="text-xs text-base-content/60 pr-1">
+              <div className="flex flex-1 items-center justify-center gap-1">
+                <label
+                  htmlFor="assumed-entry-price"
+                  className="text-base-content/60 pr-1 text-xs"
+                >
                   Assumed Entry Price
-                </span>
+                </label>
                 <button className="btn btn-circle btn-glass btn-xs">
                   <div
                     className="tooltip tooltip-top before:max-w-60 before:whitespace-normal"
                     data-tip="It first populates with the most recent price for the pool. You can adjust your desired entry price for the range calculator."
                   >
-                    <div className="font-medium text-base-content max-w-[120px] truncate">
+                    <div className="text-base-content max-w-[120px] truncate font-medium">
                       ?
                     </div>
                   </div>
@@ -272,15 +285,18 @@ export function CalculatorInputs({
 
           <input
             type="number"
-            value={inputs.fullRange ? '' : formatPriceInput(inputs.assumedPrice)}
+            id="assumed-entry-price"
+            value={
+              inputs.fullRange ? '' : formatPriceInput(inputs.assumedPrice)
+            }
             onChange={(e) => onChange('assumedPrice', Number(e.target.value))}
             disabled={inputs.fullRange}
             placeholder={inputs.fullRange ? '50/50 split' : ''}
-            className="input input-md w-full text-lg text-center glass-input rounded-xl"
+            className="input input-md glass-input w-full rounded-xl text-center text-lg"
             step={getPriceStep(inputs.assumedPrice)}
           />
 
-          <p className="text-xs text-center text-base-content/50 mt-2">
+          <p className="text-base-content/60 mt-2 text-center text-xs">
             {priceLabel}
           </p>
         </div>
@@ -294,8 +310,20 @@ export function CalculatorInputs({
         className="btn btn-error text-base-content w-full rounded-xl"
       >
         Create Position on Uniswap
-        <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 24 24">
-          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M12 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6m-7 1l9-9m-5 0h5v5"/>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="1.25em"
+          height="1.25em"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2.6"
+            d="M12 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6m-7 1l9-9m-5 0h5v5"
+          />
         </svg>
       </a>
     </div>

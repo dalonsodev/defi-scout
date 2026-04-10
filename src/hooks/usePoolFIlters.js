@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useCallback } from 'react'
-import { parseSearchParams, updateSearchParams } from "../utils/urlState"
+import { parseSearchParams, updateSearchParams } from '../utils/urlState'
 
 /**
  * Custom Hook: Centralized Filter State Manager
@@ -75,20 +75,27 @@ export function usePoolFilters() {
   }
 
   // Simple updater (debouncing handled by useDebouncedFilterInputs)
-  const updateFilter = useCallback((key, value) => {
-    updateSearchParams(navigate, searchParams, { [key]: value })
-  }, [navigate, searchParams])
+  const updateFilter = useCallback(
+    (key, value) => {
+      updateSearchParams(navigate, searchParams, { [key]: value })
+    },
+    [navigate, searchParams]
+  )
 
   // Platform toggle (custom array logic)
-  const togglePlatform = useCallback((platform) => {
-    const currentPlatforms = searchParams.get('platforms')?.split(',').filter(Boolean) || []
+  const togglePlatform = useCallback(
+    (platform) => {
+      const currentPlatforms =
+        searchParams.get('platforms')?.split(',').filter(Boolean) || []
 
-    const newPlatforms = currentPlatforms.includes(platform)
-      ? currentPlatforms.filter((p) => p !== platform)
-      : [...currentPlatforms, platform]
+      const newPlatforms = currentPlatforms.includes(platform)
+        ? currentPlatforms.filter((p) => p !== platform)
+        : [...currentPlatforms, platform]
 
-    updateSearchParams(navigate, searchParams, { platforms: newPlatforms })
-  }, [navigate, searchParams])
+      updateSearchParams(navigate, searchParams, { platforms: newPlatforms })
+    },
+    [navigate, searchParams]
+  )
 
   // Clear all filters
   const clearFilters = useCallback(() => {

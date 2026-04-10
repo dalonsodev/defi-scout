@@ -78,7 +78,6 @@ export function useSparklines({ visiblePools, currentPage }) {
     return () => {
       isMounted = false
     }
-
   }, [visiblePools, currentPage])
 
   return { sparklineData: cache.current }

@@ -1,5 +1,5 @@
-import { CHART_COLORS } from "../../../constants/chartColors"
-import { formatCompactCurrency } from "../../../utils/formatCompactCurrency"
+import { CHART_COLORS } from '../../../constants/chartColors'
+import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
 
 /**
  * UI: Multi-Series Chart Tooltip (TVL + Vol + Vol/TVl ratio + Fees)
@@ -42,7 +42,7 @@ export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
 
   return (
     <div
-      className="rounded-lg p-3 shadow-lg border"
+      className="rounded-lg border p-3 shadow-lg"
       style={{
         backgroundColor: CHART_COLORS.tooltip.bg,
         borderColor: CHART_COLORS.tooltip.border,
@@ -50,7 +50,7 @@ export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
       }}
     >
       {/* Date header */}
-      <p className="font-semibold mb-2">{displayLabel}</p>
+      <p className="mb-2 font-semibold">{displayLabel}</p>
 
       {/* Metric rows with context-aware formatting */}
       {payload.map((entry, index) => {
@@ -63,7 +63,7 @@ export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
           <div key={index} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div
-                className="w-3 h-3 rounded-full"
+                className="h-3 w-3 rounded-full"
                 style={{ backgroundColor: entry.color }}
               />
               <span className="text-sm">{entry.name}:</span>
@@ -72,7 +72,7 @@ export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
           </div>
         )
       })}
-      <div className="border-t border-base-content/20 my-2" />
+      <div className="border-base-content/20 my-2 border-t" />
 
       {/* Tooltip-only metrics with formatting */}
       {volumeToTvlRatio != null && (
@@ -80,7 +80,9 @@ export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
           <div className="flex items-center gap-2">
             <span className="text-sm">Vol/TVL Ratio:</span>
           </div>
-          <span className="text-sm font-semibold">{volumeToTvlRatio.toFixed(1) + 'x'}</span>
+          <span className="text-sm font-semibold">
+            {volumeToTvlRatio.toFixed(1) + 'x'}
+          </span>
         </div>
       )}
 
@@ -89,7 +91,9 @@ export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
           <div className="flex items-center gap-2">
             <span className="text-sm">Fees:</span>
           </div>
-          <span className="text-sm font-semibold">{formatCompactCurrency(feesUSD)}</span>
+          <span className="text-sm font-semibold">
+            {formatCompactCurrency(feesUSD)}
+          </span>
         </div>
       )}
     </div>

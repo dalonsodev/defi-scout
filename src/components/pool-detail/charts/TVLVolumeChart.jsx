@@ -45,14 +45,13 @@ export function TVLVolumeChart({ history }) {
 
   return (
     <div className="card glass-surface rounded-2xl p-4">
-      <h3 className="text-lg font-semibold mb-4">TVL & Volume</h3>
+      <h3 className="mb-4 text-lg font-semibold">TVL & Volume</h3>
 
       <ResponsiveContainer
         width="100%"
         height={window.innerWidth < 768 ? 200 : 300}
       >
         <ComposedChart data={historyWithRatio}>
-
           <XAxis
             dataKey="dateTimestamp"
             tick={{ dy: 5 }}
@@ -103,9 +102,7 @@ export function TVLVolumeChart({ history }) {
             name="Volume"
           />
 
-          <Tooltip content={
-            <CustomTVLTooltip dateShortMap={dateShortMap} />
-          } />
+          <Tooltip content={<CustomTVLTooltip dateShortMap={dateShortMap} />} />
         </ComposedChart>
       </ResponsiveContainer>
     </div>

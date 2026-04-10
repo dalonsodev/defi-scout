@@ -6,7 +6,7 @@ function PlaceholderStats({ isPulsing = false }) {
 
   return (
     <>
-      <div className={`text-4xl font-bold text-success mb-4 ${pulseClass}`}>
+      <div className={`text-success mb-4 text-4xl font-bold ${pulseClass}`}>
         $--
       </div>
       <div className="space-y-2">
@@ -67,7 +67,7 @@ export function CalculatorStats({
   if (isLoading || results === null) {
     return (
       <>
-        <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
+        <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
         <PlaceholderStats isPulsing />
       </>
     )
@@ -77,22 +77,25 @@ export function CalculatorStats({
   if (!results.success) {
     if (results.warning) {
       return (
-      <>
-        <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
-        <PlaceholderStats />
-        <div className="alert alert-warning text-xs font-semibold mt-4">{results.warning}</div>
-      </>
-    )
+        <>
+          <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
+          <PlaceholderStats />
+          <div className="alert alert-warning mt-4 text-xs font-semibold">
+            {results.warning}
+          </div>
+        </>
+      )
     } else {
       return (
         <>
-          <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
+          <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
           <PlaceholderStats />
-          <div className="alert alert-error text-xs font-semibold mt-4">{results.error}</div>
+          <div className="alert alert-error mt-4 text-xs font-semibold">
+            {results.error}
+          </div>
         </>
       )
     }
-
   }
 
   // Linear Extrapolation: Assumes fee velocity ($/day/L) stays constant.
@@ -108,12 +111,12 @@ export function CalculatorStats({
 
   return (
     <>
-      <h3 className="text-lg font-semibold mb-2">Estimated Fees (24h)</h3>
-      <div className="text-4xl font-bold text-success mb-4">
+      <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
+      <div className="text-success mb-4 text-4xl font-bold">
         ${dailyFees.toFixed(2)}
       </div>
 
-      <div className="space-y-2 mb-4">
+      <div className="mb-4 space-y-2">
         <div className="flex justify-between">
           <span className="text-base-content/60">MONTHLY:</span>
           <span className="font-semibold">
@@ -133,7 +136,7 @@ export function CalculatorStats({
 
       {/* Data Quality Warning: Low sample size increases projection variance */}
       {hasLimitedData && (
-        <div className="alert alert-warning text-xs mb-4">
+        <div className="alert alert-warning mb-4 text-xs">
           ⚠️ Based on {results.daysOfData.toFixed(1)} days. Projections may
           vary.
         </div>

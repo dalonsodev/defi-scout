@@ -36,14 +36,14 @@ export function Dropdown({ selected, onToggle, options }) {
       {/* Trigger: Toggle button with dynamic label based on selection state */}
       <button
         type="button"
-        className="btn btn-sm w-full justify-between rounded-xl glass-input"
+        className="btn btn-sm glass-input w-full justify-between rounded-xl"
         onClick={() => setIsOpen(!isOpen)}
       >
         {selected.length > 0
           ? `Selected (${selected.length})`
           : 'All Platforms'}
         <svg
-          className="w-4 h-4"
+          className="h-4 w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -59,7 +59,7 @@ export function Dropdown({ selected, onToggle, options }) {
 
       {/* Menu: Floating list of checkboxes */}
       {isOpen && (
-        <ul className="absolute z-20 mt-2 menu p-2 glass-overlay rounded-2xl w-52">
+        <ul className="menu glass-overlay absolute z-20 mt-2 w-52 rounded-2xl p-2">
           {options.map((option) => (
             <li key={option.value}>
               <label className="label cursor-pointer rounded-xl">

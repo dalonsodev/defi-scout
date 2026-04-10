@@ -38,7 +38,7 @@ export function useFavorites() {
     let cancelled = false
 
     const fetchFavorites = async () => {
-      const favoritesRef = collection(db, "users", currentUser.uid, "favorites")
+      const favoritesRef = collection(db, 'users', currentUser.uid, 'favorites')
       const querySnapshot = await getDocs(favoritesRef)
       const poolIds = new Set(querySnapshot.docs.map((doc) => doc.id))
 
@@ -49,7 +49,9 @@ export function useFavorites() {
 
     fetchFavorites()
     // Cleanup: Prevents state update on unmounted component
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [currentUser])
 
   /**
@@ -67,7 +69,7 @@ export function useFavorites() {
       openAuthModal()
       return
     }
-    const docRef = doc(db, "users", currentUser.uid, "favorites", poolId)
+    const docRef = doc(db, 'users', currentUser.uid, 'favorites', poolId)
 
     if (favoriteIds.has(poolId)) {
       setFavoriteIds((prev) => {
@@ -76,7 +78,6 @@ export function useFavorites() {
         return next
       })
       await deleteDoc(docRef)
-
     } else {
       setFavoriteIds((prev) => new Set([...prev, poolId]))
       await setDoc(docRef, { poolId, addedAt: serverTimestamp() })
