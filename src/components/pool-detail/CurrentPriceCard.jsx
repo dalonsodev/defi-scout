@@ -19,6 +19,8 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
     return selectedTokenIdx === 0 ? price0 : price1
   }, [pool.token0Price, pool.token1Price, selectedTokenIdx])
 
+  const glassBtnClasses = 'btn btn-glass join-item'
+
   return (
     <div className="glass-surface rounded-2xl p-4">
       {currentPrice && (
@@ -41,7 +43,7 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
 
       <div className="join mt-4">
         <button
-          className={`btn btn-glass join-item rounded-l-xl ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
+          className={`${glassBtnClasses} rounded-l-xl ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
           onClick={() => {
             onTokenChange(0)
           }}
@@ -49,7 +51,7 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
           {pool.token0.symbol}
         </button>
         <button
-          className={`btn btn-glass join-item rounded-r-xl ${selectedTokenIdx === 1 ? 'btn-active' : ''}`}
+          className={`${glassBtnClasses} rounded-r-xl ${selectedTokenIdx === 1 ? 'btn-active' : ''}`}
           onClick={() => {
             onTokenChange(1)
           }}

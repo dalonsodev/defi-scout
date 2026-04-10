@@ -87,7 +87,11 @@ export function PoolFilters({
 
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 md:hidden ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+        className={`
+          fixed inset-0 z-40 bg-black/50
+          transition-opacity duration-300 md:hidden
+          ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}
+        `}
         onClick={() => {
           setIsOpen(false)
         }}
@@ -95,7 +99,11 @@ export function PoolFilters({
 
       {/* Bottom sheet */}
       <div
-        className={`glass-modal fixed right-0 bottom-0 left-0 z-50 rounded-t-4xl transition-transform duration-300 ease-out md:hidden ${isOpen ? 'translate-y-0' : 'translate-y-[140%]'}`}
+        className={`
+          glass-modal fixed right-0 bottom-0 left-0 z-50 rounded-t-4xl
+          transition-transform duration-300 ease-out md:hidden
+          ${isOpen ? 'translate-y-0' : 'translate-y-[140%]'}
+        `}
       >
         <div className="p-4">
           <div className="bg-base-300 mx-auto mb-4 h-1 w-12 rounded-full" />
