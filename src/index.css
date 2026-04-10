@@ -24,8 +24,8 @@
   --color-base-content: oklch(0.91 0.01 265);
 
   /* INTERACTIVE */
-  /* --color-primary: oklch(0.56 0.22 264); */
-  --color-primary: oklch(0.5854 0.2041 277.12);
+  /* --color-primary: oklch(0.5854 0.2041 277.12); Previous to a11y pass */
+  --color-primary: oklch(0.65 0.2 277.12 / 1);
   --color-primary-content: oklch(1 0 0);
   --color-secondary: oklch(0.50 0.26 280);
   --color-secondary-content: oklch(1 0 0);
