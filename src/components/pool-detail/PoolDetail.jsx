@@ -185,6 +185,9 @@ export function PoolDetail() {
 
   return (
     <div className="container mx-auto px-4 pt-4 max-w-7xl">
+      <title>
+        {`${primary.symbol}/${secondary.symbol} ${(pool.feeTier / 10000).toFixed(2)}% Pool | DeFi Scout`}
+      </title>
       {/* NAVIGATION: Contextual return */}
       <Link
         to={fromWatchlist ? '/watchlist' : '/'}

@@ -1,6 +1,6 @@
 import { useLoaderData, useOutletContext } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
-import { usePoolFilters } from '../hooks/usePoolFIlters'
+import { usePoolFilters } from '../hooks/usePoolFilters'
 import { PoolsContent } from '../components/pools/PoolsContent'
 
 /**
@@ -18,6 +18,7 @@ export default function Pools() {
 
   return (
     <div className="mx-auto max-w-7xl">
+      <title>Explore DeFi Pools | DeFi Scout</title>
       {/* SECTION: Header and context */}
       <header className="p-4">
         <h1 className="text-3xl font-bold">Explore Pools</h1>

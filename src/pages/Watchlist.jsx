@@ -45,6 +45,7 @@ export default function Watchlist() {
 
   return (
     <div className="p-4">
+      <title>My Watchlist | DeFi Scout</title>
       <h1 className="text-2xl font-bold text-base-content mb-6">My Watchlist</h1>
       <div
         ref={tableRef}
