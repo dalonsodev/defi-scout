@@ -62,7 +62,15 @@ export function useDebouncedFilterInputs(filters, updateFilter) {
     if (debouncedVolume !== filters.volumeUsd1d) {
       updateFilter('volumeUsd1d', debouncedVolume)
     }
-  }, [debouncedSearch, debouncedTvl, debouncedVolume, filters.search, filters.tvlUsd, filters.volumeUsd1d, updateFilter])
+  }, [
+    debouncedSearch,
+    debouncedTvl,
+    debouncedVolume,
+    filters.search,
+    filters.tvlUsd,
+    filters.volumeUsd1d,
+    updateFilter
+  ])
 
   // Effect 2: Sync URL back to local
   useEffect(() => {
@@ -74,7 +82,7 @@ export function useDebouncedFilterInputs(filters, updateFilter) {
   }, [filters.search, filters.tvlUsd, filters.volumeUsd1d])
 
   const updateLocalFilter = (key, value) => {
-    setLocalFilters(prev => ({ ...prev, [key]: value }))
+    setLocalFilters((prev) => ({ ...prev, [key]: value }))
   }
 
   // Cleanup API: Resets local state and sets guard to prevent debounce restoration

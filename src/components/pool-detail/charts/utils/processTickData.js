@@ -1,4 +1,4 @@
-import { tickToPrice } from "../../calculator/utils/uniswapV3Ticks"
+import { tickToPrice } from '../../calculator/utils/uniswapV3Ticks'
 
 /**
  * Process Tick Data for display in Liquidity Distribution chart (BarChart)
@@ -24,7 +24,9 @@ export function processTickData(
   const { tick: currentTick, liquidity: poolLiquidity, ticks } = tickData
 
   // Find split point
-  const splitIdx = ticks.findIndex((t) => Number(t.tickIdx) > Number(currentTick))
+  const splitIdx = ticks.findIndex(
+    (t) => Number(t.tickIdx) > Number(currentTick)
+  )
 
   if (splitIdx <= 0 || splitIdx >= ticks.length) return []
 
@@ -46,11 +48,12 @@ export function processTickData(
   const result = []
 
   for (let i = 0; i < ticks.length - 1; i++) {
-    const midTick = (Number(ticks[i].tickIdx) + Number(ticks[i + 1].tickIdx)) / 2
+    const midTick =
+      (Number(ticks[i].tickIdx) + Number(ticks[i + 1].tickIdx)) / 2
     const rawPrice = tickToPrice(midTick)
     const humanPrice = rawPrice * Math.pow(10, token0Decimals - token1Decimals)
     const price = selectedTokenIdx === 0 ? 1 / humanPrice : humanPrice
-    const liquidity = Math.max(0, liquidities[i])   // clamp float precision errors
+    const liquidity = Math.max(0, liquidities[i]) // clamp float precision errors
 
     result.push({ price, liquidity })
   }

@@ -133,7 +133,6 @@ export function simulateRangePerformance({
     priceToken1InUSD = result.priceToken1InUSD
   }
 
-
   // ===== STAGE 5: COMPOSITION CALCULATION =====
   const allPrices = hourlyData.map((h) => parseFloat(h.token0Price))
   const compositionResult = calculateComposition({

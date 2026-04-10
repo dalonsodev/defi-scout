@@ -49,9 +49,9 @@ export function ILProjectionModal({
 
   return createPortal(
     <dialog className={`modal ${isOpen ? 'modal-open' : ''}`}>
-      <div className="modal-box max-w-xl glass-overlay rounded-2xl">
+      <div className="modal-box glass-overlay max-w-xl rounded-2xl">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <h3 className="text-2xl font-bold">Simulate Position Performance</h3>
           <button onClick={onClose} className="btn btn-sm btn-circle btn-glass">
             x
