@@ -44,6 +44,14 @@ export function useDebouncedFilterInputs(filters, updateFilter) {
 
   // Race condition guard: prevents debounced values from restoring after manual clear
   const isResetting = useRef(false)
+  const isOurUpdate = useRef(false)
+
+  // Track the latest filters value to prevent infinite loops
+  const filtersRef = useRef(filters)
+
+  useEffect(() => {
+    filtersRef.current = filters
+  }, [filters])
 
   // Effect 1: Propagate debounced values to URL (with reset guard)
   useEffect(() => {
@@ -53,27 +61,31 @@ export function useDebouncedFilterInputs(filters, updateFilter) {
       return
     }
 
-    if (debouncedSearch !== filters.search) {
+    if (debouncedSearch !== filtersRef.current.search) {
+      isOurUpdate.current = true
       updateFilter('search', debouncedSearch)
     }
-    if (debouncedTvl !== filters.tvlUsd) {
+    if (debouncedTvl !== filtersRef.current.tvlUsd) {
+      isOurUpdate.current = true
       updateFilter('tvlUsd', debouncedTvl)
     }
-    if (debouncedVolume !== filters.volumeUsd1d) {
+    if (debouncedVolume !== filtersRef.current.volumeUsd1d) {
+      isOurUpdate.current = true
       updateFilter('volumeUsd1d', debouncedVolume)
     }
   }, [
     debouncedSearch,
     debouncedTvl,
     debouncedVolume,
-    filters.search,
-    filters.tvlUsd,
-    filters.volumeUsd1d,
     updateFilter
   ])
 
   // Effect 2: Sync URL back to local
   useEffect(() => {
+    if (isOurUpdate.current) {
+      isOurUpdate.current = false
+      return
+    }
     setLocalFilters({
       search: filters.search,
       tvlUsd: filters.tvlUsd,
