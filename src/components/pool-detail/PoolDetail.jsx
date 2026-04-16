@@ -1,8 +1,8 @@
 import {
   useLoaderData,
-  Link,
   useOutletContext,
-  useLocation
+  useLocation,
+  useNavigate
 } from 'react-router-dom'
 import { useCallback, useEffect, useState, useRef } from 'react'
 import { ContractLinks } from './ContractLinks'
@@ -74,6 +74,7 @@ export function PoolDetail() {
     assumedPrice: ''
   })
   const { state } = useLocation()
+  const navigate = useNavigate()
 
   /**
    * Hydration: Initializes price range from on-chain liquidity distribution.
@@ -220,13 +221,13 @@ export function PoolDetail() {
         {`${primary.symbol}/${secondary.symbol} ${(pool.feeTier / 10000).toFixed(2)}% Pool | DeFi Scout`}
       </title>
       {/* NAVIGATION: Contextual return */}
-      <Link
-        to={fromWatchlist ? '/watchlist' : '/'}
+      <button
+        onClick={() => navigate(-1)}
         className="btn btn-ghost btn-sm mb-4 md:mb-6 gap-2 rounded-xl"
       >
         <span>←</span>
         <span>{`Back to ${fromWatchlist ? 'Watchlist' : 'Pools'}`}</span>
-      </Link>
+      </button>
 
       {/* Header: Identity and protocol info */}
       <div className="glass-surface mb-6 rounded-3xl p-6 shadow-lg">
