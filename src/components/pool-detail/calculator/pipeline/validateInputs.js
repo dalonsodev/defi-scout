@@ -1,14 +1,13 @@
 /**
  * Pipeline Stage: Validates inputs for LP position.
  *
- * @param {Object} params - User-defined inputs + hour snapshots from TheGraph
+ * @param {Object} params - User-defined inputs for LP position
  * @param {number} params.capitalUSD - Actual investment in USD (min $10)
  * @param {number} params.minPrice - Lower price bound (in selected token scale)
  * @param {number} params.maxPrice - Upper price bound (in selected token scale)
  * @param {boolean} params.fullRange - Whether it is a full range position
  * @param {number} params.assumedPrice - Entry price for concentrated positions
  * @param {number} params.selectedTokenIdx - 0 or 1, defines price scale interpretation
- * @param {Object[]} params.hourlyData - TheGraph poolHourData snapshots
  *
  * @returns {{success: boolean, error?: string}} Returns either success state if all inputs valid or failure state if not (with error string)
  */
@@ -18,8 +17,7 @@ export function validateInputs({
   maxPrice,
   fullRange,
   assumedPrice,
-  selectedTokenIdx,
-  hourlyData
+  selectedTokenIdx
 }) {
   if (typeof capitalUSD !== 'number' || isNaN(capitalUSD) || capitalUSD < 10) {
     return { success: false, error: 'Capital must be at least $10' }
@@ -74,16 +72,6 @@ export function validateInputs({
         success: false,
         error: 'Assumed Entry Price must be within the min/max price range.'
       }
-    }
-  }
-
-  if (!hourlyData?.length) {
-    return { success: false, error: 'No hourly data for this pool' }
-  }
-  if (hourlyData.length < 24) {
-    return {
-      success: false,
-      error: 'Insufficient hourly data (min. 24h required)'
     }
   }
 

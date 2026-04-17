@@ -27,7 +27,7 @@ import { fetchPoolHourData } from '../../../../services/theGraphClient'
  *    fetchError: string|null
  * }}
  */
-export function usePoolHourlyData(poolId, daysLookback = 7) {
+export function usePoolHourlyData(poolId, daysLookback = 30) {
   const [hourlyData, setHourlyData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [fetchError, setFetchError] = useState(null)
@@ -59,7 +59,7 @@ export function usePoolHourlyData(poolId, daysLookback = 7) {
           Math.floor(Date.now() / 1000) - fetchDays * 24 * 60 * 60
         const rawData = await fetchPoolHourData(poolId, startTime)
         const data = formatHourlyData(rawData)
-        // slice the last 7 days to avoid inflated APR calculation
+        // slice the last daysLookback days to avoid inflated APR calculation
         const result = data.slice(-(daysLookback * 24))
 
         if (!cancelled) {

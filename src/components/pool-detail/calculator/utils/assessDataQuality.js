@@ -15,22 +15,20 @@
  * if (quality === "INSUFFICIENT") showDisclaimer(warnings[0])
  */
 export function assessDataQuality(hourlyData) {
-  // Defensive: Prevents crash if TheGraph query fails or returns null
-  if (!hourlyData || !Array.isArray(hourlyData)) {
+  // Defensive: Prevents crash if TheGraph query fails or returns null or empty array
+  if (!hourlyData || !Array.isArray(hourlyData) || hourlyData.length === 0) {
     return { quality: 'EMPTY', warnings: ['No data provided for analysis.'] }
   }
 
-  const hours = hourlyData.length
-
-  // Time Constants: Explicitly defined for maintainability (hours per period)
-  const ONE_WEEK = 24 * 7 // 168h - Minimum to capture weekly volatility patterns
-  const TWO_WEEKS = 24 * 14 // 336h - Captures bi-weekly rebalancing events
-  const ONE_MONTH = 24 * 30 // 720h - Industry standard for LP projection tools
+  // Measure actual time coverage
+  const firstTs = hourlyData[0].periodStartUnix
+  const lastTs = hourlyData[hourlyData.length - 1].periodStartUnix
+  const spanHours = (lastTs - firstTs) / 3600 + 1
 
   // ===== QUALITY ASSESSMENT TIERS =====
 
   // 1. Critical: Less than 7 days is statistically insignificant for DeFi volume cycles
-  if (hours < ONE_WEEK) {
+  if (spanHours < 168) {
     return {
       quality: 'INSUFFICIENT',
       warnings: [
@@ -40,7 +38,7 @@ export function assessDataQuality(hourlyData) {
   }
 
   // 2. Warning: 7 to 14 days captures weekly cycles but lacks long-term trend stability
-  if (hours < TWO_WEEKS) {
+  if (spanHours < 336) {
     return {
       quality: 'LIMITED',
       warnings: [
@@ -51,7 +49,7 @@ export function assessDataQuality(hourlyData) {
 
   // 3. Robust: 14 to 30 days is the industry standard for short-term LP projections
   // Reference: curve.finance, poolfish.xyz use 14-30d windows for fee APR calculations
-  if (hours < ONE_MONTH) {
+  if (spanHours < 720) {
     return {
       quality: 'RELIABLE',
       warnings: []
