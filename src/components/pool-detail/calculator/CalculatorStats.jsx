@@ -106,9 +106,6 @@ export function CalculatorStats({
   const yearlyAPR = results.APR
   const monthlyAPR = yearlyAPR / 12 // Simplified (not compounded) for readability
 
-  // Statistical Confidence: <7 days = small sample, high variance
-  const hasLimitedData = results.daysOfData < 7
-
   return (
     <>
       <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
@@ -134,13 +131,14 @@ export function CalculatorStats({
         </div>
       </div>
 
-      {/* Data Quality Warning: Low sample size increases projection variance */}
-      {hasLimitedData && (
-        <div className="alert alert-warning mb-4 text-xs">
-          ⚠️ Based on {results.daysOfData.toFixed(1)} days. Projections may
-          vary.
-        </div>
-      )}
+      {/* Data quality warnings from assessDataQuality (LIMITED tier) and anomaly detection */}
+      {results.warnings.length > 0 &&
+        results.warnings.map((warning) => (
+          <div key={warning} className="alert alert-warning mb-4 text-xs">
+            {`⚠️ ${warning}`}
+          </div>
+        ))
+      }
 
       <div className="flex gap-2">
         <button

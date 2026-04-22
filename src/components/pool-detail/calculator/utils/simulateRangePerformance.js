@@ -11,7 +11,7 @@ import { debugLog } from '../../../../utils/logger'
  * Orchestrates historical LP position simulation using hourly on-chain data.
  *
  * Pipeline Architecture (fail-fast stages):
- * 1. Validate inputs (capital, price range, data completeness)
+ * 1. Validate inputs (capital, price range)
  * 2. Assess data quality (EXCELLENT/RELIABLE/LIMITED/INSUFFICIENT)
  * 3. Infer token USD prices from pool TVL
  * 4. Calculate position composition (50/50 vs concentrated)
@@ -32,7 +32,7 @@ import { debugLog } from '../../../../utils/logger'
  * @param {boolean} params.fullRange - If true, simulates V2-style 50/50 position
  * @param {number} params.assumedPrice - Entry price for concentrated positions
  * @param {number} params.selectedTokenIdx - 0 or 1 (defines price interpretation)
- * @param {Object[]} params.hourlyData - TheGraph poolHourData (min 168 hours)
+ * @param {Object[]} params.hourlyData - TheGraph poolHourData (quality assessed by assessDataQuality)
  * @param {Object} params.pool - Pool metadata (TVL, decimals, feeTier)
  *
  * @returns {Object} Simulation result
@@ -63,8 +63,7 @@ export function simulateRangePerformance({
     maxPrice,
     fullRange,
     assumedPrice,
-    selectedTokenIdx,
-    hourlyData
+    selectedTokenIdx
   })
 
   if (!validation.success) return validation
@@ -73,7 +72,7 @@ export function simulateRangePerformance({
   const { quality, warnings: rawWarnings } = assessDataQuality(hourlyData)
   const warnings = Array.isArray(rawWarnings) ? rawWarnings : []
 
-  if (quality === 'INSUFFICIENT') {
+  if (quality === 'EMPTY' || quality === 'INSUFFICIENT') {
     return {
       success: false,
       warning: 'Pool needs 7+ days of data for reliable projections',
