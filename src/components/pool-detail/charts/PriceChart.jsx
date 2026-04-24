@@ -11,6 +11,13 @@ import {
 import { CustomPriceTooltip } from './CustomPriceTooltip'
 import { CHART_COLORS } from '../../../constants/chartColors'
 
+// Maps window size (days) to label frequency (days) for X-axis readability
+const LABEL_THRESHOLDS = [
+  { max: 7, value: 1 },
+  { max: 14, value: 2 },
+  { max: 30, value: 3 }
+]
+
 /**
  * UI: Strategic Price & Range Chart.
  * Visualizes asset price trends against liquidity provider boundaries.
@@ -32,20 +39,26 @@ export function PriceChart({
   const dataKey = selectedTokenIdx === 0 ? 'token0Price' : 'token1Price'
   const selectedSymbol = tokenSymbols[selectedTokenIdx]
   const [baseToken, quoteToken] = tokenSymbols
-  const poolPriceLabel =
-    selectedTokenIdx === 0
-      ? `${baseToken} / ${quoteToken}`
-      : `${quoteToken} / ${baseToken}`
+  const poolPriceLabel = selectedTokenIdx === 0
+    ? `${baseToken} / ${quoteToken}`
+    : `${quoteToken} / ${baseToken}`
 
-  const dailyTicks = useMemo(() => {
-    if (!hourlyData?.length) return []
-    return hourlyData.filter((_, i) => i % 24 === 0)
+  const labelIntervalHours = useMemo(() => {
+    if (!hourlyData?.length) return 7
+    const daysInWindow = hourlyData.length / 24
+    const labelEveryNDays = LABEL_THRESHOLDS.find((t) => daysInWindow <= t.max)?.value || 7
+    return labelEveryNDays * 24
   }, [hourlyData])
+
+  const visibleTicks = useMemo(() => {
+    if (!hourlyData?.length) return []
+    return hourlyData.filter((_, i) => i % labelIntervalHours === 0)
+  }, [hourlyData, labelIntervalHours])
 
   const tickLabelMap = useMemo(() => {
     if (!hourlyData?.length) return []
-    return new Map(dailyTicks.map((d) => [d.periodStartUnix, d.dayLabel]))
-  }, [hourlyData, dailyTicks])
+    return new Map(visibleTicks.map((d) => [d.periodStartUnix, d.dayLabel]))
+  }, [hourlyData, visibleTicks])
 
   const dateShortMap = useMemo(() => {
     if (!hourlyData?.length) return []
@@ -79,7 +92,7 @@ export function PriceChart({
           <XAxis
             dataKey="periodStartUnix"
             axisLine={false}
-            ticks={dailyTicks.map((d) => d.periodStartUnix)}
+            ticks={visibleTicks.map((d) => d.periodStartUnix)}
             tickFormatter={(v) => tickLabelMap.get(v) ?? ''}
             tickLine={false}
             style={{ fontSize: '12px' }}
