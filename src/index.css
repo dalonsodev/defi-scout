@@ -39,6 +39,10 @@
   /* NEUTRAL */
   --color-neutral: oklch(0.22 0.04 265);
   --color-neutral-content: oklch(0.70 0.02 265);
+
+  /* ALERTS override (increase contrast to comply with WCAG 4.5:1) */
+  --color-warning-content: oklch(0.25 0.06 36.33);
+  --color-error-content: oklch(0.22 0.08 10.63);
 }
 
 :root {
