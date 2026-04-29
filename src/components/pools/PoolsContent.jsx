@@ -142,7 +142,7 @@ export function PoolsContent({
         `Showing page ${pageIndex + 1} of ${totalPages}`
       )
     }
-  }, [pageIndex, totalPages])
+  }, [pageIndex, totalPages, filtersKey])
 
   // Derive Set<Object> from visible IDs + paginated data
   // useMemo prevents new Set() reference on every render (would re-trigger useSparklines effect)
