@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { usePrevious } from '../../hooks/usePrevious'
 import { useSparklines } from '../../hooks/useSparklines'
@@ -120,16 +120,6 @@ export function PoolsContent({
     return sortedPools.slice(start, end)
   }, [sortedPools, pageIndex, pageSize])
 
-  const scrollToTableTop = useCallback(() => {
-    if (tableScrollRef.current && tableRef.current) {
-      tableScrollRef.current.scrollTop = 0
-      tableRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      })
-    }
-  }, [])
-
   // Reset sparkline cache when page changes (prepares empty Set for IntersectionObserver)
   useEffect(() => {
     setVisiblePoolIds(new Set())
@@ -143,7 +133,7 @@ export function PoolsContent({
       return
     }
 
-    scrollToTableTop()
+    tableScrollRef.current.scrollTop = 0
 
     if (tableRef.current) {
       tableRef.current.setAttribute('aria-live', 'polite')
@@ -152,7 +142,7 @@ export function PoolsContent({
         `Showing page ${pageIndex + 1} of ${totalPages}`
       )
     }
-  }, [pageIndex, totalPages, scrollToTableTop])
+  }, [pageIndex, totalPages, filtersKey])
 
   // Derive Set<Object> from visible IDs + paginated data
   // useMemo prevents new Set() reference on every render (would re-trigger useSparklines effect)
