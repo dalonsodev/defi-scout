@@ -36,7 +36,7 @@ import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
 export function CustomTVLTooltip({ active, payload, label, dateShortMap }) {
   if (!active || !payload?.length) return null
 
-  const displayLabel = dateShortMap.get(label) ?? label
+  const displayLabel = dateShortMap?.get(label) ?? label
   const feesUSD = payload[0]?.payload?.feesUSD
   const volumeToTvlRatio = payload[0]?.payload?.volumeToTvlRatio
 
