@@ -14,7 +14,7 @@ export function CurrentPriceCard({ pool, selectedTokenIdx, onTokenChange }) {
     const price0 = parseFloat(pool.token0Price)
     const price1 = parseFloat(pool.token1Price)
 
-    if (isNaN(price0) || isNaN(price1)) return null
+    if (Number.isNaN(price0) || Number.isNaN(price1)) return null
 
     return selectedTokenIdx === 0 ? price0 : price1
   }, [pool.token0Price, pool.token1Price, selectedTokenIdx])
