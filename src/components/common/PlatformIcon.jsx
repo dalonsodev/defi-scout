@@ -1,6 +1,27 @@
 import { useState } from 'react'
 import { PLATFORM_ICONS } from '../../data/platformIcons'
 
+const SIZE_CLASSES = {
+  sm: 'w-5 h-5',
+  md: 'w-6 h-6',
+  lg: 'w-8 h-8'
+}
+
+/**
+ * String Utility: Extract 2-character initials from platform slug
+ * Splits by common separators (dashes, underscores) to grab meaningful words.
+ * @param {string} platformSlug - DeFiLlama platform identifier
+ * @returns {string} Uppercase 2-char string (e.g. "UV" for "uniswap-v3")
+ */
+const getInitials = (platformSlug) => {
+  return platformSlug
+    .split('-') // Split on dash or underscore
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2) // Fixed 2 chars for consistent badge sizing
+}
+
 /**
  * UI: Platform Brand Identity Renderer.
  *
@@ -26,27 +47,6 @@ export function PlatformIcon({ platform, size = 'md' }) {
 
   const ext = PLATFORM_ICONS[platform]
   const iconUrl = ext ? `https://icons.llama.fi/${platform}.${ext}` : null
-
-  const SIZE_CLASSES = {
-    sm: 'w-5 h-5',
-    md: 'w-6 h-6',
-    lg: 'w-8 h-8'
-  }
-
-  /**
-   * String Utility: Extract 2-character initials from platform slug
-   * Splits by common separators (dashes, underscores) to grab meaningful words.
-   * @param {string} platformSlug - DeFiLlama platform identifier
-   * @returns {string} Uppercase 2-char string (e.g. "UV" for "uniswap-v3")
-   */
-  const getInitials = (platformSlug) => {
-    return platformSlug
-      .split('-') // Split on dash or underscore
-      .map((word) => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2) // Fixed 2 chars for consistent badge sizing
-  }
 
   // Fallback: Initials badge when URL missing or remote fetch fails
   if (!iconUrl || hasError) {
