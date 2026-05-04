@@ -26,7 +26,7 @@ export function PoolCharts({
   tickError
 }) {
   // UI/UX: Empty state
-  if (!history || history.length === 0) {
+  if (!history?.length) {
     return (
       <div className="card bg-base-200 rounded-2xl p-8 text-center">
         <p className="text-base-content/60">No historical data available</p>
