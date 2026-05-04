@@ -37,7 +37,7 @@ export function Dropdown({ selected, onToggle, options }) {
       <button
         type="button"
         className="btn btn-sm glass-input w-full justify-between rounded-xl"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(prev => !prev)}
       >
         {selected.length > 0
           ? `Selected (${selected.length})`
