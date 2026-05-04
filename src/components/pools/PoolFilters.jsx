@@ -71,9 +71,7 @@ export function PoolFilters({
           onChange={(e) => updateLocalFilter('search', e.target.value)}
         />
         <button
-          onClick={() => {
-            setIsOpen(true)
-          }}
+          onClick={() => setIsOpen(true)}
           className="btn btn-sm btn-outline btn-glass rounded-xl md:hidden"
         >
           Filters
@@ -92,9 +90,7 @@ export function PoolFilters({
           transition-opacity duration-300 md:hidden
           ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}
         `}
-        onClick={() => {
-          setIsOpen(false)
-        }}
+        onClick={() => setIsOpen(false)}
       />
 
       {/* Bottom sheet */}
@@ -109,9 +105,7 @@ export function PoolFilters({
           <div className="bg-base-300 mx-auto mb-4 h-1 w-12 rounded-full" />
           <button
             className="btn btn-sm btn-circle btn-glass absolute top-4 right-4 mb-4 text-sm"
-            onClick={() => {
-              setIsOpen(false)
-            }}
+            onClick={() => setIsOpen(false)}
           >
             ✕
           </button>
