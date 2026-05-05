@@ -36,11 +36,10 @@ export function PoolsContent({
 
     const uniqueProjects = [...new Set(pools.map((pool) => pool.project))]
 
-    return uniqueProjects
-      .map((project) => ({
+    return uniqueProjects.map((project) => ({
         value: project,
         display:
-          pools.find((p) => p.project === project)?.platformName || project
+          pools.find((p) => p.project === project)?.platformName ?? project
       }))
       .sort((a, b) => a.display.localeCompare(b.display))
   }, [pools])
@@ -100,6 +99,7 @@ export function PoolsContent({
         sortBy: 'tvlUsd',
         sortDir: 'desc'
       })
+      return
     }
 
     const sortBy = newSorting[0].id
