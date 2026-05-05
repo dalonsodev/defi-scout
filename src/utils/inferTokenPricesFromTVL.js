@@ -44,7 +44,7 @@ export function inferTokenPricesFromTVL({
     }
   }
 
-  if (isInvalidPrice(currentPrice) || isNaN(currentPrice)) {
+  if (isInvalidPrice(currentPrice)) {
     return {
       success: false,
       error: 'Invalid current price from hourly data.'
