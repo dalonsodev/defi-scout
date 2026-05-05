@@ -76,9 +76,7 @@ export function usePoolFilters() {
 
   // Simple updater (debouncing handled by useDebouncedFilterInputs)
   const updateFilter = useCallback(
-    (key, value) => {
-      updateSearchParams(navigate, searchParams, { [key]: value })
-    },
+    (key, value) => updateSearchParams(navigate, searchParams, { [key]: value }),
     [navigate, searchParams]
   )
 
@@ -98,9 +96,10 @@ export function usePoolFilters() {
   )
 
   // Clear all filters
-  const clearFilters = useCallback(() => {
-    navigate(window.location.pathname, { replace: true })
-  }, [navigate])
+  const clearFilters = useCallback(
+    () => navigate(window.location.pathname, { replace: true }),
+    [navigate]
+  )
 
   return { filters, updateFilter, togglePlatform, clearFilters }
 }

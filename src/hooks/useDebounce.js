@@ -23,7 +23,7 @@ import { useState, useEffect, useRef } from 'react'
  * @example
  * // Search input with 500ms debounce
  * const [searchTerm, setSearchTerm] = useState("")
- * const [debouncedSearch, setDebouncedSearch] = useDebounce(searchTerm, 500)
+ * const debouncedSearch = useDebounce(searchTerm, 500)
  *
  * useEffect(() => {
  *    fetchResults(debouncedSearch)
