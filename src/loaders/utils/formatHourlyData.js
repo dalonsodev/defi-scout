@@ -5,7 +5,7 @@
  * @returns {Array} Formatted hourly data with parsed numbers and readable dates
  */
 export function formatHourlyData(rawHourlyData) {
-  if (!rawHourlyData || !rawHourlyData?.length) {
+  if (!rawHourlyData?.length) {
     return []
   }
 

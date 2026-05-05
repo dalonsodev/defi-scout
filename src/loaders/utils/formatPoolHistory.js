@@ -13,7 +13,7 @@ function formatDateShort(timestamp) {
 }
 
 export function formatPoolHistory(rawHistory) {
-  if (!rawHistory || rawHistory.length === 0) {
+  if (!rawHistory?.length) {
     return []
   }
   return rawHistory.map((day) => {
@@ -47,7 +47,7 @@ export function formatPoolHistory(rawHistory) {
       feesUSD,
       token0Price: parseFloat(day.token0Price) || 0,
       token1Price: parseFloat(day.token1Price) || 0,
-      apy: isFinite(apy) ? apy : 0 // Safety: Prevent infinity values if TVL = 0
+      apy: Number.isFinite(apy) ? apy : 0 // Safety: Prevent infinity values if TVL = 0
     }
   })
 }
