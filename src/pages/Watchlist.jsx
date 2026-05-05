@@ -12,7 +12,6 @@ export default function Watchlist() {
   const [sorting, setSorting] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [visiblePoolIds, setVisiblePoolIds] = useState(new Set())
-  const tableRef = useRef(null)
   const tableScrollRef = useRef(null)
 
   const totalPages = Math.ceil(pools.length / PAGE_SIZE)
@@ -52,7 +51,6 @@ export default function Watchlist() {
         My Watchlist
       </h1>
       <div
-        ref={tableRef}
         className="glass-surface -mx-4 rounded-3xl shadow-lg sm:-mx-6 md:-mx-4"
       >
         <PoolTable

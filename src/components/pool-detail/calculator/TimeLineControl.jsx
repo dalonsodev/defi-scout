@@ -71,7 +71,7 @@ export function TimeLineControl({ days, onDaysChange, daysToBreakEven }) {
             onChange={(e) => {
               const val = parseInt(e.target.value)
               // Defensive: Handle empty string or non-numeric paste
-              if (isNaN(val)) {
+              if (Number.isNaN(val)) {
                 onDaysChange(0)
               } else {
                 onDaysChange(Math.max(0, Math.min(val, 365)))

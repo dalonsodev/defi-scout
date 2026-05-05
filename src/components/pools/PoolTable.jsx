@@ -133,7 +133,7 @@ const PoolTable = forwardRef(
             ...col,
             cell: ({ row }) => (
               <div className="text-success text-right font-semibold">
-                {Number(row.original.apyBase || 0).toFixed(2)}%
+                {Number(row.original.apyBase ?? 0).toFixed(2)}%
               </div>
             )
           }
@@ -256,7 +256,10 @@ const PoolTable = forwardRef(
                   sticky top-0 z-10 bg-(--table-header-bg)
                   px-6 py-4 text-xs font-semibold tracking-wider uppercase text-base-content/60
                   cursor-pointer transition hover:bg-(--table-header-bg) has-[.tooltip:hover]:z-20
-                  ${isSticky ? 'sticky-column-shadow left-0 z-11 pl-4 text-left' : ''}
+                  ${isSticky
+                    ? 'sticky-column-shadow left-0 z-11 pl-4 text-left'
+                    : ''
+                  }
                 `.trim()}
               >
                 <div
@@ -331,7 +334,13 @@ const PoolTable = forwardRef(
                 <td
                   key={cell.id}
                   style={{ width: cell.column.getSize() }}
-                  className={`px-4 py-6 text-sm whitespace-nowrap ${isSticky ? 'sticky-column-shadow sticky left-0 z-2 bg-(--table-sticky-bg) transition-colors duration-150 group-hover:bg-(--table-sticky-hover-bg)' : ''} `.trim()}
+                  className={`
+                    px-4 py-6 text-sm whitespace-nowrap
+                    ${isSticky
+                      ? 'sticky-column-shadow sticky left-0 z-2 bg-(--table-sticky-bg) transition-colors duration-150 group-hover:bg-(--table-sticky-hover-bg)'
+                      : ''
+                    }
+                  `.trim()}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>

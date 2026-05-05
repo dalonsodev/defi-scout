@@ -46,7 +46,7 @@ export function PriceChart({
   const labelIntervalHours = useMemo(() => {
     if (!hourlyData?.length) return 7
     const daysInWindow = hourlyData.length / 24
-    const labelEveryNDays = LABEL_THRESHOLDS.find((t) => daysInWindow <= t.max)?.value || 7
+    const labelEveryNDays = LABEL_THRESHOLDS.find((t) => daysInWindow <= t.max)?.value ?? 7
     return labelEveryNDays * 24
   }, [hourlyData])
 
@@ -56,12 +56,12 @@ export function PriceChart({
   }, [hourlyData, labelIntervalHours])
 
   const tickLabelMap = useMemo(() => {
-    if (!hourlyData?.length) return []
+    if (!hourlyData?.length) return new Map()
     return new Map(visibleTicks.map((d) => [d.periodStartUnix, d.dayLabel]))
   }, [hourlyData, visibleTicks])
 
   const dateShortMap = useMemo(() => {
-    if (!hourlyData?.length) return []
+    if (!hourlyData?.length) return new Map()
     return new Map(hourlyData.map((h) => [h.periodStartUnix, h.dateShort]))
   }, [hourlyData])
 

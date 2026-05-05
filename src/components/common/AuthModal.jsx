@@ -15,20 +15,18 @@ const MODE = Object.freeze({
   FORGOT: 'forgot'
 })
 
-const mapFirebaseError = (code) => {
-  const errorMap = {
-    'auth/user-not-found': 'No account found with this email',
-    'auth/wrong-password': 'Incorrect password',
-    'auth/email-already-in-use': 'An account with this email already exists',
-    'auth/weak-password': 'Password must be at least 6 characters',
-    'auth/invalid-email': 'Invalid email address',
-    'auth/invalid-credential': 'Email or password incorrect',
-    'auth/popup-closed-by-user': 'Sign-in cancelled',
-    'auth/too-many-requests': 'Too many attempts. Try again later'
-  }
-
-  return errorMap[code] || 'Something went wrong. Please try again'
+const ERROR_MAP = {
+  'auth/user-not-found': 'No account found with this email',
+  'auth/wrong-password': 'Incorrect password',
+  'auth/email-already-in-use': 'An account with this email already exists',
+  'auth/weak-password': 'Password must be at least 6 characters',
+  'auth/invalid-email': 'Invalid email address',
+  'auth/invalid-credential': 'Email or password incorrect',
+  'auth/popup-closed-by-user': 'Sign-in cancelled',
+  'auth/too-many-requests': 'Too many attempts. Try again later'
 }
+
+const mapFirebaseError = (code) => ERROR_MAP[code] ?? 'Something went wrong. Please try again'
 
 const googleProvider = new GoogleAuthProvider()
 

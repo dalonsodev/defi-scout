@@ -38,7 +38,6 @@ export function RangeCalculator({
   const displayPrice = useMemo(() => {
     if (!pool) return 0
 
-    // const currentPrice = parseFloat(hourlyData[0].token0Price)
     const currentPrice = parseFloat(pool?.token0Price)
 
     return selectedTokenIdx === 0
@@ -127,7 +126,7 @@ export function RangeCalculator({
     })
   }, [inputs, selectedTokenIdx, hourlyData, pool, ethPriceUSD])
 
-  const composition = results?.composition || null
+  const composition = results?.composition ?? null
   const positionUrl = useMemo(
     () => buildUniswapPositionUrl(pool, inputs, composition, selectedTokenIdx),
     [pool, inputs, composition, selectedTokenIdx]

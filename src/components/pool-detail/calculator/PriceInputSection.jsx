@@ -31,14 +31,12 @@ export function PriceInputSection({
   const token0ChangePercent =
     currentToken0PriceUSD > 0
       ? ((futureToken0PriceUSD - currentToken0PriceUSD) /
-          currentToken0PriceUSD) *
-        100
+          currentToken0PriceUSD) * 100
       : 0
   const token1ChangePercent =
     currentToken1PriceUSD > 0
       ? ((futureToken1PriceUSD - currentToken1PriceUSD) /
-          currentToken1PriceUSD) *
-        100
+          currentToken1PriceUSD) * 100
       : 0
 
   return (

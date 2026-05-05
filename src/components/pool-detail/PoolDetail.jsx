@@ -200,7 +200,7 @@ export function PoolDetail() {
     0
 
   // Stats: Derived metrics from historical snapshots
-  const latestSnapshot = history[history.length - 1] || {}
+  const latestSnapshot = history[history.length - 1] ?? {}
   const poolAgeDays = pool?.createdAtTimestamp
     ? Math.floor(Date.now() / 1000 - pool.createdAtTimestamp) / 86400
     : 0
@@ -387,7 +387,7 @@ function StatCard({ label, value }) {
  * Scope: Local to PoolDetail (if reused in 3+ components → refactor to utils).
  */
 function formatCurrency(value) {
-  if (!value || value === 0) return '$0'
+  if (!value) return '$0'
   if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`
   if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`
   if (value >= 1e3) return `$${(value / 1e3).toFixed(2)}K`

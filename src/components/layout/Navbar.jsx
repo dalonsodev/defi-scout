@@ -67,9 +67,7 @@ export function Navbar() {
         {currentUser === false && (
           <button
             className="btn btn-sm btn-primary mr-1 rounded-full md:rounded-xl"
-            onClick={() => {
-              openAuthModal()
-            }}
+            onClick={openAuthModal}
           >
             Login / Signup
           </button>
@@ -80,7 +78,7 @@ export function Navbar() {
             <div className="flex flex-col">
               <button
                 className="btn btn-md md:btn-sm btn-ghost btn-circle mr-1"
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen(prev => !prev)}
               >
                 {currentUser.photoURL ? (
                   <img
