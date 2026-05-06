@@ -37,7 +37,7 @@ function normalizeSearch(str) {
  */
 
 export function filterPools(pools, filters) {
-  if (!pools || !Array.isArray(pools)) return []
+  if (!Array.isArray(pools)) return []
 
   return pools.filter((pool) => {
     // 1. Text Search: Case-insensitive substring match on pool name
