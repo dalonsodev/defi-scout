@@ -77,13 +77,15 @@ export function parseSearchParams(searchParams) {
   const tvlParam = searchParams.get('tvlUsd')
   const tvlNum = Number(tvlParam)
   const tvlUsd =
-    tvlParam && !isNaN(tvlNum) && tvlNum > 0 ? tvlParam : DEFAULT_STATE.tvlUsd
+    tvlParam && !Number.isNaN(tvlNum) && tvlNum > 0
+      ? tvlParam
+      : DEFAULT_STATE.tvlUsd
 
   // 4. Volume filter (same logic as TVL)
   const volParam = searchParams.get('volumeUsd1d')
   const volNum = Number(volParam)
   const volumeUsd1d =
-    volParam && !isNaN(volNum) && volNum > 0
+    volParam && !Number.isNaN(volNum) && volNum > 0
       ? volParam
       : DEFAULT_STATE.volumeUsd1d
 
@@ -104,7 +106,9 @@ export function parseSearchParams(searchParams) {
   // 7. Page index (number with >= 0 validation)
   const pageParam = searchParams.get('page')
   const pageNum = Number(pageParam)
-  const page = !isNaN(pageNum) && pageNum >= 0 ? pageNum : DEFAULT_STATE.page
+  const page = !Number.isNaN(pageNum) && pageNum >= 0
+    ? pageNum
+    : DEFAULT_STATE.page
 
   return {
     search,

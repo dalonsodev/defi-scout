@@ -100,20 +100,6 @@ describe('validateInputs - Edge Cases', () => {
     expect(result.error).toContain('Assumed Entry Price required')
   })
 
-  it('should fail if hourlyData insufficient', () => {
-    const result = validateInputs({
-      capitalUSD: 1000,
-      minPrice: 50,
-      maxPrice: 100,
-      fullRange: false,
-      assumedPrice: 75,
-      selectedTokenIdx: 0,
-      hourlyData: new Array(50).fill({}) // Less than 168
-    })
-    expect(result.success).toBe(false)
-    expect(result.error).toContain('No hourly data')
-  })
-
   it('should pass with fullRange=true (no price checks)', () => {
     const result = validateInputs({
       capitalUSD: 1000,

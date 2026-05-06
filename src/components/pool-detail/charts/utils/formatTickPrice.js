@@ -25,10 +25,8 @@ export function formatTickPrice(price) {
     })
   }
 
-  if (price < 0.01) {
-    return price.toLocaleString('en-US', {
-      minimumFractionDigits: 8,
-      maximumFractionDigits: 8
-    })
-  }
+  return price.toLocaleString('en-US', {
+    minimumFractionDigits: 8,
+    maximumFractionDigits: 8
+  })
 }

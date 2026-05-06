@@ -19,7 +19,7 @@ export function validateInputs({
   assumedPrice,
   selectedTokenIdx
 }) {
-  if (typeof capitalUSD !== 'number' || isNaN(capitalUSD) || capitalUSD < 10) {
+  if (typeof capitalUSD !== 'number' || Number.isNaN(capitalUSD) || capitalUSD < 10) {
     return { success: false, error: 'Capital must be at least $10' }
   }
 
@@ -40,7 +40,7 @@ export function validateInputs({
     const minNum = Number(minPrice)
     const maxNum = Number(maxPrice)
 
-    if (!isFinite(minNum) || !isFinite(maxNum) || minNum <= 0 || maxNum <= 0) {
+    if (!Number.isFinite(minNum) || !Number.isFinite(maxNum) || minNum <= 0 || maxNum <= 0) {
       return {
         success: false,
         error: 'Prices must be positive'
@@ -61,7 +61,7 @@ export function validateInputs({
 
     const assumedNum = Number(assumedPrice)
 
-    if (!isFinite(assumedNum) || assumedNum <= 0) {
+    if (!Number.isFinite(assumedNum) || assumedNum <= 0) {
       return {
         success: false,
         error: 'Assumed Entry Price must be positive'

@@ -101,7 +101,7 @@ export function tickToPrice(tick) {
  * getTickSpacing(9999) // => 60 (fallback for unknown tiers)
  */
 export function getTickSpacing(feeTier) {
-  return FEE_TIER_TO_TICK_SPACING[feeTier] || 60 // Default to 0.3% spacing
+  return FEE_TIER_TO_TICK_SPACING[feeTier] ?? 60 // Default to 0.3% spacing
 }
 
 /**
