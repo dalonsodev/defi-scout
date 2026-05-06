@@ -45,9 +45,7 @@ export function usePoolTickData(poolId, currentTick, feeTier) {
     }
 
     loadTickData()
-    return () => {
-      cancelled = true
-    } // Cleanup: Prevents state update on unmounted component
+    return () => cancelled = true // Cleanup: Prevents state update on unmounted component
   }, [poolId, currentTick, feeTier])
 
   return { tickData, isLoading, fetchError }
