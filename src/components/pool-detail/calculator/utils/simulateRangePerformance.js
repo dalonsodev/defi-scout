@@ -112,7 +112,7 @@ export function simulateRangePerformance({
 
   if (token0PriceUSD !== 0) {
     priceToken0InUSD = token0PriceUSD
-    priceToken1InUSD = parseFloat(pool.token0Price) * token0PriceUSD // pool ratio
+    priceToken1InUSD = currentPrice * token0PriceUSD // pool ratio
   } else {
     const result = inferTokenPricesFromTVL({
       tvlUSD: parseFloat(pool.totalValueLockedUSD),
@@ -193,7 +193,7 @@ export function simulateRangePerformance({
     )
   }
 
-  if (L_user_base <= 0 || !isFinite(L_user_base)) {
+  if (L_user_base <= 0 || !Number.isFinite(L_user_base)) {
     return {
       success: false,
       error: 'Invalid liquidity calculation. Check range parameters.',

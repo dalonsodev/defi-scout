@@ -32,7 +32,7 @@ export function validateHourSnapshot(hour) {
   const hourLiquidity = parseFloat(hour.liquidity)
   const hourFeesUSD = parseFloat(hour.feesUSD)
 
-  if (isNaN(hourPrice) || isNaN(hourLiquidity) || isNaN(hourFeesUSD)) {
+  if (Number.isNaN(hourPrice) || Number.isNaN(hourLiquidity) || Number.isNaN(hourFeesUSD)) {
     return false
   }
 
