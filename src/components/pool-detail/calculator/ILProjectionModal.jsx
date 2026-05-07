@@ -62,7 +62,11 @@ export function ILProjectionModal({
           >
             Simulate Position Performance
           </h3>
-          <button onClick={onClose} className="btn btn-sm btn-circle btn-glass">
+          <button
+            onClick={onClose}
+            className="btn btn-sm btn-circle btn-glass"
+            aria-label="Close modal"
+          >
             x
           </button>
         </div>
