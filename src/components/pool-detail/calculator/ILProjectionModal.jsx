@@ -48,11 +48,20 @@ export function ILProjectionModal({
   } = useProjectionCalculator(poolData, rangeInputs, results)
 
   return createPortal(
-    <dialog className={`modal ${isOpen ? 'modal-open' : ''}`}>
+    <dialog
+      className={`modal ${isOpen ? 'modal-open' : ''}`}
+      aria-modal="true"
+      aria-labelledby="simulate-position-modal"
+    >
       <div className="modal-box glass-overlay max-w-xl rounded-2xl">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-2xl font-bold">Simulate Position Performance</h3>
+          <h3
+            id="simulate-position-modal"
+            className="text-2xl font-bold"
+          >
+            Simulate Position Performance
+          </h3>
           <button onClick={onClose} className="btn btn-sm btn-circle btn-glass">
             x
           </button>
