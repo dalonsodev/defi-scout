@@ -99,8 +99,13 @@ export function ILProjectionModal({
       </div>
 
       {/* Backdrop: Click-outside-to-close */}
-      <form method="dialog" onClick={onClose} className="modal-backdrop">
-        <button>close</button>
+      <form
+        method="dialog"
+        onClick={onClose}
+        className="modal-backdrop"
+        aria-hidden="true"
+      >
+        <button tabIndex="-1">close</button>
       </form>
     </dialog>,
     document.body
