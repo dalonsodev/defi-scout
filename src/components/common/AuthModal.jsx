@@ -144,7 +144,6 @@ export function AuthModal() {
                 id="email"
                 type="email"
                 className="input glass-input mt-1 w-full rounded-xl"
-                aria-label="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
@@ -174,7 +173,6 @@ export function AuthModal() {
                     id="password"
                     type="password"
                     className="input glass-input mt-1 w-full rounded-xl"
-                    aria-label="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete={
