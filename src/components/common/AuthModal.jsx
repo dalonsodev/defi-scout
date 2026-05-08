@@ -269,8 +269,13 @@ export function AuthModal() {
           )}
         </form>
       </div>
-      <form method="dialog" className="modal-backdrop">
-        <button onClick={handleClose}>close</button>
+      <form
+        method="dialog"
+        onClick={handleClose}
+        className="modal-backdrop"
+        aria-hidden="true"
+      >
+        <button tabIndex="-1">close</button>
       </form>
     </dialog>
   )
