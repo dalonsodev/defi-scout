@@ -99,8 +99,9 @@ export function AuthModal() {
     >
       <div className="modal-box glass-modal max-w-xl rounded-2xl">
         <button
-          className="btn btn-sm btn-circle btn-glass absolute top-2 right-2 text-sm"
           onClick={handleClose}
+          className="btn btn-sm btn-circle btn-glass absolute top-2 right-2 text-sm"
+          aria-label="Close modal"
         >
           ✕
         </button>
