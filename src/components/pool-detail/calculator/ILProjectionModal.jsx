@@ -1,8 +1,10 @@
+import { useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { PriceInputSection } from './PriceInputSection'
 import { TimeLineControl } from './TimeLineControl'
 import { StrategyComparison } from './StrategyComparison'
 import { useProjectionCalculator } from './hooks/useProjectionCalculator'
+import { useFocusTrap } from '../../common/hooks/useFocusTrap'
 
 /**
  * UI: IL (Impermanent Loss) vs HODL Strategy Simulator
@@ -29,6 +31,9 @@ export function ILProjectionModal({
   rangeInputs,
   results
 }) {
+  const modalRef = useRef(null)
+  useFocusTrap(modalRef, isOpen, onClose)
+
   // Hook Orchestration: Manages complex IL math + debounced recalculation.
   // Simulates AMM rebalancing at each price move, calculates cumulative fees,
   // and compares final LP value vs simple HODL (buy-and-hold).
@@ -53,7 +58,10 @@ export function ILProjectionModal({
       aria-modal="true"
       aria-labelledby="simulate-position-modal"
     >
-      <div className="modal-box glass-overlay max-w-xl rounded-2xl">
+      <div
+        ref={modalRef}
+        className="modal-box glass-overlay max-w-xl rounded-2xl"
+      >
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <h3
