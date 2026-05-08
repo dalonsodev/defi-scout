@@ -1,8 +1,10 @@
+import { useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { PriceInputSection } from './PriceInputSection'
 import { TimeLineControl } from './TimeLineControl'
 import { StrategyComparison } from './StrategyComparison'
 import { useProjectionCalculator } from './hooks/useProjectionCalculator'
+import { useFocusTrap } from '../../common/hooks/useFocusTrap'
 
 /**
  * UI: IL (Impermanent Loss) vs HODL Strategy Simulator
@@ -29,6 +31,9 @@ export function ILProjectionModal({
   rangeInputs,
   results
 }) {
+  const modalRef = useRef(null)
+  useFocusTrap(modalRef, isOpen, onClose)
+
   // Hook Orchestration: Manages complex IL math + debounced recalculation.
   // Simulates AMM rebalancing at each price move, calculates cumulative fees,
   // and compares final LP value vs simple HODL (buy-and-hold).
@@ -48,12 +53,28 @@ export function ILProjectionModal({
   } = useProjectionCalculator(poolData, rangeInputs, results)
 
   return createPortal(
-    <dialog className={`modal ${isOpen ? 'modal-open' : ''}`}>
-      <div className="modal-box glass-overlay max-w-xl rounded-2xl">
+    <dialog
+      className={`modal ${isOpen ? 'modal-open' : ''}`}
+      aria-modal="true"
+      aria-labelledby="simulate-position-modal"
+    >
+      <div
+        ref={modalRef}
+        className="modal-box glass-overlay max-w-xl rounded-2xl"
+      >
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-2xl font-bold">Simulate Position Performance</h3>
-          <button onClick={onClose} className="btn btn-sm btn-circle btn-glass">
+          <h3
+            id="simulate-position-modal"
+            className="text-2xl font-bold"
+          >
+            Simulate Position Performance
+          </h3>
+          <button
+            onClick={onClose}
+            className="btn btn-sm btn-circle btn-glass"
+            aria-label="Close modal"
+          >
             x
           </button>
         </div>
@@ -86,8 +107,13 @@ export function ILProjectionModal({
       </div>
 
       {/* Backdrop: Click-outside-to-close */}
-      <form method="dialog" onClick={onClose} className="modal-backdrop">
-        <button>close</button>
+      <form
+        method="dialog"
+        onClick={onClose}
+        className="modal-backdrop"
+        aria-hidden="true"
+      >
+        <button tabIndex="-1">close</button>
       </form>
     </dialog>,
     document.body

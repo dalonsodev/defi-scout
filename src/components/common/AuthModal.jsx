@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useFocusTrap } from './hooks/useFocusTrap'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -31,6 +32,7 @@ const mapFirebaseError = (code) => ERROR_MAP[code] ?? 'Something went wrong. Ple
 const googleProvider = new GoogleAuthProvider()
 
 export function AuthModal() {
+  const modalRef = useRef(null)
   const [mode, setMode] = useState(MODE.LOGIN)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -48,6 +50,8 @@ export function AuthModal() {
     setResetSent(false)
     closeAuthModal()
   }
+
+  useFocusTrap(modalRef, isAuthModalOpen, handleClose)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -92,16 +96,24 @@ export function AuthModal() {
   `
 
   return (
-    <dialog className={`modal ${isAuthModalOpen ? 'modal-open' : ''}`}>
-      <div className="modal-box glass-modal max-w-xl rounded-2xl">
+    <dialog
+      className={`modal ${isAuthModalOpen ? 'modal-open' : ''}`}
+      aria-modal="true"
+      aria-labelledby="auth-modal"
+    >
+      <div
+        ref={modalRef}
+        className="modal-box glass-modal max-w-xl rounded-2xl"
+      >
         <button
-          className="btn btn-sm btn-circle btn-glass absolute top-2 right-2 text-sm"
           onClick={handleClose}
+          className="btn btn-sm btn-circle btn-glass absolute top-2 right-2 text-sm"
+          aria-label="Close modal"
         >
           ✕
         </button>
 
-        <h3 className="p-4 text-center text-2xl font-bold">
+        <h3 id="auth-modal" className="p-4 text-center text-2xl font-bold">
           {mode === MODE.LOGIN
             ? 'Welcome'
             : mode === MODE.SIGNUP
@@ -112,7 +124,7 @@ export function AuthModal() {
         <form onSubmit={handleSubmit}>
           {resetSent ? (
             <>
-              <div className="alert alert-success mt-4 text-sm font-semibold">
+              <div role="alert" className="alert alert-success mt-4 text-sm font-semibold">
                 Check your inbox
               </div>
               <button
@@ -139,7 +151,6 @@ export function AuthModal() {
                 id="email"
                 type="email"
                 className="input glass-input mt-1 w-full rounded-xl"
-                aria-label="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
@@ -169,7 +180,6 @@ export function AuthModal() {
                     id="password"
                     type="password"
                     className="input glass-input mt-1 w-full rounded-xl"
-                    aria-label="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete={
@@ -180,7 +190,7 @@ export function AuthModal() {
               )}
 
               {error && (
-                <div className="alert alert-error mt-4 text-sm font-semibold">
+                <div role="alert" className="alert alert-error mt-4 text-sm font-semibold">
                   {error}
                 </div>
               )}
@@ -225,6 +235,7 @@ export function AuthModal() {
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 48 48"
                       className="mr-2 h-5 w-5"
+                      aria-hidden="true"
                     >
                       <path
                         fill="#FFC107"
@@ -264,8 +275,13 @@ export function AuthModal() {
           )}
         </form>
       </div>
-      <form method="dialog" className="modal-backdrop">
-        <button onClick={handleClose}>close</button>
+      <form
+        method="dialog"
+        onClick={handleClose}
+        className="modal-backdrop"
+        aria-hidden="true"
+      >
+        <button tabIndex="-1">close</button>
       </form>
     </dialog>
   )
