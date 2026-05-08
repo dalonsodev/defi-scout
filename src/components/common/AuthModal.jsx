@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useFocusTrap } from './hooks/useFocusTrap'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -31,6 +32,7 @@ const mapFirebaseError = (code) => ERROR_MAP[code] ?? 'Something went wrong. Ple
 const googleProvider = new GoogleAuthProvider()
 
 export function AuthModal() {
+  const modalRef = useRef(null)
   const [mode, setMode] = useState(MODE.LOGIN)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -48,6 +50,8 @@ export function AuthModal() {
     setResetSent(false)
     closeAuthModal()
   }
+
+  useFocusTrap(modalRef, isAuthModalOpen, handleClose)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -97,7 +101,10 @@ export function AuthModal() {
       aria-modal="true"
       aria-labelledby="auth-modal"
     >
-      <div className="modal-box glass-modal max-w-xl rounded-2xl">
+      <div
+        ref={modalRef}
+        className="modal-box glass-modal max-w-xl rounded-2xl"
+      >
         <button
           onClick={handleClose}
           className="btn btn-sm btn-circle btn-glass absolute top-2 right-2 text-sm"
