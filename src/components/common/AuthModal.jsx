@@ -228,6 +228,7 @@ export function AuthModal() {
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 48 48"
                       className="mr-2 h-5 w-5"
+                      aria-hidden="true"
                     >
                       <path
                         fill="#FFC107"
