@@ -117,7 +117,7 @@ export function AuthModal() {
         <form onSubmit={handleSubmit}>
           {resetSent ? (
             <>
-              <div className="alert alert-success mt-4 text-sm font-semibold">
+              <div role="alert" className="alert alert-success mt-4 text-sm font-semibold">
                 Check your inbox
               </div>
               <button
@@ -183,7 +183,7 @@ export function AuthModal() {
               )}
 
               {error && (
-                <div className="alert alert-error mt-4 text-sm font-semibold">
+                <div role="alert" className="alert alert-error mt-4 text-sm font-semibold">
                   {error}
                 </div>
               )}
