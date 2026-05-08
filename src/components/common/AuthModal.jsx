@@ -92,7 +92,11 @@ export function AuthModal() {
   `
 
   return (
-    <dialog className={`modal ${isAuthModalOpen ? 'modal-open' : ''}`}>
+    <dialog
+      className={`modal ${isAuthModalOpen ? 'modal-open' : ''}`}
+      aria-modal="true"
+      aria-labelledby="auth-modal"
+    >
       <div className="modal-box glass-modal max-w-xl rounded-2xl">
         <button
           className="btn btn-sm btn-circle btn-glass absolute top-2 right-2 text-sm"
@@ -101,7 +105,7 @@ export function AuthModal() {
           ✕
         </button>
 
-        <h3 className="p-4 text-center text-2xl font-bold">
+        <h3 id="auth-modal" className="p-4 text-center text-2xl font-bold">
           {mode === MODE.LOGIN
             ? 'Welcome'
             : mode === MODE.SIGNUP
