@@ -57,8 +57,8 @@ const BlockExplorerIcon = () => (
  */
 export function PoolDetail() {
   const { pool, history, ethPriceUSD } = useLoaderData()
-  const { hourlyData, isLoading, fetchError } = usePoolHourlyData(pool.id)
-  const { tickData, fetchError: tickError } = usePoolTickData(
+  const { hourlyData, isLoading: hourlyIsLoading, fetchError } = usePoolHourlyData(pool.id)
+  const { tickData, isLoading: tickIsLoading, fetchError: tickError } = usePoolTickData(
     pool.id,
     pool.tick,
     pool.feeTier
@@ -338,7 +338,7 @@ export function PoolDetail() {
             inputs={rangeInputs}
             onInputsChange={setRangeInputs}
             hourlyData={hourlyData}
-            isLoading={isLoading}
+            hourlyIsLoading={hourlyIsLoading}
             fetchError={fetchError}
             ethPriceUSD={ethPriceUSD}
           />
@@ -358,6 +358,8 @@ export function PoolDetail() {
             currentPrice={currentPrice}
             tickData={tickData}
             tickError={tickError}
+            hourlyIsLoading={hourlyIsLoading}
+            tickIsLoading={tickIsLoading}
           />
         </div>
         <div className="mb-4 md:hidden">
