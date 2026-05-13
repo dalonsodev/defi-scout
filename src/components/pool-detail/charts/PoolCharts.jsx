@@ -1,6 +1,7 @@
 import { LiquidityChart } from './LiquidityChart'
 import { PriceChart } from './PriceChart'
 import { TVLVolumeChart } from './TVLVolumeChart'
+import { ChartSkeleton } from './ChartSkeleton'
 
 /**
  * UI: Pool Analytics Dashboard.
@@ -23,7 +24,9 @@ export function PoolCharts({
   rangeInputs,
   currentPrice,
   tickData,
-  tickError
+  tickError,
+  hourlyIsLoading,
+  tickIsLoading
 }) {
   // UI/UX: Empty state
   if (!history?.length) {
@@ -36,23 +39,30 @@ export function PoolCharts({
 
   return (
     <div className="grid grid-cols-1 gap-4">
-      <LiquidityChart
-        selectedTokenIdx={selectedTokenIdx}
-        tokenSymbols={tokenSymbols}
-        token0Decimals={pool.token0.decimals}
-        token1Decimals={pool.token1.decimals}
-        rangeInputs={rangeInputs}
-        currentPrice={currentPrice}
-        tickData={tickData}
-        tickError={tickError}
-      />
-      <PriceChart
-        hourlyData={hourlyData}
-        selectedTokenIdx={selectedTokenIdx}
-        tokenSymbols={tokenSymbols}
-        rangeInputs={rangeInputs}
-        currentPrice={currentPrice}
-      />
+      {tickIsLoading
+        ? <ChartSkeleton />
+        : <LiquidityChart
+            selectedTokenIdx={selectedTokenIdx}
+            tokenSymbols={tokenSymbols}
+            token0Decimals={pool.token0.decimals}
+            token1Decimals={pool.token1.decimals}
+            rangeInputs={rangeInputs}
+            currentPrice={currentPrice}
+            tickData={tickData}
+            tickError={tickError}
+            isLoading={tickIsLoading}
+          />
+      }
+      {hourlyIsLoading
+        ? <ChartSkeleton/>
+        : <PriceChart
+            hourlyData={hourlyData}
+            selectedTokenIdx={selectedTokenIdx}
+            tokenSymbols={tokenSymbols}
+            rangeInputs={rangeInputs}
+            currentPrice={currentPrice}
+          />
+      }
       <TVLVolumeChart history={history} />
     </div>
   )
