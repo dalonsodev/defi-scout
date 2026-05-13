@@ -69,6 +69,11 @@ export function CalculatorStats({
       <>
         <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
         <PlaceholderStats isPulsing />
+        <div className="flex gap-2">
+          <button disabled className="btn btn-sm btn-glass flex-1 mt-4 rounded-xl opacity-50">
+            Simulate Position Performance
+          </button>
+        </div>
       </>
     )
   }
