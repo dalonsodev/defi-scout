@@ -12,6 +12,11 @@ const FOCUSABLE_SELECTOR = 'button:not([disabled]), [href], input:not([disabled]
  */
 export function useFocusTrap(modalRef, isOpen, onClose) {
   const savedFocusRef = useRef(null)
+  const onCloseRef = useRef(onClose)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  })
 
   useEffect(() => {
     if (isOpen) {
@@ -26,7 +31,7 @@ export function useFocusTrap(modalRef, isOpen, onClose) {
       }
 
       const handleKeyDown = (e) => {
-        if (e.key === 'Escape') onClose()
+        if (e.key === 'Escape') onCloseRef.current()
 
         if (e.key === 'Tab') {
           if (e.shiftKey) {
@@ -49,7 +54,6 @@ export function useFocusTrap(modalRef, isOpen, onClose) {
         savedFocusRef.current?.focus()
       }
     }
-  }, [isOpen, onClose, modalRef])
-
+  }, [isOpen, modalRef])
 }
 
