@@ -1,6 +1,6 @@
 # DeFi Scout 🧭
 
-**Find the best DeFi yields** across 8,000+ liquidity pools. Browse APY/TVL data, filter by multiple criteria, and discover high-yield opportunities with global sorting and real-time sparklines.
+**Explore and analyze Uniswap V3 liquidity pools.** Browse the top 1,000 pools by TVL, filter by multiple criteria, dig into historical charts, and simulate LP strategies before committing capital.
 
 ![demo](./public/demo.gif)
 
@@ -8,58 +8,56 @@
 
 ## ✨ Features
 
-### Core Functionality
+### Pool Explorer
 
-- **Pool Explorer:** Responsive table with key metrics (APY, TVL, Volume, Chain, Platform, Risk)
-- **Pool Detail Pages:** Click any pool to view:
-  - 30-day historical charts (TVL/Volume, Price, Fees/APY)
-  - Token composition breakdown with interactive PieChart
-  - Current price display with toggle between token pairs
-  - Contract addresses with Explorer links (temporary hardcoded Etherscan for now)
-- **Global Column Sorting:** Click headers to sort entire dataset (8k+ pools), not just visible rows
-- **Real-time Filtering:** Instant client-side filters by coin/pair, platform, TVL, volume, and risk level
-- **Smart Pagination:** Navigate 40 items/page with ellipsis controls and auto-reset on filter/sort changes
+- Responsive table with key metrics: APY, TVL, 24h Volume, platform, and 14-day sparklines
+- **Global sorting** — clicking a column header sorts the full 1,000-pool dataset, not just the current page
+- **Client-side filtering** by token/pair name, platform (multi-select), minimum TVL, minimum volume, and risk level
+- Filter state lives in the URL, so searches are shareable and survive a refresh
+- Paginated 40 pools/page with ellipsis controls that reset automatically on filter or sort change
+- Star any pool to save it to your watchlist
 
-### Performance & UX
+### Pool Detail & Analytics
 
-- **⚡ Sub-second loads:** Fetches and transforms 8k pools in <1s (deferred loading with React Router)
-- **Rate-limited Sparklines:** Token bucket algorithm (80 tokens, 1.2/s refill) with circuit breaker
-  - Lazy-loaded via IntersectionObserver (200px viewport threshold)
-  - Freemium model: Pages 1-3 load instantly, rate-limit fallback shows "Upgrade to Pro"
-  - Request queue with concurrency limiting (10 parallel max)
-- **Dynamic Platform List:** Auto-generates dropdown from API data with proper branding (43 platforms)
-- **Platform Icons:** Automated build script tests icon availability (~10s regeneration)
-- **Historical Data:** TheGraph API integration for 30-day pool snapshots
+Click any pool to get a full breakdown:
 
-### Design
+- **KPI cards** — current TVL, 24h volume, and 7-day average APY
+- **30-day TVL/Volume chart** from TheGraph historical snapshots
+- **Hourly price chart** (last 7 days) with the user's LP range overlaid as a reference band
+- **Liquidity distribution chart** — on-chain tick data rendered as a bar chart, showing where liquidity is concentrated relative to the current price and the user's selected range
+- Links to Etherscan and DexScreener
 
-- **Dark-mode first:** DaisyUI theme with custom 450px mobile breakpoint
-- **Sticky columns:** First column persists on horizontal scroll with shadow effect
-- **Responsive hiding:** Intelligently collapses columns on mobile (pool → apy → tvl → vol → platform icon)
-- **Interactive Charts:** Recharts-powered visualizations with context-aware tooltips
-- **Optimized Date Formatting:** Rotated labels ("Dec 22" at 45°) prevent overlap
+### Range Calculator
 
-### 🚧 Coming Soon
+Built on top of the pool detail data:
 
-- **Range Calculator:** Based on historical data of the pool and desired APY
-- **Enhanced Charts:** 1/7/30/90 day toggles for improved control and granularity
-- **Watchlist** with Firebase Auth + Firestore persistence
-- **PWA capabilities** for offline browsing
+- Input capital, min/max price range, and an assumed entry price
+- The calculator simulates fee accrual by replaying the last 168 hourly snapshots against the given range, estimating what portion of pool fees the position would have captured
+- **IL Projection** — models HODL vs LP outcomes under a user-defined future price scenario, accounting for impermanent loss and projected fee earnings
+- Preset range buttons (±5%, ±10%, ±20%) and tick-aligned increment/decrement controls
+- Price range auto-initializes from the pool's on-chain liquidity distribution (inferred from tick data)
+- Token pair can be flipped; range inputs invert automatically
+- One-click link to open the configured position directly on Uniswap
+
+### Watchlist
+
+- Firebase Auth (Google) for sign-in
+- Starred pools persisted to Firestore per user
+- Watchlist page reuses the same table and sparkline infrastructure as the main explorer
 
 ---
 
 ## 🛠 Tech Stack
 
-| Technology             | Purpose                           |
-| ---------------------- | --------------------------------- |
-| **Vite + React**       | Build tool + UI framework         |
-| **React Router 6.4+**  | Routing with loaders/defer        |
-| **TanStack Table v8**  | Headless table (manual sorting)   |
-| **Recharts**           | Declarative data visualization    |
-| **Tailwind + DaisyUI** | Utility-first CSS + components    |
-| **The Graph**          | Decentralized GraphQL (subgraphs) |
-| **Firebase**           | Auth + Firestore _(planned)_      |
-| **DeFiLlama API**      | Real-time pool yield data         |
+| Technology             | Purpose                                          |
+| ---------------------- | ------------------------------------------------ |
+| **Vite + React**       | Build tool + UI framework                        |
+| **React Router 6.4+**  | Routing with data loaders                        |
+| **TanStack Table v8**  | Headless table with manual sorting               |
+| **Recharts**           | Declarative chart library                        |
+| **Tailwind + DaisyUI** | Utility-first CSS + component primitives         |
+| **TheGraph**           | GraphQL subgraphs for Uniswap V3 on-chain data   |
+| **Firebase**           | Google Auth + Firestore watchlist persistence    |
 
 ---
 
@@ -68,160 +66,65 @@
 ```
 src/
 ├── components/
-│   ├── common/                  # Reusable UI components
-│   │   ├── Dropdown.jsx
-│   │   ├── MiniSparkline.jsx
-│   │   ├── PaginationControls.jsx
-│   │   └── PlatformIcon.jsx
-│   ├── pools/                   # Pool explorer components
-│   │   ├── PoolsContent.jsx     # Filters + pagination logic
-│   │   ├── PoolTable.jsx        # TanStack Table integration
-│   │   └── PoolFilters.jsx      # Filter controls UI
-│   ├── pool-detail/             # Pool detail page components
-│   │   ├── PoolDetail.jsx       # Main detail page
-│   │   ├── TokenInfoBlock.jsx   # Token composition + toggle
-│   │   ├── PoolCharts.jsx       # Charts container (grid)
-│   │   ├── TVLVolumeChart.jsx   # TVL/Volume/Ratio chart
-│   │   ├── PriceChart.jsx       # Token price chart (synced toggle)
-│   │   ├── FeesApyChart.jsx     # Fees/APY dual-axis chart
-│   │   ├── CustomTooltip.jsx    # Generic chart tooltip
-│   │   └── CustomPriceTooltip.jsx # Price-specific tooltip
-│   └── layout/
-│       ├── Layout.jsx
-│       └── Navbar.jsx
-├── data/
-│   └── platformIcons.js         # Auto-generated icon mappings
-├── hooks/
-│   ├── useBreakpoint.js         # Custom 450px breakpoint
-│   ├── useDebounce.js           # Search input optimization
-│   ├── useIntersection.js       # Lazy-load visible rows
-│   ├── usePoolFilters.js        # Filter state management
-│   ├── useRequestQueue.js       # Token bucket rate limiter
-│   └── useSparklines.js         # Sparkline data fetching
-├── loaders/
-│   ├── poolsLoader.js           # React Router data loader (main table)
-│   └── poolDetailLoader.js      # Pool detail page loader (TheGraph)
-├── pages/
-│   ├── Pools.jsx
-│   └── Watchlist.jsx            # (Coming soon)
-├── scripts/
-│   └── testPlatformIcons.js     # Icon availability checker
-├── services/
-│   └── theGraphClient.js        # GraphQL client for Uniswap V3 data
-├── utils/
-│   ├── chartColors.js           # Centralized color palette (hex values)
-│   ├── filterPools.js           # Client-side filter logic
-│   ├── sortPools.js             # Global sorting with type detection
-│   ├── formatPoolData.js        # Main table data transformation
-│   ├── formatPoolHistory.js     # TheGraph data transformation + APY calc
-│   ├── formatCompactCurrency.js # Chart axis formatters ($1.2M)
-│   └── formatters.js            # Number/string formatters
+│   ├── common/              # Shared UI primitives (Dropdown, PaginationControls, etc.)
+│   ├── layout/              # App shell (Layout, Navbar, BackgroundVisuals)
+│   ├── pools/               # Pool explorer (PoolTable, PoolFilters, PoolsContent)
+│   │   ├── cells/           # Custom cell renderers (SparklineCell)
+│   │   └── utils/           # filterPools, sortPools
+│   └── pool-detail/
+│       ├── charts/          # LiquidityChart, PriceChart, TVLVolumeChart
+│       └── calculator/      # RangeCalculator and all simulation logic
+│           ├── hooks/       # usePoolHourlyData, useProjectionCalculator
+│           ├── pipeline/    # Pure calculation steps (fees, composition, validation)
+│           └── utils/       # Math helpers (IL, ticks, token ratios)
+├── constants/               # Shared constants (chartColors)
+├── context/                 # AuthContext (Firebase session)
+├── data/                    # platformIcons.js (auto-generated)
+├── hooks/                   # Shared custom hooks (see hooks/README.md)
+├── loaders/                 # React Router data loaders
+│   └── utils/               # formatPoolData, formatPoolHistory, formatHourlyData
+├── pages/                   # Route-level components (Pools, Watchlist)
+├── services/                # theGraphClient (all GraphQL queries)
+├── utils/                   # Formatters, URL state helpers, misc utilities
 ├── router.jsx
 └── main.jsx
 ```
 
 ---
 
-## 🏗️ Setup and Installation
+## 🏗️ Architecture Notes
 
-1. **Clone the repository:**
+### Why TheGraph for everything?
 
-   ```bash
-   git clone https://github.com/dalonsodev/defi-scout.git
-   cd defi-scout
-   ```
+All data — pool list, sparklines, historical charts, hourly prices, and tick distribution — comes from TheGraph's Uniswap V3 subgraph. The original plan used DeFiLlama for the pool list and its `/chart/:poolId` endpoint for sparklines, but the rate limits on that endpoint were aggressive enough to make the sparkline UX unreliable. Moving everything to TheGraph meant a single GraphQL client, one API key to manage, and batch queries that fetch 40 sparklines in one round trip instead of 40 sequential REST calls.
 
-2. **Install dependencies:**
+### Why client-side filtering and sorting?
 
-   ```bash
-   npm install
-   ```
+TheGraph's pool queries don't support arbitrary filter combinations or multi-column sorting server-side. Loading the top 1,000 pools once and handling everything in-browser keeps the UI instant after the initial fetch — filter latency is a `useMemo` call, not a network round trip.
 
-3. **Run development server:**
+### Why manual sorting in TanStack Table?
 
-   ```bash
-   npm run dev
-   ```
+`manualSorting: true` tells TanStack not to sort the data it receives. Sorting happens before pagination, so the order reflects the full 1,000-pool dataset rather than just the 40 visible rows.
 
-4. **Regenerate platform icons (optional):**
-   ```bash
-   node scripts/testPlatformIcons.js
-   ```
+### Why URL state for filters?
 
----
+Storing filter state in search params means the browser back button works as expected, filtered views are bookmarkable and shareable, and there's no extra state management layer on top of React Router.
 
-## 🏗️ Architecture Decisions
+### Sparklines: batch query + session cache
 
-### Why Client-Side Filtering/Sorting?
+IntersectionObserver tracks which rows are in the viewport. When new pools become visible, `useSparklines` fires a single batched GraphQL query for all uncached pool IDs. Results are stored in a ref-based session cache, so scrolling back up never re-fetches. Page 2+ shows an "Upgrade to Pro" placeholder (freemium gate — the batch query cost scales with volume).
 
-DeFiLlama's `/pools` API returns a static snapshot without server-side pagination or sorting parameters. To provide real-time filtering without rate limits, all transformations happen client-side:
+### Range calculator simulation
 
-```
-API (8k pools) → Filter → Sort → Paginate (40 items) → Render
-```
+The calculator doesn't call any API at runtime. It replays the last 168 hourly snapshots (fetched once on page load) against the user's price range, computing what share of pool liquidity the position would have represented each hour and scaling the fee output accordingly. IL projection uses the standard Uniswap V2/V3 formula and assumes fees accrue linearly — accurate enough for ±20% price moves over typical rebalancing windows.
 
-### Why TheGraph for Historical Data?
+### Hex colors in charts
 
-DeFiLlama's `/chart/:poolId` endpoint has aggressive rate limits. TheGraph provides:
-
-- Decentralized infrastructure (no single point of failure)
-- GraphQL flexibility (query only needed fields)
-- 30-day history in single request (reduces API calls)
-- Free tier sufficient for portfolio project scale
-
-### Why Token Bucket for Sparklines?
-
-The `/chart/:poolId` endpoint has undocumented rate limits. Token bucket allows:
-
-- Controlled burst capacity (80 initial requests)
-- Sustained throughput (1.2 req/s)
-- Circuit breaker on 429 errors (fail-fast, no retry storms)
-
-### Why Manual Sorting in TanStack Table?
-
-Sorting before pagination ensures global ordering across all 8k pools, not just the 40 visible rows. Configured with `manualSorting: true` to prevent double-sorting.
-
-### Why Recharts over D3?
-
-- **Declarative API:** Faster development (3 charts in 2h vs D3's 6h+)
-- **React-native:** Built for React (no imperative DOM manipulation)
-- **Trade-off:** Less flexibility for custom interactions (acceptable for MVP)
-
-### Why Hex Colors in Charts?
-
-SVG `fill` and `stroke` attributes don't support CSS variables like `hsl(var(--primary))`. Hex values ensure consistent theming across charts.
-
----
-
-## 🚀 Development Roadmap
-
-- [x] **Phase 0:** Project setup + dependencies
-- [x] **Phase 1:** Dark theme + routing skeleton
-- [x] **Phase 2:** API integration (DeFiLlama) + data transformation
-- [x] **Phase 3:** Filtering system + responsive table UI
-- [x] **Phase 4:** Client-side pagination (40 items/page)
-- [x] **Phase 5:** Global column sorting with custom comparators
-- [x] **Phase 6:** Sticky first column + mobile breakpoint (450px)
-- [x] **Phase 7:** Rate-limited sparklines with lazy loading
-- [x] **Phase 8:** Pool detail pages (TheGraph + 3 interactive charts)
-- [ ] **Phase 9:** Range calculator (based on historical data of the pool and desired APY)
-- [ ] **Phase 10:** Firebase auth + watchlist functionality
-- [ ] **Phase 11:** PWA configuration + deployment
-
----
-
-## 📊 Performance Metrics
-
-- **Initial load:** <1s for 8k pools (deferred fetch)
-- **Filter latency:** ~50ms (client-side with useMemo)
-- **Sort time:** ~80ms for 8k items (O(n log n))
-- **Sparkline coverage:** 95% of use cases (pages 1-4 instant, rest throttled)
-- **Chart render:** ~100ms for 30 data points (Recharts optimization)
-- **Detail page load:** ~300ms (TheGraph query + data transformation)
+SVG `fill` and `stroke` attributes don't resolve CSS custom properties like `hsl(var(--primary))`. Colors are defined as hex constants so charts stay consistent with the DaisyUI theme without runtime resolution issues.
 
 ---
 
 ## 📬 Contact
 
-Built by **David Alonso** | [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)  
-Live demo: _Coming soon at https://_
+Built by **David Alonso** | [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)
+Live demo: _coming soon_
