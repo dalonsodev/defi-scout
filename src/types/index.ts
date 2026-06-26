@@ -71,6 +71,12 @@ export interface RawPoolHourData {
   tick: string | null
 }
 
+export interface PoolTickResult {
+  tick: string | null
+  liquidity: string
+  ticks: RawTick[]
+}
+
 export interface ParamsState {
   search: string
   platforms: string[]

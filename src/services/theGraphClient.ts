@@ -1,4 +1,26 @@
 import { GraphQLClient, gql } from 'graphql-request'
+import { PoolTickResult, RawPool, RawPoolDayData, RawPoolHourData, RawBundle, RawPoolHistory, RawPoolTicks } from '../types'
+
+interface PoolVariables {
+  first: number
+  skip: number
+  orderBy: string
+  orderDirection: 'asc' | 'desc'
+  minTVL: string
+  minVol: string
+}
+
+interface PoolHistoryResult {
+  pool: RawPoolHistory
+  history: RawPoolDayData[]
+  ethPriceUSD: number
+}
+
+interface PoolHistoryResponse {
+  pool: RawPoolHistory
+  bundle: RawBundle
+  poolDayDatas: RawPoolDayData[]
+}
 
 // ===== CONFIGURATION =====
 
@@ -262,8 +284,8 @@ const GET_WATCHED_POOLS_QUERY = gql`
  * Service: Batch-fetches live pool data for a user's watchlist.
  * Returns the same shape as fetchPools() - compatible with PoolTable rendering.
  *
- * @param {string[]} poolIds - Pool contract addresses from Firestore favorites
- * @returns {Promise<Array>} Fresh pool objects ordered by TVL desc
+ * @param poolIds - Pool contract addresses from Firestore favorites
+ * @returns Fresh pool objects ordered by TVL desc
  *
  * @example
  * const pools = await fetchWatchedPools([
@@ -272,16 +294,16 @@ const GET_WATCHED_POOLS_QUERY = gql`
  * ])
  * // => [{ id, feeTier, totalValueLockedUSD, token0, token1, ... }]
  */
-export async function fetchWatchedPools(poolIds) {
-  const data = await client.request(GET_WATCHED_POOLS_QUERY, { ids: poolIds })
+export async function fetchWatchedPools(poolIds: string[]): Promise<RawPool[]> {
+  const data = await client.request<{ pools: RawPool[] }>(GET_WATCHED_POOLS_QUERY, { ids: poolIds })
   return data.pools
 }
 
 /**
  * Service: Batch-fetches 14-day historical data for sparkline rendering.
  *
- * @param {string[]} poolAddresses - Array of pool contract addresses
- * @returns {Promise<Array>} Dictionary: { poolId: [poolDayDatas, ...] }
+ * @param poolAddresses - Array of pool contract addresses
+ * @returns Dictionary: { poolId: [poolDayDatas, ...] }
  *
  * @example
  * const data = await fetchPoolSparklines([
@@ -293,19 +315,21 @@ export async function fetchWatchedPools(poolIds) {
  * //   "0x88e...": [...]
  * // }
  */
-export async function fetchPoolSparklines(poolAddresses) {
+export async function fetchPoolSparklines(poolAddresses: string[]): Promise<Record<string, RawPoolDayData[]>> {
   // Calculate 14 days ago (Unix timestamp in seconds)
   const startDate = Math.floor(Date.now() / 1000) - 14 * 86400
 
-  const data = await client.request(GET_POOL_SPARKLINES_QUERY, {
+  const data = await client.request<{ poolDayDatas: RawPoolDayData[] }>(GET_POOL_SPARKLINES_QUERY, {
     poolIds: poolAddresses.filter(Boolean).map((addr) => addr.toLowerCase()),
     startDate
   })
 
   // Group flat array by pool ID (TheGraph returns all poolDayDatas in one array)
-  const grouped = {}
+  const grouped: Record<string, RawPoolDayData[]> = {}
 
-  data.poolDayDatas.forEach((dayData) => {
+  data.poolDayDatas.forEach((dayData: RawPoolDayData):void => {
+    if (!dayData.pool?.id) throw new Error('Missing pool reference on poolDayData')
+
     const poolId = dayData.pool.id
 
     if (!grouped[poolId]) {
@@ -324,8 +348,8 @@ export async function fetchPoolSparklines(poolAddresses) {
  * Calculation: APY = (Daily Fees / TVL) * 365 * 100
  * This matches the formula used in formatPoolHistory.js for consistency.
  *
- * @param {Array} poolDayDatas - Array of daily snapshots from TheGraph
- * @returns {number[]} Array of APY percentages (up to 14 values)
+ * @param poolDayDatas - Array of daily snapshots from TheGraph
+ * @returns Array of APY percentages (up to 14 values)
  *
  * @example
  * const apyArray = formatSparklineData([
@@ -334,7 +358,7 @@ export async function fetchPoolSparklines(poolAddresses) {
  * ])
  * // => [7.30, 8.42] (APY percentages)
  */
-export function formatSparklineData(poolDayDatas) {
+export function formatSparklineData(poolDayDatas: RawPoolDayData[]): number[] {
   if (!poolDayDatas || poolDayDatas.length === 0) return []
 
   return poolDayDatas.map((snapshot) => {
@@ -361,34 +385,34 @@ export function formatSparklineData(poolDayDatas) {
  * to ensure consistent UX. Low-TVL pools have unreliable APY data and high
  * slippage risk, making them unsuitable for a portfolio showcase.
  *
- * @param {Object} variables - GraphQL query variables
- * @param {number} variables.first - Number of pools to fetch
- * @param {number} variables.skip - Pagination offset
- * @param {string} variables.orderBy - Field to sort by (e.g. "totalValueLockedUSD")
- * @param {string} variables.orderDirection - "asc" or "desc"
- * @param {string} variables.minTVL - Minimum TVL in USD (string for precision)
- * @param {string} variables.minVol - Minimum 24h volume in USD
+ * @param variables - GraphQL query variables
+ * @param variables.first - Number of pools to fetch
+ * @param variables.skip - Pagination offset
+ * @param variables.orderBy - Field to sort by (e.g. "totalValueLockedUSD")
+ * @param variables.orderDirection - "asc" or "desc"
+ * @param variables.minTVL - Minimum TVL in USD (string for precision)
+ * @param variables.minVol - Minimum 24h volume in USD
  *
- * @returns {Promise<Array>} Array of pool objects (tokens, TVL, volume, fees)
+ * @returns Array of pool objects (tokens, TVL, volume, fees)
  */
-export async function fetchPools(variables) {
-  const data = await client.request(GET_POOLS_QUERY, variables)
+export async function fetchPools(variables: PoolVariables): Promise<RawPool[]> {
+  const data = await client.request<{ pools: RawPool[] }>(GET_POOLS_QUERY, variables)
   return data.pools
 }
 
 /**
  * Service: Fetches 30-day historical data for pool detail charts.
  *
- * @param {string} poolId - Pool contract address (case-insensitive, normalized to lowercase)
- * @param {number} startDate - Unix timestamp in seconds for oldest data point
+ * @param poolId - Pool contract address (case-insensitive, normalized to lowercase)
+ * @param startDate - Unix timestamp in seconds for oldest data point
  *
- * @returns {Promise<Object>} result
+ * @returns result
  * @returns {Object} result.pool - Pool metadata (tokens, TVL, prices)
  * @returns {Array} result.history - Daily snapshots (volumeUSD, tvlUSD, feesUSD, prices)
  */
-export async function fetchPoolHistory(poolId, startDate) {
+export async function fetchPoolHistory(poolId: string, startDate: number): Promise<PoolHistoryResult> {
   const normalizedId = poolId.toLowerCase()
-  const data = await client.request(GET_POOL_HISTORY_QUERY, {
+  const data = await client.request<PoolHistoryResponse>(GET_POOL_HISTORY_QUERY, {
     // TheGraph indexes addresses in lowercase (checksummed addresses return null)
     poolId: normalizedId,
     poolIdString: normalizedId,
@@ -397,20 +421,20 @@ export async function fetchPoolHistory(poolId, startDate) {
   return {
     pool: data.pool,
     history: data.poolDayDatas,
-    ethPriceUSD: parseFloat(data.bundle?.ethPriceUSD || 0)
+    ethPriceUSD: parseFloat(data.bundle?.ethPriceUSD) || 0
   }
 }
 
 /**
  * Service: Fetches hourly snapshots for concentrated liquidity range simulations.
  *
- * @param {string} poolId - Pool contract address (case-insensitive)
- * @param {number} startTime - Unix timestamp in seconds (epoch start of hour)
+ * @param poolId - Pool contract address (case-insensitive)
+ * @param startTime - Unix timestamp in seconds (epoch start of hour)
  *
- * @returns {Promise<Array>} Array of hourly datapoints (up to 720 items = 30 days)
+ * @returns Array of hourly datapoints (up to 720 items = 30 days)
  */
-export async function fetchPoolHourData(poolId, startTime) {
-  const data = await client.request(GET_POOL_HOUR_DATAS_QUERY, {
+export async function fetchPoolHourData(poolId: string, startTime: number): Promise<RawPoolHourData[]> {
+  const data = await client.request<{ poolHourDatas: RawPoolHourData[] }>(GET_POOL_HOUR_DATAS_QUERY, {
     poolId: poolId.toLowerCase(),
     startTime
   })
@@ -420,16 +444,16 @@ export async function fetchPoolHourData(poolId, startTime) {
 /**
  * Service: Fetches pool ticks for Liquidity Distribution chart in PoolCharts
  *
- * @param {string} poolId - Pool contract address (case-insensitive)
- * @param {number} currentTick - Current active tick
+ * @param poolId - Pool contract address (case-insensitive)
+ * @param currentTick - Current active tick
  *
- * @returns {Promise<Object>} pool
- * @returns {number} pool.tick - Current active tick
- * @returns {string} pool.liquidity - Active liquidity at current tick (BigInt as string)
- * @returns {Object[]} pool.ticks - Ordered tick array (up to 1000 items)
+ * @returns pool
+ * @returns pool.tick - Current active tick
+ * @returns pool.liquidity - Active liquidity at current tick (BigInt as string)
+ * @returns pool.ticks - Ordered tick array (up to 1000 items)
  */
-export async function fetchPoolTicks(poolId, currentTick) {
-  const data = await client.request(GET_POOL_TICKS_QUERY, {
+export async function fetchPoolTicks(poolId: string, currentTick: number): Promise<PoolTickResult> {
+  const data = await client.request<{ pool: RawPoolTicks }>(GET_POOL_TICKS_QUERY, {
     poolId: poolId.toLowerCase(),
     currentTick
   })
