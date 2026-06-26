@@ -1,15 +1,25 @@
+import type { UserInputs } from "../../../../types"
+
+interface ValidateInputsProps extends UserInputs {
+  selectedTokenIdx: number
+}
+
+type ValidateInputsResult =
+  | { success: true }
+  | { success: false, error: string }
+
 /**
  * Pipeline Stage: Validates inputs for LP position.
  *
- * @param {Object} params - User-defined inputs for LP position
- * @param {number} params.capitalUSD - Actual investment in USD (min $10)
- * @param {number} params.minPrice - Lower price bound (in selected token scale)
- * @param {number} params.maxPrice - Upper price bound (in selected token scale)
- * @param {boolean} params.fullRange - Whether it is a full range position
- * @param {number} params.assumedPrice - Entry price for concentrated positions
- * @param {number} params.selectedTokenIdx - 0 or 1, defines price scale interpretation
+ * @param props - User-defined inputs for LP position
+ * @param props.capitalUSD - Actual investment in USD (min $10)
+ * @param props.minPrice - Lower price bound (in selected token scale)
+ * @param props.maxPrice - Upper price bound (in selected token scale)
+ * @param props.fullRange - Whether it is a full range position
+ * @param props.assumedPrice - Entry price for concentrated positions
+ * @param props.selectedTokenIdx - 0 or 1, defines price scale interpretation
  *
- * @returns {{success: boolean, error?: string}} Returns either success state if all inputs valid or failure state if not (with error string)
+ * @returns Returns either success state if all inputs valid or failure state if not (with error string)
  */
 export function validateInputs({
   capitalUSD,
@@ -18,7 +28,7 @@ export function validateInputs({
   fullRange,
   assumedPrice,
   selectedTokenIdx
-}) {
+}: ValidateInputsProps): ValidateInputsResult {
   if (typeof capitalUSD !== 'number' || Number.isNaN(capitalUSD) || capitalUSD < 10) {
     return { success: false, error: 'Capital must be at least $10' }
   }
@@ -27,7 +37,7 @@ export function validateInputs({
     return { success: false, error: 'You must select a token' }
   }
 
-  const isEmpty = (value) => value === '' || value == null
+  const isEmpty = (value: string | number | null | undefined) => value === '' || value == null
 
   if (!fullRange) {
     if (isEmpty(minPrice) || isEmpty(maxPrice)) {

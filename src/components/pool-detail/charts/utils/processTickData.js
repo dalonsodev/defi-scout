@@ -1,4 +1,4 @@
-import { tickToPrice } from '../../calculator/utils/uniswapV3Ticks'
+import { tickToPrice } from "../../calculator/utils/uniswapV3Ticks"
 
 /**
  * Process Tick Data for display in Liquidity Distribution chart (BarChart)

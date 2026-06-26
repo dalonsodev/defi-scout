@@ -41,8 +41,8 @@ export function buildUniswapPositionUrl(
     minTick = Math.ceil(MIN_TICK / tickSpacing) * tickSpacing
     maxTick = Math.floor(MAX_TICK / tickSpacing) * tickSpacing
   } else {
-    const maxPriceNum = parseFloat(inputs.maxPrice)
-    const minPriceNum = parseFloat(inputs.minPrice)
+    const maxPriceNum = parseFloat((inputs.maxPrice).toString())
+    const minPriceNum = parseFloat((inputs.minPrice).toString())
 
     const canonicalMin =
     selectedTokenIdx === 1 ? 1 / maxPriceNum : minPriceNum

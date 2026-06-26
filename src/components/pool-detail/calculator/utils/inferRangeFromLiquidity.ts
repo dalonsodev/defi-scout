@@ -1,3 +1,14 @@
+interface ProcessedTick {
+  price: number
+  liquidity: number
+  targetPtc?: number
+}
+
+interface RangeResults {
+  minPrice: number | null
+  maxPrice: number | null
+}
+
 /**
  * Utility: Infers range input hydration values from current liquidity.
  *
@@ -7,13 +18,16 @@
  *
  * Usage: It helps hydrate UI inputs for range-bound liquidity provision.
  *
- * @param {Object[]} processedTicks - Array of tick data objects
- * @param {number} processedTicks[].price - Value at current tick
- * @param {number} processedTicks[].liquidity - Active, at current tick
- * @param {number} [targetPct=0.9] - Target depth to capture (0.0 to 1.0)
- * @returns {{ minPrice: number|null, maxPrice: number|null }|null}
+ * @param processedTicks - Array of tick data objects
+ * @param processedTicks[].price - Value at current tick
+ * @param processedTicks[].liquidity - Active, at current tick
+ * @param [targetPct=0.9] - Target depth to capture (0.0 to 1.0)
+ * @returns An object containing minPrice and maxPrice or null
  */
-export function inferRangeFromLiquidity(processedTicks, targetPct = 0.6) {
+export function inferRangeFromLiquidity(
+  processedTicks: ProcessedTick[],
+  targetPct = 0.6
+): RangeResults | null {
   if (processedTicks.length < 2) return null
 
   const total = processedTicks.reduce((acc, curr) => acc + curr.liquidity, 0)

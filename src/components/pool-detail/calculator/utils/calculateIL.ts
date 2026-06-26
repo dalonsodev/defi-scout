@@ -8,15 +8,15 @@
  *
  * Formula Reference: https://lambert-guillaume.medium.com/understanding-the-value-of-uniswap-v3-liquidity-positions-cdaaee127fe7
  *
- * @param {number} initialPrice - Starting price ratio (token1/token0)
- * @param {number} finalPrice - Ending price ratio (token1/token0)
- * @returns {number} IL as decimal (e.g. -0.057 represents a 5.7% loss relative to holding)
+ * @param initialPrice - Starting price ratio (token1/token0)
+ * @param finalPrice - Ending price ratio (token1/token0)
+ * @returns IL as decimal (e.g. -0.057 represents a 5.7% loss relative to holding)
  *
  * @example
  * // ETH goes from $2000 to $3000 (1.5x move)
  * const il = calculateIL(2000, 3000) // -0.0605 = ~6% loss vs holding 50/50
  */
-export function calculateIL(initialPrice, finalPrice) {
+export function calculateIL(initialPrice: number, finalPrice: number): number {
   // Defensive: Prevents division by zero or negative price logic
   if (initialPrice <= 0 || finalPrice <= 0) {
     throw new Error('Prices must be positive non-zero values')

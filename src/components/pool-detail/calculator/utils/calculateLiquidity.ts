@@ -15,19 +15,19 @@ import { debugLog } from '../../../../utils/logger'
  * - In range (P_low ≤ P ≤ P_high): Both tokens, take min(L0, L1)
  * - Above range (P > P_high): 100% token1, use Δy formula
  *
- * @param {number} amount0 - Token0 amount (human units, e.g. 1000 USDC)
- * @param {number} amount1 - Token1 amount (human units, e.g. 0.5 WETH)
- * @param {number} price - Current price (token0/token1, e.g. 2000 USDC per WETH)
- * @param {number} minPrice - Lower bound (same scale as price)
- * @param {number} maxPrice - Upper bound (same scale as price)
- * @returns {number} Liquidity in RAW units (compatible with TheGraph's L_pool)
+ * @param amount0 - Token0 amount (human units, e.g. 1000 USDC)
+ * @param amount1 - Token1 amount (human units, e.g. 0.5 WETH)
+ * @param price - Current price (token0/token1, e.g. 2000 USDC per WETH)
+ * @param minPrice - Lower bound (same scale as price)
+ * @param maxPrice - Upper bound (same scale as price)
+ * @returns Liquidity in RAW units (compatible with TheGraph's L_pool)
  */
 export function calculateLiquidity(
-  amount0,
-  amount1,
-  price,
-  minPrice,
-  maxPrice
+  amount0: number,
+  amount1: number,
+  price: number,
+  minPrice: number,
+  maxPrice: number
 ) {
   // Invert to Uniswap V3 convention (P = token1/token0)
   const P = 1 / price
@@ -52,8 +52,8 @@ export function calculateLiquidity(
     sqrtP: sqrtP.toFixed(6)
   })
 
-  let liquidity
-  let positionState
+  let liquidity: number
+  let positionState: string
 
   if (P <= P_low) {
     // Below range: L = Δx × (√P_high × √P_low) / (√P_high - √P_low)

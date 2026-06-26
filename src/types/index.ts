@@ -82,11 +82,11 @@ export interface ParamsState {
 }
 
 export interface UserInputs {
-  capitalUSD: number
   fullRange: boolean
-  minPrice: string
-  maxPrice: string
-  assumedPrice: string
+  capitalUSD: number
+  minPrice: string | number
+  maxPrice: string | number
+  assumedPrice: string | number
 }
 
 export interface Composition {

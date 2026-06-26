@@ -80,6 +80,9 @@ describe('calculateComposition', () => {
 
       // Verify split
       expect(result.success).toBe(true)
+
+      if (!result.success) throw new Error('Expected success result')
+
       expect(result.composition.token0Percent).toBe(50)
       expect(result.composition.token1Percent).toBe(50)
 
@@ -96,6 +99,10 @@ describe('calculateComposition', () => {
         historicalPrices: validHistoricalPrices
       })
 
+      expect(result.success).toBe(true)
+
+      if (!result.success) throw new Error('Expected success result')
+
       // amount0 = $5000 / $3000 = 1.666... WETH
       // amount1 = $5000 / $1 = 5000 USDT
       expect(result.composition.amount0).toBeCloseTo(1.6666, 3)
@@ -111,6 +118,10 @@ describe('calculateComposition', () => {
         poolState: validPoolState,
         historicalPrices: history
       })
+
+      expect(result.success).toBe(true)
+
+      if (!result.success) throw new Error('Expected success result')
 
       // Buffer = 50% (because volatility 0.4)
       const expectedMin = 0.00025 * (1 - 0.5) // 0.000125
@@ -129,6 +140,10 @@ describe('calculateComposition', () => {
         poolState: validPoolState,
         historicalPrices: history
       })
+
+      expect(result.success).toBe(true)
+
+      if (!result.success) throw new Error('Expected success result')
 
       // Expected: 100% buffer (volatility > 0.5)
       const expectedMin = 0.0002 * (1 - 1.0)
@@ -157,6 +172,10 @@ describe('calculateComposition', () => {
         historicalPrices: validHistoricalPrices
       })
 
+      expect(result.success).toBe(true)
+
+      if (!result.success) throw new Error('Expected success result')
+
       // Effective range must be equal to user inputs
       expect(result.effectiveRange.min).toBe(0.0002)
       expect(result.effectiveRange.max).toBe(0.0004)
@@ -177,6 +196,10 @@ describe('calculateComposition', () => {
         historicalPrices: validHistoricalPrices
       })
 
+      expect(result.success).toBe(true)
+
+      if (!result.success) throw new Error('Expected success result')
+
       // Normalized min: 1 / 5000 = 0.0002, max = 1 / 2500 = 0.0004
       // (note: min/max will swap after inversion)
       expect(result.effectiveRange.min).toBeCloseTo(1 / 5000, 6)
@@ -195,6 +218,9 @@ describe('calculateComposition', () => {
       })
 
       expect(result.success).toBe(true)
+
+      if (!result.success) throw new Error('Expected success result')
+
       expect(result.composition).toHaveProperty('token0Percent')
       expect(result.composition).toHaveProperty('token1Percent')
       expect(result.composition).toHaveProperty('amount0')
@@ -213,6 +239,10 @@ describe('calculateComposition', () => {
         poolState: validPoolState,
         historicalPrices: validHistoricalPrices
       })
+
+      expect(result.success).toBe(true)
+
+      if (!result.success) throw new Error('Expected success result')
 
       const { capital0USD, capital1USD } = result.capitalAllocation
       const { token0Percent, token1Percent } = result.composition

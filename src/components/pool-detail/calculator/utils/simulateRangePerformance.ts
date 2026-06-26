@@ -6,6 +6,53 @@ import { calculateComposition } from '../pipeline/calculateComposition'
 import { calculateFeesWithQuality } from '../pipeline/calculateFeesWithQuality'
 import { inferTokenPricesFromTVL } from '../../../../utils/inferTokenPricesFromTVL'
 import { debugLog } from '../../../../utils/logger'
+import { RawPoolHourData, RawPoolHistory } from '../../../../types'
+
+interface RangePerformanceParams {
+  fullRange: boolean
+  capitalUSD: number
+  minPrice: number
+  maxPrice: number
+  assumedPrice: number
+  selectedTokenIdx: number
+  hourlyData: RawPoolHourData[]
+  pool: RawPoolHistory
+  ethPriceUSD: number
+}
+
+interface TokenComposition {
+  token0Percent: number
+  token1Percent: number
+  capital0USD: number
+  capital1USD: number
+  amount0: number
+  amount1: number
+}
+
+interface ProcessFailure {
+  success: false
+  error?: string
+  warning?: string
+  dataQuality?: string
+}
+
+interface ProcessSuccess {
+  success: true
+  totalFeesUSD: number
+  feeReturnPercent: number
+  APR: number
+  dailyFeesUSD: number,
+  daysOfData: number
+  hoursInRange: number | undefined
+  percentInRange: number
+  composition: TokenComposition
+  token0PriceUSD: number
+  token1PriceUSD: number
+  dataQuality: string
+  warnings: string[]
+}
+
+type ProcessResult = ProcessFailure | ProcessSuccess
 
 /**
  * Orchestrates historical LP position simulation using hourly on-chain data.
@@ -25,15 +72,16 @@ import { debugLog } from '../../../../utils/logger'
  * - Linear interpolation for fee share → Reality: tick-level precision
  * - Accuracy: Good for ±20% moves over 7-30 days
  *
- * @param {Object} params
- * @param {number} params.capitalUSD - Initial investment (min $10)
- * @param {number} params.minPrice - Lower bound (in selected token scale)
- * @param {number} params.maxPrice - Upper bound (in selected token scale)
- * @param {boolean} params.fullRange - If true, simulates V2-style 50/50 position
- * @param {number} params.assumedPrice - Entry price for concentrated positions
- * @param {number} params.selectedTokenIdx - 0 or 1 (defines price interpretation)
- * @param {Object[]} params.hourlyData - TheGraph poolHourData (quality assessed by assessDataQuality)
- * @param {Object} params.pool - Pool metadata (TVL, decimals, feeTier)
+ * @param params
+ * @param params.capitalUSD - Initial investment (min $10)
+ * @param params.minPrice - Lower bound (in selected token scale)
+ * @param params.maxPrice - Upper bound (in selected token scale)
+ * @param params.fullRange - If true, simulates V2-style 50/50 position
+ * @param params.assumedPrice - Entry price for concentrated positions
+ * @param params.selectedTokenIdx - 0 or 1 (defines price interpretation)
+ * @param params.hourlyData - TheGraph poolHourData (quality assessed by assessDataQuality)
+ * @param params.pool - Pool metadata (TVL, decimals, feeTier)
+ * @param ethPriceUSD - Current ETH Price
  *
  * @returns {Object} Simulation result
  * @returns {boolean} returns.success - Operation status
@@ -55,7 +103,7 @@ export function simulateRangePerformance({
   hourlyData,
   pool,
   ethPriceUSD
-}) {
+}: RangePerformanceParams): ProcessResult | ReturnType<typeof validateInputs> {
   // ===== STAGE 1: INPUT VALIDATION =====
   const validation = validateInputs({
     capitalUSD,
@@ -76,7 +124,7 @@ export function simulateRangePerformance({
     return {
       success: false,
       warning: 'Pool needs 7+ days of data for reliable projections',
-      quality
+      dataQuality: quality
     }
   }
 
@@ -147,7 +195,7 @@ export function simulateRangePerformance({
       currentPrice,
       priceToken0InUSD,
       priceToken1InUSD,
-      feeTier: pool.feeTier
+      feeTier: Number(pool.feeTier)
     },
     historicalPrices: allPrices
   })
@@ -216,7 +264,7 @@ export function simulateRangePerformance({
   })
 
   if (feeSharePercent > 100) {
-    debugLog('⚠️ Fee share > 100% (possible scaling bug)')
+    debugLog('⚠️ Fee share > 100% (possible scaling bug)', null)
   }
 
   // ===== STAGE 7: FEE ACCUMULATION =====

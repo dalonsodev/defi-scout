@@ -28,14 +28,13 @@ const MAX_TICK = 887272
  * Design Rationale: Higher fees = wider spreads = less frequent rebalancing needed
  * → Larger tick spacing reduces gas costs without harming LPs
  *
- * @type {Object.<number, number>}
- * @property {number} 100 - 0.01% fee tier (1 tick spacing, for stablecoin pairs)
- * @property {number} 200 - 0.02% fee tier (4 tick spacing, used in L2s like Arbitrum)
- * @property {number} 500 - 0.05% fee tier (10 tick spacing, most common)
- * @property {number} 3000 - 0.30% fee tier (60 tick spacing, volatile pairs)
- * @property {number} 10000 - 1.00% fee tier (200 tick spacing, exotic pairs, memecoins)
+ * @property 100 - 0.01% fee tier (1 tick spacing, for stablecoin pairs)
+ * @property 200 - 0.02% fee tier (4 tick spacing, used in L2s like Arbitrum)
+ * @property 500 - 0.05% fee tier (10 tick spacing, most common)
+ * @property 3000 - 0.30% fee tier (60 tick spacing, volatile pairs)
+ * @property 10000 - 1.00% fee tier (200 tick spacing, exotic pairs, memecoins)
  */
-const FEE_TIER_TO_TICK_SPACING = {
+const FEE_TIER_TO_TICK_SPACING: Record<number, number> = {
   100: 1, // 0.01% fee -> Spacing 1
   200: 4, // 0.02% fee -> Spacing 4
   500: 10, // 0.05% fee -> Spacing 10
@@ -55,8 +54,8 @@ const FEE_TIER_TO_TICK_SPACING = {
  * - Negative/zero prices clamp to MIN_TICK (prevents log domain errors)
  * - Prices above MAX_TICK clam to MAX_TICK (prevents overflow)
  *
- * @param {number} price - Price ratio (token1/token0, must be positive)
- * @returns {number} - Tick index (integer in range [MIN_TICK, MAX_TICK])
+ * @param price - Price ratio (token1/token0, must be positive)
+ * @returns Tick index (integer in range [MIN_TICK, MAX_TICK])
  *
  * @example
  * // ETH/USDC at $3000
@@ -67,7 +66,7 @@ const FEE_TIER_TO_TICK_SPACING = {
  * priceToTick(0) // => -887272 (MIN_TICK)
  * priceToTick(Infinity) // => 887272 (MAX_TICK)
  */
-export function priceToTick(price) {
+export function priceToTick(price: number): number {
   if (price <= 0) return MIN_TICK
 
   const tick = Math.floor(Math.log(price) / Math.log(1.0001))
@@ -78,13 +77,13 @@ export function priceToTick(price) {
 /**
  * Utility: Convert tick index back to a numeric price.
  *
- * @param {number} tick - Tick index (will be clamped to valid range)
- * @returns {number} Price ratio (token1/token0)
+ * @param tick - Tick index (will be clamped to valid range)
+ * @returns Price ratio (token1/token0)
  *
  * @example
  * tickToPrice(83091) // => ~3000.00 (ETH/USDC)
  */
-export function tickToPrice(tick) {
+export function tickToPrice(tick: number): number {
   // Defensive: Clamping and round to prevent floating-point edge cases
   const clampedTick = Math.max(MIN_TICK, Math.min(MAX_TICK, Math.round(tick)))
   return Math.pow(1.0001, clampedTick)
@@ -93,14 +92,14 @@ export function tickToPrice(tick) {
 /**
  * Utility: Get protocol-mandated tick spacing for a given fee tier.
  *
- * @param {number} feeTier - Fee tier in basis points (100, 500, 3000, 10000)
- * @returns {number} - Tick spacing (granularity of price grid)
+ * @param feeTier - Fee tier in basis points (100, 500, 3000, 10000)
+ * @returns Tick spacing (granularity of price grid)
  *
  * @example
  * getTickSpacing(3000) // => 60 (for 0.3% fee tier)
  * getTickSpacing(9999) // => 60 (fallback for unknown tiers)
  */
-export function getTickSpacing(feeTier) {
+export function getTickSpacing(feeTier: number): number {
   return FEE_TIER_TO_TICK_SPACING[feeTier] ?? 60 // Default to 0.3% spacing
 }
 
@@ -110,11 +109,11 @@ export function getTickSpacing(feeTier) {
  * Context: Uniswap V3 only allows liquidity to be provided at ticks that are
  * multiples of spacing. This prevents fragmentation and reduces gas costs.
  *
- * @param {number} tick - Target raw tick (can be any integer)
- * @param {number} tickSpacing - Fee-dependent spacing (from getTickSpacing)
- * @returns {number} - Aligned tick (guaranteed multiple of tickSpacing)
+ * @param tick - Target raw tick (can be any integer)
+ * @param tickSpacing - Fee-dependent spacing (from getTickSpacing)
+ * @returns Aligned tick (guaranteed multiple of tickSpacing)
  */
-export function alignTickToSpacing(tick, tickSpacing) {
+export function alignTickToSpacing(tick: number, tickSpacing: number): number {
   return Math.round(tick / tickSpacing) * tickSpacing
 }
 
@@ -138,7 +137,11 @@ export function alignTickToSpacing(tick, tickSpacing) {
  * // Decrement with boundary clamping
  * incrementPriceByTick(0.0001, 3000, -1) // => tickToPrice(MIN_TICK)
  */
-export function incrementPriceByTick(currentPrice, feeTier, direction = 1) {
+export function incrementPriceByTick(
+  currentPrice: number,
+  feeTier: number,
+  direction: number = 1
+): number {
   const tickSpacing = getTickSpacing(feeTier)
   const currentTick = priceToTick(currentPrice)
 

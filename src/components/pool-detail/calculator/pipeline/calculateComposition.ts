@@ -1,5 +1,60 @@
 import { calculateTokenRatio } from '../utils/calculateTokenRatio'
 import { debugLog } from '../../../../utils/logger'
+import { Composition } from '../../../../types'
+
+interface UserInputs {
+  capitalUSD: number
+  fullRange: boolean
+  minPrice: number
+  maxPrice: number
+  assumedPrice: number
+  selectedTokenIdx: number
+}
+
+interface PoolState {
+  currentPrice: number
+  priceToken0InUSD: number
+  priceToken1InUSD: number
+  feeTier: number | null
+}
+
+interface CalculateCompositionParams {
+  userInputs: UserInputs
+  poolState: PoolState
+  historicalPrices: number[]
+}
+
+interface TokenComposition {
+  token0Percent: number
+  token1Percent: number
+  amount0: number
+  amount1: number
+}
+
+interface CapitalAllocation {
+  capital0USD: number
+  capital1USD: number
+}
+
+interface EffectiveRange {
+  min: number
+  max: number
+}
+
+interface ProcessResultFailure {
+  success: false
+  error: string
+}
+
+interface ProcessResultSuccess {
+  success: true
+  composition: TokenComposition
+  capitalAllocation: CapitalAllocation
+  effectiveRange: EffectiveRange
+  error?: string
+}
+
+type ProcessResults = ProcessResultFailure | ProcessResultSuccess
 
 /**
  * Pipeline Stage 2: Calculates LP position composition and effective price bounds.
@@ -9,43 +64,43 @@ import { debugLog } from '../../../../utils/logger'
  * - Full Range: 50/50 split with volatility-adjusted safety buffer (V2-style)
  * - Concentrated: Custom ratio derived from tick math for user-defined bounds (V3-style)
  *
- * @param {Object} params
- * @param {Object} params.userInputs - Form-controlled parameters
- * @param {number} params.userInputs.capitalUSD - Total investment in USD
- * @param {number} params.userInputs.minPrice - Lower price bound (in selectedToken scale)
- * @param {number} params.userInputs.maxPrice - Upper price bound (in selectedToken scale)
- * @param {boolean} params.userInputs.fullRange - Mode toggle (true=V2, false=V3)
- * @param {number} params.userInputs.assumedPrice - Entry price for V3 mode
- * @param {number} params.userInputs.selectedTokenIdx - Display scale (0=token0, 1=token1)
+ * @param params
+ * @param params.userInputs - Form-controlled parameters
+ * @param params.userInputs.capitalUSD - Total investment in USD
+ * @param params.userInputs.minPrice - Lower price bound (in selectedToken scale)
+ * @param params.userInputs.maxPrice - Upper price bound (in selectedToken scale)
+ * @param params.userInputs.fullRange - Mode toggle (true=V2, false=V3)
+ * @param params.userInputs.assumedPrice - Entry price for V3 mode
+ * @param params.userInputs.selectedTokenIdx - Display scale (0=token0, 1=token1)
  *
- * @param {Object} params.poolState - Live on-chain state
- * @param {number} params.poolState.currentPrice - Latest token0Price from TheGraph
- * @param {number} params.poolState.priceToken0InUSD - Token0 market price
- * @param {number} params.poolState.priceToken1InUSD - Token1 market price
- * @param {number} params.poolState.feeTier - Pool fee (500/3000/10000 basis points)
+ * @param params.poolState - Live on-chain state
+ * @param params.poolState.currentPrice - Latest token0Price from TheGraph
+ * @param params.poolState.priceToken0InUSD - Token0 market price
+ * @param params.poolState.priceToken1InUSD - Token1 market price
+ * @param params.poolState.feeTier - Pool fee (500/3000/10000 basis points)
  *
- * @param {number[]} params.historicalPrices - 30-day token0Price history for volatility calc
+ * @param params.historicalPrices - 30-day token0Price history for volatility calc
  *
- * @returns {Object} Result
- * @returns {boolean} returns.success
- * @returns {string} [returns.error] - Validation failure message
- * @returns {Object} [returns.composition] - Token split (percentages + amounts)
- * @returns {number} returns.composition.token0Percent - Allocation % for token0
- * @returns {number} returns.composition.token1Percent - Allocation % for token1
- * @returns {number} returns.composition.amount0 - Token0 quantity in human units
- * @returns {number} returns.composition.amount1 - Token1 quantity in human units
- * @returns {Object} [returns.capitalAllocation] - USD breakdown
- * @returns {number} returns.capitalAllocation.capital0USD
- * @returns {number} returns.capitalAllocation.capital1USD
- * @returns {Object} [returns.effectiveRange] - Active bounds in token0Price scale
- * @returns {number} returns.effectiveRange.min - Lower boundary
- * @returns {number} returns.effectiveRange.max - Upper boundary
+ * @returns Result
+ * @returns returns.success
+ * @returns [returns.error] - Validation failure message
+ * @returns [returns.composition] - Token split (percentages + amounts)
+ * @returns returns.composition.token0Percent - Allocation % for token0
+ * @returns returns.composition.token1Percent - Allocation % for token1
+ * @returns returns.composition.amount0 - Token0 quantity in human units
+ * @returns returns.composition.amount1 - Token1 quantity in human units
+ * @returns [returns.capitalAllocation] - USD breakdown
+ * @returns returns.capitalAllocation.capital0USD
+ * @returns returns.capitalAllocation.capital1USD
+ * @returns [returns.effectiveRange] - Active bounds in token0Price scale
+ * @returns returns.effectiveRange.min - Lower boundary
+ * @returns returns.effectiveRange.max - Upper boundary
  */
 export function calculateComposition({
   userInputs,
   poolState,
   historicalPrices
-}) {
+}: CalculateCompositionParams): ProcessResults {
   const {
     capitalUSD,
     minPrice,

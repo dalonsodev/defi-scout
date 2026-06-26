@@ -1,3 +1,10 @@
+import type { RawPoolHourData } from "../../../../types"
+
+interface AssesDataQualityResult {
+  quality: string
+  warnings: string[]
+}
+
 /**
  * Domain Logic: Statistical Significance Assessment
  *
@@ -5,16 +12,16 @@
  * Rationale: 7-day minimum captures weekly cycles (Sat/Sun low volume), 30-day optimal
  * for detecting long-term trends vs temporary liquidity mining incentives.
  *
- * @param {Array} hourlyData - Array of { timestamp, feesUSD, tvlUSD } snapshots
- * @returns {Object} Quality report
- * @returns {string} return.quality - Rating: "INSUFFICIENT" | "LIMITED" | "RELIABLE" | "EXCELLENT"
- * @returns {string[]} return.warnings - User-facing messages (empty array if RELIABLE+)
+ * @param hourlyData - Array of { timestamp, feesUSD, tvlUSD } snapshots
+ * @returns Quality report
+ * @returns return.quality - Rating: "INSUFFICIENT" | "LIMITED" | "RELIABLE" | "EXCELLENT"
+ * @returns return.warnings - User-facing messages (empty array if RELIABLE+)
  *
  * @example
  * const { quality, warnings } = assessDataQuality(pool30DaysData)
  * if (quality === "INSUFFICIENT") showDisclaimer(warnings[0])
  */
-export function assessDataQuality(hourlyData) {
+export function assessDataQuality(hourlyData: RawPoolHourData[]): AssesDataQualityResult {
   // Defensive: Prevents crash if TheGraph query fails or returns null or empty array
   if (!hourlyData || !Array.isArray(hourlyData) || hourlyData.length === 0) {
     return { quality: 'EMPTY', warnings: ['No data provided for analysis.'] }

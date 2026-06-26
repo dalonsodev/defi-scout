@@ -1,3 +1,7 @@
+import type { RawToken } from "../../../../types"
+
+const STABLES = ['USDT', 'USDC', 'DAI', 'USDe', 'PYUSD', 'FDUSD', 'USDS']
+
 /**
  * Utility: Token USD Price Calculation via Uniswap Oracle
  *
@@ -9,24 +13,24 @@
  * 2. Secondary: Stablecoin heuristic (if derivedETH missing)
  * 3. Tertiary: Return [0, 0] and log warning
  *
- * @param {Object} token0 - Token0 metadata from TheGraph
- * @param {string} token0.derivedETH - Token price in ETH
- * @param {string} token0.symbol - For stablecoin detection
- * @param {Object} token1 - Token1 metadata
- * @param {number} ethPriceUSD - Current ETH/USD price from bundle
- * @param {number} currentPrice - Pool price ratio (fallback only)
+ * @param token0 - Token0 metadata from TheGraph
+ * @param token0.derivedETH - Token price in ETH
+ * @param token0.symbol - For stablecoin detection
+ * @param token1 - Token1 metadata
+ * @param ethPriceUSD - Current ETH/USD price from bundle
+ * @param currentPrice - Pool price ratio (fallback only)
  *
- * @returns {{ token0PriceUSD: number, token1PriceUSD: number }}
+ * @returns Object containing the price of both tokens in USD
  */
 export function calculateTokenPrices(
-  token0,
-  token1,
-  ethPriceUSD,
-  currentPrice
+  token0: RawToken,
+  token1: RawToken,
+  ethPriceUSD: number,
+  currentPrice: number
 ) {
   // Parse oracle data
-  const derivedETH0 = parseFloat(token0.derivedETH || 0)
-  const derivedETH1 = parseFloat(token1.derivedETH || 0)
+  const derivedETH0 = parseFloat(token0.derivedETH || '0')
+  const derivedETH1 = parseFloat(token1.derivedETH || '0')
 
   // ===== PRIMARY METHOD: Oracle-based =====
   if (derivedETH0 > 0 && derivedETH1 > 0 && ethPriceUSD > 0) {
@@ -37,7 +41,6 @@ export function calculateTokenPrices(
   }
 
   // ===== FALLBACK: Stablecoin Heuristic =====
-  const STABLES = ['USDT', 'USDC', 'DAI', 'USDe', 'PYUSD', 'FDUSD', 'USDS']
   const token0IsStable = STABLES.includes(token0.symbol)
   const token1IsStable = STABLES.includes(token1.symbol)
 

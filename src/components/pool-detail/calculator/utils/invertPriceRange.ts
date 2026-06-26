@@ -1,5 +1,18 @@
 import { formatPriceInput } from '../../../../utils/priceInputUtils'
 
+interface InputsToInvert {
+  minPrice: string
+  maxPrice: string
+  fullRange: boolean
+  assumedPrice: number
+}
+
+interface RangeResult {
+  minPrice: string
+  maxPrice: string
+  assumedPrice: string
+}
+
 /**
  * Utility: Inverts Uniswap V3 range prices for token base flip
  *
@@ -13,19 +26,19 @@ import { formatPriceInput } from '../../../../utils/priceInputUtils'
  * - If empty minPrice/maxPrice/assumedPrice → return null
  * - If any ≤ 0 or !isFinite() → return null
  *
- * @param {Object} inputs
- * @param {string} inputs.minPrice - Lower price bound (in selected token scale)
- * @param {string} inputs.maxPrice - Upper price bound (in selected token scale)
- * @param {boolean} inputs.fullRange - If true, returns null (range not needed)
- * @param {number} inputs.assumedPrice - Entry price for concentrated positions
+ * @param inputs
+ * @param inputs.minPrice - Lower price bound (in selected token scale)
+ * @param inputs.maxPrice - Upper price bound (in selected token scale)
+ * @param inputs.fullRange - If true, returns null (range not needed)
+ * @param inputs.assumedPrice - Entry price for concentrated positions
  *
- * @returns {Object|null} { minPrice: string, maxPrice: string, assumedPrice: string }
+ * @returns Range prices (minPrice, maxPrice, assumedPrice)
  *
  * @example
  * invertPriceRange({ minPrice: "1500", maxPrice: "2000", ... })
  * // => { minPrice: "0.00050000", maxPrice: "0.00066667", ... }
  */
-export function invertPriceRange(inputs) {
+export function invertPriceRange(inputs: InputsToInvert): RangeResult | null {
   const { minPrice, maxPrice, fullRange, assumedPrice } = inputs
 
   if (fullRange) return null
@@ -44,8 +57,8 @@ export function invertPriceRange(inputs) {
   const newAssumed = 1 / oldAssumed
 
   return {
-    minPrice: formatPriceInput(newMin),
-    maxPrice: formatPriceInput(newMax),
-    assumedPrice: formatPriceInput(newAssumed)
+    minPrice: formatPriceInput(newMin.toString()),
+    maxPrice: formatPriceInput(newMax.toString()),
+    assumedPrice: formatPriceInput(newAssumed.toString())
   }
 }

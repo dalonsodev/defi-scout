@@ -1,3 +1,20 @@
+
+interface CalculatePresetRangeResult {
+  minPrice: string
+  maxPrice: string
+}
+
+/**
+ * Predefined Volatility Brackets:
+ * These multipliers represent the "width" of the concentrated liquidity position.
+ * Chosen to match Uniswap's default options in their official interface.
+*/
+const MULTIPLIERS = {
+  '±10%': { min: 0.9, max: 1.1 }, // Low-risk: Stablecoin pairs
+  '±15%': { min: 0.85, max: 1.15 }, // Medium: Major pairs (ETH/USDC)
+  '±20%': { min: 0.8, max: 1.2 } // High-risk: Volatile altcoins
+}
+
 /**
  * Utility: Calculates min/max price range based on preset volatility brackets.
  *
@@ -11,25 +28,18 @@
  * Limitation: Creates asymmetric IL - e.g. ±10% range has different loss at minPrice vs maxPrice.
  * Accuracy: Good enough for UI quickstart; advanced users should use custom ranges.
  *
- * @param {number} assumedPrice - Reference price (usually current market price from pool.token0Price)
- * @param {string} presetType - Preset identifier "±10%" | "±15%" | "±20%"
- * @returns {{ minPrice: string, maxPrice: string }} Formatted price boundaries as strings (HTML input compatible)
+ * @param assumedPrice - Reference price (usually current market price from pool.token0Price)
+ * @param presetType - Preset identifier "±10%" | "±15%" | "±20%"
+ * @returns Formatted price boundaries as strings (HTML input compatible)
  *
  * @example
  * const { minPrice, maxPrice } = calculatePresetRange(2000, "±10%")
  * // Returns { minPrice: "1800.00000000", maxPrice: "2200.00000000"}
  */
-export function calculatePresetRange(assumedPrice, presetType) {
-  /**
-   * Predefined Volatility Brackets:
-   * These multipliers represent the "width" of the concentrated liquidity position.
-   * Chosen to match Uniswap's default options in their official interface.
-   */
-  const MULTIPLIERS = {
-    '±10%': { min: 0.9, max: 1.1 }, // Low-risk: Stablecoin pairs
-    '±15%': { min: 0.85, max: 1.15 }, // Medium: Major pairs (ETH/USDC)
-    '±20%': { min: 0.8, max: 1.2 } // High-risk: Volatile altcoins
-  }
+export function calculatePresetRange(
+  assumedPrice: number,
+  presetType: '±10%' | '±15%' | '±20%'
+): CalculatePresetRangeResult {
 
   const { min, max } = MULTIPLIERS[presetType]
 

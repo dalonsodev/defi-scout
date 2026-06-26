@@ -7,6 +7,11 @@ interface InferTokenPricesFromTVLParams {
   currentPrice: number
 }
 
+type InferPricesResult =
+  | { success: false; error: string }
+  | { success: true; priceToken0InUSD: number; priceToken1InUSD: number }
+
+
 /**
  * Infers USD prices of both tokens from current pool TVL snapshot.
  *
@@ -23,7 +28,7 @@ export function inferTokenPricesFromTVL({
   tvlToken0,
   tvlToken1,
   currentPrice
-}: InferTokenPricesFromTVLParams) {
+}: InferTokenPricesFromTVLParams): InferPricesResult {
   const isInvalidPrice = (price: number) => price <= 0 || !isFinite(price)
 
   // Validate all inputs exist

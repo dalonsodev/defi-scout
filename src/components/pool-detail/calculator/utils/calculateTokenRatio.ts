@@ -10,13 +10,12 @@ import {
  * Architecture: Token ratio changes non-linearly across price ranges due to
  * rebalancing. A position at tick 100 in [50, 150] is NOT 50/50 composition.
  *
- * @param {number} assumedPrice - Entry price (token1/token0 ratio)
- * @param {number} minPrice - Lower bound of concentrated range
- * @param {number} maxPrice - Upper bound of concentrated range
- * @param {number} feeTier - Pool fee tier (100, 500, 3000, 10000 bps)
+ * @param assumedPrice - Entry price (token1/token0 ratio)
+ * @param minPrice - Lower bound of concentrated range
+ * @param maxPrice - Upper bound of concentrated range
+ * @param feeTier - Pool fee tier (100, 500, 3000, 10000 bps)
  *
- * @returns {{ token0Percent: number, token1Percent: number }}
- * Composition rounded to 2 decimals (UI display precision)
+ * @returns Composition percentages rounded to 2 decimals (UI display precision)
  *
  * @example
  * // ETH/USDC pool at $3000, range $2500-$3500, 0.3% fee
@@ -24,7 +23,12 @@ import {
  * => { token0Percent: 45.23, token1Percent: 54.77 }
  * // Position skewed toward USDC (token1) because price is mid-range
  */
-export function calculateTokenRatio(assumedPrice, minPrice, maxPrice, feeTier) {
+export function calculateTokenRatio(
+  assumedPrice: number,
+  minPrice: number,
+  maxPrice: number,
+  feeTier: number
+) {
   // Financial Edge Case: Handle boundary conditions where liquidity becomes single-sided
   if (assumedPrice <= minPrice) {
     // Price below range: 100% token0 (cheaper asset), 0% token1

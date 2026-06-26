@@ -1,5 +1,33 @@
 import { validateHourSnapshot } from '../utils/validateHourSnapshot'
 import { debugLog } from '../../../../utils/logger'
+import type { RawPoolHourData } from '../../../../types'
+
+interface CalculateFeesWithQualityParams {
+  hourlyData: RawPoolHourData[]
+  effectiveMin: number
+  effectiveMax: number
+  L_user: number
+  initialQuality: string
+  debug?: boolean
+}
+
+interface ProcessFailure {
+  success: false
+  error: string | undefined
+  dataQuality: string | undefined
+}
+
+interface ProcessSuccess {
+  success: true
+  totalFeesUSD: number
+  percentInRange: number
+  finalQuality: string
+  warnings: string[]
+  dataQuality?: string
+  hoursInRange?: number
+}
+
+type ProcessResult = ProcessFailure | ProcessSuccess
 
 /**
  * Pipeline Stage: Accumulates fees from hourly snapshots proportional to user liquidity.
@@ -18,13 +46,13 @@ import { debugLog } from '../../../../utils/logger'
  * - Fee share calculation: userFees = poolFees × (L_user / L_pool)
  * - Model limitation: Assumes constant token amounts (degrades accuracy for >50% price moves)
  *
- * @param {Object} params
- * @param {Object[]} params.hourlyData - TheGraph poolHourData snapshots (30d history)
- * @param {number} params.effectiveMin - Lower price bound (normalized to token0Price)
- * @param {number} params.effectiveMax - Upper price bound (normalized to token0Price)
- * @param {number} params.L_user - User liquidity in RAW units (from calculateLiquidity)
- * @param {string} params.initialQuality - Initial quality from assessDataQuality
- * @param {boolean} [params.debug=true] - Enable diagnostic logging
+ * @param params
+ * @param params.hourlyData - TheGraph poolHourData snapshots (30d history)
+ * @param params.effectiveMin - Lower price bound (normalized to token0Price)
+ * @param params.effectiveMax - Upper price bound (normalized to token0Price)
+ * @param params.L_user - User liquidity in RAW units (from calculateLiquidity)
+ * @param params.initialQuality - Initial quality from assessDataQuality
+ * @param [params.debug=true] - Enable diagnostic logging
  *
  * @returns {Object} Success state (with totalFeesUSD) or failure state (with error)
  * @returns {boolean} returns.success - false if position never entered range
@@ -42,7 +70,7 @@ export function calculateFeesWithQuality({
   L_user,
   initialQuality,
   debug = true
-}) {
+}: CalculateFeesWithQualityParams): ProcessResult {
   const warnings = []
   let totalFeesUSD = 0
   let hoursInRange = 0
