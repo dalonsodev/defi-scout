@@ -6,14 +6,11 @@
  * Precision: .toFixed(1) optimized for chart axes with limited horizontal space.
  * Trade-off: Loses precision (.toFixed(1) for K/M/B) but improves readability.
  *
- * @param {number} value - Raw currency value
- * @returns {string} Formatted compact string with currency symbol
- *
  * @example
  * formatCompactCurrency(1234567)   // "$1.2M"
  * formatCompactCurrency(890)       // "$890" (no decimals < 1K)
  */
-export function formatCompactCurrency(value) {
+export function formatCompactCurrency(value: number): string {
   // Threshold: Billions (10^9)
   if (value >= 1e9) return `$${(value / 1e9).toFixed(1)}B`
 

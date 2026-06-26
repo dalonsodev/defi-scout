@@ -7,15 +7,12 @@
  *
  * Performance: Zero overhead in production (dead code elimination at build time)
  *
- * @param {string} label - Descriptive label for the log group
- * @param {*} data - Data to log (object, array, primitive)
- *
  * @example
  * debugLog('Fee Calculation', { fees: 123, share: 0.5 })
  * // Development: 🔍 Fee Calculation: { fees: 123, share: 0.5 }
  * // Production: (nothing - stripped at build time)
  */
-export function debugLog(label, data) {
+export function debugLog(label: string, data: unknown) {
   if (import.meta.env.MODE !== 'production') {
     console.log(`🔍 ${label}:`, data)
   }

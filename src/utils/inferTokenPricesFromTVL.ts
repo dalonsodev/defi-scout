@@ -1,5 +1,12 @@
 import { debugLog } from './logger'
 
+interface InferTokenPricesFromTVLParams {
+  tvlUSD: number
+  tvlToken0: number
+  tvlToken1: number
+  currentPrice: number
+}
+
 /**
  * Infers USD prices of both tokens from current pool TVL snapshot.
  *
@@ -10,26 +17,14 @@ import { debugLog } from './logger'
  * - Price token0: priceToken0 = priceToken1 / currentPrice
  *
  * Trade-off: Uses current TVL as proxy for historical prices (<5% error for 7-30d periods)
- *
- * @param {Object} params
- * @param {number} params.tvlUSD - Total pool TVL in USD
- * @param {number} params.tvlToken0 - Amount of token0 in pool
- * @param {number} params.tvlToken1 - Amount of token1 in pool
- * @param {number} params.currentPrice - token0Price from hourly data
- *
- * @returns {Object} Result
- * @returns {boolean} returns.success
- * @returns {string} [returns.error] - Human-readable error message
- * @returns {number} [returns.priceToken0InUSD] - Inferred token0 USD price
- * @returns {number} [returns.priceToken1InUSD] - Inferred token1 USD price
  */
 export function inferTokenPricesFromTVL({
   tvlUSD,
   tvlToken0,
   tvlToken1,
   currentPrice
-}) {
-  const isInvalidPrice = (price) => price <= 0 || !isFinite(price)
+}: InferTokenPricesFromTVLParams) {
+  const isInvalidPrice = (price: number) => price <= 0 || !isFinite(price)
 
   // Validate all inputs exist
   if (
@@ -66,9 +61,9 @@ export function inferTokenPricesFromTVL({
   }
 
   // Calculate prices using TVL proportions
-  const totalValueInToken1Units = tvlToken0 / currentPrice + tvlToken1
+  const totalValueInToken1Units = tvlToken0 * currentPrice + tvlToken1
   const priceToken1InUSD = tvlUSD / totalValueInToken1Units
-  const priceToken0InUSD = priceToken1InUSD / currentPrice
+  const priceToken0InUSD = priceToken1InUSD * currentPrice
 
   if (isInvalidPrice(priceToken0InUSD) || isInvalidPrice(priceToken1InUSD)) {
     return {

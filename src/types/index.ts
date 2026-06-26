@@ -71,6 +71,31 @@ export interface RawPoolHourData {
   tick: string | null
 }
 
+export interface ParamsState {
+  search: string
+  platforms: string[]
+  tvlUsd: string
+  volumeUsd1d: string
+  sortBy: string
+  sortDir: 'desc' | 'asc'
+  page: number
+}
+
+export interface UserInputs {
+  capitalUSD: number
+  fullRange: boolean
+  minPrice: string
+  maxPrice: string
+  assumedPrice: string
+}
+
+export interface Composition {
+  amount0: number
+  amount1: number
+  currentPrice: string
+  range: string
+}
+
 export interface FormattedPool {
   id: string
   symbol: string

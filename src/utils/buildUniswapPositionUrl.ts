@@ -3,6 +3,7 @@ import {
   alignTickToSpacing,
   getTickSpacing
 } from '../components/pool-detail/calculator/utils/uniswapV3Ticks'
+import { RawPool, UserInputs, Composition } from '../types'
 
 const MIN_TICK = -887272
 const MAX_TICK = 887272
@@ -10,18 +11,18 @@ const MAX_TICK = 887272
 /**
  * Utility: Builds a URL to auto-populate a Uniswap V3 position creation form.
  *
- * @param {Object} pool - Pool data from TheGraph (token ids, chain, feeTier)
- * @param {Object} inputs - User-defined range state (fullRange, minPrice, maxPrice, assumedPrice)
- * @param {Object|null} [composition] - Token split from simulation pipeline (null during computation)
- * @param {number} selectedTokenIdx - Active token perspective (0=token0, 1=token1)
- * @returns {string} URL to create a Uniswap V3 position
+ * @param pool - Pool data from TheGraph (token ids, chain, feeTier)
+ * @param inputs - User-defined range state (fullRange, minPrice, maxPrice, assumedPrice)
+ * @param composition - Token split from simulation pipeline (null during computation)
+ * @param selectedTokenIdx - Active token perspective (0=token0, 1=token1)
+ * @returns URL to create a Uniswap V3 position
  */
 export function buildUniswapPositionUrl(
-  pool,
-  inputs,
-  composition,
-  selectedTokenIdx
-) {
+  pool: RawPool,
+  inputs: UserInputs,
+  selectedTokenIdx: number,
+  composition?: Composition,
+): string {
   const token0Address = pool.token0.id.toLowerCase()
   const token1Address = pool.token1.id.toLowerCase()
 
@@ -29,7 +30,9 @@ export function buildUniswapPositionUrl(
   const decimals1 = Number(pool.token1.decimals)
   const decimalAdjustment = Math.pow(10, decimals1 - decimals0)
 
-  const tickSpacing = getTickSpacing(pool.feeTier)
+  const feeTierNum = parseFloat(pool.feeTier)
+
+  const tickSpacing = getTickSpacing(feeTierNum)
   const priceInverted = selectedTokenIdx === 0
 
   let minTick, maxTick
@@ -38,10 +41,13 @@ export function buildUniswapPositionUrl(
     minTick = Math.ceil(MIN_TICK / tickSpacing) * tickSpacing
     maxTick = Math.floor(MAX_TICK / tickSpacing) * tickSpacing
   } else {
+    const maxPriceNum = parseFloat(inputs.maxPrice)
+    const minPriceNum = parseFloat(inputs.minPrice)
+
     const canonicalMin =
-      selectedTokenIdx === 1 ? 1 / inputs.maxPrice : inputs.minPrice
+    selectedTokenIdx === 1 ? 1 / maxPriceNum : minPriceNum
     const canonicalMax =
-      selectedTokenIdx === 1 ? 1 / inputs.minPrice : inputs.maxPrice
+    selectedTokenIdx === 1 ? 1 / minPriceNum : maxPriceNum
 
     const canonicalMinTick = alignTickToSpacing(
       priceToTick(decimalAdjustment / canonicalMax),

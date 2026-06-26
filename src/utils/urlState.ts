@@ -1,8 +1,11 @@
+import type { NavigateFunction } from 'react-router-dom'
+import type { ParamsState } from "../types"
+
 /**
  * URL State Management Utilities
  *
  * Architecture: Pure functions for URL ↔ State conversion
- * Design: Setup C - URL as SSOT, no useState/useEffect sync
+ * Design: URL as SSOT, no useState/useEffect sync
  *
  * Why pure functions:
  * - Testable without React dependencies
@@ -10,8 +13,11 @@
  * - No side effects or implicit state mutations
  */
 
+type SortColumnMap = Record<string, string>
+type ColumnToUrl = Record<string, string>
+
 // Map for building URL params from accessorKeys
-const SORT_COLUMN_MAP = {
+const SORT_COLUMN_MAP: SortColumnMap = {
   name: 'name',
   apy: 'apyBase',
   tvl: 'tvlUsd',
@@ -21,7 +27,7 @@ const SORT_COLUMN_MAP = {
 }
 
 // Reverse map URL params to TanStack Table accessorKeys
-const COLUMN_TO_URL = {
+const COLUMN_TO_URL: ColumnToUrl = {
   name: 'name',
   apyBase: 'apy',
   tvlUsd: 'tvl',
@@ -31,7 +37,7 @@ const COLUMN_TO_URL = {
 }
 
 // Defaults state values (used for validation and clean URL generation)
-const DEFAULT_STATE = {
+const DEFAULT_STATE: ParamsState = {
   search: '',
   platforms: [],
   tvlUsd: '',
@@ -44,8 +50,8 @@ const DEFAULT_STATE = {
 /**
  * Converts URLSearchParams to typed state object.
  *
- * @param {URLSearchParams} searchParams - URL Search Params object
- * @returns {Object} Parsed state with defaults for invalid/missing values
+ * @param searchParams - URL Search Params object
+ * @returns Parsed state with defaults for invalid/missing values
  *
  * Type Conversions:
  * - Strings: Direct extraction (search)
@@ -63,7 +69,7 @@ const DEFAULT_STATE = {
  * parseSearchParams(new URLSearchParams('?search=eth&platforms=uniswap,curve&tvlUsd=1000000'))
  * // => { search: 'eth', platforms: ['uniswap-v3', 'curve'], tvlUsd: '1000000', ... }
  */
-export function parseSearchParams(searchParams) {
+export function parseSearchParams(searchParams: URLSearchParams): ParamsState {
   // 1. Search term (string, no validation needed)
   const search = searchParams.get('search') || DEFAULT_STATE.search
 
@@ -98,7 +104,7 @@ export function parseSearchParams(searchParams) {
 
   // 6. Sort direction (validate enum)
   const sortDirParam = searchParams.get('sortDir')
-  const sortDir =
+  const sortDir: 'desc' | 'asc' =
     sortDirParam === 'desc' || sortDirParam === 'asc'
       ? sortDirParam
       : DEFAULT_STATE.sortDir
@@ -124,8 +130,8 @@ export function parseSearchParams(searchParams) {
 /**
  * Creates URLSearchParams from state, omitting default values.
  *
- * @param {Object} state - Current application state
- * @returns {URLSearchParams} Clean params (no defaults, no empty values)
+ * @param state - Current application state
+ * @returns Clean params (no defaults, no empty values)
  *
  * Clean URL Strategy:
  * - Omits values matching DEFAULT_STATE (e.g. page=0, sortDir='desc')
@@ -141,7 +147,7 @@ export function parseSearchParams(searchParams) {
  * buildCleanSearchParams({ search: '', platforms: [], tvlUsd: '1000000', sortBy: 'tvlUsd', sortDir: 'desc', page: 0 })
  * // => URLSearchParams with only ?tvlUsd=1000000 (rest are defaults)
  */
-export function buildCleanSearchParams(state) {
+export function buildCleanSearchParams(state: ParamsState): URLSearchParams {
   const params = new URLSearchParams()
 
   // 1. Search (skip if empty string)
@@ -186,9 +192,9 @@ export function buildCleanSearchParams(state) {
 /**
  * Merge partial state updates into current URL params
  *
- * @param {Object} navigate - React Router navigate function
- * @param {URLSearchParams} currentParams - Current URL search params
- * @param {Object} updates - Partial state changes to apply
+ * @param navigate - React Router navigate function
+ * @param currentParams - Current URL search params
+ * @param updates - Partial state changes to apply
  *
  * Flow: Parse current → Merge updates → Build clean → Navigate
  *
@@ -207,7 +213,11 @@ export function buildCleanSearchParams(state) {
  * updateSearchParam(navigate, searchParams, { sortBy: 'apyBase', sortDir: 'asc' })
  * // Result: ?search=eth&tvlUsd=1000000&sortBy=apy&sortDir=asc
  */
-export function updateSearchParams(navigate, currentParams, updates) {
+export function updateSearchParams(
+  navigate: NavigateFunction,
+  currentParams: URLSearchParams,
+  updates: Partial<ParamsState>
+): void {
   // 1. Parse current URL to full state object
   const current = parseSearchParams(currentParams)
 

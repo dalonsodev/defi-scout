@@ -1,10 +1,10 @@
 /**
  * Utility: Parses raw floats from TheGraph into formatted strings for display.
  *
- * @param {number|string} value - Raw price value (float or TheGraph BigDecimal string)
- * @returns {string} - Value formatted ready to display in price inputs
+ * @param value - Raw price value (TheGraph BigDecimal string)
+ * @returns Value formatted ready to display in price inputs
  */
-export function formatPriceInput(value) {
+export function formatPriceInput(value: string) {
   const parsedValue = parseFloat(value)
 
   if (!Number.isFinite(parsedValue)) return '0'
@@ -31,10 +31,10 @@ export function formatPriceInput(value) {
  * Math: Step is always 3 orders of magnitude below the value's order of magnitude
  * (step/value ≈ 10^-3 ratio), computed as 10^(floor(log10(value)) - 3).
  *
- * @param {number|string} value - Raw price value (float or TheGraph BigDecimal string)
- * @returns {number} - Step value, ready to use in input elements
+ * @param value - Raw price value (TheGraph BigDecimal string)
+ * @returns Step value, ready to use in input elements
  */
-export function getPriceStep(value) {
+export function getPriceStep(value: string) {
   const parsedValue = parseFloat(value)
 
   if (!Number.isFinite(parsedValue) || parsedValue <= 0) return 1e-8 // safe minimum
