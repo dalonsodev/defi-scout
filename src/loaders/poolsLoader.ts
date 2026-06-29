@@ -1,13 +1,14 @@
 import { fetchPools } from '../services/theGraphClient'
 import { formatPoolData } from './utils/formatPoolData'
+import { FormattedPool, RawPool } from '../types'
 
 /**
  * View Layer Data Loader: Pools Discovery Page.
  * Acts as the centralized entry point for data fetching before component mounts.
  * Orchestrates raw data retrieval from GraphQL subgraphs and triggers normalization.
- * @returns {Promise<{ pools: Object[] }>} A promise resolving to an array of UI-ready pool objects
+ * @returns A promise resolving to an array of UI-ready pool objects
  */
-async function fetchUniswapPools() {
+async function fetchUniswapPools(): Promise<FormattedPool[]> {
   try {
     // Configuration: High "first" value to minimize pagination jumps,
     // sorted by TVL as it's the most reliable indicator of pool health.
@@ -35,7 +36,7 @@ async function fetchUniswapPools() {
  * NOTE: This is a blocking call. Ensure the fetch time is optimized,
  * or consider deferred data for large datasets.
  */
-export async function poolsLoader() {
+export async function poolsLoader(): Promise<{ pools: FormattedPool[] }> {
   const pools = await fetchUniswapPools()
   return { pools }
 }

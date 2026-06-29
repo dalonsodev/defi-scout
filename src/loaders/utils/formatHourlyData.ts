@@ -1,10 +1,12 @@
+import type { RawPoolHourData, FormattedHourlyData } from "../../types"
+
 /**
  * Utility: Transforms raw PoolHourData from The Graph into chart-ready format.
  *
- * @param {Array} rawHourlyData - Array of poolHourData objects from API
- * @returns {Array} Formatted hourly data with parsed numbers and readable dates
+ * @param rawHourlyData - Array of poolHourData objects from API
+ * @returns Formatted hourly data with parsed numbers and readable dates
  */
-export function formatHourlyData(rawHourlyData) {
+export function formatHourlyData(rawHourlyData: RawPoolHourData[]): FormattedHourlyData[] {
   if (!rawHourlyData?.length) {
     return []
   }
@@ -25,7 +27,7 @@ export function formatHourlyData(rawHourlyData) {
       dayLabel,
       token0Price: parseFloat(record.token0Price) || null,
       token1Price: parseFloat(record.token1Price) || null,
-      periodStartUnix: parseInt(record.periodStartUnix),
+      periodStartUnix: parseInt((record.periodStartUnix).toString()),
       liquidity: parseFloat(record.liquidity),
       tvlUSD: parseFloat(record.tvlUSD) || 0,
       feesUSD: parseFloat(record.feesUSD) || 0

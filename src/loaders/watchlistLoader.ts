@@ -3,6 +3,11 @@ import { auth, db } from '../../firebase'
 import { collection, getDocs } from 'firebase/firestore'
 import { fetchWatchedPools } from '../services/theGraphClient'
 import { formatPoolData } from './utils/formatPoolData'
+import { FormattedPool } from '../types'
+
+interface WatchlistLoaderSuccess {
+  pools: FormattedPool[]
+}
 
 /**
  * Loader: Watchlist Page
@@ -17,9 +22,9 @@ import { formatPoolData } from './utils/formatPoolData'
  * Note: auth.currentUser is synchronous and may be null on hard refresh
  * before Firebase resolves. Acceptable trade-off for portfolio scope.
  *
- * @returns {Promise<{ pools: Array<Object> } | Response>}
+ * @returns Formatted pool data or hard redirect to '/'
  */
-export async function watchlistLoader() {
+export async function watchlistLoader(): Promise<WatchlistLoaderSuccess | Response> {
   // Hard redirect if unauthenticated
   if (auth.currentUser === null) return redirect('/')
 

@@ -1,5 +1,21 @@
 import { fetchPoolHistory } from '../services/theGraphClient'
 import { formatPoolHistory } from './utils/formatPoolHistory'
+import { LoaderFunctionArgs } from 'react-router-dom'
+import type { FormattedPoolHistory, RawPoolHistory } from '../types'
+
+interface LoaderResultSuccess {
+  pool: RawPoolHistory,
+  history: FormattedPoolHistory[],
+  ethPriceUSD: number
+}
+
+interface LoaderResultFailure {
+  poolId: string
+  history: [],
+  error: string
+}
+
+type PoolDetailLoaderResult = LoaderResultSuccess | LoaderResultFailure
 
 /**
  * Loader: Pool Detail Page Data Fetcher
@@ -10,20 +26,22 @@ import { formatPoolHistory } from './utils/formatPoolHistory'
  *
  * Trade-off: Slower initial paint (~500ms) vs cleaner component logic (no Suspense handling).
  *
- * @param {Object} context - React router loader context
- * @param {Object} context.params - URL parameters
- * @param {string} context.params.poolId - Pool contract address (checksummed or lowercase)
+ * @param context - React router loader context
+ * @param context.params - URL parameters
+ * @param context.params.poolId - Pool contract address (checksummed or lowercase)
  *
- * @returns {Promise<Object>} Loader data
- * @returns {Object} returns.pool - Pool metadata (tokens, fees, current TVL)
- * @returns {Array} returns.history - 30-day formatted snapshots with calculated APY
- * @returns {string} [returns.error] - Human-readable error message for UI display
+ * @returns Loader data
+ * @returns returns.pool - Pool metadata (tokens, fees, current TVL)
+ * @returns returns.history - 30-day formatted snapshots with calculated APY
+ * @returns [returns.error] - Human-readable error message for UI display
  *
- * @throws {Response} 500 error if GraphQL query fails (network/API key issues)
+ * @throws 500 error if GraphQL query fails (network/API key issues)
  */
 
-export async function poolDetailLoader({ params }) {
+export async function poolDetailLoader({ params }: LoaderFunctionArgs): Promise<PoolDetailLoaderResult> {
   const { poolId } = params
+
+  if (!poolId) throw new Response('Pool ID missing', { status: 400 })
 
   // TheGraph uses Unix timestamps in seconds (not milliseconds like Date.now())
   const thirtyDaysAgo = Math.floor(Date.now() / 1000) - 30 * 86400 // In seconds, not ms
@@ -55,3 +73,5 @@ export async function poolDetailLoader({ params }) {
     throw new Response('Failed to load pool data', { status: 500 })
   }
 }
+
+export type { PoolDetailLoaderResult }

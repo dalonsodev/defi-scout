@@ -1,10 +1,12 @@
+import type { FormattedPoolHistory, RawPoolHistory, RawPoolDayData } from "../../types"
+
 /**
  * Utility: Transforms raw PoolDayData from The Graph into chart-ready format.
- * @param {Array} rawHistory - Array of poolDayData objects from API
- * @returns {Array} Formatted history with parsed numbers and readable dates
+ * @param RawPoolDayData - Array of poolDayData objects from API
+ * @returns Formatted pool history with parsed numbers and readable dates
  */
 
-function formatDateShort(timestamp) {
+function formatDateShort(timestamp: number): string {
   const date = new Date(timestamp * 1000)
   const month = date.toLocaleDateString('en-US', { month: 'short' })
   const day = date.getDate()
@@ -12,11 +14,11 @@ function formatDateShort(timestamp) {
   return `${month} ${day}`
 }
 
-export function formatPoolHistory(rawHistory) {
-  if (!rawHistory?.length) {
+export function formatPoolHistory(rawPoolDayData: RawPoolDayData[]): FormattedPoolHistory[] {
+  if (!rawPoolDayData?.length) {
     return []
   }
-  return rawHistory.map((day) => {
+  return rawPoolDayData.map((day) => {
     // Normalization: Extract ISO date for consistent data key mapping
     const date = new Date(day.date * 1000)
     const dateString = date.toISOString().split('T')[0]
@@ -34,6 +36,10 @@ export function formatPoolHistory(rawHistory) {
      * which may show high volatility compared to the pool's lifetime average.
      */
     const apy = ((feesUSD * 365) / tvlUSD) * 100
+
+    if (day.volumeUSD === undefined || day.token0Price === undefined || day.token1Price === undefined) {
+      throw new Error('Unable to format due to missing data')
+    }
 
     return {
       date: dateString, /// Standard ISO format for filtering (e.g. "2024-01-01")

@@ -1,3 +1,5 @@
+import type { RawPool, FormattedPool } from "../../types"
+
 // APY Calculation Logic: (Accumulated Fees / Age in Days / TVL) * 365 * 100
 
 /**
@@ -6,19 +8,19 @@
  * 1. Type Casting: Converts API strings/BigInts into JS floats for math operations.
  * 2. Metric Derivation: Calculates pool age and estimated APY based on historical fee accrual.
  * 3. UI Formatting: Generates human-readable strings (K, M, B) for financial dashboards.
- * @param {Array<Object>} rawPools - Collection of pool objects from the API
- * @param {string} rawPools[].id - Deployment address of the pool
- * @param {string} rawPools[].totalValueLockedUSD - TVL in string format
- * @param {string} rawPools[].createdAtTimestamp - Unix timestamp of pool creation
- * @param {Object} rawPools[].token0 - Metadata for the first token in the pair
- * @returns {Array<Object>} Normalized pool objects with "formatted" sufixes and calculated apyBase
+ * @param rawPools - Collection of pool objects from the API
+ * @param rawPools[].id - Deployment address of the pool
+ * @param rawPools[].totalValueLockedUSD - TVL in string format
+ * @param rawPools[].createdAtTimestamp - Unix timestamp of pool creation
+ * @param rawPools[].token0 - Metadata for the first token in the pair
+ * @returns Normalized pool objects with "formatted" sufixes and calculated apyBase
  */
-export function formatPoolData(rawPools) {
+export function formatPoolData(rawPools: RawPool[]): FormattedPool[] {
   /**
    * Formats large denominations into human-readable strings (K, M, B).
    * Precision: 1 decimal place for abbreviated values, 2 for raw numbers.
    */
-  function formatNumber(n) {
+  function formatNumber(n: number) {
     if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B'
     if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M'
     if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K'
@@ -29,7 +31,7 @@ export function formatPoolData(rawPools) {
    * Converts Unix timestamps to pool age.
    * Unit: Days (floating point).
    */
-  function calculatePoolAge(createdAtTimestamp) {
+  function calculatePoolAge(createdAtTimestamp: number) {
     const poolAgeDays = (Date.now() / 1000 - createdAtTimestamp) / 86400
     return poolAgeDays
   }
@@ -41,11 +43,11 @@ export function formatPoolData(rawPools) {
    * the poolAgeDays division will result in a near-zero APY.
    */
   function calculateAPY(
-    collectedFeesUSD,
-    volumeUSD,
-    feeTier,
-    poolAgeDays,
-    totalValueLockedUSD
+    collectedFeesUSD: number,
+    volumeUSD: number,
+    feeTier: number,
+    poolAgeDays: number,
+    totalValueLockedUSD: number
   ) {
     // Safety Checks: Avoid division by zero and handle nascent pools
     if (poolAgeDays < 1) return 0
@@ -71,7 +73,7 @@ export function formatPoolData(rawPools) {
     return apyBase
   }
 
-  return rawPools.map((pool) => {
+  return rawPools.map((pool: RawPool): FormattedPool => {
     // Type Casting: Force all numeric inputs to float to prevent concatenation errors
     const feeTier = parseFloat(pool.feeTier)
     const liquidity = parseFloat(pool.liquidity)
@@ -85,7 +87,7 @@ export function formatPoolData(rawPools) {
     const token1Vol = parseFloat(pool.volumeToken1)
     const token1feesUSD = parseFloat(pool.collectedFeesToken1)
     const feesUSD = parseFloat(pool.collectedFeesUSD)
-    const poolAgeDays = calculatePoolAge(pool.createdAtTimestamp)
+    const poolAgeDays = calculatePoolAge(parseFloat(pool.createdAtTimestamp))
 
     const apyBase = calculateAPY(
       feesUSD,
