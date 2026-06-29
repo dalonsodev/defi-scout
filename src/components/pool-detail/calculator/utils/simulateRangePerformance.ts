@@ -52,7 +52,7 @@ interface ProcessSuccess {
   warnings: string[]
 }
 
-type ProcessResult = ProcessFailure | ProcessSuccess
+export type ProcessResult = ProcessFailure | ProcessSuccess
 
 /**
  * Orchestrates historical LP position simulation using hourly on-chain data.

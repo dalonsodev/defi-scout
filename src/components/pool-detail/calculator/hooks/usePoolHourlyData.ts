@@ -1,36 +1,26 @@
 import { useState, useEffect } from 'react'
 import { formatHourlyData } from '../../../../loaders/utils/formatHourlyData'
 import { fetchPoolHourData } from '../../../../services/theGraphClient'
+import type { FormattedHourlyData } from '../../../../types'
 
-/**
- * @typedef {Object} PoolHourDatas
- * @property {number} periodStartUnix - Timestamp of period start (Unix seconds)
- * @property {string} token0Price - Current token0 price (parsed float)
- * @property {string} token1Price - Current token1 price (parsed float)
- * @property {string} feesUSD - Accumulated fees is USD
- * @property {string} liquidity - Total liquidity (precision loss acceptable)
- * @property {string} tvlUSD - Total value locked in USD
- * @property {string} dateShort - Tooltip label (e.g. "Feb 10 - 14:00")
- * @property {string} dayLabel - Axis label: day number or month name at boundaries
- */
+interface PoolHourlyDataResult {
+    hourlyData: FormattedHourlyData[] | null
+    isLoading: boolean
+    fetchError: string | null
+ }
 
 /**
  * Custom Hook: Fetch and cache TheGraph data.
  *
- * @param {string|number} poolId - Pool's unique identifier
- * @param {number} daysLookback - Pipeline window in days (hook fetches daysLookback + 1
- *                                days internally to guard against boundary drift and
- *                                sparse gaps, then trims to daysLookback * 24 points)
- * @returns {{
- *    hourlyData: PoolHourDatas[],
- *    isLoading: boolean,
- *    fetchError: string|null
- * }}
+ * @param poolId - Pool's unique identifier
+ * @param daysLookback - Pipeline window in days (hook fetches daysLookback + 1
+ *                          days internally to guard against boundary drift and
+ *                          sparse gaps, then trims to daysLookback * 24 points)
  */
-export function usePoolHourlyData(poolId, daysLookback = 30) {
-  const [hourlyData, setHourlyData] = useState(null)
+export function usePoolHourlyData(poolId: string, daysLookback: number = 30): PoolHourlyDataResult {
+  const [hourlyData, setHourlyData] = useState<FormattedHourlyData[] | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [fetchError, setFetchError] = useState(null)
+  const [fetchError, setFetchError] = useState<string | null>(null)
   /**
    * Data Fetching: daysLookback Hourly Lookback.
    * Fetches (daysLookback + 1) days of data points for fee growth simulation.
@@ -69,7 +59,11 @@ export function usePoolHourlyData(poolId, daysLookback = 30) {
       } catch (err) {
         console.error('❌ Fetch error:', err)
         if (!cancelled) {
-          setFetchError(err.message)
+          if (err instanceof Error) {
+            setFetchError(err.message)
+          } else {
+            setFetchError('Unknown error occurred')
+          }
           setIsLoading(false)
         }
       }

@@ -1,6 +1,62 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { calculateIL } from '../utils/calculateIL'
 import { debugLog } from '../../../../utils/logger'
+import type { ProcessResult } from '../utils/simulateRangePerformance'
+import type { RawToken, UserInputs } from '../../../../types'
+
+interface PoolData {
+  token0: RawToken
+  token1: RawToken
+  token0Price: string
+}
+
+interface HoldStrategy {
+  token0Symbol: string
+  token1Symbol: string
+  amount0: number
+  amount1: number
+  token0Percent: number
+  token1Percent: number
+  totalValue: number
+  pnl: number
+  pnlPercent: string
+}
+
+interface LpStrategy {
+  token0Symbol: string
+  token1Symbol: string
+  amount0: number
+  amount1: number
+  token0Percent: number
+  token1Percent: number
+  totalValue: number
+  pnl: number
+  pnlPercent: string
+  feesEarned: number
+  ilPercent: string
+}
+
+interface ProjectionCalculatorResult {
+  // Calculated data
+  hodlStrategy: HoldStrategy | null
+  lpStrategy: LpStrategy | null
+  isCalculating: boolean
+  daysToBreakEven: number
+
+  // Current prices
+  currentToken0PriceUSD: number
+  currentToken1PriceUSD: number
+
+  // Inputs state
+  futureToken0Price: number
+  futureToken1Price: number
+  projectionDays: number
+
+  // Handlers
+  setFutureToken0Price: (tokenPrice: number) => void
+  setFutureToken1Price: (tokenPrice: number) => void
+  setProjectionDays: (projectionDays: number) => void
+}
 
 /**
  * Custom Hook: LP Strategy Projection Calculation
@@ -16,13 +72,13 @@ import { debugLog } from '../../../../utils/logger'
  * Accuracy: Good for ±20% price moves over 7-30 days (typical rebalancing window)
  * For larger moves or longer periods, model diverges from on-chain reality.
  *
- * @param {Object} poolData - Pool metadata from The Graph
- * @param {Object} poolData.token0 - Token0 metadata (symbol, decimals)
- * @param {Object} poolData.token1 - Token1 metadata
- * @param {string} poolData.token0Price - Current pool price (token0/token1)
+ * @param poolData - Pool metadata from The Graph
+ * @param poolData.token0 - Token0 metadata (symbol, decimals)
+ * @param poolData.token1 - Token1 metadata
+ * @param poolData.token0Price - Current pool price (token0/token1)
  *
- * @param {Object} rangeInputs - User-defined LP position parameters
- * @param {number} rangeInputs.capitalUSD - Deposit amount in USD
+ * @param rangeInputs - User-defined LP position parameters
+ * @param rangeInputs.capitalUSD - Deposit amount in USD
  *
  * @param {Object} results - Output from simulateRangePerformance
  * @param {boolean} results.success - Whether simulation completed
@@ -54,9 +110,14 @@ import { debugLog } from '../../../../utils/logger'
  * console.log(projection.lpStrategy.pnl)    // => -$42.15 (IL dominates)
  * console.log(projection.daysToBreakEven)   // => 45 days (fees need time)
  */
-export function useProjectionCalculator(poolData, rangeInputs, results) {
-  const token0PriceUSD = results?.token0PriceUSD ?? 0
-  const token1PriceUSD = results?.token1PriceUSD ?? 0
+export function useProjectionCalculator(
+  poolData: PoolData,
+  rangeInputs: UserInputs,
+  results: ProcessResult | null
+): ProjectionCalculatorResult {
+
+  const token0PriceUSD = results?.success ? results?.token0PriceUSD : 0
+  const token1PriceUSD = results?.success ? results?.token1PriceUSD : 0
 
   // User Inputs: Future price scenario and time horizon
   const hasHydrated = useRef(false)
@@ -83,6 +144,7 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
     setFutureToken1Price(token1PriceUSD)
     hasHydrated.current = true
   }, [token0PriceUSD, token1PriceUSD])
+
 
   // Strategy Simulation: Calculate HODL vs LP outcomes under given scenario
   const { hodlStrategy, lpStrategy, daysToBreakEven } = useMemo(() => {
@@ -117,7 +179,7 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
     const hodlFutureValue =
       amount0 * futureToken0Price + amount1 * futureToken1Price
 
-    const hodl = {
+    const hodl: HoldStrategy = {
       token0Symbol: poolData.token0.symbol,
       token1Symbol: poolData.token1.symbol,
       amount0,
@@ -126,9 +188,7 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
       token1Percent,
       totalValue: hodlFutureValue,
       pnl: hodlFutureValue - capitalUSD,
-      pnlPercent: (((hodlFutureValue - capitalUSD) / capitalUSD) * 100).toFixed(
-        2
-      )
+      pnlPercent: (((hodlFutureValue - capitalUSD) / capitalUSD) * 100).toFixed(2)
     }
 
     // ===== STRATEGY B: LP (Uniswap V3) =====
@@ -162,7 +222,7 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
 
     const lpFutureValue = lpValueAfterIL + projectedFees
 
-    const lp = {
+    const lp: LpStrategy = {
       token0Symbol: poolData.token0.symbol,
       token1Symbol: poolData.token1.symbol,
       amount0,
@@ -171,9 +231,7 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
       token1Percent,
       totalValue: lpFutureValue,
       pnl: lpFutureValue - capitalUSD,
-      pnlPercent: (((lpFutureValue - capitalUSD) / capitalUSD) * 100).toFixed(
-        2
-      ),
+      pnlPercent: (((lpFutureValue - capitalUSD) / capitalUSD) * 100).toFixed(2),
       feesEarned: projectedFees,
       ilPercent: IL_percent
     }
@@ -211,22 +269,15 @@ export function useProjectionCalculator(poolData, rangeInputs, results) {
   const isCalculating = !hodlStrategy || !lpStrategy
 
   return {
-    // Calculated data
     hodlStrategy,
     lpStrategy,
     isCalculating,
     daysToBreakEven,
-
-    // Current prices
     currentToken0PriceUSD: token0PriceUSD,
     currentToken1PriceUSD: token1PriceUSD,
-
-    // Inputs state
     futureToken0Price,
     futureToken1Price,
     projectionDays,
-
-    // Handlers
     setFutureToken0Price,
     setFutureToken1Price,
     setProjectionDays
