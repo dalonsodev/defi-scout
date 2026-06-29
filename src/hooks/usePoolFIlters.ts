@@ -1,6 +1,16 @@
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useCallback } from 'react'
 import { parseSearchParams, updateSearchParams } from '../utils/urlState'
+import type { ParamsState } from '../types/index'
+
+type Filters = Pick<ParamsState, 'search' | 'platforms' | 'tvlUsd' | 'volumeUsd1d'>
+
+interface PoolFiltersResult {
+  filters: Filters
+  updateFilter: (key: string, value: unknown) => void
+  togglePlatform: (platform: string) => void
+  clearFilters: () => void
+}
 
 /**
  * Custom Hook: Centralized Filter State Manager
@@ -16,21 +26,16 @@ import { parseSearchParams, updateSearchParams } from '../utils/urlState'
  * Performance: useCallback with empty deps ensures stable references for input
  * onChange handlers. Without this, PoolFilters would re-render on every keystroke
  * in search input (unnecessary diffing of 40+ table rows below).
- * @returns {{
- *    filters: Object,
- *    updateFilter: Function,
- *    togglePlatform: Function,
- *    clearFilters: Function
- * }}
- * @property {Object} filters - Current filter values
- * @property {string} filters.search - Pool name/token search query (case-insensitive match)
- * @property {string[]} filters.platforms - Selected platform IDs (e.g. ["uniswap-v3", "curve-dex"])
- * @property {string} filters.tvlUsd - Minimum TVL threshold (stored as string for input compatibility)
- * @property {string} filters.volumeUsd1d - Minimum 24h volume threshold
- * @property {string} filters.riskLevel - Risk filter ("low" | "medium" | "high" | "")
- * @property {Function} updateFilter - Generic setter: (key: string, value: string) => void
- * @property {Function} togglePlatform - Multi-select handler: (platformId: string) => void
- * @property {Function} clearFilters - Reset to factory defaults: () => void
+
+ * @property filters - Current filter values
+ * @property filters.search - Pool name/token search query (case-insensitive match)
+ * @property filters.platforms - Selected platform IDs (e.g. ["uniswap-v3", "curve-dex"])
+ * @property filters.tvlUsd - Minimum TVL threshold (stored as string for input compatibility)
+ * @property filters.volumeUsd1d - Minimum 24h volume threshold
+ * @property filters.riskLevel - Risk filter ("low" | "medium" | "high" | "")
+ * @property updateFilter - Generic setter: (key: string, value: string) => void
+ * @property togglePlatform - Multi-select handler: (platformId: string) => void
+ * @property clearFilters - Reset to factory defaults: () => void
  *
  * @example
  * // Typical usage in PoolsContent orchestrator
@@ -61,13 +66,13 @@ import { parseSearchParams, updateSearchParams } from '../utils/urlState'
  *   )
  * }
  */
-export function usePoolFilters() {
+export function usePoolFilters(): PoolFiltersResult {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
   // Derived filters from URL (read-only)
   const allState = parseSearchParams(searchParams)
-  const filters = {
+  const filters: Filters = {
     search: allState.search,
     platforms: allState.platforms,
     tvlUsd: allState.tvlUsd,
@@ -76,13 +81,13 @@ export function usePoolFilters() {
 
   // Simple updater (debouncing handled by useDebouncedFilterInputs)
   const updateFilter = useCallback(
-    (key, value) => updateSearchParams(navigate, searchParams, { [key]: value }),
+    (key: string, value: unknown) => updateSearchParams(navigate, searchParams, { [key]: value }),
     [navigate, searchParams]
   )
 
   // Platform toggle (custom array logic)
   const togglePlatform = useCallback(
-    (platform) => {
+    (platform: string) => {
       const currentPlatforms =
         searchParams.get('platforms')?.split(',').filter(Boolean) || []
 

@@ -3,6 +3,18 @@ import {
   fetchPoolSparklines,
   formatSparklineData
 } from '../services/theGraphClient'
+import type { FormattedPool } from '../types'
+
+interface SparklinesParams {
+  visiblePools: Set<FormattedPool>
+  currentPage: number
+}
+
+type SparklineCache = Record<string, number[]>
+
+interface SparklinesResult {
+  sparklineData: SparklineCache
+}
 
 /**
  * Custom Hook: Lazy-Loading Sparkline Fetcher with Session Cache
@@ -19,11 +31,11 @@ import {
  *      -> formatSparklineData (poolDayDatas -> APY arrays)
  *        -> cache.current (session-persistent)
  *
- * @param {Object} params
- * @param {Set<Object>} params.visiblePools - Set of full pool objects in viewport
- * @param {number} params.currentPage - Freemium gate: only page 1 fetches data
+ * @param params
+ * @param params.visiblePools - Set of full pool objects in viewport
+ * @param params.currentPage - Freemium gate: only page 1 fetches data
  *
- * @returns {{ sparklineData: Object }} Dictionary: poolId -> 14-day APY array
+ * @returns Dictionary: poolId -> 14-day APY array
  *
  * @example
  * const { sparklineData } = useSparklines({
@@ -32,9 +44,9 @@ import {
  * })
  * // sparklineData = { "0xabc...": [3.1, 3.4, 2.9, ...] }
  */
-export function useSparklines({ visiblePools, currentPage }) {
+export function useSparklines({ visiblePools, currentPage }: SparklinesParams): SparklinesResult {
   // Local Cache: Prevents re-fetching data for the same pool during the session life-cycle
-  const cache = useRef({})
+  const cache = useRef<SparklineCache>({})
 
   // Dummy state to force re-render when the cache reference updates
   const [_, setSparklineData] = useState({})

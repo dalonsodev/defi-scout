@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
 
+interface BreakPointResult {
+  isDesktop: boolean
+}
+
 /**
  * Custom Hook: Responsive breakpoint tracker.
  *
@@ -23,14 +27,14 @@ import { useEffect, useState } from 'react'
  *   return isDesktop ? <ComposedChart /> : <LineChart />
  * }
  */
-export function useBreakpoint() {
-  const [isDesktop, setIsDesktop] = useState(
+export function useBreakpoint(): BreakPointResult {
+  const [isDesktop, setIsDesktop] = useState<boolean>(
     window.matchMedia('(min-width: 768px)').matches
   )
 
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 768px)')
-    const handleChange = (e) => {
+    const handleChange = (e: MediaQueryListEvent) => {
       setIsDesktop(e.matches)
     }
 

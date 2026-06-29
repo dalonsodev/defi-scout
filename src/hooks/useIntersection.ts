@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, RefObject } from 'react'
 
 /**
  * Custom Hook: Intersection Observer
@@ -12,12 +12,12 @@ import { useState, useEffect } from 'react'
  * if user scrolls back. Trade-off: ~8KB memory (Set of strings) vs 300KB network
  * traffic (redundant API calls).
  *
- * @param {React.RefObject[]} refs - Array of refs attached to the elements to monitor
- * @param {IntersectionObserverInit} [options] - Standard API config
- * @param {Element} [options.root=null] - Scrolling container (null = viewport)
- * @param {string} [options.rootMargin="0px"] - Margin around root (e.g. "200px" for eager loading)
- * @param {number} [options.threshold=0] - % of element visible to trigger (0-1)
- * @returns {Set<string>} A ser of unique IDs for elements that have intersected
+ * @param refs - Array of refs attached to the elements to monitor
+ * @param [options] - Standard API config
+ * @param [options.root=null] - Scrolling container (null = viewport)
+ * @param [options.rootMargin="0px"] - Margin around root (e.g. "200px" for eager loading)
+ * @param [options.threshold=0] - % of element visible to trigger (0-1)
+ * @returns A set of unique IDs for elements that have intersected
  *
  * @example
  * function PoolTable({ pools }) {
@@ -34,14 +34,19 @@ import { useState, useEffect } from 'react'
  *   ))
  * }
  */
-export function useIntersection(refs, options = {}) {
+export function useIntersection(
+  refs: RefObject<HTMLElement | null>[],
+  options: IntersectionObserverInit = {}
+) {
   // Set provides O(1) lookups for has() checks (array would be O(n))
-  const [visibleIds, setVisibleIds] = useState(new Set())
+  const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        const poolId = entry.target.dataset.poolId
+        const poolId = (entry.target as HTMLElement).dataset.poolId
+
+        if (!poolId) return
 
         if (entry.isIntersecting) {
           setVisibleIds((prev) => {

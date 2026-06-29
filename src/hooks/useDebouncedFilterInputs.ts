@@ -1,5 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDebounce } from './useDebounce'
+import type { ParamsState } from '../types'
+
+type Filters = Pick<ParamsState, 'search' | 'platforms' | 'tvlUsd' | 'volumeUsd1d'>
+type LocalFilters = Omit<Filters, 'platforms'>
+
+interface DebouncedFilterInputsResult {
+    localFilters: LocalFilters;
+    updateLocalFilter: (key: string, value: unknown) => void;
+    resetLocalFilters: () => void;
+}
 
 /**
  * Custom Hook: Debounced Filter Inputs with Reset Guard
@@ -23,16 +33,16 @@ import { useDebounce } from './useDebounce'
  * Solution: isResetting flag tells Effect 1 to skip one cycle after resetLocalFilters(),
  * allowing URL clear to complete before debounced values propagate empty strings.
  *
- * @param {Object} filters - Current filter state from URL
- * @param {Function} updateFilter - Callback to update URL params
- * @returns {{
- *   localFilters: Object,
- *   updateLocalFilter: Function,
- *   resetLocalFilters: Function
- * }}
+ * @param filters - Current filter state from URL
+ * @param updateFilter - Callback to update URL params
+ * @returns An object with local filters, a function to update and a function to reset them
  */
-export function useDebouncedFilterInputs(filters, updateFilter) {
-  const [localFilters, setLocalFilters] = useState({
+export function useDebouncedFilterInputs(
+  filters: Filters,
+  updateFilter: (key: string, value: unknown) => void
+): DebouncedFilterInputsResult {
+
+  const [localFilters, setLocalFilters] = useState<LocalFilters>({
     search: filters.search,
     tvlUsd: filters.tvlUsd,
     volumeUsd1d: filters.volumeUsd1d
@@ -93,7 +103,7 @@ export function useDebouncedFilterInputs(filters, updateFilter) {
     })
   }, [filters.search, filters.tvlUsd, filters.volumeUsd1d])
 
-  const updateLocalFilter = (key, value) => {
+  const updateLocalFilter = (key: string, value: unknown): void => {
     setLocalFilters((prev) => ({ ...prev, [key]: value }))
   }
 

@@ -16,9 +16,9 @@ import { useState, useEffect, useRef } from 'react'
  * Alternative: For deferring UI updates without delaying state, use React's
  * built-in useDeferredValue (Concurrent Mode only).
  *
- * @param {*} value - The state value to be debounced
- * @param {number} delay - Time in milliseconds to wait before updating
- * @returns {*} The debounced value
+ * @param value - The state value to be debounced
+ * @param delay - Time in milliseconds to wait before updating
+ * @returns The debounced value
  *
  * @example
  * // Search input with 500ms debounce
@@ -29,9 +29,9 @@ import { useState, useEffect, useRef } from 'react'
  *    fetchResults(debouncedSearch)
  * }, [debouncedSearch])
  */
-export function useDebounce(value, delay) {
-  const [debouncedValue, setDebouncedValue] = useState(value)
-  const valueRef = useRef(value)
+export function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+  const valueRef = useRef<T>(value)
 
   useEffect(() => {
     // Skip debounce on initial mount (valueRef starts === value)
