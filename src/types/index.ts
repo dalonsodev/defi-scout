@@ -90,16 +90,14 @@ export interface ParamsState {
 export interface UserInputs {
   fullRange: boolean
   capitalUSD: number
-  minPrice: string | number
-  maxPrice: string | number
-  assumedPrice: string | number
+  minPrice: string
+  maxPrice: string
+  assumedPrice: string
 }
 
 export interface Composition {
   amount0: number
   amount1: number
-  currentPrice: string
-  range: string
 }
 
 export interface FormattedPool {

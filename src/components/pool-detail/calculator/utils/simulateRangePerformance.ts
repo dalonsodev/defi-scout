@@ -6,7 +6,7 @@ import { calculateComposition } from '../pipeline/calculateComposition'
 import { calculateFeesWithQuality } from '../pipeline/calculateFeesWithQuality'
 import { inferTokenPricesFromTVL } from '../../../../utils/inferTokenPricesFromTVL'
 import { debugLog } from '../../../../utils/logger'
-import { RawPoolHourData, RawPoolHistory } from '../../../../types'
+import type { RawPoolHourData, RawPoolHistory } from '../../../../types'
 
 interface RangePerformanceParams {
   fullRange: boolean
@@ -20,7 +20,7 @@ interface RangePerformanceParams {
   ethPriceUSD: number
 }
 
-interface TokenComposition {
+export interface PositionComposition {
   token0Percent: number
   token1Percent: number
   capital0USD: number
@@ -36,7 +36,7 @@ interface ProcessFailure {
   dataQuality?: string
 }
 
-interface ProcessSuccess {
+export interface ProcessSuccess {
   success: true
   totalFeesUSD: number
   feeReturnPercent: number
@@ -45,7 +45,7 @@ interface ProcessSuccess {
   daysOfData: number
   hoursInRange: number | undefined
   percentInRange: number
-  composition: TokenComposition
+  composition: PositionComposition
   token0PriceUSD: number
   token1PriceUSD: number
   dataQuality: string
@@ -107,10 +107,10 @@ export function simulateRangePerformance({
   // ===== STAGE 1: INPUT VALIDATION =====
   const validation = validateInputs({
     capitalUSD,
-    minPrice,
-    maxPrice,
     fullRange,
-    assumedPrice,
+    minPrice: String(minPrice),
+    maxPrice: String(maxPrice),
+    assumedPrice: String(assumedPrice),
     selectedTokenIdx
   })
 

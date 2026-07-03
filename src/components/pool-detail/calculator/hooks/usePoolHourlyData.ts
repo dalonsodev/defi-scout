@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { formatHourlyData } from '../../../../loaders/utils/formatHourlyData'
 import { fetchPoolHourData } from '../../../../services/theGraphClient'
-import type { FormattedHourlyData } from '../../../../types'
+import type { FormattedHourlyData, RawPoolHourData } from '../../../../types'
 
 interface PoolHourlyDataResult {
     hourlyData: FormattedHourlyData[] | null
+    rawHourlyData: RawPoolHourData[] | null
     isLoading: boolean
     fetchError: string | null
  }
@@ -19,6 +20,7 @@ interface PoolHourlyDataResult {
  */
 export function usePoolHourlyData(poolId: string, daysLookback: number = 30): PoolHourlyDataResult {
   const [hourlyData, setHourlyData] = useState<FormattedHourlyData[] | null>(null)
+  const [rawHourlyData, setRawHourlyData] = useState<RawPoolHourData[] | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [fetchError, setFetchError] = useState<string | null>(null)
   /**
@@ -48,12 +50,12 @@ export function usePoolHourlyData(poolId: string, daysLookback: number = 30): Po
         const startTime =
           Math.floor(Date.now() / 1000) - fetchDays * 24 * 60 * 60
         const rawData = await fetchPoolHourData(poolId, startTime)
-        const data = formatHourlyData(rawData)
         // slice the last daysLookback days to avoid inflated APR calculation
-        const result = data.slice(-(daysLookback * 24))
+        const rawSliced = rawData.slice(-(daysLookback * 24))
 
         if (!cancelled) {
-          setHourlyData(result)
+          setRawHourlyData(rawSliced)
+          setHourlyData(formatHourlyData(rawSliced))
           setIsLoading(false)
         }
       } catch (err) {
@@ -75,5 +77,5 @@ export function usePoolHourlyData(poolId: string, daysLookback: number = 30): Po
     } // Cleanup: Prevents state update on unmounted component
   }, [poolId, daysLookback])
 
-  return { hourlyData, isLoading, fetchError }
+  return { hourlyData, rawHourlyData, isLoading, fetchError }
 }

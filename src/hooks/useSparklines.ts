@@ -10,7 +10,7 @@ interface SparklinesParams {
   currentPage: number
 }
 
-type SparklineCache = Record<string, number[]>
+export type SparklineCache = Record<string, number[]>
 
 interface SparklinesResult {
   sparklineData: SparklineCache

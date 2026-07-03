@@ -10,7 +10,7 @@ interface PoolData {
   token0Price: string
 }
 
-interface HoldStrategy {
+export interface HoldStrategy {
   token0Symbol: string
   token1Symbol: string
   amount0: number
@@ -22,7 +22,7 @@ interface HoldStrategy {
   pnlPercent: string
 }
 
-interface LpStrategy {
+export interface LpStrategy {
   token0Symbol: string
   token1Symbol: string
   amount0: number

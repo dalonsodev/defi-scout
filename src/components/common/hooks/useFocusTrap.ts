@@ -10,7 +10,7 @@ const FOCUSABLE_SELECTOR = 'button:not([disabled]), [href], input:not([disabled]
  * @param isOpen - Whether the focus trap is currently active
  * @param onClose - Callback function executed to close the modal (e.g. when pressing 'Escape')
  */
-export function useFocusTrap(modalRef: RefObject<HTMLElement>, isOpen: boolean, onClose: () => void): void {
+export function useFocusTrap(modalRef: RefObject<HTMLElement | null>, isOpen: boolean, onClose: () => void): void {
   const savedFocusRef = useRef<Element | null>(null)
   const onCloseRef = useRef(onClose)
 
@@ -22,7 +22,7 @@ export function useFocusTrap(modalRef: RefObject<HTMLElement>, isOpen: boolean, 
     if (isOpen) {
       savedFocusRef.current = document.activeElement
 
-      const focusableElements = [...modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)]
+      const focusableElements = [...(modalRef.current as HTMLElement).querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)]
       const firstElement = focusableElements[0]
       const lastElement = focusableElements[focusableElements.length - 1]
 

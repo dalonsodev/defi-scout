@@ -1,0 +1,432 @@
+import { useCallback, useEffect, useState, useRef } from 'react'
+import {
+  useLoaderData,
+  useOutletContext,
+  useLocation,
+  useNavigate
+} from 'react-router-dom'
+import { ContractLinks } from './ContractLinks'
+import { CurrentPriceCard } from './CurrentPriceCard'
+import { PoolCharts } from './charts/PoolCharts'
+import { RangeCalculator } from './calculator/RangeCalculator'
+import { usePoolHourlyData } from './calculator/hooks/usePoolHourlyData'
+import { usePoolTickData } from './charts/hooks/usePoolTickData'
+import { inferRangeFromLiquidity } from './calculator/utils/inferRangeFromLiquidity'
+import { invertPriceRange } from './calculator/utils/invertPriceRange'
+import { processTickData } from './charts/utils/processTickData'
+import { OutlinedStarIcon, FilledStarIcon } from '../common/StarIcons'
+import type { ReactNode } from 'react'
+import type { RawPoolHistory, FormattedPoolHistory, PoolTickResult, RawPool } from '../../types'
+
+interface PoolDetailLoaderData {
+  pool: RawPoolHistory
+  history: FormattedPoolHistory[]
+  ethPriceUSD: number
+}
+
+interface OutletContextData {
+  favoriteIds: Set<string>
+  toggleFavorite: (poolId: string) => Promise<void>
+}
+
+const DexScreenLogo = (): ReactNode => (
+  <svg
+    width="1.5em"
+    height="1.5em"
+    viewBox="0 0 252 300"
+    fill="currentColor"
+    fillRule="evenodd"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M151.818 106.866c9.177-4.576 20.854-11.312 32.545-20.541 2.465 5.119 2.735 9.586 1.465 13.193-.9 2.542-2.596 4.753-4.826 6.512-2.415 1.901-5.431 3.285-8.765 4.033-6.326 1.425-13.712.593-20.419-3.197m1.591 46.886l12.148 7.017c-24.804 13.902-31.547 39.716-39.557 64.859-8.009-25.143-14.753-50.957-39.556-64.859l12.148-7.017a5.95 5.95 0 003.84-5.845c-1.113-23.547 5.245-33.96 13.821-40.498 3.076-2.342 6.434-3.518 9.747-3.518s6.671 1.176 9.748 3.518c8.576 6.538 14.934 16.951 13.821 40.498a5.95 5.95 0 003.84 5.845zM126 0c14.042.377 28.119 3.103 40.336 8.406 8.46 3.677 16.354 8.534 23.502 14.342 3.228 2.622 5.886 5.155 8.814 8.071 7.897.273 19.438-8.5 24.796-16.709-9.221 30.23-51.299 65.929-80.43 79.589-.012-.005-.02-.012-.029-.018-5.228-3.992-11.108-5.988-16.989-5.988s-11.76 1.996-16.988 5.988c-.009.005-.017.014-.029.018-29.132-13.66-71.209-49.359-80.43-79.589 5.357 8.209 16.898 16.982 24.795 16.709 2.929-2.915 5.587-5.449 8.814-8.071C69.31 16.94 77.204 12.083 85.664 8.406 97.882 3.103 111.959.377 126 0m-25.818 106.866c-9.176-4.576-20.854-11.312-32.544-20.541-2.465 5.119-2.735 9.586-1.466 13.193.901 2.542 2.597 4.753 4.826 6.512 2.416 1.901 5.432 3.285 8.766 4.033 6.326 1.425 13.711.593 20.418-3.197"></path>
+    <path d="M197.167 75.016c6.436-6.495 12.107-13.684 16.667-20.099l2.316 4.359c7.456 14.917 11.33 29.774 11.33 46.494l-.016 26.532.14 13.754c.54 33.766 7.846 67.929 24.396 99.193l-34.627-27.922-24.501 39.759-25.74-24.231L126 299.604l-41.132-66.748-25.739 24.231-24.501-39.759L0 245.25c16.55-31.264 23.856-65.427 24.397-99.193l.14-13.754-.016-26.532c0-16.721 3.873-31.578 11.331-46.494l2.315-4.359c4.56 6.415 10.23 13.603 16.667 20.099l-2.01 4.175c-3.905 8.109-5.198 17.176-2.156 25.799 1.961 5.554 5.54 10.317 10.154 13.953 4.48 3.531 9.782 5.911 15.333 7.161 3.616.814 7.3 1.149 10.96 1.035-.854 4.841-1.227 9.862-1.251 14.978L53.2 160.984l25.206 14.129a41.926 41.926 0 015.734 3.869c20.781 18.658 33.275 73.855 41.861 100.816 8.587-26.961 21.08-82.158 41.862-100.816a41.865 41.865 0 015.734-3.869l25.206-14.129-32.665-18.866c-.024-5.116-.397-10.137-1.251-14.978 3.66.114 7.344-.221 10.96-1.035 5.551-1.25 10.854-3.63 15.333-7.161 4.613-3.636 8.193-8.399 10.153-13.953 3.043-8.623 1.749-17.689-2.155-25.799l-2.01-4.175z"></path>
+  </svg>
+)
+
+const BlockExplorerIcon = (): ReactNode => (
+  <svg
+    width="1.5em"
+    height="1.5em"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g
+      fill="none"
+      stroke="currentColor"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+    >
+      <path d="M12 22c.244 0 .471-.113.926-.34l3.65-1.817C18.193 19.04 19 18.637 19 18v-8m-7 12c-.244 0-.471-.113-.926-.34l-3.65-1.817C5.807 19.04 5 18.637 5 18v-8m7 12v-8m7-4c0-.637-.808-1.039-2.423-1.843l-3.651-1.818C12.47 6.113 12.244 6 12 6s-.471.113-.926.34l-3.65 1.817C5.807 8.96 5 9.363 5 10m14 0c0 .637-.808 1.039-2.423 1.843l-3.651 1.818c-.455.226-.682.339-.926.339m-7-4c0 .637.808 1.039 2.423 1.843l3.651 1.818c.455.226.682.339.926.339" />
+      <path strokeLinecap="round" d="m22 21l-3-2.5M12 2v4M2 21l3-2.5" />
+    </g>
+  </svg>
+)
+
+/**
+ * Architecture: Pool Analytics & Strategy Dashboard.
+ * State orchestrator for liquidity simulation and historical trend visualization.
+ */
+export function PoolDetail(): ReactNode {
+  const { pool, history, ethPriceUSD } = useLoaderData() as PoolDetailLoaderData
+  const {
+    hourlyData,
+    rawHourlyData,
+    isLoading: hourlyIsLoading,
+    fetchError
+  } = usePoolHourlyData(pool.id)
+
+  const { tickData, isLoading: tickIsLoading, fetchError: tickError } = usePoolTickData(
+    pool.id,
+    Number(pool.tick),
+    Number(pool.feeTier)
+  )
+  const { favoriteIds, toggleFavorite } = useOutletContext() as OutletContextData
+  const hasHydrated = useRef(false)
+  const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
+  const [rangeInputs, setRangeInputs] = useState({
+    capitalUSD: 1000,
+    fullRange: false,
+    minPrice: '',
+    maxPrice: '',
+    assumedPrice: ''
+  })
+  const { state } = useLocation()
+  const navigate = useNavigate()
+
+  /**
+   * Hydration: Initializes price range from on-chain liquidity distribution.
+   * Runs once when both hourlyData and tickData are available.
+   *
+   * Design Decision:
+   * 1. Infer cluster width from 90th-percentile tick liquidity distribution
+   * 2. If currentPrice is outside the cluster, slide the range so the
+   *    nearest boundary aligns with currentPrice (width preserved)
+   * 3. Adds 0.1% epsilon buffer on the anchored bound to prevent
+   *    division-by-zero in calculateLiquidity at exact boundary conditions
+   * 4. Falls back to ±10% if tick inference returns null
+   *
+   * hasHydrated flag prevents re-hydration after manual user edits.
+   */
+  useEffect(() => {
+    if (hasHydrated.current) return
+    if (rangeInputs.minPrice !== '' || rangeInputs.maxPrice !== '') return
+    if (!hourlyData || !tickData) return
+
+    const currentPrice =
+      parseFloat(
+        selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price
+      ) || 0
+
+    const processedTicks = processTickData(
+      tickData,
+      selectedTokenIdx,
+      Number(pool.token0.decimals),
+      Number(pool.token1.decimals)
+    )
+    const inferredRange = inferRangeFromLiquidity(processedTicks)
+
+    if (!inferredRange) {
+      setRangeInputs((prev) => ({
+        ...prev,
+        minPrice: String(currentPrice * 0.9),
+        maxPrice: String(currentPrice * 1.1),
+        assumedPrice: String(currentPrice)
+      }))
+    } else {
+      let minPrice = inferredRange.minPrice ?? 0
+      let maxPrice = inferredRange.maxPrice ?? 0
+      let assumedPrice = currentPrice
+      const width = maxPrice - minPrice
+
+      if (assumedPrice < maxPrice && assumedPrice > minPrice) {
+        assumedPrice = currentPrice
+      }
+
+      if (assumedPrice >= maxPrice) {
+        maxPrice = assumedPrice * 1.001
+        minPrice = assumedPrice - width
+      }
+
+      if (assumedPrice <= minPrice) {
+        minPrice = assumedPrice * 0.999
+        maxPrice = assumedPrice + width
+      }
+
+      setRangeInputs((prev) => ({
+        ...prev,
+        minPrice: String(minPrice),
+        maxPrice: String(maxPrice),
+        assumedPrice: String(assumedPrice)
+      }))
+    }
+
+    hasHydrated.current = true
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    hourlyData,
+    tickData,
+    selectedTokenIdx,
+    pool.token0Price,
+    pool.token1Price
+  ])
+  // Justification: rangeInputs.minPrice/maxPrice are guards, not triggers.
+  // Including them would cause unnecessary effect re-runs on every input change.
+
+  const handleTokenChange = useCallback(
+    (newIdx: number) => {
+      const invertedPrices = invertPriceRange({
+        minPrice: rangeInputs.minPrice,
+        maxPrice: rangeInputs.maxPrice,
+        assumedPrice: Number(rangeInputs.assumedPrice),
+        fullRange: rangeInputs.fullRange
+      })
+
+      setSelectedTokenIdx(newIdx)
+
+      if (invertedPrices) {
+        setRangeInputs((prev) => ({ ...prev, ...invertedPrices }))
+      }
+    },
+    [rangeInputs]
+  )
+
+  // Event Management: Scroll to top on route entry
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  // Domain Logic: Price inversion and token symbol
+  const tokenSymbols: [string, string] = [pool.token0.symbol, pool.token1.symbol]
+  const primary =
+    selectedTokenIdx === 0
+      ? { symbol: pool.token0.symbol, name: pool.token0.name }
+      : { symbol: pool.token1.symbol, name: pool.token1.name }
+  const secondary =
+    selectedTokenIdx === 0
+      ? { symbol: pool.token1.symbol, name: pool.token1.name }
+      : { symbol: pool.token0.symbol, name: pool.token0.name }
+
+  /**
+   * Math: Resolve relative price
+   * Uniswap price is usually token0/token1. If user selects token1 as base,
+   * we may need to handle the reciprocal price depending on the calculator's logic.
+   */
+  const currentPrice =
+    parseFloat(selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price) ||
+    0
+
+  // Stats: Derived metrics from historical snapshots
+  const latestSnapshot = history[history.length - 1] ?? {}
+  const poolAgeDays = pool?.createdAtTimestamp
+    ? Math.floor(Date.now() / 1000 - Number(pool.createdAtTimestamp)) / 86400
+    : 0
+
+  // Calculate sample-based APY (7-day window)
+  const last7Days = history.slice(-7)
+  const avgAPY = calculateAverageAPY(last7Days, latestSnapshot.tvlUSD)
+
+  // Check if pool is in the user's watchlist
+  const isFavorited = favoriteIds.has(pool.id)
+
+  // Check if user comes from watchlist
+  const fromWatchlist = state?.from === 'watchlist'
+
+  return (
+    <div className="container mx-auto max-w-7xl px-4 pt-4">
+      <title>
+        {`${primary.symbol}/${secondary.symbol} ${(Number(pool.feeTier) / 10000).toFixed(2)}% Pool | DeFi Scout`}
+      </title>
+      {/* NAVIGATION: Contextual return */}
+      <button
+        onClick={() => navigate(-1)}
+        className="btn btn-ghost btn-sm mb-4 md:mb-6 gap-2 rounded-xl"
+      >
+        <span>←</span>
+        <span>{`Back to ${fromWatchlist ? 'Watchlist' : 'Pools'}`}</span>
+      </button>
+
+      {/* Header: Identity and protocol info */}
+      <div className="glass-surface mb-6 rounded-3xl p-6 shadow-lg">
+        <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between md:gap-4">
+          <div>
+            {/* Row 1: name + fee only */}
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-3xl font-bold">
+                {primary.symbol} / {secondary.symbol}
+              </h1>
+              <span className="badge badge-outline text-primary badge-md rounded-full">
+                {(Number(pool.feeTier) / 10000).toFixed(2)}%
+              </span>
+              <span className="badge badge-soft badge-md text-base-content/60 glass-overlay hidden rounded-full md:inline-flex">
+                Ethereum
+              </span>
+            </div>
+
+            {/* Row 2: full token names */}
+            <span className="text-base-content/60 text-sm">
+              {primary.name} / {secondary.name}
+            </span>
+          </div>
+
+          {/* Row 3: chain badge - mobile only */}
+          <span className="badge badge-soft badge-md text-base-content/60 glass-overlay mt-1 rounded-full md:hidden">
+            Ethereum
+          </span>
+
+          <div className="flex items-center justify-between gap-2 md:flex-col md:items-end md:justify-end">
+            <span className="text-base-content/60 text-sm">
+              {Math.floor(poolAgeDays)} days old
+            </span>
+            <div className="flex justify-around md:justify-between">
+              <div className="tooltip" data-tip="View on DexScreener">
+                <a
+                  href={`https://dexscreener.com/ethereum/${pool.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <button
+                    className="btn btn-ghost btn-circle btn-sm"
+                    aria-label="View on DexScreener"
+                  >
+                    <DexScreenLogo />
+                  </button>
+                </a>
+              </div>
+
+              <div className="tooltip" data-tip="View on Explorer">
+                <a
+                  href={`https://etherscan.io/address/${pool.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <button
+                    className="btn btn-ghost btn-circle btn-sm"
+                    aria-label="View on Explorer"
+                  >
+                    <BlockExplorerIcon />
+                  </button>
+                </a>
+              </div>
+
+              <div
+                className="tooltip tooltip-left"
+                data-tip={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
+              >
+                <button
+                  className="btn btn-ghost btn-circle btn-sm"
+                  onClick={() => toggleFavorite(pool.id)}
+                  aria-label={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
+                >
+                  {isFavorited ? <FilledStarIcon /> : <OutlinedStarIcon />}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid: Key Performance Indicators */}
+      <div className="flex flex-col gap-4 md:grid md:grid-cols-5">
+        <div className="md:col-span-3 md:col-start-3 md:row-start-1">
+          <div className="grid grid-cols-3 gap-4">
+            <StatCard
+              label="TVL"
+              value={formatCurrency(Number(latestSnapshot.tvlUSD))}
+            />
+            <StatCard
+              label="Volume (24h)"
+              value={formatCurrency(Number(latestSnapshot.volumeUSD))}
+            />
+            <StatCard label="Avg APY (7d)" value={`${avgAPY.toFixed(2)}%`} />
+          </div>
+        </div>
+
+        {/* Main Interface: Simulator vs History */}
+        <div className="flex flex-col gap-4 md:col-span-2 md:col-start-1 md:row-span-2 md:row-start-1">
+          <CurrentPriceCard
+            pool={pool}
+            selectedTokenIdx={selectedTokenIdx}
+            onTokenChange={handleTokenChange}
+          />
+          <RangeCalculator
+            pool={pool}
+            selectedTokenIdx={selectedTokenIdx}
+            inputs={rangeInputs}
+            hourlyData={rawHourlyData ?? []}
+            isLoading={hourlyIsLoading}
+            fetchError={fetchError}
+            ethPriceUSD={ethPriceUSD}
+            onInputsChange={setRangeInputs}
+          />
+          <div className="mb-4 hidden md:block">
+            <ContractLinks pool={pool} />
+          </div>
+        </div>
+
+        <div className="md:col-span-3 md:col-start-3 md:row-start-2">
+          <PoolCharts
+            pool={pool as RawPool}
+            history={history}
+            hourlyData={hourlyData ?? []}
+            selectedTokenIdx={selectedTokenIdx}
+            tokenSymbols={tokenSymbols}
+            rangeInputs={rangeInputs}
+            currentPrice={currentPrice}
+            tickData={tickData as PoolTickResult}
+            tickError={tickError}
+            hourlyIsLoading={hourlyIsLoading}
+            tickIsLoading={tickIsLoading}
+          />
+        </div>
+        <div className="mb-4 md:hidden">
+          <ContractLinks pool={pool} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ===== Helper Components =====
+
+function StatCard({ label, value }: { label: string, value: string }): ReactNode {
+  return (
+    <div className="glass-surface rounded-2xl p-3 shadow">
+      <div className="text-base-content/60 mb-1 text-xs tracking-wide whitespace-nowrap uppercase">
+        {label}
+      </div>
+      <div className="text-primary text-base font-semibold">{value}</div>
+    </div>
+  )
+}
+
+/**
+ * Stats-optimized currency formatter (vs formatCompactCurrency in charts).
+ * Precision: .toFixed(2) for KPI cards where extra decimal improves clarity.
+ * Scope: Local to PoolDetail (if reused in 3+ components → refactor to utils).
+ */
+function formatCurrency(value: number): string {
+  if (!value) return '$0'
+  if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`
+  if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`
+  if (value >= 1e3) return `$${(value / 1e3).toFixed(2)}K`
+
+  return `$${value.toFixed(2)}`
+}
+
+function calculateAverageAPY(snapshots: FormattedPoolHistory[], currentTVL: number): number {
+  if (!snapshots || snapshots.length === 0 || !currentTVL) return 0
+
+  const apyValues = snapshots
+    .filter((s) => s.feesUSD && s.tvlUSD)
+    .map((s) => {
+      const dailyFeeRate = s.feesUSD / s.tvlUSD
+      return dailyFeeRate * 365 * 100 // Annualized
+    })
+
+  if (apyValues.length === 0) return 0
+
+  const sum = apyValues.reduce((acc, curr) => acc + curr, 0)
+  return sum / apyValues.length
+}

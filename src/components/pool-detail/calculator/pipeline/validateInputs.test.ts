@@ -5,26 +5,24 @@ describe('validateInputs - Edge Cases', () => {
   it('should fail if price range is inverted', () => {
     const result = validateInputs({
       capitalUSD: 1000,
-      minPrice: 100,
-      maxPrice: 50,
+      minPrice: '100',
+      maxPrice: '50',
       fullRange: false,
-      assumedPrice: 75,
-      selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({})
+      assumedPrice: '75',
+      selectedTokenIdx: 0
     })
     expect(result.success).toBe(false)
-    expect(result.error.toLowerCase()).toContain('min price')
+    expect((result as { error: string }).error.toLowerCase()).toContain('min price')
   })
 
   it('should pass with valid standard inputs', () => {
     const result = validateInputs({
       capitalUSD: 1000,
-      minPrice: 50,
-      maxPrice: 100,
+      minPrice: '50',
+      maxPrice: '100',
       fullRange: false,
-      assumedPrice: 75,
-      selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({})
+      assumedPrice: '75',
+      selectedTokenIdx: 0
     })
     expect(result.success).toBe(true)
   })
@@ -33,29 +31,27 @@ describe('validateInputs - Edge Cases', () => {
   it('should fail if capital < $10', () => {
     const result = validateInputs({
       capitalUSD: 5,
-      minPrice: 50,
-      maxPrice: 100,
+      minPrice: '50',
+      maxPrice: '100',
       fullRange: false,
-      assumedPrice: 75,
-      selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({})
+      assumedPrice: '75',
+      selectedTokenIdx: 0
     })
     expect(result.success).toBe(false)
-    expect(result.error).toContain('$10')
+    expect((result as { error: string }).error).toContain('$10')
   })
 
   it('should fail if selectedTokenIdx is invalid', () => {
     const result = validateInputs({
       capitalUSD: 1000,
-      minPrice: 50,
-      maxPrice: 100,
+      minPrice: '50',
+      maxPrice: '100',
       fullRange: false,
-      assumedPrice: 75,
+      assumedPrice: '75',
       selectedTokenIdx: 5, // Invalid
-      hourlyData: new Array(168).fill({})
     })
     expect(result.success).toBe(false)
-    expect(result.error).toContain('select a token')
+    expect((result as { error: string }).error).toContain('select a token')
   })
 
   it('should fail if price range missing when fullRange=false', () => {
@@ -64,40 +60,37 @@ describe('validateInputs - Edge Cases', () => {
       minPrice: '',
       maxPrice: '',
       fullRange: false,
-      assumedPrice: 75,
-      selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({})
+      assumedPrice: '75',
+      selectedTokenIdx: 0
     })
     expect(result.success).toBe(false)
-    expect(result.error).toContain('Price range required')
+    expect((result as { error: string }).error).toContain('Price range required')
   })
 
   it('should fail if prices are negative', () => {
     const result = validateInputs({
       capitalUSD: 1000,
-      minPrice: -10,
-      maxPrice: 100,
+      minPrice: '-10',
+      maxPrice: '100',
       fullRange: false,
-      assumedPrice: 75,
-      selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({})
+      assumedPrice: '75',
+      selectedTokenIdx: 0
     })
     expect(result.success).toBe(false)
-    expect(result.error).toContain('positive')
+    expect((result as { error: string }).error).toContain('positive')
   })
 
   it('should fail if assumedPrice missing when fullRange=false', () => {
     const result = validateInputs({
       capitalUSD: 1000,
-      minPrice: 50,
-      maxPrice: 100,
+      minPrice: '50',
+      maxPrice: '100',
       fullRange: false,
       assumedPrice: '',
-      selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({})
+      selectedTokenIdx: 0
     })
     expect(result.success).toBe(false)
-    expect(result.error).toContain('Assumed Entry Price required')
+    expect((result as { error: string }).error).toContain('Assumed Entry Price required')
   })
 
   it('should pass with fullRange=true (no price checks)', () => {
@@ -107,8 +100,7 @@ describe('validateInputs - Edge Cases', () => {
       maxPrice: '',
       fullRange: true,
       assumedPrice: '',
-      selectedTokenIdx: 0,
-      hourlyData: new Array(168).fill({})
+      selectedTokenIdx: 0
     })
     expect(result.success).toBe(true)
   })

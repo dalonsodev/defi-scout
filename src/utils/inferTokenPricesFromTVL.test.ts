@@ -6,14 +6,14 @@ describe('inferTokenPricesFromTVL', () => {
   describe('Edge Cases - Existence', () => {
     it('should fail if tvlUSD is missing', () => {
       const result = inferTokenPricesFromTVL({
-        tvlUSD: null,
+        tvlUSD: null as unknown as number,
         tvlToken0: 200_000,
         tvlToken1: 350_000,
         currentPrice: 3200
       })
 
       expect(result.success).toBe(false)
-      expect(result.error).toContain(
+      expect((result as { error: string }).error).toContain(
         'Pool metadata incomplete. Cannot calculate prices.'
       )
     })
@@ -21,13 +21,13 @@ describe('inferTokenPricesFromTVL', () => {
     it('should fail if tvlToken0 is missing', () => {
       const result = inferTokenPricesFromTVL({
         tvlUSD: 550_000,
-        tvlToken0: undefined,
+        tvlToken0: undefined as unknown as number,
         tvlToken1: 350_000,
         currentPrice: 3200
       })
 
       expect(result.success).toBe(false)
-      expect(result.error).toContain(
+      expect((result as { error: string }).error).toContain(
         'Pool metadata incomplete. Cannot calculate prices.'
       )
     })
@@ -37,11 +37,11 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 550_000,
         tvlToken0: 200_000,
         tvlToken1: 350_000,
-        currentPrice: null
+        currentPrice: null as unknown as number
       })
 
       expect(result.success).toBe(false)
-      expect(result.error).toContain(
+      expect((result as { error: string }).error).toContain(
         'Pool metadata incomplete. Cannot calculate prices.'
       )
     })
@@ -58,7 +58,7 @@ describe('inferTokenPricesFromTVL', () => {
       })
 
       expect(result.success).toBe(false)
-      expect(result.error).toContain('Invalid current price from hourly data.')
+      expect((result as { error: string }).error).toContain('Invalid current price from hourly data.')
     })
 
     it('should fail if currentPrice is Infinity', () => {
@@ -70,7 +70,7 @@ describe('inferTokenPricesFromTVL', () => {
       })
 
       expect(result.success).toBe(false)
-      expect(result.error).toContain('Invalid current price from hourly data.')
+      expect((result as { error: string }).error).toContain('Invalid current price from hourly data.')
     })
 
     it('should handle very small amounts without causing Infinity', () => {
@@ -82,8 +82,8 @@ describe('inferTokenPricesFromTVL', () => {
       })
 
       expect(result.success).toBe(true)
-      expect(result.priceToken0InUSD).toBeLessThan(Infinity)
-      expect(result.priceToken1InUSD).toBeLessThan(Infinity)
+      expect((result as { priceToken0InUSD: number }).priceToken0InUSD).toBeLessThan(Infinity)
+      expect((result as { priceToken1InUSD: number }).priceToken1InUSD).toBeLessThan(Infinity)
     })
   })
 
@@ -98,7 +98,7 @@ describe('inferTokenPricesFromTVL', () => {
       })
 
       expect(result.success).toBe(false)
-      expect(result.error).toContain('Pool has no liquidity (TVL = $0).')
+      expect((result as { error: string }).error).toContain('Pool has no liquidity (TVL = $0).')
     })
 
     it('should fail if tvlToken0 is negative', () => {
@@ -110,7 +110,7 @@ describe('inferTokenPricesFromTVL', () => {
       })
 
       expect(result.success).toBe(false)
-      expect(result.error).toContain(
+      expect((result as { error: string }).error).toContain(
         'Pool is imbalanced (one token at 0%). Cannot calculate prices.'
       )
     })
@@ -124,7 +124,7 @@ describe('inferTokenPricesFromTVL', () => {
       })
 
       expect(result.success).toBe(false)
-      expect(result.error).toContain(
+      expect((result as { error: string }).error).toContain(
         'Pool is imbalanced (one token at 0%). Cannot calculate prices.'
       )
     })
@@ -148,8 +148,8 @@ describe('inferTokenPricesFromTVL', () => {
 
       // ASSERT
       expect(result.success).toBe(true)
-      expect(result.priceToken0InUSD).toBeCloseTo(3000, 0) // ETH = ~$3000
-      expect(result.priceToken1InUSD).toBeCloseTo(1, 0) // USDC = ~$1
+      expect((result as { priceToken0InUSD: number }).priceToken0InUSD).toBeCloseTo(3000, 0) // ETH = ~$3000
+      expect((result as { priceToken1InUSD: number }).priceToken1InUSD).toBeCloseTo(1, 0) // USDC = ~$1
     })
   })
 })

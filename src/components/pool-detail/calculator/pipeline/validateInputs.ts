@@ -23,9 +23,9 @@ type ValidateInputsResult =
  */
 export function validateInputs({
   capitalUSD,
+  fullRange,
   minPrice,
   maxPrice,
-  fullRange,
   assumedPrice,
   selectedTokenIdx
 }: ValidateInputsProps): ValidateInputsResult {

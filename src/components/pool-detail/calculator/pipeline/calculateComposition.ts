@@ -1,6 +1,5 @@
 import { calculateTokenRatio } from '../utils/calculateTokenRatio'
 import { debugLog } from '../../../../utils/logger'
-import { Composition } from '../../../../types'
 
 interface UserInputs {
   capitalUSD: number

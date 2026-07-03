@@ -3,7 +3,7 @@ import {
   alignTickToSpacing,
   getTickSpacing
 } from '../components/pool-detail/calculator/utils/uniswapV3Ticks'
-import { RawPool, UserInputs, Composition } from '../types'
+import type { RawPoolHistory, UserInputs, Composition } from '../types'
 
 const MIN_TICK = -887272
 const MAX_TICK = 887272
@@ -18,7 +18,7 @@ const MAX_TICK = 887272
  * @returns URL to create a Uniswap V3 position
  */
 export function buildUniswapPositionUrl(
-  pool: RawPool,
+  pool: RawPoolHistory,
   inputs: UserInputs,
   selectedTokenIdx: number,
   composition?: Composition,

@@ -1,7 +1,7 @@
 interface Hour {
-  token0Price: string
-  liquidity: string
-  feesUSD: string
+  token0Price: string | number
+  liquidity: string | number
+  feesUSD: string | number | undefined
 }
 
 /**
@@ -34,9 +34,9 @@ interface Hour {
  * // => false (NaN detected, negative liquidity)
  */
 export function validateHourSnapshot(hour: Hour): boolean {
-  const hourPrice = parseFloat(hour.token0Price)
-  const hourLiquidity = parseFloat(hour.liquidity)
-  const hourFeesUSD = parseFloat(hour.feesUSD)
+  const hourPrice = Number(hour.token0Price)
+  const hourLiquidity = Number(hour.liquidity)
+  const hourFeesUSD = Number(hour.feesUSD)
 
   if (Number.isNaN(hourPrice) || Number.isNaN(hourLiquidity) || Number.isNaN(hourFeesUSD)) {
     return false

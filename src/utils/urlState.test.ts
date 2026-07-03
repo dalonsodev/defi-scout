@@ -96,7 +96,7 @@ describe('parseSearchParams', () => {
         tvlUsd: '',
         volumeUsd1d: '',
         sortBy: 'tvlUsd',
-        sortDir: 'desc',
+        sortDir: 'desc' as const,
         page: 0
       })
     })
@@ -185,7 +185,7 @@ describe('buildCleanSearchParams', () => {
         tvlUsd: '',
         volumeUsd1d: '',
         sortBy: 'tvlUsd',
-        sortDir: 'desc',
+        sortDir: 'desc' as const,
         page: 0
       }
       const params = buildCleanSearchParams(state)
@@ -200,7 +200,7 @@ describe('buildCleanSearchParams', () => {
         tvlUsd: '1000000', // Non-default
         volumeUsd1d: '',
         sortBy: 'tvlUsd',
-        sortDir: 'desc',
+        sortDir: 'desc' as const,
         page: 0
       }
       const params = buildCleanSearchParams(state)
@@ -215,7 +215,7 @@ describe('buildCleanSearchParams', () => {
         tvlUsd: '',
         volumeUsd1d: '',
         sortBy: 'apyBase', // accessorKey
-        sortDir: 'asc',
+        sortDir: 'asc' as const,
         page: 0
       }
       const params = buildCleanSearchParams(state)
@@ -232,7 +232,7 @@ describe('buildCleanSearchParams', () => {
         tvlUsd: '',
         volumeUsd1d: '',
         sortBy: 'tvlUsd',
-        sortDir: 'desc',
+        sortDir: 'desc' as const,
         page: 0
       }
       const params = buildCleanSearchParams(state)
@@ -253,7 +253,7 @@ describe('Round-Trip Consistency', () => {
       tvlUsd: '500000',
       volumeUsd1d: '10000',
       sortBy: 'apyBase',
-      sortDir: 'asc',
+      sortDir: 'asc' as const,
       page: 3
     }
 
@@ -277,7 +277,7 @@ describe('Round-Trip Consistency', () => {
       tvlUsd: '',
       volumeUsd1d: '',
       sortBy: 'tvlUsd',
-      sortDir: 'desc',
+      sortDir: 'desc' as const,
       page: 0
     }
 
@@ -311,7 +311,7 @@ describe('Performance Requirements', () => {
       tvlUsd: '5000000',
       volumeUsd1d: '100000',
       sortBy: 'volumeUsd1d',
-      sortDir: 'desc',
+      sortDir: 'desc' as const,
       page: 5
     }
 

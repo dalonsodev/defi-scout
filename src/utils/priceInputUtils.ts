@@ -34,7 +34,7 @@ export function formatPriceInput(value: string) {
  * @param value - Raw price value (TheGraph BigDecimal string)
  * @returns Step value, ready to use in input elements
  */
-export function getPriceStep(value: string) {
+export function getPriceStep(value: string): number {
   const parsedValue = parseFloat(value)
 
   if (!Number.isFinite(parsedValue) || parsedValue <= 0) return 1e-8 // safe minimum
