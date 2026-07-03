@@ -18,9 +18,10 @@ const required = [
   'VITE_FIREBASE_APP_ID'
 ]
 
+const env = import.meta.env as Record<string, string | undefined>
 // Fail-fast guard
 required.forEach((key) => {
-  if (!import.meta.env[key]) {
+  if (!env[key]) {
     throw new Error(`Missing environment variable: ${key}`)
   }
 })
@@ -42,13 +43,11 @@ const app = initializeApp(firebaseConfig)
 /**
  * Singleton: Firestore Authentication instance.
  * Import this in components instead of calling getAuth() multiple times.
- * @type {Auth}
  */
 export const auth = getAuth(app)
 
 /**
  * Singleton: Firestore Database instance.
  * Import this in components instead of calling getFirestore() multiple times.
- * @type {Firestore}
  */
 export const db = getFirestore(app)

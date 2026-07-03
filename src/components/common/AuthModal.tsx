@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { useFocusTrap } from './hooks/useFocusTrap'
+import type { ReactNode, FormEvent } from 'react'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -7,8 +7,10 @@ import {
   signInWithPopup,
   sendPasswordResetEmail
 } from 'firebase/auth'
+import { useFocusTrap } from './hooks/useFocusTrap'
 import { auth } from '../../../firebase'
 import { useAuth } from '../../context/AuthContext'
+import type { FirebaseError } from 'firebase/app'
 
 const MODE = Object.freeze({
   LOGIN: 'login',
@@ -16,7 +18,7 @@ const MODE = Object.freeze({
   FORGOT: 'forgot'
 })
 
-const ERROR_MAP = {
+const ERROR_MAP: Record<string, string> = {
   'auth/user-not-found': 'No account found with this email',
   'auth/wrong-password': 'Incorrect password',
   'auth/email-already-in-use': 'An account with this email already exists',
@@ -27,22 +29,22 @@ const ERROR_MAP = {
   'auth/too-many-requests': 'Too many attempts. Try again later'
 }
 
-const mapFirebaseError = (code) => ERROR_MAP[code] ?? 'Something went wrong. Please try again'
+const mapFirebaseError = (code: string) => ERROR_MAP[code] ?? 'Something went wrong. Please try again'
 
 const googleProvider = new GoogleAuthProvider()
 
-export function AuthModal() {
-  const modalRef = useRef(null)
-  const [mode, setMode] = useState(MODE.LOGIN)
+export function AuthModal(): ReactNode {
+  const modalRef = useRef<HTMLDivElement | null>(null)
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>(MODE.LOGIN)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [resetSent, setResetSent] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const { closeAuthModal, isAuthModalOpen } = useAuth()
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setEmail('')
     setPassword('')
     setError(null)
@@ -53,7 +55,7 @@ export function AuthModal() {
 
   useFocusTrap(modalRef, isAuthModalOpen, handleClose)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setError(null)
     setIsLoading(true)
@@ -70,13 +72,13 @@ export function AuthModal() {
       }
       handleClose()
     } catch (err) {
-      setError(mapFirebaseError(err.code))
+      setError(mapFirebaseError((err as FirebaseError).code))
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = async (): Promise<void> => {
     setError(null)
     setIsLoading(true)
 
@@ -84,7 +86,7 @@ export function AuthModal() {
       await signInWithPopup(auth, googleProvider)
       handleClose()
     } catch (err) {
-      setError(mapFirebaseError(err.code))
+      setError(mapFirebaseError((err as FirebaseError).code))
     } finally {
       setIsLoading(false)
     }
@@ -281,7 +283,7 @@ export function AuthModal() {
         className="modal-backdrop"
         aria-hidden="true"
       >
-        <button tabIndex="-1">close</button>
+        <button tabIndex={-1}>close</button>
       </form>
     </dialog>
   )

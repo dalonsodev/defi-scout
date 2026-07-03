@@ -1,18 +1,22 @@
-import { useLoaderData, useOutletContext, Link } from 'react-router-dom'
 import { useRef, useState, useMemo } from 'react'
+import { useLoaderData, useOutletContext, Link } from 'react-router-dom'
 import { PoolTable } from '../components/pools/PoolTable'
 import { PaginationControls } from '../components/common/PaginationControls'
 import { useSparklines } from '../hooks/useSparklines'
+import type { ReactNode } from 'react'
+import type { FavoritesOutletContext } from '../components/layout/FavoritesLayout'
+import type { FormattedPool } from '../types'
+import type { SortingState } from '@tanstack/react-table'
 
 const PAGE_SIZE = 40
 
-export default function Watchlist() {
-  const { pools } = useLoaderData()
-  const { favoriteIds, toggleFavorite } = useOutletContext()
-  const [sorting, setSorting] = useState([])
+export default function Watchlist(): ReactNode {
+  const { pools } = useLoaderData() as { pools: FormattedPool[]}
+  const { favoriteIds, toggleFavorite } = useOutletContext() as FavoritesOutletContext
+  const [sorting, setSorting] = useState<SortingState>([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [visiblePoolIds, setVisiblePoolIds] = useState(new Set())
-  const tableScrollRef = useRef(null)
+  const [visiblePoolIds, setVisiblePoolIds] = useState<Set<string>>(new Set())
+  const tableScrollRef = useRef<HTMLDivElement | null>(null)
 
   const totalPages = Math.ceil(pools.length / PAGE_SIZE)
   const paginatedPools = pools.slice(
@@ -57,18 +61,18 @@ export default function Watchlist() {
           ref={tableScrollRef}
           pools={paginatedPools}
           sparklineData={sparklineData}
-          favoriteIds={favoriteIds}
-          toggleFavorite={toggleFavorite}
           sorting={sorting}
+          favoriteIds={favoriteIds}
           onSortingChange={setSorting}
           onVisiblePoolsChange={setVisiblePoolIds}
+          toggleFavorite={toggleFavorite}
           from="watchlist"
         />
         <div className="py-4">
           <PaginationControls
             totalPages={totalPages}
             currentPage={currentPage}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => setCurrentPage(Number(page))}
           />
         </div>
       </div>

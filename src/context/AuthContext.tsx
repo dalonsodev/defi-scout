@@ -1,11 +1,21 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from '../../firebase'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+import type { ReactNode } from 'react'
+import type { User } from 'firebase/auth'
 
-const AuthContext = createContext(null)
+interface AuthContextValue {
+  currentUser: User | false | null
+  isAuthModalOpen: boolean
+  openAuthModal: () => void
+  closeAuthModal: () => void
+  logout: () => Promise<void>
+}
 
-export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null)
+const AuthContext = createContext<AuthContextValue | null>(null)
+
+export const AuthProvider = ({ children }: { children: ReactNode }): ReactNode => {
+  const [currentUser, setCurrentUser] = useState<User | false | null>(null)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
 
   useEffect(() => {
@@ -24,9 +34,9 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         currentUser,
+        isAuthModalOpen,
         openAuthModal,
         closeAuthModal,
-        isAuthModalOpen,
         logout
       }}
     >
@@ -36,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = () => {
+export const useAuth = (): AuthContextValue => {
   const context = useContext(AuthContext)
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider')

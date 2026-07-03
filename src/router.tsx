@@ -39,7 +39,11 @@ export const router = createBrowserRouter(
           loader={poolDetailLoader}
           errorElement={<Error />}
         />
-        <Route index element={<Pools />} loader={poolsLoader} />
+        <Route
+          index
+          element={<Pools />}
+          loader={poolsLoader}
+        />
         <Route
           path="watchlist"
           element={<Watchlist />}

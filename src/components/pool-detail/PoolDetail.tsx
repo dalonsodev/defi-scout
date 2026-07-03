@@ -16,6 +16,7 @@ import { invertPriceRange } from './calculator/utils/invertPriceRange'
 import { processTickData } from './charts/utils/processTickData'
 import { OutlinedStarIcon, FilledStarIcon } from '../common/StarIcons'
 import type { ReactNode } from 'react'
+import type { FavoritesOutletContext } from '../layout/FavoritesLayout'
 import type { RawPoolHistory, FormattedPoolHistory, PoolTickResult, RawPool } from '../../types'
 
 interface PoolDetailLoaderData {
@@ -81,7 +82,7 @@ export function PoolDetail(): ReactNode {
     Number(pool.tick),
     Number(pool.feeTier)
   )
-  const { favoriteIds, toggleFavorite } = useOutletContext() as OutletContextData
+  const { favoriteIds, toggleFavorite } = useOutletContext() as FavoritesOutletContext
   const hasHydrated = useRef(false)
   const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
   const [rangeInputs, setRangeInputs] = useState({

@@ -1,21 +1,20 @@
 import { useLoaderData, useOutletContext } from 'react-router-dom'
-import { useMediaQuery } from 'react-responsive'
 import { usePoolFilters } from '../hooks/usePoolFilters'
 import { PoolsContent } from '../components/pools/PoolsContent'
+import type { ReactNode } from 'react'
+import type { FormattedPool } from '../types'
+import type { FavoritesOutletContext } from '../components/layout/FavoritesLayout'
 
 /**
  * UI: Market Pools Explorer
  * Entry point for the liquidity pools discovery interface
  * Connects router data with global filtering logic
- * @returns {JSX.Element}
  */
-export default function Pools() {
-  const { pools } = useLoaderData()
-  const isDesktop = useMediaQuery({ minWidth: 769 })
+export default function Pools(): ReactNode {
+  const { pools } = useLoaderData() as { pools: FormattedPool[] }
 
-  const { filters, updateFilter, togglePlatform, clearFilters } =
-    usePoolFilters()
-  const { favoriteIds, toggleFavorite } = useOutletContext()
+  const { filters, updateFilter, togglePlatform, clearFilters } = usePoolFilters()
+  const { favoriteIds, toggleFavorite } = useOutletContext() as FavoritesOutletContext
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -29,11 +28,10 @@ export default function Pools() {
       <PoolsContent
         pools={pools}
         filters={filters}
+        favoriteIds={favoriteIds}
         updateFilter={updateFilter}
         togglePlatform={togglePlatform}
         clearFilters={clearFilters}
-        isDesktop={isDesktop}
-        favoriteIds={favoriteIds}
         toggleFavorite={toggleFavorite}
       />
     </div>

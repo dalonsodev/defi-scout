@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
@@ -16,17 +17,15 @@ import { useAuth } from '../../context/AuthContext'
  *
  * Feature Enhancement: Consider active link styling with NavLink component
  * (aria-current="page" for screen readers).
- *
- * @returns {JSX.Element} Navigation bar with app branding and primary routes
  */
-export function Navbar() {
+export function Navbar(): ReactNode {
   const { currentUser, openAuthModal, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef(null)
+  const dropdownRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsOpen(false)
       }
     }

@@ -10,18 +10,18 @@ import {
   serverTimestamp
 } from 'firebase/firestore'
 
+interface UseFavoritesResult {
+  favoriteIds: Set<string>
+  toggleFavorite: (poolId: string) => Promise<void>
+  isLoggedIn: boolean
+}
+
 /**
  * Custom Hook: Fetch watchlist favorites from a user's collection (Firebase)
- *
- * @returns {{
- *  favoriteIds: Set<string>,
- *  toggleFavorite: (poolId: string) => Promise<void>,
- *  isLoggedIn: boolean
- * }}
  */
-export function useFavorites() {
+export function useFavorites(): UseFavoritesResult {
   const { currentUser, openAuthModal } = useAuth()
-  const [favoriteIds, setFavoriteIds] = useState(new Set())
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
 
   /**
    * Data Fetching: User-saved pools from Firebase.
@@ -37,7 +37,7 @@ export function useFavorites() {
     }
     let cancelled = false
 
-    const fetchFavorites = async () => {
+    const fetchFavorites = async (): Promise<void> => {
       const favoritesRef = collection(db, 'users', currentUser.uid, 'favorites')
       const querySnapshot = await getDocs(favoritesRef)
       const poolIds = new Set(querySnapshot.docs.map((doc) => doc.id))
@@ -61,10 +61,9 @@ export function useFavorites() {
    * Note: Optimistic update - local Set changes before Firestore confirms.
    * If the Firestore write fails, Set might be out of sync until next fetch.
    *
-   * @param {string} poolId - Pool contract address, used as the Firestore document ID
-   * @returns {Promise<void>}
+   * @param poolId - Pool contract address, used as the Firestore document ID
    */
-  const toggleFavorite = async (poolId) => {
+  const toggleFavorite = async (poolId: string): Promise<void> => {
     if (!currentUser) {
       openAuthModal()
       return

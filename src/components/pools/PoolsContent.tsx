@@ -217,7 +217,6 @@ export function PoolsContent({
             onSortingChange={handleSortingChange}
             favoriteIds={favoriteIds}
             toggleFavorite={toggleFavorite}
-            currentPage={pageIndex + 1}
           />
           <div className="py-4">
             <PaginationControls

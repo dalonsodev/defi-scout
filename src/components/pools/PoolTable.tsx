@@ -6,13 +6,13 @@ import {
   getFilteredRowModel,
   flexRender
 } from '@tanstack/react-table'
-import { baseColumns } from '../../data/tableColumns'
-import { SparklineCell } from './cells/SparklineCell'
 import { PlatformIcon } from '../common/PlatformIcon'
 import { OutlinedStarIcon, FilledStarIcon } from '../common/StarIcons'
+import { SparklineCell } from './cells/SparklineCell'
 import { useBreakpoint } from '../../hooks/useBreakpoint'
 import { useIntersection } from '../../hooks/useIntersection'
-import type { Dispatch, SetStateAction, ReactNode, MouseEvent } from 'react'
+import { baseColumns } from '../../data/tableColumns'
+import type { ReactNode, MouseEvent } from 'react'
 import type { SortingState, OnChangeFn } from '@tanstack/react-table'
 import type { FormattedPool } from '../../types'
 import type { SparklineCache } from '../../hooks/useSparklines'
@@ -20,12 +20,11 @@ import type { SparklineCache } from '../../hooks/useSparklines'
 interface PoolTableProps {
   pools: FormattedPool[]
   sparklineData: SparklineCache
-  onVisiblePoolsChange: Dispatch<SetStateAction<Set<string>>>
   sorting: SortingState
-  onSortingChange: OnChangeFn<SortingState>
   favoriteIds: Set<string>
+  onSortingChange: OnChangeFn<SortingState>
+  onVisiblePoolsChange: (visiblePoolIds: Set<string>) => void
   toggleFavorite: (poolId: string) => Promise<void>
-  currentPage: number
   from?: string
 }
 
