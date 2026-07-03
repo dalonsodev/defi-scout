@@ -1,0 +1,290 @@
+import { useState, useRef } from 'react'
+import type { ReactNode, FormEvent } from 'react'
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  sendPasswordResetEmail
+} from 'firebase/auth'
+import { useFocusTrap } from './hooks/useFocusTrap'
+import { auth } from '../../../firebase'
+import { useAuth } from '../../context/AuthContext'
+import type { FirebaseError } from 'firebase/app'
+
+const MODE = Object.freeze({
+  LOGIN: 'login',
+  SIGNUP: 'signup',
+  FORGOT: 'forgot'
+})
+
+const ERROR_MAP: Record<string, string> = {
+  'auth/user-not-found': 'No account found with this email',
+  'auth/wrong-password': 'Incorrect password',
+  'auth/email-already-in-use': 'An account with this email already exists',
+  'auth/weak-password': 'Password must be at least 6 characters',
+  'auth/invalid-email': 'Invalid email address',
+  'auth/invalid-credential': 'Email or password incorrect',
+  'auth/popup-closed-by-user': 'Sign-in cancelled',
+  'auth/too-many-requests': 'Too many attempts. Try again later'
+}
+
+const mapFirebaseError = (code: string) => ERROR_MAP[code] ?? 'Something went wrong. Please try again'
+
+const googleProvider = new GoogleAuthProvider()
+
+export function AuthModal(): ReactNode {
+  const modalRef = useRef<HTMLDivElement | null>(null)
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>(MODE.LOGIN)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [resetSent, setResetSent] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const { closeAuthModal, isAuthModalOpen } = useAuth()
+
+  const handleClose = (): void => {
+    setEmail('')
+    setPassword('')
+    setError(null)
+    setMode(MODE.LOGIN)
+    setResetSent(false)
+    closeAuthModal()
+  }
+
+  useFocusTrap(modalRef, isAuthModalOpen, handleClose)
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault()
+    setError(null)
+    setIsLoading(true)
+
+    try {
+      if (mode === MODE.LOGIN) {
+        await signInWithEmailAndPassword(auth, email, password)
+      } else if (mode === MODE.SIGNUP) {
+        await createUserWithEmailAndPassword(auth, email, password)
+      } else {
+        await sendPasswordResetEmail(auth, email)
+        setResetSent(true)
+        return
+      }
+      handleClose()
+    } catch (err) {
+      setError(mapFirebaseError((err as FirebaseError).code))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleGoogleSignIn = async (): Promise<void> => {
+    setError(null)
+    setIsLoading(true)
+
+    try {
+      await signInWithPopup(auth, googleProvider)
+      handleClose()
+    } catch (err) {
+      setError(mapFirebaseError((err as FirebaseError).code))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const ghostLinkClasses = `
+    block mx-auto text-sm text-base-content/60
+    hover:text-base-content/80 transition-colors cursor-pointer
+  `
+
+  return (
+    <dialog
+      className={`modal ${isAuthModalOpen ? 'modal-open' : ''}`}
+      aria-modal="true"
+      aria-labelledby="auth-modal"
+    >
+      <div
+        ref={modalRef}
+        className="modal-box glass-modal max-w-xl rounded-2xl"
+      >
+        <button
+          onClick={handleClose}
+          className="btn btn-sm btn-circle btn-glass absolute top-2 right-2 text-sm"
+          aria-label="Close modal"
+        >
+          ✕
+        </button>
+
+        <h3 id="auth-modal" className="p-4 text-center text-2xl font-bold">
+          {mode === MODE.LOGIN
+            ? 'Welcome'
+            : mode === MODE.SIGNUP
+              ? 'Create Account'
+              : 'Reset Password'}
+        </h3>
+
+        <form onSubmit={handleSubmit}>
+          {resetSent ? (
+            <>
+              <div role="alert" className="alert alert-success mt-4 text-sm font-semibold">
+                Check your inbox
+              </div>
+              <button
+                type="button"
+                className="btn btn-ghost text-base-content/60 mx-auto mt-4 block text-sm"
+                onClick={() => {
+                  setMode(MODE.LOGIN)
+                  setResetSent(false)
+                }}
+              >
+                Back to log in
+              </button>
+            </>
+          ) : (
+            <>
+              <label
+                htmlFor="email"
+                className="label mb-2 flex flex-col items-start"
+              >
+                <span className="label-text mt-2">Email address</span>
+              </label>
+
+              <input
+                id="email"
+                type="email"
+                className="input glass-input mt-1 w-full rounded-xl"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+              />
+
+              {(mode === MODE.LOGIN || mode === MODE.SIGNUP) && (
+                <>
+                  <label
+                    htmlFor="password"
+                    className="label mb-2 flex flex-col items-end"
+                  >
+                    <div className="mt-4 flex w-full justify-between">
+                      <span className="label-text mt-2">Password</span>
+                      {mode === MODE.LOGIN && (
+                        <button
+                          type="button"
+                          className="link-primary -mb-2 cursor-pointer"
+                          onClick={() => setMode(MODE.FORGOT)}
+                        >
+                          Forgot password?
+                        </button>
+                      )}
+                    </div>
+                  </label>
+
+                  <input
+                    id="password"
+                    type="password"
+                    className="input glass-input mt-1 w-full rounded-xl"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete={
+                      mode === MODE.LOGIN ? 'current-password' : 'new-password'
+                    }
+                  />
+                </>
+              )}
+
+              {error && (
+                <div role="alert" className="alert alert-error mt-4 text-sm font-semibold">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="btn btn-primary mt-4 w-full rounded-xl"
+                disabled={isLoading}
+              >
+                {isLoading && (
+                  <span className="loading loading-spinner loading-sm" />
+                )}
+                {mode === MODE.LOGIN
+                  ? 'Log In'
+                  : mode === MODE.FORGOT
+                    ? 'Send reset email'
+                    : 'Create Account'}
+              </button>
+
+              {mode === MODE.FORGOT ? (
+                <button
+                  type="button"
+                  className={`${ghostLinkClasses} mt-6`}
+                  onClick={() => {
+                    setMode(MODE.LOGIN)
+                    setResetSent(false)
+                  }}
+                >
+                  Back to log in
+                </button>
+              ) : (
+                <>
+                  <div className="divider text-base-content my-8">OR</div>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-glass mb-2 w-full rounded-xl"
+                    onClick={handleGoogleSignIn}
+                    disabled={isLoading}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 48 48"
+                      className="mr-2 h-5 w-5"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="#FFC107"
+                        d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
+                      />
+                      <path
+                        fill="#FF3D00"
+                        d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
+                      />
+                      <path
+                        fill="#4CAF50"
+                        d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
+                      />
+                      <path
+                        fill="#1976D2"
+                        d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C40.483,35.58,44,30.222,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+                      />
+                    </svg>
+                    Continue with Google
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`${ghostLinkClasses} my-6`}
+                    onClick={() => {
+                      setMode(mode === MODE.LOGIN ? MODE.SIGNUP : MODE.LOGIN)
+                      setError(null)
+                    }}
+                  >
+                    {mode === MODE.LOGIN
+                      ? "Don't have an account? Sign up ↗"
+                      : 'Already have an account? Log in ↗'}
+                  </button>
+                </>
+              )}
+            </>
+          )}
+        </form>
+      </div>
+      <form
+        method="dialog"
+        onClick={handleClose}
+        className="modal-backdrop"
+        aria-hidden="true"
+      >
+        <button tabIndex={-1}>close</button>
+      </form>
+    </dialog>
+  )
+}
