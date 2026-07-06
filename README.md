@@ -2,6 +2,13 @@
 
 **Explore and analyze Uniswap V3 liquidity pools.** Browse the top 1,000 pools by TVL, filter by multiple criteria, dig into historical charts, and simulate LP strategies before committing capital.
 
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)
+![Vitest](https://img.shields.io/badge/Tested%20with-Vitest-6E9F18?logo=vitest&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?logo=firebase&logoColor=black)
+
 ![demo](./public/demo.gif)
 
 ---
@@ -51,6 +58,7 @@ Built on top of the pool detail data:
 
 | Technology             | Purpose                                          |
 | ---------------------- | ------------------------------------------------ |
+| **TypeScript**         | Full codebase type safety                        |
 | **Vite + React**       | Build tool + UI framework                        |
 | **React Router 6.4+**  | Routing with data loaders                        |
 | **TanStack Table v8**  | Headless table with manual sorting               |
@@ -58,6 +66,35 @@ Built on top of the pool detail data:
 | **Tailwind + DaisyUI** | Utility-first CSS + component primitives         |
 | **TheGraph**           | GraphQL subgraphs for Uniswap V3 on-chain data   |
 | **Firebase**           | Google Auth + Firestore watchlist persistence    |
+| **Vitest**             | Unit tests for the calculation pipeline          |
+
+---
+
+## 🚀 Getting Started
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/dalonsodev/defi-scout.git
+cd defi-scout
+
+# 2. Install dependencies
+npm install
+
+# 3. Set up environment variables
+cp .env.example .env
+# Add your TheGraph API key and Firebase config to .env
+
+# 4. Start the dev server
+npm run dev
+```
+
+Other useful commands:
+
+```bash
+npm test          # Run unit tests (Vitest)
+npm run typecheck # TypeScript type check (no emit)
+npm run build     # Production build
+```
 
 ---
 
@@ -79,15 +116,15 @@ src/
 │           └── utils/       # Math helpers (IL, ticks, token ratios)
 ├── constants/               # Shared constants (chartColors)
 ├── context/                 # AuthContext (Firebase session)
-├── data/                    # platformIcons.js (auto-generated)
+├── data/                    # platformIcons (auto-generated)
 ├── hooks/                   # Shared custom hooks (see hooks/README.md)
 ├── loaders/                 # React Router data loaders
 │   └── utils/               # formatPoolData, formatPoolHistory, formatHourlyData
 ├── pages/                   # Route-level components (Pools, Watchlist)
 ├── services/                # theGraphClient (all GraphQL queries)
 ├── utils/                   # Formatters, URL state helpers, misc utilities
-├── router.jsx
-└── main.jsx
+├── router.tsx
+└── main.tsx
 ```
 
 ---
@@ -118,6 +155,8 @@ IntersectionObserver tracks which rows are in the viewport. When new pools becom
 
 The calculator doesn't call any API at runtime. It replays the last 168 hourly snapshots (fetched once on page load) against the user's price range, computing what share of pool liquidity the position would have represented each hour and scaling the fee output accordingly. IL projection uses the standard Uniswap V2/V3 formula and assumes fees accrue linearly — accurate enough for ±20% price moves over typical rebalancing windows.
 
+> See [`src/docs/FEE_CALCULATION.md`](./src/docs/FEE_CALCULATION.md) for the full mathematical breakdown of the liquidity-based fee simulation.
+
 ### Hex colors in charts
 
 SVG `fill` and `stroke` attributes don't resolve CSS custom properties like `hsl(var(--primary))`. Colors are defined as hex constants so charts stay consistent with the DaisyUI theme without runtime resolution issues.
@@ -126,5 +165,7 @@ SVG `fill` and `stroke` attributes don't resolve CSS custom properties like `hsl
 
 ## 📬 Contact
 
-Built by **David Alonso** | [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)
+Built by **David Alonso**
+[GitHub](https://github.com/dalonsodev) · [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)
+
 Live demo: _coming soon_

@@ -1,7 +1,6 @@
 # Uniswap V3 Liquidity-Based Fee Calculation
 
-**Branch:** `feat/range-calculator`  
-**Purpose:** Simulate concentrated liquidity positions with accurate fee accumulation
+Simulates concentrated liquidity positions with accurate fee accumulation by computing fee share from **liquidity contribution** rather than TVL ratio.
 
 ## Overview
 
@@ -17,7 +16,7 @@ In Uniswap V3, concentrated positions earn more fees because they provide **high
 
 We use Uniswap V3's liquidity formulas adapted for off-chain simulation:
 
-```javascript
+```typescript
 // From token0 contribution
 L0 = amount0 * (√price * √maxPrice) / (√maxPrice - √price)
 
@@ -32,7 +31,7 @@ L_user = Math.min(L0, L1)
 
 ### Fee Share Calculation
 
-```javascript
+```typescript
 feeShare = L_user / (L_user + L_pool)
 ```
 
@@ -43,7 +42,7 @@ Where:
 
 ### Impermanent Loss Calculation
 
-```javascript
+```typescript
 // Classic AMM formula
 priceRatio = finalPrice / initialPrice
 IL_decimal = (2 × √priceRatio) / (1 + priceRatio) - 1
@@ -55,13 +54,13 @@ IL_decimal = (2 × √priceRatio) / (1 + priceRatio) - 1
 - Future projections: Compare current vs user-input future price
 - Strategy comparison: HODL value vs LP value (capital × (1 + IL))
 
-**Implementation:** `src/utils/calculateIL.js`
+**Implementation:** `src/components/pool-detail/calculator/utils/calculateIL.ts`
 
 ### Universal Normalization
 
 On-chain liquidity values are scaled by token decimals. To compare `L_user` (off-chain) with `L_pool` (on-chain), we normalize using the **geometric mean of token decimals**:
 
-```javascript
+```typescript
 exponent = (decimals0 + decimals1) / 2
 L_pool_normalized = (L_pool_onchain / 10) ^ exponent
 ```
@@ -76,7 +75,7 @@ L_pool_normalized = (L_pool_onchain / 10) ^ exponent
 
 We use `BigInt` for on-chain liquidity values to avoid IEEE 754 precision loss:
 
-```javascript
+```typescript
 const L_pool_bigint = BigInt(hour.liquidity) // Preserves all digits
 const L_pool_normalized = Number(L_pool_bigint) / Math.pow(10, exponent)
 ```
@@ -88,17 +87,20 @@ const L_pool_normalized = Number(L_pool_bigint) / Math.pow(10, exponent)
 ### File Structure
 
 ```
-src/utils/
-├── calculateLiquidity.js          # L_user calculation
-├── calculateIL.js                 # Impermanent loss formula
-└── simulateRangePerformance.js    # Fee accumulation loop
+src/components/pool-detail/calculator/
+├── utils/
+│   ├── calculateLiquidity.ts       # L_user calculation
+│   ├── calculateIL.ts              # Impermanent loss formula
+│   └── simulateRangePerformance.ts # Fee accumulation loop
+└── pipeline/
+    └── calculateFeesWithQuality.ts # Orchestration + data quality checks
 ```
 
 ### Integration Points
 
-**Liquidity calculation (Stage 4.6):**
+**Liquidity calculation:**
 
-```javascript
+```typescript
 const L_user = calculateLiquidity(
   amount0,
   amount1,
@@ -108,9 +110,9 @@ const L_user = calculateLiquidity(
 )
 ```
 
-**Fee accumulation (Stage 5.5):**
+**Fee accumulation:**
 
-```javascript
+```typescript
 const L_pool_bigint = BigInt(hour.liquidity)
 const L_pool_normalized =
   Number(L_pool_bigint) / Math.pow(10, liquidityExponent)
@@ -128,7 +130,7 @@ totalFeesUSD += hourFeesUSD * feeShare
 
 Compare fee share with TVL-based baseline:
 
-```javascript
+```typescript
 expectedFeeShare = capitalUSD / poolTVL // Baseline (full range)
 actualFeeShare = L_user / (L_user + L_pool) // Should be 3-30x higher for concentrated ranges
 ```
@@ -140,7 +142,7 @@ actualFeeShare = L_user / (L_user + L_pool) // Should be 3-30x higher for concen
 - **±10% range:** 5-15x higher
 - **±5% range:** 10-30x higher
 
-## Technical Debt & Limitations
+## Known Limitations
 
 - **Current tick check:** We use `price >= minPrice && price <= maxPrice` instead of tick-based range checking (acceptable for off-chain simulation)
 - **Assumes static composition:** Token amounts don't change during simulation (IL affects value, not quantities)
