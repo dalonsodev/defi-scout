@@ -190,9 +190,7 @@ export function CalculatorInputs({
                 >
                   −
                 </button>
-                <label className="text-base-content/60 text-xs">
-                  Min Price
-                </label>
+                <label className="text-base-content/60 text-xs">Min Price</label>
                 <button
                   type="button"
                   onClick={() => onIncrement('minPrice', 1)}
@@ -215,9 +213,7 @@ export function CalculatorInputs({
               step={getPriceStep(inputs.minPrice)}
             />
 
-            <p className="text-base-content/60 mt-2 text-center text-xs">
-              {priceLabel}
-            </p>
+            <p className="text-base-content/60 mt-2 text-center text-xs">{priceLabel}</p>
           </div>
 
           <div className="form-control glass-surface rounded-xl p-3">
@@ -232,9 +228,7 @@ export function CalculatorInputs({
                 >
                   −
                 </button>
-                <label className="text-base-content/60 text-xs">
-                  Max Price
-                </label>
+                <label className="text-base-content/60 text-xs">Max Price</label>
                 <button
                   type="button"
                   onClick={() => onIncrement('maxPrice', 1)}
@@ -257,9 +251,7 @@ export function CalculatorInputs({
               step={getPriceStep(inputs.maxPrice)}
             />
 
-            <p className="text-base-content/60 mt-2 text-center text-xs">
-              {priceLabel}
-            </p>
+            <p className="text-base-content/60 mt-2 text-center text-xs">{priceLabel}</p>
           </div>
         </div>
 
@@ -288,9 +280,7 @@ export function CalculatorInputs({
                     className="tooltip tooltip-top before:max-w-60 before:whitespace-normal"
                     data-tip="It first populates with the most recent price for the pool. You can adjust your desired entry price for the range calculator."
                   >
-                    <div className="text-base-content max-w-[120px] truncate font-medium">
-                      ?
-                    </div>
+                    <div className="text-base-content max-w-[120px] truncate font-medium">?</div>
                   </div>
                 </button>
               </div>
@@ -309,9 +299,7 @@ export function CalculatorInputs({
           <input
             type="number"
             id="assumed-entry-price"
-            value={
-              inputs.fullRange ? '' : formatPriceInput(inputs.assumedPrice)
-            }
+            value={inputs.fullRange ? '' : formatPriceInput(inputs.assumedPrice)}
             onChange={(e) => onChange('assumedPrice', Number(e.target.value))}
             disabled={inputs.fullRange}
             placeholder={inputs.fullRange ? '50/50 split' : ''}
@@ -319,9 +307,7 @@ export function CalculatorInputs({
             step={getPriceStep(inputs.assumedPrice)}
           />
 
-          <p className="text-base-content/60 mt-2 text-center text-xs">
-            {priceLabel}
-          </p>
+          <p className="text-base-content/60 mt-2 text-center text-xs">{priceLabel}</p>
         </div>
       </div>
 

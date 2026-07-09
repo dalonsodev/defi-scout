@@ -48,9 +48,8 @@ export function PriceChart({
   const dataKey = selectedTokenIdx === 0 ? 'token0Price' : 'token1Price'
   const selectedSymbol = tokenSymbols[selectedTokenIdx]
   const [baseToken, quoteToken] = tokenSymbols
-  const poolPriceLabel = selectedTokenIdx === 0
-    ? `${baseToken} / ${quoteToken}`
-    : `${quoteToken} / ${baseToken}`
+  const poolPriceLabel =
+    selectedTokenIdx === 0 ? `${baseToken} / ${quoteToken}` : `${quoteToken} / ${baseToken}`
 
   const labelIntervalHours = useMemo(() => {
     if (!hourlyData?.length) return 7
@@ -77,9 +76,7 @@ export function PriceChart({
   const yDomain = useMemo(() => {
     if (!hourlyData?.length) return ['auto', 'auto']
 
-    const prices = hourlyData
-      .map((h) => h[dataKey])
-      .filter((x): x is number => x !== null)
+    const prices = hourlyData.map((h) => h[dataKey]).filter((x): x is number => x !== null)
 
     const min = Math.min(...prices)
     const max = Math.max(...prices)
@@ -94,9 +91,7 @@ export function PriceChart({
 
   return (
     <div className="card glass-surface rounded-2xl p-4">
-      <h3 className="mb-4 text-lg font-semibold">
-        {poolPriceLabel + ' Pool Price'}
-      </h3>
+      <h3 className="mb-4 text-lg font-semibold">{poolPriceLabel + ' Pool Price'}</h3>
 
       <ResponsiveContainer
         width="100%"
@@ -131,9 +126,7 @@ export function PriceChart({
 
           {currentPrice > 0 && (
             <ReferenceLine
-              y={
-                !rangeInputs.fullRange ? rangeInputs.assumedPrice : currentPrice
-              }
+              y={!rangeInputs.fullRange ? rangeInputs.assumedPrice : currentPrice}
               stroke={CHART_COLORS.primary}
               strokeDasharray="5 5"
             />

@@ -3,7 +3,13 @@ import { LiquidityChart } from './LiquidityChart'
 import { PriceChart } from './PriceChart'
 import { TVLVolumeChart } from './TVLVolumeChart'
 import { ChartSkeleton } from './ChartSkeleton'
-import type { FormattedHourlyData, RawPool, PoolTickResult, UserInputs, FormattedPoolHistory } from '../../../types'
+import type {
+  FormattedHourlyData,
+  RawPool,
+  PoolTickResult,
+  UserInputs,
+  FormattedPoolHistory
+} from '../../../types'
 
 interface PoolChartsProps {
   pool: RawPool
@@ -54,29 +60,31 @@ export function PoolCharts({
 
   return (
     <div className="grid grid-cols-1 gap-4">
-      {tickIsLoading
-        ? <ChartSkeleton />
-        : <LiquidityChart
-            selectedTokenIdx={selectedTokenIdx}
-            tokenSymbols={tokenSymbols}
-            token0Decimals={Number(pool.token0.decimals)}
-            token1Decimals={Number(pool.token1.decimals)}
-            rangeInputs={rangeInputs}
-            currentPrice={currentPrice}
-            tickData={tickData}
-            tickError={tickError}
-          />
-      }
-      {hourlyIsLoading
-        ? <ChartSkeleton/>
-        : <PriceChart
-            hourlyData={hourlyData}
-            selectedTokenIdx={selectedTokenIdx}
-            tokenSymbols={tokenSymbols}
-            rangeInputs={rangeInputs}
-            currentPrice={currentPrice}
-          />
-      }
+      {tickIsLoading ? (
+        <ChartSkeleton />
+      ) : (
+        <LiquidityChart
+          selectedTokenIdx={selectedTokenIdx}
+          tokenSymbols={tokenSymbols}
+          token0Decimals={Number(pool.token0.decimals)}
+          token1Decimals={Number(pool.token1.decimals)}
+          rangeInputs={rangeInputs}
+          currentPrice={currentPrice}
+          tickData={tickData}
+          tickError={tickError}
+        />
+      )}
+      {hourlyIsLoading ? (
+        <ChartSkeleton />
+      ) : (
+        <PriceChart
+          hourlyData={hourlyData}
+          selectedTokenIdx={selectedTokenIdx}
+          tokenSymbols={tokenSymbols}
+          rangeInputs={rangeInputs}
+          currentPrice={currentPrice}
+        />
+      )}
       <TVLVolumeChart history={history} />
     </div>
   )

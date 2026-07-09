@@ -28,13 +28,10 @@ interface MiniSparklineProps {
  * <MiniSparkline data={[12.5, 13.1, 12.8, 14.2, 13.9, 14.5, 15.1 ...]} width={80} />
  */
 export function MiniSparkline({ data, width = 80, height = 20 }: MiniSparklineProps): ReactNode {
-  if (!data)
-    return <div className="bg-base-300 h-10 w-20 animate-pulse rounded" />
+  if (!data) return <div className="bg-base-300 h-10 w-20 animate-pulse rounded" />
 
   if (data.length < 2)
-    return (
-      <span className="text-base-content/50 text-xs font-medium">No data</span>
-    )
+    return <span className="text-base-content/50 text-xs font-medium">No data</span>
 
   const values = data
   const min = Math.min(...data)

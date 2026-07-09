@@ -45,8 +45,7 @@ export function CurrentPriceCard({
               {selectedTokenIdx === 0 ? pool.token0.symbol : pool.token1.symbol}
             </span>
             <span className="text-base-content/60 text-xs">
-              per{' '}
-              {selectedTokenIdx === 0 ? pool.token1.symbol : pool.token0.symbol}
+              per {selectedTokenIdx === 0 ? pool.token1.symbol : pool.token0.symbol}
             </span>
           </div>
         </div>

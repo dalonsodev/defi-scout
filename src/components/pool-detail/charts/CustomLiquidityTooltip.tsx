@@ -47,9 +47,7 @@ export function CustomLiquidityTooltip({
           style={{ backgroundColor: entry.color }}
         />
         <div>
-          <span className="text-sm font-semibold">
-            {formatTickPrice(price)}
-          </span>
+          <span className="text-sm font-semibold">{formatTickPrice(price)}</span>
           <span className="text-base-content/70 ml-1 text-xs">{label}</span>
         </div>
       </div>

@@ -1,4 +1,3 @@
-
 interface CalculatePresetRangeResult {
   minPrice: string
   maxPrice: string
@@ -8,7 +7,7 @@ interface CalculatePresetRangeResult {
  * Predefined Volatility Brackets:
  * These multipliers represent the "width" of the concentrated liquidity position.
  * Chosen to match Uniswap's default options in their official interface.
-*/
+ */
 const MULTIPLIERS = {
   '±10%': { min: 0.9, max: 1.1 }, // Low-risk: Stablecoin pairs
   '±15%': { min: 0.85, max: 1.15 }, // Medium: Major pairs (ETH/USDC)
@@ -40,7 +39,6 @@ export function calculatePresetRange(
   assumedPrice: number,
   presetType: '±10%' | '±15%' | '±20%'
 ): CalculatePresetRangeResult {
-
   const { min, max } = MULTIPLIERS[presetType]
 
   /**

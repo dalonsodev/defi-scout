@@ -57,10 +57,7 @@ export function PlatformIcon({ platform, size = 'md' }: PlatformIconProps): Reac
   if (!iconUrl || hasError) {
     return (
       <div
-        className={`
-          ${SIZE_CLASSES[size]} bg-base-300 flex items-center
-          justify-center rounded-full text-xs font-semibold
-        `}
+        className={` ${SIZE_CLASSES[size]} bg-base-300 flex items-center justify-center rounded-full text-xs font-semibold`}
       >
         {getInitials(platform)}
       </div>

@@ -11,7 +11,7 @@ interface PoolFiltersProps {
   updateFilter: (key: string, value: unknown) => void
   togglePlatform: (platform: string) => void
   clearFilters: () => void
-  availablePlatforms: { value: string, display: string }[]
+  availablePlatforms: { value: string; display: string }[]
 }
 
 /**
@@ -45,8 +45,10 @@ export function PoolFilters({
 }: PoolFiltersProps): ReactNode {
   const [isOpen, setIsOpen] = useState(false)
 
-  const { localFilters, updateLocalFilter, resetLocalFilters } =
-    useDebouncedFilterInputs(filters, updateFilter)
+  const { localFilters, updateLocalFilter, resetLocalFilters } = useDebouncedFilterInputs(
+    filters,
+    updateFilter
+  )
 
   // Coordinated reset: Clear local state first (sets guard flag), then URL
   // Order matters: prevents debounced values from restoring after URL clear
@@ -67,7 +69,10 @@ export function PoolFilters({
       {/* Mobile row: search + toggle */}
       <div className="relative flex flex-1 gap-2">
         <span className="text-muted pointer-events-none absolute top-1/2 left-3 -translate-y-1/2">
-          <svg className="h-4 w-4" viewBox="0 0 20 20">
+          <svg
+            className="h-4 w-4"
+            viewBox="0 0 20 20"
+          >
             <path
               fill="currentColor"
               d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9z"
@@ -86,9 +91,7 @@ export function PoolFilters({
           className="btn btn-sm btn-outline btn-glass rounded-xl md:hidden"
         >
           Filters
-          <span
-            className={`${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}
-          >
+          <span className={`${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}>
             {activeCount}
           </span>
         </button>
@@ -96,21 +99,13 @@ export function PoolFilters({
 
       {/* Backdrop */}
       <div
-        className={`
-          fixed inset-0 z-40 bg-black/50
-          transition-opacity duration-300 md:hidden
-          ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}
-        `}
+        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 md:hidden ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'} `}
         onClick={() => setIsOpen(false)}
       />
 
       {/* Bottom sheet */}
       <div
-        className={`
-          glass-modal fixed right-0 bottom-0 left-0 z-50 rounded-t-4xl
-          transition-transform duration-300 ease-out md:hidden
-          ${isOpen ? 'translate-y-0' : 'translate-y-[140%]'}
-        `}
+        className={`glass-modal fixed right-0 bottom-0 left-0 z-50 rounded-t-4xl transition-transform duration-300 ease-out md:hidden ${isOpen ? 'translate-y-0' : 'translate-y-[140%]'} `}
       >
         <div className="p-4">
           <div className="bg-base-300 mx-auto mb-4 h-1 w-12 rounded-full" />
@@ -183,9 +178,7 @@ export function PoolFilters({
         className="btn btn-sm btn-glass hidden rounded-xl md:block"
       >
         Clear filters
-        <span
-          className={`ml-2 ${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}
-        >
+        <span className={`ml-2 ${activeCount < 1 ? 'hidden' : 'badge badge-xs badge-primary'}`}>
           {activeCount}
         </span>
       </button>

@@ -1,6 +1,7 @@
 import { useRef, useEffect, RefObject } from 'react'
 
-const FOCUSABLE_SELECTOR = 'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 /**
  * Traps keyboard focus within a modal. Handles Tab/Shift+Tab cycling.
@@ -10,7 +11,11 @@ const FOCUSABLE_SELECTOR = 'button:not([disabled]), [href], input:not([disabled]
  * @param isOpen - Whether the focus trap is currently active
  * @param onClose - Callback function executed to close the modal (e.g. when pressing 'Escape')
  */
-export function useFocusTrap(modalRef: RefObject<HTMLElement | null>, isOpen: boolean, onClose: () => void): void {
+export function useFocusTrap(
+  modalRef: RefObject<HTMLElement | null>,
+  isOpen: boolean,
+  onClose: () => void
+): void {
   const savedFocusRef = useRef<Element | null>(null)
   const onCloseRef = useRef(onClose)
 
@@ -22,7 +27,9 @@ export function useFocusTrap(modalRef: RefObject<HTMLElement | null>, isOpen: bo
     if (isOpen) {
       savedFocusRef.current = document.activeElement
 
-      const focusableElements = [...(modalRef.current as HTMLElement).querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)]
+      const focusableElements = [
+        ...(modalRef.current as HTMLElement).querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+      ]
       const firstElement = focusableElements[0]
       const lastElement = focusableElements[focusableElements.length - 1]
 
@@ -50,10 +57,9 @@ export function useFocusTrap(modalRef: RefObject<HTMLElement | null>, isOpen: bo
       document.addEventListener('keydown', handleKeyDown)
 
       return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-        (savedFocusRef.current as HTMLElement)?.focus()
+        document.removeEventListener('keydown', handleKeyDown)
+        ;(savedFocusRef.current as HTMLElement)?.focus()
       }
     }
   }, [isOpen, modalRef])
 }
-

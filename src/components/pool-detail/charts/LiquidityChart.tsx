@@ -1,13 +1,5 @@
 import { useMemo } from 'react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceLine
-} from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { CustomLiquidityTooltip } from './CustomLiquidityTooltip'
 import { processTickData } from './utils/processTickData'
 import { CHART_COLORS } from '../../../constants/chartColors'
@@ -51,12 +43,7 @@ export function LiquidityChart({
   tickError
 }: LiquidityChartProps): ReactNode | null {
   const processedData = useMemo(() => {
-    return processTickData(
-      tickData,
-      selectedTokenIdx,
-      token0Decimals,
-      token1Decimals
-    )
+    return processTickData(tickData, selectedTokenIdx, token0Decimals, token1Decimals)
   }, [tickData, selectedTokenIdx, token0Decimals, token1Decimals])
 
   const yDomain = useMemo(() => {
@@ -73,9 +60,7 @@ export function LiquidityChart({
 
     const nearest = (target: number) => {
       return processedData.reduce((best, item) =>
-        Math.abs(item.price - target) < Math.abs(best.price - target)
-          ? item
-          : best
+        Math.abs(item.price - target) < Math.abs(best.price - target) ? item : best
       ).price
     }
 
@@ -100,8 +85,15 @@ export function LiquidityChart({
           data={processedData}
           margin={{ top: 4, right: 0, bottom: 0, left: 0 }}
         >
-          <XAxis dataKey="price" type="category" hide />
-          <YAxis hide domain={yDomain} />
+          <XAxis
+            dataKey="price"
+            type="category"
+            hide
+          />
+          <YAxis
+            hide
+            domain={yDomain}
+          />
 
           {currentPrice > 0 && (
             <ReferenceLine

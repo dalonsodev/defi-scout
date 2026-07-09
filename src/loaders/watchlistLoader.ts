@@ -29,9 +29,7 @@ export async function watchlistLoader(): Promise<WatchlistLoaderSuccess | Respon
   if (auth.currentUser === null) return redirect('/')
 
   // Phase 1: Firestore -> pool IDs
-  const snapshot = await getDocs(
-    collection(db, 'users', auth.currentUser.uid, 'favorites')
-  )
+  const snapshot = await getDocs(collection(db, 'users', auth.currentUser.uid, 'favorites'))
   const poolIds = snapshot.docs.map((doc) => doc.id)
   if (!poolIds.length) return { pools: [] }
 

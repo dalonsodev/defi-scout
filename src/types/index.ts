@@ -20,7 +20,7 @@ export interface RawPoolTicks {
 }
 
 export interface BasePool {
-  id: string,
+  id: string
   feeTier: string
   totalValueLockedUSD: string
   totalValueLockedToken0: string

@@ -1,4 +1,4 @@
-import { FormattedPool, ParamsState } from "../../../types"
+import { FormattedPool, ParamsState } from '../../../types'
 
 type ActiveFilters = Pick<ParamsState, 'search' | 'platforms' | 'tvlUsd' | 'volumeUsd1d'>
 
@@ -45,10 +45,7 @@ export function filterPools(pools: FormattedPool[], filters: ActiveFilters): For
 
   return pools.filter((pool) => {
     // 1. Text Search: Case-insensitive substring match on pool name
-    if (
-      filters.search &&
-      !normalizeSearch(pool.name).includes(normalizeSearch(filters.search))
-    ) {
+    if (filters.search && !normalizeSearch(pool.name).includes(normalizeSearch(filters.search))) {
       return false
     }
 

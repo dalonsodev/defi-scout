@@ -1,4 +1,4 @@
-import type { RawPoolHourData } from "../../../../types"
+import type { RawPoolHourData } from '../../../../types'
 
 interface AssesDataQualityResult {
   quality: string
@@ -38,9 +38,7 @@ export function assessDataQuality(hourlyData: RawPoolHourData[]): AssesDataQuali
   if (spanHours < 168) {
     return {
       quality: 'INSUFFICIENT',
-      warnings: [
-        'Sample size too small (< 7 days). Projections are speculative.'
-      ]
+      warnings: ['Sample size too small (< 7 days). Projections are speculative.']
     }
   }
 
@@ -48,9 +46,7 @@ export function assessDataQuality(hourlyData: RawPoolHourData[]): AssesDataQuali
   if (spanHours < 336) {
     return {
       quality: 'LIMITED',
-      warnings: [
-        'Less than 14 days of data. Weekly volatility may skew results'
-      ]
+      warnings: ['Less than 14 days of data. Weekly volatility may skew results']
     }
   }
 

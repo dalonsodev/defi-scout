@@ -4,14 +4,14 @@ import { LoaderFunctionArgs } from 'react-router-dom'
 import type { FormattedPoolHistory, RawPoolHistory } from '../types'
 
 interface LoaderResultSuccess {
-  pool: RawPoolHistory,
-  history: FormattedPoolHistory[],
+  pool: RawPoolHistory
+  history: FormattedPoolHistory[]
   ethPriceUSD: number
 }
 
 interface LoaderResultFailure {
   poolId: string
-  history: [],
+  history: []
   error: string
 }
 
@@ -38,7 +38,9 @@ type PoolDetailLoaderResult = LoaderResultSuccess | LoaderResultFailure
  * @throws 500 error if GraphQL query fails (network/API key issues)
  */
 
-export async function poolDetailLoader({ params }: LoaderFunctionArgs): Promise<PoolDetailLoaderResult> {
+export async function poolDetailLoader({
+  params
+}: LoaderFunctionArgs): Promise<PoolDetailLoaderResult> {
   const { poolId } = params
 
   if (!poolId) throw new Response('Pool ID missing', { status: 400 })
@@ -47,10 +49,7 @@ export async function poolDetailLoader({ params }: LoaderFunctionArgs): Promise<
   const thirtyDaysAgo = Math.floor(Date.now() / 1000) - 30 * 86400 // In seconds, not ms
 
   try {
-    const { pool, history, ethPriceUSD } = await fetchPoolHistory(
-      poolId,
-      thirtyDaysAgo
-    )
+    const { pool, history, ethPriceUSD } = await fetchPoolHistory(poolId, thirtyDaysAgo)
 
     // Edge Case: Pool exists but has no daily snapshots (new pool, or indexing lag)
     if (!history || history.length === 0) {

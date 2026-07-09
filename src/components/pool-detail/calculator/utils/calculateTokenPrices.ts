@@ -1,4 +1,4 @@
-import type { RawToken } from "../../../../types"
+import type { RawToken } from '../../../../types'
 
 const STABLES = ['USDT', 'USDC', 'DAI', 'USDe', 'PYUSD', 'FDUSD', 'USDS']
 

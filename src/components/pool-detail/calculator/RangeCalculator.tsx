@@ -62,16 +62,9 @@ export function RangeCalculator({
   // Token Price Normalization: Convert pool prices to USD for display
   const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
     const currentPrice =
-      parseFloat(pool?.token0Price) ||
-      parseFloat(hourlyData?.[0]?.token0Price) ||
-      0
+      parseFloat(pool?.token0Price) || parseFloat(hourlyData?.[0]?.token0Price) || 0
 
-    return calculateTokenPrices(
-      pool.token0,
-      pool.token1,
-      ethPriceUSD,
-      currentPrice
-    )
+    return calculateTokenPrices(pool.token0, pool.token1, ethPriceUSD, currentPrice)
   }, [hourlyData, pool, ethPriceUSD])
 
   const priceLabel = useMemo(() => {
@@ -106,10 +99,7 @@ export function RangeCalculator({
   const handlePresetClick = useCallback(
     (presetType: Preset) => {
       const assumedPrice = displayPrice
-      const { minPrice, maxPrice } = calculatePresetRange(
-        assumedPrice,
-        presetType
-      )
+      const { minPrice, maxPrice } = calculatePresetRange(assumedPrice, presetType)
       onInputsChange((prev: UserInputs) => ({ ...prev, minPrice, maxPrice }))
     },
     [displayPrice, onInputsChange]

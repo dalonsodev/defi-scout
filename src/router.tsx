@@ -1,8 +1,4 @@
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route
-} from 'react-router-dom'
+import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom'
 import Pools from './pages/Pools'
 import Watchlist from './pages/Watchlist'
 import { Layout } from './components/layout/Layout'
@@ -28,7 +24,10 @@ import { watchlistLoader } from './loaders/watchlistLoader'
  */
 export const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<Layout />}>
+    <Route
+      path="/"
+      element={<Layout />}
+    >
       <Route element={<FavoritesLayout />}>
         <Route
           path="pools/:poolId"

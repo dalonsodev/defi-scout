@@ -52,9 +52,7 @@ export function StrategyComparison({
 }: StrategyComparisonProps): ReactNode {
   // Architecture: Winner determined by absolute PNL (not ROI%)
   // Edge Case: Both strategies can be negative (shows lesser loss)
-  const winner = (lpStrategy?.pnl ?? -Infinity) > (hodlStrategy?.pnl ?? -Infinity)
-    ? 'lp'
-    : 'hodl'
+  const winner = (lpStrategy?.pnl ?? -Infinity) > (hodlStrategy?.pnl ?? -Infinity) ? 'lp' : 'hodl'
 
   debugLog('Simulation Results:', { hodlStrategy, lpStrategy })
 
@@ -144,8 +142,7 @@ function StrategyCard({ title, isWinner, data, isCalculating }: StrategyCardProp
           <div className="flex justify-between">
             <span>P&L</span>
             <span className={data.pnl >= 0 ? 'text-success' : 'text-error'}>
-              {data.pnl >= 0 ? '+' : ''}${data.pnl.toFixed(2)} (
-              {data.pnlPercent}%)
+              {data.pnl >= 0 ? '+' : ''}${data.pnl.toFixed(2)} ({data.pnlPercent}%)
             </span>
           </div>
 
@@ -154,9 +151,7 @@ function StrategyCard({ title, isWinner, data, isCalculating }: StrategyCardProp
             <>
               <div className="flex justify-between text-sm">
                 <span className="text-base-content/60">Fees Earned</span>
-                <span className="text-success">
-                  +${strategyData.feesEarned.toFixed(2)}
-                </span>
+                <span className="text-success">+${strategyData.feesEarned.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-base-content/60">Impermanent Loss</span>

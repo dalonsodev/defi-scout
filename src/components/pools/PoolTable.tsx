@@ -162,9 +162,7 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
           return {
             ...col,
             cell: ({ row }: RowType) => (
-              <div className="text-base-content text-right">
-                ${row.original.tvlFormatted}
-              </div>
+              <div className="text-base-content text-right">${row.original.tvlFormatted}</div>
             )
           }
         }
@@ -173,9 +171,7 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
           return {
             ...col,
             cell: ({ row }: RowType) => (
-              <div className="text-base-content text-right">
-                ${row.original.volumeFormatted}
-              </div>
+              <div className="text-base-content text-right">${row.original.volumeFormatted}</div>
             )
           }
         }
@@ -207,7 +203,10 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
           return {
             ...col,
             cell: ({ row }: RowType) => (
-              <PlatformIcon platform={row.original.project} size="md" />
+              <PlatformIcon
+                platform={row.original.project}
+                size="md"
+              />
             )
           }
         }
@@ -217,10 +216,11 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
             ...col,
             cell: ({ row }: RowType) => (
               <div className="flex items-center gap-2">
-                <PlatformIcon platform={row.original.project} size="md" />
-                <span className="text-base-content/70 text-sm">
-                  {row.original.platformName}
-                </span>
+                <PlatformIcon
+                  platform={row.original.project}
+                  size="md"
+                />
+                <span className="text-base-content/70 text-sm">{row.original.platformName}</span>
               </div>
             )
           }
@@ -271,31 +271,17 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
                 key={header.id}
                 onClick={header.column.getToggleSortingHandler()}
                 style={{ width: header.column.getSize() }}
-                className={`
-                  sticky top-0 z-10 bg-(--table-header-bg)
-                  px-6 py-4 text-xs font-semibold tracking-wider uppercase text-base-content/60
-                  cursor-pointer transition hover:bg-(--table-header-bg) has-[.tooltip:hover]:z-20
-                  ${isSticky
-                    ? 'sticky-column-shadow left-0 z-11 pl-4 text-left'
-                    : ''
-                  }
-                `.trim()}
+                className={`text-base-content/60 sticky top-0 z-10 cursor-pointer bg-(--table-header-bg) px-6 py-4 text-xs font-semibold tracking-wider uppercase transition hover:bg-(--table-header-bg) has-[.tooltip:hover]:z-20 ${
+                  isSticky ? 'sticky-column-shadow left-0 z-11 pl-4 text-left' : ''
+                } `.trim()}
               >
                 <div
-                  className={`
-                    flex items-center gap-1 whitespace-nowrap
-                    ${isSticky ? 'justify-start' : 'justify-center'}
-                  `}
+                  className={`flex items-center gap-1 whitespace-nowrap ${isSticky ? 'justify-start' : 'justify-center'} `}
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
 
                   {header.column.getIsSorted() && (
-                    <span>
-                      {header.column.getIsSorted() === 'desc' ? '↓' : '↑'}
-                    </span>
+                    <span>{header.column.getIsSorted() === 'desc' ? '↓' : '↑'}</span>
                   )}
 
                   {tooltipText && (
@@ -354,13 +340,11 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
                 <td
                   key={cell.id}
                   style={{ width: cell.column.getSize() }}
-                  className={`
-                    px-4 py-6 text-sm whitespace-nowrap
-                    ${isSticky
+                  className={`px-4 py-6 text-sm whitespace-nowrap ${
+                    isSticky
                       ? 'sticky-column-shadow sticky left-0 z-2 bg-(--table-sticky-bg) transition-colors duration-150 group-hover:bg-(--table-sticky-hover-bg)'
                       : ''
-                    }
-                  `.trim()}
+                  } `.trim()}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>

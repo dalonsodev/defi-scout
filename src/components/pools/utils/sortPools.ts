@@ -1,6 +1,9 @@
-import { FormattedPool } from "../../../types"
+import { FormattedPool } from '../../../types'
 
-interface SortDescriptor { id: string, desc: boolean }
+interface SortDescriptor {
+  id: string
+  desc: boolean
+}
 
 /**
  * Utility: Client-side sorting for liquidity pool table.

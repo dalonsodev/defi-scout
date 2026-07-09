@@ -11,7 +11,6 @@ type InferPricesResult =
   | { success: false; error: string }
   | { success: true; priceToken0InUSD: number; priceToken1InUSD: number }
 
-
 /**
  * Infers USD prices of both tokens from current pool TVL snapshot.
  *
@@ -32,12 +31,7 @@ export function inferTokenPricesFromTVL({
   const isInvalidPrice = (price: number) => price <= 0 || !isFinite(price)
 
   // Validate all inputs exist
-  if (
-    tvlUSD == null ||
-    tvlToken0 == null ||
-    tvlToken1 == null ||
-    currentPrice == null
-  ) {
+  if (tvlUSD == null || tvlToken0 == null || tvlToken1 == null || currentPrice == null) {
     return {
       success: false,
       error: 'Pool metadata incomplete. Cannot calculate prices.'
@@ -78,8 +72,7 @@ export function inferTokenPricesFromTVL({
   }
 
   // Sanity check: Sum of (token amounts * prices) should equal total TVL
-  const calculatedTVL =
-    tvlToken0 * priceToken0InUSD + tvlToken1 * priceToken1InUSD
+  const calculatedTVL = tvlToken0 * priceToken0InUSD + tvlToken1 * priceToken1InUSD
   const errorPercent = Math.abs(((calculatedTVL - tvlUSD) / tvlUSD) * 100)
 
   debugLog('Price Inference:', {

@@ -29,7 +29,8 @@ const ERROR_MAP: Record<string, string> = {
   'auth/too-many-requests': 'Too many attempts. Try again later'
 }
 
-const mapFirebaseError = (code: string) => ERROR_MAP[code] ?? 'Something went wrong. Please try again'
+const mapFirebaseError = (code: string) =>
+  ERROR_MAP[code] ?? 'Something went wrong. Please try again'
 
 const googleProvider = new GoogleAuthProvider()
 
@@ -115,7 +116,10 @@ export function AuthModal(): ReactNode {
           ✕
         </button>
 
-        <h3 id="auth-modal" className="p-4 text-center text-2xl font-bold">
+        <h3
+          id="auth-modal"
+          className="p-4 text-center text-2xl font-bold"
+        >
           {mode === MODE.LOGIN
             ? 'Welcome'
             : mode === MODE.SIGNUP
@@ -126,7 +130,10 @@ export function AuthModal(): ReactNode {
         <form onSubmit={handleSubmit}>
           {resetSent ? (
             <>
-              <div role="alert" className="alert alert-success mt-4 text-sm font-semibold">
+              <div
+                role="alert"
+                className="alert alert-success mt-4 text-sm font-semibold"
+              >
                 Check your inbox
               </div>
               <button
@@ -184,15 +191,16 @@ export function AuthModal(): ReactNode {
                     className="input glass-input mt-1 w-full rounded-xl"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    autoComplete={
-                      mode === MODE.LOGIN ? 'current-password' : 'new-password'
-                    }
+                    autoComplete={mode === MODE.LOGIN ? 'current-password' : 'new-password'}
                   />
                 </>
               )}
 
               {error && (
-                <div role="alert" className="alert alert-error mt-4 text-sm font-semibold">
+                <div
+                  role="alert"
+                  className="alert alert-error mt-4 text-sm font-semibold"
+                >
                   {error}
                 </div>
               )}
@@ -202,9 +210,7 @@ export function AuthModal(): ReactNode {
                 className="btn btn-primary mt-4 w-full rounded-xl"
                 disabled={isLoading}
               >
-                {isLoading && (
-                  <span className="loading loading-spinner loading-sm" />
-                )}
+                {isLoading && <span className="loading loading-spinner loading-sm" />}
                 {mode === MODE.LOGIN
                   ? 'Log In'
                   : mode === MODE.FORGOT

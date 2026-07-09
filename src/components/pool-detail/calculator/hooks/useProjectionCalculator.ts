@@ -115,7 +115,6 @@ export function useProjectionCalculator(
   rangeInputs: UserInputs,
   results: ProcessResult | null
 ): ProjectionCalculatorResult {
-
   const token0PriceUSD = results?.success ? results?.token0PriceUSD : 0
   const token1PriceUSD = results?.success ? results?.token1PriceUSD : 0
 
@@ -145,7 +144,6 @@ export function useProjectionCalculator(
     hasHydrated.current = true
   }, [token0PriceUSD, token1PriceUSD])
 
-
   // Strategy Simulation: Calculate HODL vs LP outcomes under given scenario
   const { hodlStrategy, lpStrategy, daysToBreakEven } = useMemo(() => {
     /*
@@ -170,14 +168,12 @@ export function useProjectionCalculator(
     }
 
     const capitalUSD = rangeInputs.capitalUSD || 1000
-    const { amount0, amount1, token0Percent, token1Percent } =
-      results.composition
+    const { amount0, amount1, token0Percent, token1Percent } = results.composition
 
     // ===== STRATEGY A: HODL (Buy and Hold) =====
 
     // HODL Value: Token quantities * future prices
-    const hodlFutureValue =
-      amount0 * futureToken0Price + amount1 * futureToken1Price
+    const hodlFutureValue = amount0 * futureToken0Price + amount1 * futureToken1Price
 
     const hodl: HoldStrategy = {
       token0Symbol: poolData.token0.symbol,
@@ -217,8 +213,7 @@ export function useProjectionCalculator(
     const lpValueAfterIL = hodlFutureValue * (1 + IL_decimal)
 
     // Step 3: Add projected fee earnings
-    const projectedFees =
-      projectionDays > 0 ? results.dailyFeesUSD * projectionDays : 0
+    const projectedFees = projectionDays > 0 ? results.dailyFeesUSD * projectionDays : 0
 
     const lpFutureValue = lpValueAfterIL + projectedFees
 
@@ -250,9 +245,7 @@ export function useProjectionCalculator(
     // Days needed for fees to offset IL loss
     const ilLossUSD = hodlFutureValue - lpValueAfterIL
     const daysToBreakEven =
-      ilLossUSD > 0 && results.dailyFeesUSD > 0
-        ? ilLossUSD / results.dailyFeesUSD
-        : 0
+      ilLossUSD > 0 && results.dailyFeesUSD > 0 ? ilLossUSD / results.dailyFeesUSD : 0
 
     return { hodlStrategy: hodl, lpStrategy: lp, daysToBreakEven }
   }, [

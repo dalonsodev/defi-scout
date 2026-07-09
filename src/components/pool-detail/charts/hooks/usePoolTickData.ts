@@ -22,7 +22,6 @@ export function usePoolTickData(
   currentTick: number,
   feeTier: number
 ): PoolTickDataResult {
-
   const [tickData, setTickData] = useState<PoolTickResult | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [fetchError, setFetchError] = useState<string | null>(null)
@@ -57,7 +56,9 @@ export function usePoolTickData(
     }
 
     loadTickData()
-    return () => { cancelled = true } // Cleanup: Prevents state update on unmounted component
+    return () => {
+      cancelled = true
+    } // Cleanup: Prevents state update on unmounted component
   }, [poolId, currentTick, feeTier])
 
   return { tickData, isLoading, fetchError }

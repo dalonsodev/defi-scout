@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
-import {
-  useLoaderData,
-  useOutletContext,
-  useLocation,
-  useNavigate
-} from 'react-router-dom'
+import { useLoaderData, useOutletContext, useLocation, useNavigate } from 'react-router-dom'
 import { ContractLinks } from './ContractLinks'
 import { CurrentPriceCard } from './CurrentPriceCard'
 import { PoolCharts } from './charts/PoolCharts'
@@ -59,7 +54,10 @@ const BlockExplorerIcon = (): ReactNode => (
       strokeWidth="1.5"
     >
       <path d="M12 22c.244 0 .471-.113.926-.34l3.65-1.817C18.193 19.04 19 18.637 19 18v-8m-7 12c-.244 0-.471-.113-.926-.34l-3.65-1.817C5.807 19.04 5 18.637 5 18v-8m7 12v-8m7-4c0-.637-.808-1.039-2.423-1.843l-3.651-1.818C12.47 6.113 12.244 6 12 6s-.471.113-.926.34l-3.65 1.817C5.807 8.96 5 9.363 5 10m14 0c0 .637-.808 1.039-2.423 1.843l-3.651 1.818c-.455.226-.682.339-.926.339m-7-4c0 .637.808 1.039 2.423 1.843l3.651 1.818c.455.226.682.339.926.339" />
-      <path strokeLinecap="round" d="m22 21l-3-2.5M12 2v4M2 21l3-2.5" />
+      <path
+        strokeLinecap="round"
+        d="m22 21l-3-2.5M12 2v4M2 21l3-2.5"
+      />
     </g>
   </svg>
 )
@@ -77,11 +75,11 @@ export function PoolDetail(): ReactNode {
     fetchError
   } = usePoolHourlyData(pool.id)
 
-  const { tickData, isLoading: tickIsLoading, fetchError: tickError } = usePoolTickData(
-    pool.id,
-    Number(pool.tick),
-    Number(pool.feeTier)
-  )
+  const {
+    tickData,
+    isLoading: tickIsLoading,
+    fetchError: tickError
+  } = usePoolTickData(pool.id, Number(pool.tick), Number(pool.feeTier))
   const { favoriteIds, toggleFavorite } = useOutletContext() as FavoritesOutletContext
   const hasHydrated = useRef(false)
   const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
@@ -115,9 +113,7 @@ export function PoolDetail(): ReactNode {
     if (!hourlyData || !tickData) return
 
     const currentPrice =
-      parseFloat(
-        selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price
-      ) || 0
+      parseFloat(selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price) || 0
 
     const processedTicks = processTickData(
       tickData,
@@ -165,13 +161,7 @@ export function PoolDetail(): ReactNode {
     hasHydrated.current = true
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    hourlyData,
-    tickData,
-    selectedTokenIdx,
-    pool.token0Price,
-    pool.token1Price
-  ])
+  }, [hourlyData, tickData, selectedTokenIdx, pool.token0Price, pool.token1Price])
   // Justification: rangeInputs.minPrice/maxPrice are guards, not triggers.
   // Including them would cause unnecessary effect re-runs on every input change.
 
@@ -214,9 +204,7 @@ export function PoolDetail(): ReactNode {
    * Uniswap price is usually token0/token1. If user selects token1 as base,
    * we may need to handle the reciprocal price depending on the calculator's logic.
    */
-  const currentPrice =
-    parseFloat(selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price) ||
-    0
+  const currentPrice = parseFloat(selectedTokenIdx === 0 ? pool.token0Price : pool.token1Price) || 0
 
   // Stats: Derived metrics from historical snapshots
   const latestSnapshot = history[history.length - 1] ?? {}
@@ -242,7 +230,7 @@ export function PoolDetail(): ReactNode {
       {/* NAVIGATION: Contextual return */}
       <button
         onClick={() => navigate(-1)}
-        className="btn btn-ghost btn-sm mb-4 md:mb-6 gap-2 rounded-xl"
+        className="btn btn-ghost btn-sm mb-4 gap-2 rounded-xl md:mb-6"
       >
         <span>←</span>
         <span>{`Back to ${fromWatchlist ? 'Watchlist' : 'Pools'}`}</span>
@@ -277,11 +265,12 @@ export function PoolDetail(): ReactNode {
           </span>
 
           <div className="flex items-center justify-between gap-2 md:flex-col md:items-end md:justify-end">
-            <span className="text-base-content/60 text-sm">
-              {Math.floor(poolAgeDays)} days old
-            </span>
+            <span className="text-base-content/60 text-sm">{Math.floor(poolAgeDays)} days old</span>
             <div className="flex justify-around md:justify-between">
-              <div className="tooltip" data-tip="View on DexScreener">
+              <div
+                className="tooltip"
+                data-tip="View on DexScreener"
+              >
                 <a
                   href={`https://dexscreener.com/ethereum/${pool.id}`}
                   target="_blank"
@@ -296,7 +285,10 @@ export function PoolDetail(): ReactNode {
                 </a>
               </div>
 
-              <div className="tooltip" data-tip="View on Explorer">
+              <div
+                className="tooltip"
+                data-tip="View on Explorer"
+              >
                 <a
                   href={`https://etherscan.io/address/${pool.id}`}
                   target="_blank"
@@ -340,7 +332,10 @@ export function PoolDetail(): ReactNode {
               label="Volume (24h)"
               value={formatCurrency(Number(latestSnapshot.volumeUSD))}
             />
-            <StatCard label="Avg APY (7d)" value={`${avgAPY.toFixed(2)}%`} />
+            <StatCard
+              label="Avg APY (7d)"
+              value={`${avgAPY.toFixed(2)}%`}
+            />
           </div>
         </div>
 
@@ -391,7 +386,7 @@ export function PoolDetail(): ReactNode {
 
 // ===== Helper Components =====
 
-function StatCard({ label, value }: { label: string, value: string }): ReactNode {
+function StatCard({ label, value }: { label: string; value: string }): ReactNode {
   return (
     <div className="glass-surface rounded-2xl p-3 shadow">
       <div className="text-base-content/60 mb-1 text-xs tracking-wide whitespace-nowrap uppercase">

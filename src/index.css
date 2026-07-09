@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@plugin "daisyui";
+@plugin 'daisyui';
 
 @theme {
   /* BREAKPOINTS */
@@ -11,10 +11,10 @@
 
   /* CUSTOM THEME */
   --daisyui-themes: defi-scout;
-  --daisyui-root: [data-theme="defi-scout"];
+  --daisyui-root: [data-theme= 'defi-scout'];
 }
 
-[data-theme="defi-scout"] {
+[data-theme='defi-scout'] {
   color-scheme: dark;
 
   /* DEPTH (Base Layers) */
@@ -27,7 +27,7 @@
   /* --color-primary: oklch(0.5854 0.2041 277.12); Previous to a11y pass */
   --color-primary: oklch(0.65 0.2 277.12 / 1);
   --color-primary-content: oklch(1 0 0);
-  --color-secondary: oklch(0.50 0.26 280);
+  --color-secondary: oklch(0.5 0.26 280);
   --color-secondary-content: oklch(1 0 0);
 
   /* SEMANTIC */
@@ -38,7 +38,7 @@
 
   /* NEUTRAL */
   --color-neutral: oklch(0.22 0.04 265);
-  --color-neutral-content: oklch(0.70 0.02 265);
+  --color-neutral-content: oklch(0.7 0.02 265);
 
   /* ALERTS override (increase contrast to comply with WCAG 4.5:1) */
   --color-warning-content: oklch(0.25 0.06 36.33);
@@ -49,17 +49,17 @@
   /* GLASS SURFACES (backdrop + bg color + border) */
   --glass-bg-surface: rgba(19, 24, 42, 0.55);
   --glass-bg-overlay: rgba(30, 36, 58, 0.75);
-  --glass-bg-input: rgba(40, 46, 70, 0.80);
+  --glass-bg-input: rgba(40, 46, 70, 0.8);
   --glass-bg-modal: oklch(0.24 0.04 265 / 95%);
   --glass-bg-btn: rgba(255, 255, 255, 0.05);
-  --glass-bg-btn-hover: rgba(255, 255, 255, 0.10);
+  --glass-bg-btn-hover: rgba(255, 255, 255, 0.1);
   --glass-bg-btn-ghost-hover: rgba(255, 255, 255, 0.08);
   --glass-bg-btn-active: rgba(var(--color-primary), 0.2);
 
   /* Text Hierarchy */
   --text-primary: oklch(0.91 0.01 265);
-  --text-secondary: oklch(0.70 0.02 265);
-  --text-muted: oklch(0.40 0.02 265);
+  --text-secondary: oklch(0.7 0.02 265);
+  --text-muted: oklch(0.4 0.02 265);
 
   /* Borders */
   --border-subtle: oklch(1 0 0 / 7%);
@@ -69,7 +69,7 @@
 
   /* TABLE SURFACES */
   --table-header-bg: rgba(10, 14, 28, 0.85);
-  --table-body-bg: rgba(16, 20, 38, 0.50);
+  --table-body-bg: rgba(16, 20, 38, 0.5);
   --table-sticky-bg: rgba(12, 16, 32, 0.97);
   --table-sticky-hover-bg: rgba(24, 30, 52, 0.97);
   --table-divider: rgba(255, 255, 255, 0.06);
@@ -169,4 +169,3 @@
     filter: blur(140px);
   }
 }
-
