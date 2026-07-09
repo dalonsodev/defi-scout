@@ -1,49 +1,49 @@
-import js from "@eslint/js";
-import globals from "globals";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
-import { defineConfig, globalIgnores } from "eslint/config";
-import tseslint from 'typescript-eslint'
+import js from "@eslint/js"
+import globals from "globals"
+import reactHooks from "eslint-plugin-react-hooks"
+import reactRefresh from "eslint-plugin-react-refresh"
+import tseslint from "typescript-eslint"
+import eslintConfigPrettier from "eslint-config-prettier"
 
-export default defineConfig([
-  globalIgnores(["dist", "coverage"]),
+export default tseslint.config(
+  {
+    ignores: ["dist", "coverage", ".vite"]
+  },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs["recommended-latest"],
-      reactRefresh.configs.vite,
-    ],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        ...globals.es2020
+      },
       parser: tseslint.parser,
       parserOptions: {
-        ecmaVersion: "latest",
         ecmaFeatures: { jsx: true },
-        sourceType: "module",
-      },
+        sourceType: "module"
+      }
+    },
+    plugins: {
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh
     },
     rules: {
-      "prefer-const": "error"
-    },
-  },
-
-  ...tseslint.config({
-    files: ["**/*.{ts,tsx}"],
-    extends: [...tseslint.configs.recommended],
-    rules: {
-      "@typescript-eslint/no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
+      ...reactHooks.configs.recommended.rules,
+      "prefer-const": "error",
+      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "@typescript-eslint/no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }]
     }
-  }),
-
+  },
   {
-    files: ["tailwind.config.js", "postcss.config.js"],
+    files: ["vite.config.ts"],
     languageOptions: {
-      globals: globals.node,
+      globals: globals.node
     },
     rules: {
-      "no-undef": "off",
-    },
+      "no-undef": "off"
+    }
   },
-]);
+  eslintConfigPrettier
+)
