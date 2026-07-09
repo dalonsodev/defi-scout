@@ -101,21 +101,14 @@ src/components/pool-detail/calculator/
 **Liquidity calculation:**
 
 ```typescript
-const L_user = calculateLiquidity(
-  amount0,
-  amount1,
-  currentPrice,
-  effectiveMin,
-  effectiveMax
-)
+const L_user = calculateLiquidity(amount0, amount1, currentPrice, effectiveMin, effectiveMax)
 ```
 
 **Fee accumulation:**
 
 ```typescript
 const L_pool_bigint = BigInt(hour.liquidity)
-const L_pool_normalized =
-  Number(L_pool_bigint) / Math.pow(10, liquidityExponent)
+const L_pool_normalized = Number(L_pool_bigint) / Math.pow(10, liquidityExponent)
 const feeShare = L_user / (L_pool_normalized + L_user)
 totalFeesUSD += hourFeesUSD * feeShare
 ```

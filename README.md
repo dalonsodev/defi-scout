@@ -56,17 +56,17 @@ Built on top of the pool detail data:
 
 ## 🛠 Tech Stack
 
-| Technology             | Purpose                                          |
-| ---------------------- | ------------------------------------------------ |
-| **TypeScript**         | Full codebase type safety                        |
-| **Vite + React**       | Build tool + UI framework                        |
-| **React Router 6.4+**  | Routing with data loaders                        |
-| **TanStack Table v8**  | Headless table with manual sorting               |
-| **Recharts**           | Declarative chart library                        |
-| **Tailwind + DaisyUI** | Utility-first CSS + component primitives         |
-| **TheGraph**           | GraphQL subgraphs for Uniswap V3 on-chain data   |
-| **Firebase**           | Google Auth + Firestore watchlist persistence    |
-| **Vitest**             | Unit tests for the calculation pipeline          |
+| Technology             | Purpose                                        |
+| ---------------------- | ---------------------------------------------- |
+| **TypeScript**         | Full codebase type safety                      |
+| **Vite + React**       | Build tool + UI framework                      |
+| **React Router 6.4+**  | Routing with data loaders                      |
+| **TanStack Table v8**  | Headless table with manual sorting             |
+| **Recharts**           | Declarative chart library                      |
+| **Tailwind + DaisyUI** | Utility-first CSS + component primitives       |
+| **TheGraph**           | GraphQL subgraphs for Uniswap V3 on-chain data |
+| **Firebase**           | Google Auth + Firestore watchlist persistence  |
+| **Vitest**             | Unit tests for the calculation pipeline        |
 
 ---
 

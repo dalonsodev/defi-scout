@@ -1,4 +1,4 @@
-import type { RawPool, FormattedPool } from "../../types"
+import type { RawPool, FormattedPool } from '../../types'
 
 // APY Calculation Logic: (Accumulated Fees / Age in Days / TVL) * 365 * 100
 
@@ -89,13 +89,7 @@ export function formatPoolData(rawPools: RawPool[]): FormattedPool[] {
     const feesUSD = parseFloat(pool.collectedFeesUSD)
     const poolAgeDays = calculatePoolAge(parseFloat(pool.createdAtTimestamp))
 
-    const apyBase = calculateAPY(
-      feesUSD,
-      volumeUsd1d,
-      feeTier,
-      poolAgeDays,
-      tvlUsd
-    )
+    const apyBase = calculateAPY(feesUSD, volumeUsd1d, feeTier, poolAgeDays, tvlUsd)
 
     return {
       // UI-ready schema: Consolidates symbols and formats financial values

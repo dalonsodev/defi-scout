@@ -1,14 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { db } from '../../firebase'
-import {
-  collection,
-  doc,
-  getDocs,
-  setDoc,
-  deleteDoc,
-  serverTimestamp
-} from 'firebase/firestore'
+import { collection, doc, getDocs, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
 
 interface UseFavoritesResult {
   favoriteIds: Set<string>

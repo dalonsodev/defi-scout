@@ -42,13 +42,11 @@ export function PriceInputSection({
   // Percentages Deviation: Convert absolute price delta to % for display
   const token0ChangePercent =
     currentToken0PriceUSD > 0
-      ? ((futureToken0PriceUSD - currentToken0PriceUSD) /
-          currentToken0PriceUSD) * 100
+      ? ((futureToken0PriceUSD - currentToken0PriceUSD) / currentToken0PriceUSD) * 100
       : 0
   const token1ChangePercent =
     currentToken1PriceUSD > 0
-      ? ((futureToken1PriceUSD - currentToken1PriceUSD) /
-          currentToken1PriceUSD) * 100
+      ? ((futureToken1PriceUSD - currentToken1PriceUSD) / currentToken1PriceUSD) * 100
       : 0
 
   return (
@@ -69,9 +67,7 @@ export function PriceInputSection({
           />
         </div>
         <label className="label">
-          <span className="label-text-alt mt-2">
-            {token0Symbol} Price (USD)
-          </span>
+          <span className="label-text-alt mt-2">{token0Symbol} Price (USD)</span>
         </label>
       </div>
 
@@ -112,9 +108,7 @@ export function PriceInputSection({
           />
         </div>
         <label className="label">
-          <span className="label-text-alt mt-2">
-            {token1Symbol} Price (USD)
-          </span>
+          <span className="label-text-alt mt-2">{token1Symbol} Price (USD)</span>
         </label>
       </div>
 

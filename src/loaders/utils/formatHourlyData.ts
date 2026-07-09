@@ -1,4 +1,4 @@
-import type { RawPoolHourData, FormattedHourlyData } from "../../types"
+import type { RawPoolHourData, FormattedHourlyData } from '../../types'
 
 /**
  * Utility: Transforms raw PoolHourData from The Graph into chart-ready format.
@@ -27,7 +27,7 @@ export function formatHourlyData(rawHourlyData: RawPoolHourData[]): FormattedHou
       dayLabel,
       token0Price: parseFloat(record.token0Price) || null,
       token1Price: parseFloat(record.token1Price) || null,
-      periodStartUnix: parseInt((record.periodStartUnix).toString()),
+      periodStartUnix: parseInt(record.periodStartUnix.toString()),
       liquidity: parseFloat(record.liquidity),
       tvlUSD: parseFloat(record.tvlUSD) || 0,
       feesUSD: parseFloat(record.feesUSD) || 0

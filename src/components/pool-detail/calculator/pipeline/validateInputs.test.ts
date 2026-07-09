@@ -48,7 +48,7 @@ describe('validateInputs - Edge Cases', () => {
       maxPrice: '100',
       fullRange: false,
       assumedPrice: '75',
-      selectedTokenIdx: 5, // Invalid
+      selectedTokenIdx: 5 // Invalid
     })
     expect(result.success).toBe(false)
     expect((result as { error: string }).error).toContain('select a token')

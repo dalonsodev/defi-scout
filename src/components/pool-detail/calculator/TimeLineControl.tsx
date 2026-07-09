@@ -54,9 +54,7 @@ export function TimeLineControl({
         {/* Domain Logic: Break-even insight from fee accumulation modal */}
         <div className="flex flex-col items-center gap-2">
           <label className="label">
-            <span className="label-text font-semibold">
-              Days of Active Position
-            </span>
+            <span className="label-text font-semibold">Days of Active Position</span>
           </label>
 
           {/* UX: Warning if duration < break-even (user would lose money vs HODL) */}

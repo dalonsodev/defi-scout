@@ -23,9 +23,7 @@ export function SparklineCell({ poolId, sparklineData }: SparklineCellProps): Re
           className="tooltip tooltip-left cursor-help"
           data-tip="Upgrade to Pro for unlimited sparklines"
         >
-          <span className="text-base-content/60 min-h-10 text-xs font-medium">
-            ⟢ Pro
-          </span>
+          <span className="text-base-content/60 min-h-10 text-xs font-medium">⟢ Pro</span>
         </div>
       </div>
     )

@@ -4,11 +4,11 @@ import { fetchPoolHourData } from '../../../../services/theGraphClient'
 import type { FormattedHourlyData, RawPoolHourData } from '../../../../types'
 
 interface PoolHourlyDataResult {
-    hourlyData: FormattedHourlyData[] | null
-    rawHourlyData: RawPoolHourData[] | null
-    isLoading: boolean
-    fetchError: string | null
- }
+  hourlyData: FormattedHourlyData[] | null
+  rawHourlyData: RawPoolHourData[] | null
+  isLoading: boolean
+  fetchError: string | null
+}
 
 /**
  * Custom Hook: Fetch and cache TheGraph data.
@@ -47,8 +47,7 @@ export function usePoolHourlyData(poolId: string, daysLookback: number = 30): Po
         // Extra buffer to circumvent full hour boundaries from TheGraph,
         // and possible sparse gaps in the pool data due to low activity.
         const fetchDays = daysLookback + 1
-        const startTime =
-          Math.floor(Date.now() / 1000) - fetchDays * 24 * 60 * 60
+        const startTime = Math.floor(Date.now() / 1000) - fetchDays * 24 * 60 * 60
         const rawData = await fetchPoolHourData(poolId, startTime)
         // slice the last daysLookback days to avoid inflated APR calculation
         const rawSliced = rawData.slice(-(daysLookback * 24))

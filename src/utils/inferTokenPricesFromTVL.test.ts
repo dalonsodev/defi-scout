@@ -58,7 +58,9 @@ describe('inferTokenPricesFromTVL', () => {
       })
 
       expect(result.success).toBe(false)
-      expect((result as { error: string }).error).toContain('Invalid current price from hourly data.')
+      expect((result as { error: string }).error).toContain(
+        'Invalid current price from hourly data.'
+      )
     })
 
     it('should fail if currentPrice is Infinity', () => {
@@ -70,7 +72,9 @@ describe('inferTokenPricesFromTVL', () => {
       })
 
       expect(result.success).toBe(false)
-      expect((result as { error: string }).error).toContain('Invalid current price from hourly data.')
+      expect((result as { error: string }).error).toContain(
+        'Invalid current price from hourly data.'
+      )
     })
 
     it('should handle very small amounts without causing Infinity', () => {

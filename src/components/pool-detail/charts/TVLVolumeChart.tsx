@@ -1,19 +1,13 @@
 import { useMemo } from 'react'
-import {
-  ComposedChart,
-  Area,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts'
+import { ComposedChart, Area, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { CustomTVLTooltip } from './CustomTVLTooltip'
 import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
 import { CHART_COLORS } from '../../../constants/chartColors'
 import type { FormattedPoolHistory } from '../../../types'
 
-interface TVLVolumeChartProps { history: FormattedPoolHistory[] }
+interface TVLVolumeChartProps {
+  history: FormattedPoolHistory[]
+}
 
 /**
  * UI: Capital Efficiency & Liquidity Chart.

@@ -34,11 +34,9 @@ export function Navbar(): ReactNode {
   }, [])
 
   return (
-    <header className={`
-      navbar glass-surface sticky top-2 z-50
-      mx-2 mt-2 w-auto rounded-full px-0 sm:px-2
-      md:top-0 md:mx-0 md:mt-0 md:w-full md:rounded-none md:rounded-b-3xl md:px-2
-    `}>
+    <header
+      className={`navbar glass-surface sticky top-2 z-50 mx-2 mt-2 w-auto rounded-full px-0 sm:px-2 md:top-0 md:mx-0 md:mt-0 md:w-full md:rounded-none md:rounded-b-3xl md:px-2`}
+    >
       <div className="ml-3.5 flex-1 md:ml-2">
         {/* Brand: Site logo */}
         <Link
@@ -55,13 +53,14 @@ export function Navbar(): ReactNode {
       </div>
       <div className="flex flex-none items-center gap-2 pr-2">
         {/* Primary routes: Ghost buttons for understated navigation */}
-        <Link to="/" className="btn btn-ghost rounded-xl">
+        <Link
+          to="/"
+          className="btn btn-ghost rounded-xl"
+        >
           Pools
         </Link>
 
-        {currentUser === null && (
-          <div className="loading loading-spinner loading-sm"></div>
-        )}
+        {currentUser === null && <div className="loading loading-spinner loading-sm"></div>}
 
         {currentUser === false && (
           <button
@@ -73,11 +72,14 @@ export function Navbar(): ReactNode {
         )}
 
         {currentUser && (
-          <div className="relative flex" ref={dropdownRef}>
+          <div
+            className="relative flex"
+            ref={dropdownRef}
+          >
             <div className="flex flex-col">
               <button
                 className="btn btn-md md:btn-sm btn-ghost btn-circle mr-1"
-                onClick={() => setIsOpen(prev => !prev)}
+                onClick={() => setIsOpen((prev) => !prev)}
               >
                 {currentUser.photoURL ? (
                   <img
@@ -102,11 +104,9 @@ export function Navbar(): ReactNode {
               </button>
 
               {isOpen && (
-                <div className={`
-                  glass-overlay absolute top-full right-0 z-50 mt-2
-                  flex flex-col items-center gap-2 rounded-xl p-4
-                  md:gap-0 md:p-2
-                `}>
+                <div
+                  className={`glass-overlay absolute top-full right-0 z-50 mt-2 flex flex-col items-center gap-2 rounded-xl p-4 md:gap-0 md:p-2`}
+                >
                   <Link
                     to="/watchlist"
                     className="btn btn-ghost rounded-xl text-lg md:text-sm"

@@ -21,7 +21,7 @@ export function buildUniswapPositionUrl(
   pool: RawPoolHistory,
   inputs: UserInputs,
   selectedTokenIdx: number,
-  composition?: Composition,
+  composition?: Composition
 ): string {
   const token0Address = pool.token0.id.toLowerCase()
   const token1Address = pool.token1.id.toLowerCase()
@@ -41,13 +41,11 @@ export function buildUniswapPositionUrl(
     minTick = Math.ceil(MIN_TICK / tickSpacing) * tickSpacing
     maxTick = Math.floor(MAX_TICK / tickSpacing) * tickSpacing
   } else {
-    const maxPriceNum = parseFloat((inputs.maxPrice).toString())
-    const minPriceNum = parseFloat((inputs.minPrice).toString())
+    const maxPriceNum = parseFloat(inputs.maxPrice.toString())
+    const minPriceNum = parseFloat(inputs.minPrice.toString())
 
-    const canonicalMin =
-    selectedTokenIdx === 1 ? 1 / maxPriceNum : minPriceNum
-    const canonicalMax =
-    selectedTokenIdx === 1 ? 1 / minPriceNum : maxPriceNum
+    const canonicalMin = selectedTokenIdx === 1 ? 1 / maxPriceNum : minPriceNum
+    const canonicalMax = selectedTokenIdx === 1 ? 1 / minPriceNum : maxPriceNum
 
     const canonicalMinTick = alignTickToSpacing(
       priceToTick(decimalAdjustment / canonicalMax),
@@ -86,20 +84,14 @@ export function buildUniswapPositionUrl(
     exactField: 'TOKEN0',
     exactAmounts: composition
       ? {
-          TOKEN0: isFinite(composition.amount0)
-            ? composition.amount0.toFixed(8)
-            : '0',
-          TOKEN1: isFinite(composition.amount1)
-            ? composition.amount1.toFixed(8)
-            : '0'
+          TOKEN0: isFinite(composition.amount0) ? composition.amount0.toFixed(8) : '0',
+          TOKEN1: isFinite(composition.amount1) ? composition.amount1.toFixed(8) : '0'
         }
       : {}
   })
 
   const [c0, c1] =
-    token0Address < token1Address
-      ? [token0Address, token1Address]
-      : [token1Address, token0Address]
+    token0Address < token1Address ? [token0Address, token1Address] : [token1Address, token0Address]
 
   const params = new URLSearchParams()
   params.set('currencyA', c0)

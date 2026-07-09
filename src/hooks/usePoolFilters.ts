@@ -88,8 +88,7 @@ export function usePoolFilters(): PoolFiltersResult {
   // Platform toggle (custom array logic)
   const togglePlatform = useCallback(
     (platform: string) => {
-      const currentPlatforms =
-        searchParams.get('platforms')?.split(',').filter(Boolean) || []
+      const currentPlatforms = searchParams.get('platforms')?.split(',').filter(Boolean) || []
 
       const newPlatforms = currentPlatforms.includes(platform)
         ? currentPlatforms.filter((p) => p !== platform)

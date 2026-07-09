@@ -1,5 +1,5 @@
 import type { NavigateFunction } from 'react-router-dom'
-import type { ParamsState } from "../types"
+import type { ParamsState } from '../types'
 
 /**
  * URL State Management Utilities
@@ -82,18 +82,13 @@ export function parseSearchParams(searchParams: URLSearchParams): ParamsState {
   // 3. TVL filter (string → validated number → back to string for input compatibility)
   const tvlParam = searchParams.get('tvlUsd')
   const tvlNum = Number(tvlParam)
-  const tvlUsd =
-    tvlParam && !Number.isNaN(tvlNum) && tvlNum > 0
-      ? tvlParam
-      : DEFAULT_STATE.tvlUsd
+  const tvlUsd = tvlParam && !Number.isNaN(tvlNum) && tvlNum > 0 ? tvlParam : DEFAULT_STATE.tvlUsd
 
   // 4. Volume filter (same logic as TVL)
   const volParam = searchParams.get('volumeUsd1d')
   const volNum = Number(volParam)
   const volumeUsd1d =
-    volParam && !Number.isNaN(volNum) && volNum > 0
-      ? volParam
-      : DEFAULT_STATE.volumeUsd1d
+    volParam && !Number.isNaN(volNum) && volNum > 0 ? volParam : DEFAULT_STATE.volumeUsd1d
 
   // 5. Sort column (validate against allowed columns)
   const sortByParam = searchParams.get('sortBy')
@@ -105,16 +100,12 @@ export function parseSearchParams(searchParams: URLSearchParams): ParamsState {
   // 6. Sort direction (validate enum)
   const sortDirParam = searchParams.get('sortDir')
   const sortDir: 'desc' | 'asc' =
-    sortDirParam === 'desc' || sortDirParam === 'asc'
-      ? sortDirParam
-      : DEFAULT_STATE.sortDir
+    sortDirParam === 'desc' || sortDirParam === 'asc' ? sortDirParam : DEFAULT_STATE.sortDir
 
   // 7. Page index (number with >= 0 validation)
   const pageParam = searchParams.get('page')
   const pageNum = Number(pageParam)
-  const page = !Number.isNaN(pageNum) && pageNum >= 0
-    ? pageNum
-    : DEFAULT_STATE.page
+  const page = !Number.isNaN(pageNum) && pageNum >= 0 ? pageNum : DEFAULT_STATE.page
 
   return {
     search,

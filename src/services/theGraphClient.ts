@@ -1,5 +1,13 @@
 import { GraphQLClient, gql } from 'graphql-request'
-import { PoolTickResult, RawPool, RawPoolDayData, RawPoolHourData, RawBundle, RawPoolHistory, RawPoolTicks } from '../types'
+import {
+  PoolTickResult,
+  RawPool,
+  RawPoolDayData,
+  RawPoolHourData,
+  RawBundle,
+  RawPoolHistory,
+  RawPoolTicks
+} from '../types'
 
 interface PoolVariables {
   first: number
@@ -246,11 +254,7 @@ const GET_POOL_SPARKLINES_QUERY = gql`
  */
 const GET_WATCHED_POOLS_QUERY = gql`
   query GetWatchedPools($ids: [ID!]) {
-    pools(
-      where: { id_in: $ids }
-      orderBy: totalValueLockedUSD
-      orderDirection: desc
-    ) {
+    pools(where: { id_in: $ids }, orderBy: totalValueLockedUSD, orderDirection: desc) {
       id
       feeTier
       liquidity
@@ -315,7 +319,9 @@ export async function fetchWatchedPools(poolIds: string[]): Promise<RawPool[]> {
  * //   "0x88e...": [...]
  * // }
  */
-export async function fetchPoolSparklines(poolAddresses: string[]): Promise<Record<string, RawPoolDayData[]>> {
+export async function fetchPoolSparklines(
+  poolAddresses: string[]
+): Promise<Record<string, RawPoolDayData[]>> {
   // Calculate 14 days ago (Unix timestamp in seconds)
   const startDate = Math.floor(Date.now() / 1000) - 14 * 86400
 
@@ -327,7 +333,7 @@ export async function fetchPoolSparklines(poolAddresses: string[]): Promise<Reco
   // Group flat array by pool ID (TheGraph returns all poolDayDatas in one array)
   const grouped: Record<string, RawPoolDayData[]> = {}
 
-  data.poolDayDatas.forEach((dayData: RawPoolDayData):void => {
+  data.poolDayDatas.forEach((dayData: RawPoolDayData): void => {
     if (!dayData.pool?.id) throw new Error('Missing pool reference on poolDayData')
 
     const poolId = dayData.pool.id
@@ -410,7 +416,10 @@ export async function fetchPools(variables: PoolVariables): Promise<RawPool[]> {
  * @returns {Object} result.pool - Pool metadata (tokens, TVL, prices)
  * @returns {Array} result.history - Daily snapshots (volumeUSD, tvlUSD, feesUSD, prices)
  */
-export async function fetchPoolHistory(poolId: string, startDate: number): Promise<PoolHistoryResult> {
+export async function fetchPoolHistory(
+  poolId: string,
+  startDate: number
+): Promise<PoolHistoryResult> {
   const normalizedId = poolId.toLowerCase()
   const data = await client.request<PoolHistoryResponse>(GET_POOL_HISTORY_QUERY, {
     // TheGraph indexes addresses in lowercase (checksummed addresses return null)
@@ -433,11 +442,17 @@ export async function fetchPoolHistory(poolId: string, startDate: number): Promi
  *
  * @returns Array of hourly datapoints (up to 720 items = 30 days)
  */
-export async function fetchPoolHourData(poolId: string, startTime: number): Promise<RawPoolHourData[]> {
-  const data = await client.request<{ poolHourDatas: RawPoolHourData[] }>(GET_POOL_HOUR_DATAS_QUERY, {
-    poolId: poolId.toLowerCase(),
-    startTime
-  })
+export async function fetchPoolHourData(
+  poolId: string,
+  startTime: number
+): Promise<RawPoolHourData[]> {
+  const data = await client.request<{ poolHourDatas: RawPoolHourData[] }>(
+    GET_POOL_HOUR_DATAS_QUERY,
+    {
+      poolId: poolId.toLowerCase(),
+      startTime
+    }
+  )
   return data.poolHourDatas
 }
 

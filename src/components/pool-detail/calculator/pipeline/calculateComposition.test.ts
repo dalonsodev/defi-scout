@@ -227,8 +227,7 @@ describe('calculateComposition', () => {
       expect(result.composition).toHaveProperty('amount1')
 
       // Percentages must sum to 100
-      const sum =
-        result.composition.token0Percent + result.composition.token1Percent
+      const sum = result.composition.token0Percent + result.composition.token1Percent
       expect(sum).toBeCloseTo(100, 2)
     })
 

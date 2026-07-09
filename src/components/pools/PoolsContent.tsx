@@ -60,10 +60,10 @@ export function PoolsContent({
 
     const uniqueProjects = [...new Set(pools.map((pool) => pool.project))]
 
-    return uniqueProjects.map((project) => ({
+    return uniqueProjects
+      .map((project) => ({
         value: project,
-        display:
-          pools.find((p) => p.project === project)?.platformName ?? project
+        display: pools.find((p) => p.project === project)?.platformName ?? project
       }))
       .sort((a, b) => a.display.localeCompare(b.display))
   }, [pools])
@@ -98,8 +98,7 @@ export function PoolsContent({
   // 5. Dirty checking for filters (to detect resets)
   const filtersKey = JSON.stringify(filters)
   const prevFiltersKey = usePrevious(filtersKey)
-  const filtersChanged =
-    prevFiltersKey !== undefined && prevFiltersKey !== filtersKey
+  const filtersChanged = prevFiltersKey !== undefined && prevFiltersKey !== filtersKey
 
   // 6. Derive pageIndex with reset logic
   const pageIndex = filtersChanged ? 0 : urlState.page
@@ -109,7 +108,7 @@ export function PoolsContent({
   const isFirstRender = useRef(true)
 
   const handlePageChange = (newPage: number | string) => {
-    updateSearchParams(navigate, searchParams, { page: newPage as number - 1 })
+    updateSearchParams(navigate, searchParams, { page: (newPage as number) - 1 })
   }
 
   const handleSortingChange: OnChangeFn<SortingState> = (updaterOrValue) => {
@@ -163,10 +162,7 @@ export function PoolsContent({
 
     if (tableRef.current) {
       tableRef.current.setAttribute('aria-live', 'polite')
-      tableRef.current.setAttribute(
-        'aria-label',
-        `Showing page ${pageIndex + 1} of ${totalPages}`
-      )
+      tableRef.current.setAttribute('aria-label', `Showing page ${pageIndex + 1} of ${totalPages}`)
     }
   }, [pageIndex, totalPages, filtersKey])
 
@@ -193,9 +189,7 @@ export function PoolsContent({
 
       {filteredPools.length === 0 ? (
         <div className="py-12 text-center">
-          <p className="mb-2 text-lg text-gray-500">
-            No pools match your filters
-          </p>
+          <p className="mb-2 text-lg text-gray-500">No pools match your filters</p>
           <button
             onClick={clearFilters}
             className="btn btn-sm btn-primary mt-4"

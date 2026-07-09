@@ -73,7 +73,10 @@ export function CustomTVLTooltip({
           // Note: Using index as key (React anti-pattern) because payload order
           // is stable within a single tooltip render. No add/remove/reorder happens.
           // Alternative: entry.dataKey as key would work but adds unnecessary coupling.
-          <div key={index} className="flex items-center justify-between gap-4">
+          <div
+            key={index}
+            className="flex items-center justify-between gap-4"
+          >
             <div className="flex items-center gap-2">
               <div
                 className="h-3 w-3 rounded-full"
@@ -93,9 +96,7 @@ export function CustomTVLTooltip({
           <div className="flex items-center gap-2">
             <span className="text-sm">Vol/TVL Ratio:</span>
           </div>
-          <span className="text-sm font-semibold">
-            {volumeToTvlRatio.toFixed(1) + 'x'}
-          </span>
+          <span className="text-sm font-semibold">{volumeToTvlRatio.toFixed(1) + 'x'}</span>
         </div>
       )}
 
@@ -104,9 +105,7 @@ export function CustomTVLTooltip({
           <div className="flex items-center gap-2">
             <span className="text-sm">Fees:</span>
           </div>
-          <span className="text-sm font-semibold">
-            {formatCompactCurrency(feesUSD)}
-          </span>
+          <span className="text-sm font-semibold">{formatCompactCurrency(feesUSD)}</span>
         </div>
       )}
     </div>

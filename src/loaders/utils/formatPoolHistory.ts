@@ -1,4 +1,4 @@
-import type { FormattedPoolHistory, RawPoolHistory, RawPoolDayData } from "../../types"
+import type { FormattedPoolHistory, RawPoolHistory, RawPoolDayData } from '../../types'
 
 /**
  * Utility: Transforms raw PoolDayData from The Graph into chart-ready format.
@@ -37,7 +37,11 @@ export function formatPoolHistory(rawPoolDayData: RawPoolDayData[]): FormattedPo
      */
     const apy = ((feesUSD * 365) / tvlUSD) * 100
 
-    if (day.volumeUSD === undefined || day.token0Price === undefined || day.token1Price === undefined) {
+    if (
+      day.volumeUSD === undefined ||
+      day.token0Price === undefined ||
+      day.token1Price === undefined
+    ) {
       throw new Error('Unable to format due to missing data')
     }
 

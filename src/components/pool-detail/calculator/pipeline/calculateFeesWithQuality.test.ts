@@ -27,10 +27,10 @@ describe('calculateFeesWithQuality', () => {
 
   it('downgrades quality when anomaly rate > 20%', () => {
     const hourlyData = [
-      {token0Price: '3000', liquidity: '1000000000000000000000000', feesUSD: '100'},
-      {token0Price: 'NaN', liquidity: '1000000000000000000000000', feesUSD: '100'},
-      {token0Price: 'NaN', liquidity: '1000000000000000000000000', feesUSD: '100'},
-      {token0Price: '3100', liquidity: '1000000000000000000000000', feesUSD: '100'}
+      { token0Price: '3000', liquidity: '1000000000000000000000000', feesUSD: '100' },
+      { token0Price: 'NaN', liquidity: '1000000000000000000000000', feesUSD: '100' },
+      { token0Price: 'NaN', liquidity: '1000000000000000000000000', feesUSD: '100' },
+      { token0Price: '3100', liquidity: '1000000000000000000000000', feesUSD: '100' }
     ] as RawPoolHourData[]
 
     const result = calculateFeesWithQuality({

@@ -100,17 +100,9 @@ export function calculateComposition({
   poolState,
   historicalPrices
 }: CalculateCompositionParams): ProcessResults {
-  const {
-    capitalUSD,
-    minPrice,
-    maxPrice,
-    fullRange,
-    assumedPrice,
-    selectedTokenIdx
-  } = userInputs
+  const { capitalUSD, minPrice, maxPrice, fullRange, assumedPrice, selectedTokenIdx } = userInputs
 
-  const { currentPrice, priceToken0InUSD, priceToken1InUSD, feeTier } =
-    poolState
+  const { currentPrice, priceToken0InUSD, priceToken1InUSD, feeTier } = poolState
 
   if (!feeTier) {
     return {
@@ -156,8 +148,7 @@ export function calculateComposition({
     const historicalMax = Math.max(...historicalPrices)
     const volatility = (historicalMax - historicalMin) / historicalMin
 
-    const bufferMultiplier =
-      volatility < 0.2 ? 0.3 : volatility < 0.5 ? 0.5 : 1.0
+    const bufferMultiplier = volatility < 0.2 ? 0.3 : volatility < 0.5 ? 0.5 : 1.0
 
     const effectiveMin = historicalMin * (1 - bufferMultiplier)
     const effectiveMax = historicalMax * (1 + bufferMultiplier)

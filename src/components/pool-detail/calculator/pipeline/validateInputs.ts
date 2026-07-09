@@ -1,12 +1,10 @@
-import type { UserInputs } from "../../../../types"
+import type { UserInputs } from '../../../../types'
 
 interface ValidateInputsProps extends UserInputs {
   selectedTokenIdx: number
 }
 
-type ValidateInputsResult =
-  | { success: true }
-  | { success: false, error: string }
+type ValidateInputsResult = { success: true } | { success: false; error: string }
 
 /**
  * Pipeline Stage: Validates inputs for LP position.

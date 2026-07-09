@@ -43,16 +43,17 @@ export function Dropdown({ selected, onToggle, options }: DropdownProps): ReactN
   }, [])
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div
+      className="relative"
+      ref={dropdownRef}
+    >
       {/* Trigger: Toggle button with dynamic label based on selection state */}
       <button
         type="button"
         className="btn btn-sm glass-input w-full justify-between rounded-xl"
-        onClick={() => setIsOpen(prev => !prev)}
+        onClick={() => setIsOpen((prev) => !prev)}
       >
-        {selected.length > 0
-          ? `Selected (${selected.length})`
-          : 'All Platforms'}
+        {selected.length > 0 ? `Selected (${selected.length})` : 'All Platforms'}
         <svg
           className="h-4 w-4"
           fill="none"

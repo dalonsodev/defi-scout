@@ -19,9 +19,7 @@ function PlaceholderStats({ isPulsing = false }: { isPulsing?: boolean }): React
 
   return (
     <>
-      <div className={`text-success mb-4 text-4xl font-bold ${pulseClass}`}>
-        $--
-      </div>
+      <div className={`text-success mb-4 text-4xl font-bold ${pulseClass}`}>$--</div>
       <div className="space-y-2">
         <div className={`flex justify-between ${pulseClass}`}>
           <span className="text-base-content/60">MONTHLY:</span>
@@ -68,9 +66,7 @@ export function CalculatorStats({
   if (fetchError) {
     return (
       <>
-        <p className="text-error text-sm">
-          Failed to load pool data: {fetchError}
-        </p>
+        <p className="text-error text-sm">Failed to load pool data: {fetchError}</p>
       </>
     )
   }
@@ -82,7 +78,10 @@ export function CalculatorStats({
         <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
         <PlaceholderStats isPulsing />
         <div className="flex gap-2">
-          <button disabled className="btn btn-sm btn-glass flex-1 mt-4 rounded-xl opacity-50">
+          <button
+            disabled
+            className="btn btn-sm btn-glass mt-4 flex-1 rounded-xl opacity-50"
+          >
             Simulate Position Performance
           </button>
         </div>
@@ -97,9 +96,7 @@ export function CalculatorStats({
         <>
           <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
           <PlaceholderStats />
-          <div className="alert alert-warning mt-4 text-xs font-semibold">
-            {results.warning}
-          </div>
+          <div className="alert alert-warning mt-4 text-xs font-semibold">{results.warning}</div>
         </>
       )
     } else {
@@ -107,9 +104,7 @@ export function CalculatorStats({
         <>
           <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
           <PlaceholderStats />
-          <div className="alert alert-error mt-4 text-xs font-semibold">
-            {results.error}
-          </div>
+          <div className="alert alert-error mt-4 text-xs font-semibold">{results.error}</div>
         </>
       )
     }
@@ -126,24 +121,20 @@ export function CalculatorStats({
   return (
     <>
       <h2 className="mb-2 text-lg font-semibold">Estimated Fees (24h)</h2>
-      <div className="text-success mb-4 text-4xl font-bold">
-        ${dailyFees.toFixed(2)}
-      </div>
+      <div className="text-success mb-4 text-4xl font-bold">${dailyFees.toFixed(2)}</div>
 
       <div className="mb-4 space-y-2">
         <div className="flex justify-between">
           <span className="text-base-content/60">MONTHLY:</span>
           <span className="font-semibold">
-            ${monthlyFees.toFixed(2)}{' '}
-            <span className="text-success">{monthlyAPR.toFixed(2)}%</span>
+            ${monthlyFees.toFixed(2)} <span className="text-success">{monthlyAPR.toFixed(2)}%</span>
           </span>
         </div>
 
         <div className="flex justify-between">
           <span className="text-base-content/60">YEARLY (APR):</span>
           <span className="font-semibold">
-            ${yearlyFees.toFixed(2)}{' '}
-            <span className="text-success">{yearlyAPR.toFixed(2)}%</span>
+            ${yearlyFees.toFixed(2)} <span className="text-success">{yearlyAPR.toFixed(2)}%</span>
           </span>
         </div>
       </div>
@@ -151,11 +142,13 @@ export function CalculatorStats({
       {/* Data quality warnings from assessDataQuality (LIMITED tier) and anomaly detection */}
       {results.warnings.length > 0 &&
         results.warnings.map((warning) => (
-          <div key={warning} className="alert alert-warning mb-4 text-xs">
+          <div
+            key={warning}
+            className="alert alert-warning mb-4 text-xs"
+          >
             {`⚠️ ${warning}`}
           </div>
-        ))
-      }
+        ))}
 
       <div className="flex gap-2">
         <button

@@ -41,7 +41,7 @@ export interface ProcessSuccess {
   totalFeesUSD: number
   feeReturnPercent: number
   APR: number
-  dailyFeesUSD: number,
+  dailyFeesUSD: number
   daysOfData: number
   hoursInRange: number | undefined
   percentInRange: number
@@ -232,13 +232,7 @@ export function simulateRangePerformance({
     L_user_base = Math.sqrt(amount0 * amount1)
   } else {
     // Concentrated: Canonical Uniswap V3 formula
-    L_user_base = calculateLiquidity(
-      amount0,
-      amount1,
-      currentPrice,
-      effectiveMin,
-      effectiveMax
-    )
+    L_user_base = calculateLiquidity(amount0, amount1, currentPrice, effectiveMin, effectiveMax)
   }
 
   if (L_user_base <= 0 || !Number.isFinite(L_user_base)) {

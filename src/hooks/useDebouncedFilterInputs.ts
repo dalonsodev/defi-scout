@@ -6,9 +6,9 @@ type Filters = Pick<ParamsState, 'search' | 'platforms' | 'tvlUsd' | 'volumeUsd1
 type LocalFilters = Omit<Filters, 'platforms'>
 
 interface DebouncedFilterInputsResult {
-    localFilters: LocalFilters;
-    updateLocalFilter: (key: string, value: unknown) => void;
-    resetLocalFilters: () => void;
+  localFilters: LocalFilters
+  updateLocalFilter: (key: string, value: unknown) => void
+  resetLocalFilters: () => void
 }
 
 /**
@@ -41,7 +41,6 @@ export function useDebouncedFilterInputs(
   filters: Filters,
   updateFilter: (key: string, value: unknown) => void
 ): DebouncedFilterInputsResult {
-
   const [localFilters, setLocalFilters] = useState<LocalFilters>({
     search: filters.search,
     tvlUsd: filters.tvlUsd,
@@ -83,12 +82,7 @@ export function useDebouncedFilterInputs(
       isOurUpdate.current = true
       updateFilter('volumeUsd1d', debouncedVolume)
     }
-  }, [
-    debouncedSearch,
-    debouncedTvl,
-    debouncedVolume,
-    updateFilter
-  ])
+  }, [debouncedSearch, debouncedTvl, debouncedVolume, updateFilter])
 
   // Effect 2: Sync URL back to local
   useEffect(() => {
