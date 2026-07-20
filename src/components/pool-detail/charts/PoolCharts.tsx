@@ -1,14 +1,14 @@
-import type { ReactNode } from 'react'
+import { ChartSkeleton } from './ChartSkeleton'
 import { LiquidityChart } from './LiquidityChart'
 import { PriceChart } from './PriceChart'
 import { TVLVolumeChart } from './TVLVolumeChart'
-import { ChartSkeleton } from './ChartSkeleton'
+import type { ReactNode } from 'react'
 import type {
   FormattedHourlyData,
-  RawPool,
+  FormattedPoolHistory,
   PoolTickResult,
-  UserInputs,
-  FormattedPoolHistory
+  RawPool,
+  UserInputs
 } from '../../../types'
 
 interface PoolChartsProps {

@@ -1,21 +1,21 @@
-import { useMemo, createRef, useEffect, forwardRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import {
-  useReactTable,
+  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  flexRender
+  useReactTable
 } from '@tanstack/react-table'
-import { PlatformIcon } from '../common/PlatformIcon'
-import { OutlinedStarIcon, FilledStarIcon } from '../common/StarIcons'
-import { SparklineCell } from './cells/SparklineCell'
+import { createRef, forwardRef, useEffect, useMemo } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { baseColumns } from '../../data/tableColumns'
 import { useBreakpoint } from '../../hooks/useBreakpoint'
 import { useIntersection } from '../../hooks/useIntersection'
-import { baseColumns } from '../../data/tableColumns'
-import type { ReactNode, MouseEvent } from 'react'
-import type { SortingState, OnChangeFn } from '@tanstack/react-table'
-import type { FormattedPool } from '../../types'
+import { PlatformIcon } from '../common/PlatformIcon'
+import { FilledStarIcon, OutlinedStarIcon } from '../common/StarIcons'
+import { SparklineCell } from './cells/SparklineCell'
+import type { OnChangeFn, SortingState } from '@tanstack/react-table'
+import type { MouseEvent, ReactNode } from 'react'
 import type { SparklineCache } from '../../hooks/useSparklines'
+import type { FormattedPool } from '../../types'
 
 interface PoolTableProps {
   pools: FormattedPool[]

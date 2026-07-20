@@ -1,4 +1,4 @@
-import { useState, useEffect, RefObject } from 'react'
+import { RefObject, useEffect, useState } from 'react'
 
 /**
  * Custom Hook: Intersection Observer

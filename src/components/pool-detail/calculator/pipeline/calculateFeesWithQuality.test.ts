@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest'
-import { calculateFeesWithQuality } from './calculateFeesWithQuality'
+import { describe, expect, it } from 'vitest'
 import { RawPoolHourData } from '../../../../types'
+import { calculateFeesWithQuality } from './calculateFeesWithQuality'
 
 describe('calculateFeesWithQuality', () => {
   it('returns success with accumulated fees', () => {

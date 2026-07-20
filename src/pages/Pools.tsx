@@ -1,9 +1,9 @@
 import { useLoaderData, useOutletContext } from 'react-router-dom'
-import { usePoolFilters } from '../hooks/usePoolFilters'
 import { PoolsContent } from '../components/pools/PoolsContent'
+import { usePoolFilters } from '../hooks/usePoolFilters'
 import type { ReactNode } from 'react'
-import type { FormattedPool } from '../types'
 import type { FavoritesOutletContext } from '../components/layout/FavoritesLayout'
+import type { FormattedPool } from '../types'
 
 /**
  * UI: Market Pools Explorer

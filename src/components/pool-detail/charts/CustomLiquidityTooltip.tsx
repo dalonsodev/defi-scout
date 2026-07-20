@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { CHART_COLORS } from '../../../constants/chartColors'
 import { formatTickPrice } from './utils/formatTickPrice'
 import type { TooltipContentProps } from 'recharts'
-import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent'
+import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent'
 
 interface CustomLiquidityTooltipProps extends Partial<TooltipContentProps<ValueType, NameType>> {
   tokenSymbols: [string, string]

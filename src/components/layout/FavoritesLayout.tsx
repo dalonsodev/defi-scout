@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
 import { Outlet } from 'react-router-dom'
 import { useFavorites } from '../../hooks/useFavorites'
+import type { ReactNode } from 'react'
 
 export interface FavoritesOutletContext {
   favoriteIds: Set<string>

@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { PLATFORM_ICONS } from '../../data/platformIcons'
 
 interface PlatformIconProps {

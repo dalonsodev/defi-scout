@@ -1,5 +1,5 @@
-import { validateHourSnapshot } from '../utils/validateHourSnapshot'
 import { debugLog } from '../../../../utils/logger'
+import { validateHourSnapshot } from '../utils/validateHourSnapshot'
 import type { RawPoolHourData } from '../../../../types'
 
 interface CalculateFeesWithQualityParams {

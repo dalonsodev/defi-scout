@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-  priceToTick,
-  tickToPrice,
-  getTickSpacing,
   alignTickToSpacing,
-  incrementPriceByTick
+  getTickSpacing,
+  incrementPriceByTick,
+  priceToTick,
+  tickToPrice
 } from './uniswapV3Ticks.js'
 
 const MIN_TICK = -887272

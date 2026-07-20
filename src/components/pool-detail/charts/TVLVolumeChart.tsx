@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-import { ComposedChart, Area, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
-import { CustomTVLTooltip } from './CustomTVLTooltip'
-import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
+import { Area, Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { CHART_COLORS } from '../../../constants/chartColors'
+import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
+import { CustomTVLTooltip } from './CustomTVLTooltip'
 import type { FormattedPoolHistory } from '../../../types'
 
 interface TVLVolumeChartProps {

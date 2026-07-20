@@ -1,5 +1,5 @@
-import { tickToPrice } from '../../calculator/utils/uniswapV3Ticks'
 import { PoolTickResult } from '../../../../types'
+import { tickToPrice } from '../../calculator/utils/uniswapV3Ticks'
 
 /**
  * Process Tick Data for display in Liquidity Distribution chart (BarChart)

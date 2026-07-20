@@ -1,11 +1,11 @@
-import { GraphQLClient, gql } from 'graphql-request'
+import { gql, GraphQLClient } from 'graphql-request'
 import {
   PoolTickResult,
+  RawBundle,
   RawPool,
   RawPoolDayData,
-  RawPoolHourData,
-  RawBundle,
   RawPoolHistory,
+  RawPoolHourData,
   RawPoolTicks
 } from '../types'
 

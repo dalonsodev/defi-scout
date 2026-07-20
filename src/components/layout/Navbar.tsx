@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import type { ReactNode } from 'react'
 
 /**
  * UI: Global Application Header.

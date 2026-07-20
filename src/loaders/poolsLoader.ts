@@ -1,6 +1,6 @@
 import { fetchPools } from '../services/theGraphClient'
-import { formatPoolData } from './utils/formatPoolData'
 import { FormattedPool, RawPool } from '../types'
+import { formatPoolData } from './utils/formatPoolData'
 
 /**
  * View Layer Data Loader: Pools Discovery Page.

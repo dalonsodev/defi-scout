@@ -1,12 +1,12 @@
-import { assessDataQuality } from './assessDataQuality'
-import { calculateLiquidity } from './calculateLiquidity'
-import { validateInputs } from '../pipeline/validateInputs'
-import { calculateTokenPrices } from './calculateTokenPrices'
-import { calculateComposition } from '../pipeline/calculateComposition'
-import { calculateFeesWithQuality } from '../pipeline/calculateFeesWithQuality'
 import { inferTokenPricesFromTVL } from '../../../../utils/inferTokenPricesFromTVL'
 import { debugLog } from '../../../../utils/logger'
-import type { RawPoolHourData, RawPoolHistory } from '../../../../types'
+import { calculateComposition } from '../pipeline/calculateComposition'
+import { calculateFeesWithQuality } from '../pipeline/calculateFeesWithQuality'
+import { validateInputs } from '../pipeline/validateInputs'
+import { assessDataQuality } from './assessDataQuality'
+import { calculateLiquidity } from './calculateLiquidity'
+import { calculateTokenPrices } from './calculateTokenPrices'
+import type { RawPoolHistory, RawPoolHourData } from '../../../../types'
 
 interface RangePerformanceParams {
   fullRange: boolean

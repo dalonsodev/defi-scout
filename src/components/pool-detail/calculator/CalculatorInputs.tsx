@@ -1,7 +1,7 @@
+import { formatPriceInput, getPriceStep } from '../../../utils/priceInputUtils'
 import type { ReactNode } from 'react'
 import type { UserInputs } from '../../../types'
 import type { PositionComposition } from './utils/simulateRangePerformance'
-import { formatPriceInput, getPriceStep } from '../../../utils/priceInputUtils'
 
 export type Field = 'capitalUSD' | 'fullRange' | 'minPrice' | 'maxPrice' | 'assumedPrice'
 export type Value = number | boolean

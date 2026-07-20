@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { formatHourlyData } from '../../../../loaders/utils/formatHourlyData'
 import { fetchPoolHourData } from '../../../../services/theGraphClient'
 import type { FormattedHourlyData, RawPoolHourData } from '../../../../types'

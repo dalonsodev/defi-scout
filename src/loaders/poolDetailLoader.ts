@@ -1,6 +1,6 @@
+import { LoaderFunctionArgs } from 'react-router-dom'
 import { fetchPoolHistory } from '../services/theGraphClient'
 import { formatPoolHistory } from './utils/formatPoolHistory'
-import { LoaderFunctionArgs } from 'react-router-dom'
 import type { FormattedPoolHistory, RawPoolHistory } from '../types'
 
 interface LoaderResultSuccess {

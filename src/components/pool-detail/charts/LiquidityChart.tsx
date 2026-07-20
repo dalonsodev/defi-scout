@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
+import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { CHART_COLORS } from '../../../constants/chartColors'
 import { CustomLiquidityTooltip } from './CustomLiquidityTooltip'
 import { processTickData } from './utils/processTickData'
-import { CHART_COLORS } from '../../../constants/chartColors'
 import type { ReactNode } from 'react'
 import type { AxisDomain } from 'recharts/types/util/types'
-import type { UserInputs, PoolTickResult } from '../../../types'
+import type { PoolTickResult, UserInputs } from '../../../types'
 
 interface LiquidityChartProps {
   selectedTokenIdx: number

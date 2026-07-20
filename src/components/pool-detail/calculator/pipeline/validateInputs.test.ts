@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { validateInputs } from './validateInputs.js'
 
 describe('validateInputs - Edge Cases', () => {

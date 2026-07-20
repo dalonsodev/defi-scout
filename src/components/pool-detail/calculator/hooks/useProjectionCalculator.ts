@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
-import { calculateIL } from '../utils/calculateIL'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { debugLog } from '../../../../utils/logger'
-import type { ProcessResult } from '../utils/simulateRangePerformance'
+import { calculateIL } from '../utils/calculateIL'
 import type { RawToken, UserInputs } from '../../../../types'
+import type { ProcessResult } from '../utils/simulateRangePerformance'
 
 interface PoolData {
   token0: RawToken
