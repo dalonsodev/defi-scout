@@ -54,14 +54,7 @@ type ProcessResult = ProcessFailure | ProcessSuccess
  * @param params.initialQuality - Initial quality from assessDataQuality
  * @param [params.debug=true] - Enable diagnostic logging
  *
- * @returns Success state (with totalFeesUSD) or failure state (with error)
- * @returns returns.success - false if position never entered range
- * @returns [returns.error] - Human-readable error message
- * @returns [returns.totalFeesUSD] - Accumulated fees across in-range hours
- * @returns [returns.hoursInRange] - Count of hours position was active
- * @returns [returns.percentInRange] - Percentage of hours in range
- * @returns returns.finalQuality - Adjusted quality (downgraded if high anomaly rate)
- * @returns returns.warnings - Anomaly warnings (max 5)
+ * @returns Success state (with fee totals + adjusted quality) or failure state (with error)
  */
 export function calculateFeesWithQuality({
   hourlyData,

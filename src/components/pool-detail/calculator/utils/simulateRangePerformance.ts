@@ -83,15 +83,7 @@ export type ProcessResult = ProcessFailure | ProcessSuccess
  * @param params.pool - Pool metadata (TVL, decimals, feeTier)
  * @param ethPriceUSD - Current ETH Price
  *
- * @returns Simulation result
- * @returns returns.success - Operation status
- * @returns [returns.error] - Error message if failed
- * @returns [returns.APR] - Annualized fee return (if successful)
- * @returns [returns.totalFeesUSD] - Accumulated historical fees
- * @returns [returns.dailyFeesUSD] - Average daily fees
- * @returns [returns.composition] - Position breakdown (amounts, USD values)
- * @returns returns.dataQuality - EXCELLENT | RELIABLE | LIMITED | INSUFFICIENT
- * @returns returns.warnings - Anomalies detected (max 5)
+ * @returns Simulation result with position breakdown, fees and quality (or error if failed)
  */
 export function simulateRangePerformance({
   capitalUSD,

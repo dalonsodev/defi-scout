@@ -85,19 +85,7 @@ interface ProjectionCalculatorResult {
  * @param results.composition - Token amounts (amount0, amount1)
  * @param results.dailyFeesUSD - Historical daily fee earnings
  *
- * @returns Projection interface
- * @returns returns.hodlStrategy - Buy-and-hold metrics (pnl, totalValue)
- * @returns returns.lpStrategy - LP metrics (pnl, feesEarned, ilPercent)
- * @returns returns.isCalculating - Loading state
- * @returns returns.daysToBreakEven - Days until LP fees offset IL
- * @returns returns.currentToken0PriceUSD - Current USD price of token0
- * @returns returns.currentToken1PriceUSD - Current USD price of token1
- * @returns returns.futureToken0Price - User input (scenario price)
- * @returns returns.futureToken1Price - User input
- * @returns returns.projectionDays - User input (time horizon)
- * @returns returns.setFutureToken0Price - Update scenario price
- * @returns returns.setFutureToken1Price - Update scenario price
- * @returns returns.setProjectionDays - Update time horizon
+ * @returns Projection interface with position metrics, loading state, current prices and user-defined projections
  *
  * @example
  * const projection = useProjectionCalculator(pool, rangeInputs, simulationResults)
