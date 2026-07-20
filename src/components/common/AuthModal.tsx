@@ -1,16 +1,16 @@
-import { useState, useRef } from 'react'
-import type { ReactNode, FormEvent } from 'react'
 import {
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup
 } from 'firebase/auth'
-import { useFocusTrap } from './hooks/useFocusTrap'
+import { useRef, useState } from 'react'
 import { auth } from '../../../firebase'
 import { useAuth } from '../../context/AuthContext'
+import { useFocusTrap } from './hooks/useFocusTrap'
 import type { FirebaseError } from 'firebase/app'
+import type { FormEvent, ReactNode } from 'react'
 
 const MODE = Object.freeze({
   LOGIN: 'login',

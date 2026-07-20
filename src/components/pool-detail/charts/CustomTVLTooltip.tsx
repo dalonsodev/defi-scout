@@ -1,8 +1,8 @@
 import { ReactNode } from 'react'
-import type { TooltipContentProps } from 'recharts'
-import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent'
-import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
 import { CHART_COLORS } from '../../../constants/chartColors'
+import { formatCompactCurrency } from '../../../utils/formatCompactCurrency'
+import type { TooltipContentProps } from 'recharts'
+import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent'
 
 interface CustomTVLTooltipProps extends Partial<TooltipContentProps<ValueType, NameType>> {
   dateShortMap: Map<number, string>

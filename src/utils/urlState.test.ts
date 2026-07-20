@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { parseSearchParams, buildCleanSearchParams } from './urlState'
+import { describe, expect, it } from 'vitest'
+import { buildCleanSearchParams, parseSearchParams } from './urlState'
 
 /**
  * Test Suite: URL State Management

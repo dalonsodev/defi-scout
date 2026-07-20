@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import { CHART_COLORS } from '../../../constants/chartColors'
 import type { TooltipContentProps } from 'recharts'
-import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent'
+import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent'
 
 interface CustomPriceTooltipProps extends Partial<TooltipContentProps<ValueType, NameType>> {
   tokenSymbols: [string, string]

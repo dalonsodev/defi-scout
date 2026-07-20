@@ -123,10 +123,10 @@ export function alignTickToSpacing(tick: number, tickSpacing: number): number {
  * Use Case: Implements "+" and "-" buttons in price inputs fields, ensuring
  * each step respects protocol tick spacing (prevents invalid positions)
  *
- * @param {number} currentPrice - Reference price (token1/token0)
- * @param {number} feeTier - Pool fee tier (100, 500, 3000, 10000 bps)
- * @param {number} direction - 1 for increment, -1 for decrement
- * @returns {number} Adjusted price (guaranteed to be on valid tick grid)
+ * @param currentPrice - Reference price (token1/token0)
+ * @param feeTier - Pool fee tier (100, 500, 3000, 10000 bps)
+ * @param direction - 1 for increment, -1 for decrement
+ * @returns Adjusted price (guaranteed to be on valid tick grid)
  *
  * @example
  * // Increment ETH/USDC price by one 0.3% tick

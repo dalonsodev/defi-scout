@@ -1,4 +1,4 @@
-import type { RawPool, FormattedPool } from '../../types'
+import type { FormattedPool, RawPool } from '../../types'
 
 // APY Calculation Logic: (Accumulated Fees / Age in Days / TVL) * 365 * 100
 

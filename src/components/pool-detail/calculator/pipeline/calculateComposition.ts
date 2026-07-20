@@ -1,5 +1,5 @@
-import { calculateTokenRatio } from '../utils/calculateTokenRatio'
 import { debugLog } from '../../../../utils/logger'
+import { calculateTokenRatio } from '../utils/calculateTokenRatio'
 
 interface UserInputs {
   capitalUSD: number

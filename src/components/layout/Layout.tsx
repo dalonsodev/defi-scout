@@ -1,4 +1,4 @@
-import { Outlet, useNavigation, Link } from 'react-router-dom'
+import { Link, Outlet, useNavigation } from 'react-router-dom'
 import { Navbar } from './Navbar'
 
 /**
@@ -17,7 +17,7 @@ import { Navbar } from './Navbar'
  * eye strain on ultra-wide monitors, follows Nielsen Norman Group guidelines)
  * - Fixed spinner (top-right): Non-blocking, doesn't shift layout on show/hide
  *
- * @returns {JSX.Element} Global site structure: navbar + route outlet + loading indicator
+ * @returns Global site structure: navbar + route outlet + loading indicator
  */
 export function Layout() {
   const navigation = useNavigation()

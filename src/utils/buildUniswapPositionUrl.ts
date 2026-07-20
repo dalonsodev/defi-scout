@@ -1,9 +1,9 @@
 import {
-  priceToTick,
   alignTickToSpacing,
-  getTickSpacing
+  getTickSpacing,
+  priceToTick
 } from '../components/pool-detail/calculator/utils/uniswapV3Ticks'
-import type { RawPoolHistory, UserInputs, Composition } from '../types'
+import type { Composition, RawPoolHistory, UserInputs } from '../types'
 
 const MIN_TICK = -887272
 const MAX_TICK = 887272

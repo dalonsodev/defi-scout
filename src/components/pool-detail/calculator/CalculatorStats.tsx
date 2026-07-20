@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import { ILProjectionModal } from './ILProjectionModal'
 import type { ReactNode } from 'react'
 import type { RawPoolHistory, UserInputs } from '../../../types'
 import type { ProcessResult } from './utils/simulateRangePerformance'
-import { ILProjectionModal } from './ILProjectionModal'
 
 interface CalculatorStatsProps {
   results: ProcessResult | null

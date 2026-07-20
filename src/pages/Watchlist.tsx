@@ -1,12 +1,12 @@
-import { useRef, useState, useMemo } from 'react'
-import { useLoaderData, useOutletContext, Link } from 'react-router-dom'
-import { PoolTable } from '../components/pools/PoolTable'
+import { useMemo, useRef, useState } from 'react'
+import { Link, useLoaderData, useOutletContext } from 'react-router-dom'
 import { PaginationControls } from '../components/common/PaginationControls'
+import { PoolTable } from '../components/pools/PoolTable'
 import { useSparklines } from '../hooks/useSparklines'
+import type { SortingState } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
 import type { FavoritesOutletContext } from '../components/layout/FavoritesLayout'
 import type { FormattedPool } from '../types'
-import type { SortingState } from '@tanstack/react-table'
 
 const PAGE_SIZE = 40
 

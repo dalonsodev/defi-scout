@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from './useDebounce'
 import type { ParamsState } from '../types'
 

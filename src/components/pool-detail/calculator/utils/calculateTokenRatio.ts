@@ -1,4 +1,4 @@
-import { priceToTick, getTickSpacing, alignTickToSpacing } from './uniswapV3Ticks'
+import { alignTickToSpacing, getTickSpacing, priceToTick } from './uniswapV3Ticks'
 
 /**
  * Utility: Calculates token composition ratio for Uniswap V3 concentrated positions.

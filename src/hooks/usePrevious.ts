@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 /**
  * Custom Hook: Returns the previous value of a variable from the last render.

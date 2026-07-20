@@ -1,12 +1,12 @@
-import { assessDataQuality } from './assessDataQuality'
-import { calculateLiquidity } from './calculateLiquidity'
-import { validateInputs } from '../pipeline/validateInputs'
-import { calculateTokenPrices } from './calculateTokenPrices'
-import { calculateComposition } from '../pipeline/calculateComposition'
-import { calculateFeesWithQuality } from '../pipeline/calculateFeesWithQuality'
 import { inferTokenPricesFromTVL } from '../../../../utils/inferTokenPricesFromTVL'
 import { debugLog } from '../../../../utils/logger'
-import type { RawPoolHourData, RawPoolHistory } from '../../../../types'
+import { calculateComposition } from '../pipeline/calculateComposition'
+import { calculateFeesWithQuality } from '../pipeline/calculateFeesWithQuality'
+import { validateInputs } from '../pipeline/validateInputs'
+import { assessDataQuality } from './assessDataQuality'
+import { calculateLiquidity } from './calculateLiquidity'
+import { calculateTokenPrices } from './calculateTokenPrices'
+import type { RawPoolHistory, RawPoolHourData } from '../../../../types'
 
 interface RangePerformanceParams {
   fullRange: boolean
@@ -83,15 +83,7 @@ export type ProcessResult = ProcessFailure | ProcessSuccess
  * @param params.pool - Pool metadata (TVL, decimals, feeTier)
  * @param ethPriceUSD - Current ETH Price
  *
- * @returns {Object} Simulation result
- * @returns {boolean} returns.success - Operation status
- * @returns {string} [returns.error] - Error message if failed
- * @returns {number} [returns.APR] - Annualized fee return (if successful)
- * @returns {number} [returns.totalFeesUSD] - Accumulated historical fees
- * @returns {number} [returns.dailyFeesUSD] - Average daily fees
- * @returns {Object} [returns.composition] - Position breakdown (amounts, USD values)
- * @returns {string} returns.dataQuality - EXCELLENT | RELIABLE | LIMITED | INSUFFICIENT
- * @returns {string[]} returns.warnings - Anomalies detected (max 5)
+ * @returns Simulation result with position breakdown, fees and quality (or error if failed)
  */
 export function simulateRangePerformance({
   capitalUSD,

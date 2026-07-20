@@ -1,5 +1,5 @@
-import { validateHourSnapshot } from '../utils/validateHourSnapshot'
 import { debugLog } from '../../../../utils/logger'
+import { validateHourSnapshot } from '../utils/validateHourSnapshot'
 import type { RawPoolHourData } from '../../../../types'
 
 interface CalculateFeesWithQualityParams {
@@ -54,14 +54,7 @@ type ProcessResult = ProcessFailure | ProcessSuccess
  * @param params.initialQuality - Initial quality from assessDataQuality
  * @param [params.debug=true] - Enable diagnostic logging
  *
- * @returns {Object} Success state (with totalFeesUSD) or failure state (with error)
- * @returns {boolean} returns.success - false if position never entered range
- * @returns {string} [returns.error] - Human-readable error message
- * @returns {number} [returns.totalFeesUSD] - Accumulated fees across in-range hours
- * @returns {number} [returns.hoursInRange] - Count of hours position was active
- * @returns {number} [returns.percentInRange] - Percentage of hours in range
- * @returns {string} returns.finalQuality - Adjusted quality (downgraded if high anomaly rate)
- * @returns {string[]} returns.warnings - Anomaly warnings (max 5)
+ * @returns Success state (with fee totals + adjusted quality) or failure state (with error)
  */
 export function calculateFeesWithQuality({
   hourlyData,

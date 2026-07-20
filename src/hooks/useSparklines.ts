@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { fetchPoolSparklines, formatSparklineData } from '../services/theGraphClient'
 import type { FormattedPool } from '../types'
 

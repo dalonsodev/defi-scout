@@ -1,12 +1,12 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom'
+import { Error } from './components/common/Error'
+import { FavoritesLayout } from './components/layout/FavoritesLayout'
+import { Layout } from './components/layout/Layout'
+import { poolDetailLoader } from './loaders/poolDetailLoader'
+import { poolsLoader } from './loaders/poolsLoader'
+import { watchlistLoader } from './loaders/watchlistLoader'
 import Pools from './pages/Pools'
 import Watchlist from './pages/Watchlist'
-import { Layout } from './components/layout/Layout'
-import { FavoritesLayout } from './components/layout/FavoritesLayout'
-import { Error } from './components/common/Error'
-import { poolsLoader } from './loaders/poolsLoader'
-import { poolDetailLoader } from './loaders/poolDetailLoader'
-import { watchlistLoader } from './loaders/watchlistLoader'
 
 /**
  * Application Router: React Router 6.4+ (with loader-based data fetching)

@@ -1,9 +1,9 @@
+import { collection, getDocs } from 'firebase/firestore'
 import { redirect } from 'react-router-dom'
 import { auth, db } from '../../firebase'
-import { collection, getDocs } from 'firebase/firestore'
 import { fetchWatchedPools } from '../services/theGraphClient'
-import { formatPoolData } from './utils/formatPoolData'
 import { FormattedPool } from '../types'
+import { formatPoolData } from './utils/formatPoolData'
 
 interface WatchlistLoaderSuccess {
   pools: FormattedPool[]

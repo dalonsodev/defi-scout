@@ -1,11 +1,11 @@
-import { GraphQLClient, gql } from 'graphql-request'
+import { gql, GraphQLClient } from 'graphql-request'
 import {
   PoolTickResult,
+  RawBundle,
   RawPool,
   RawPoolDayData,
-  RawPoolHourData,
-  RawBundle,
   RawPoolHistory,
+  RawPoolHourData,
   RawPoolTicks
 } from '../types'
 
@@ -412,9 +412,7 @@ export async function fetchPools(variables: PoolVariables): Promise<RawPool[]> {
  * @param poolId - Pool contract address (case-insensitive, normalized to lowercase)
  * @param startDate - Unix timestamp in seconds for oldest data point
  *
- * @returns result
- * @returns {Object} result.pool - Pool metadata (tokens, TVL, prices)
- * @returns {Array} result.history - Daily snapshots (volumeUSD, tvlUSD, feesUSD, prices)
+ * @returns Pool metadata plus daily historical snapshots and current ETH price
  */
 export async function fetchPoolHistory(
   poolId: string,
@@ -462,10 +460,7 @@ export async function fetchPoolHourData(
  * @param poolId - Pool contract address (case-insensitive)
  * @param currentTick - Current active tick
  *
- * @returns pool
- * @returns pool.tick - Current active tick
- * @returns pool.liquidity - Active liquidity at current tick (BigInt as string)
- * @returns pool.ticks - Ordered tick array (up to 1000 items)
+ * @returns Current active tick with liquidity and an ordered tick array (up to 1000 items)
  */
 export async function fetchPoolTicks(poolId: string, currentTick: number): Promise<PoolTickResult> {
   const data = await client.request<{ pool: RawPoolTicks }>(GET_POOL_TICKS_QUERY, {

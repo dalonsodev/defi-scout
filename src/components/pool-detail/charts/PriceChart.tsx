@@ -1,15 +1,15 @@
 import { useMemo } from 'react'
 import {
-  LineChart,
   Line,
-  XAxis,
-  YAxis,
-  Tooltip,
+  LineChart,
+  ReferenceLine,
   ResponsiveContainer,
-  ReferenceLine
+  Tooltip,
+  XAxis,
+  YAxis
 } from 'recharts'
-import { CustomPriceTooltip } from './CustomPriceTooltip'
 import { CHART_COLORS } from '../../../constants/chartColors'
+import { CustomPriceTooltip } from './CustomPriceTooltip'
 import type { ReactNode } from 'react'
 import type { FormattedHourlyData, UserInputs } from '../../../types'
 

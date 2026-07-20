@@ -1,4 +1,4 @@
-import type { FormattedPoolHistory, RawPoolHistory, RawPoolDayData } from '../../types'
+import type { FormattedPoolHistory, RawPoolDayData, RawPoolHistory } from '../../types'
 
 /**
  * Utility: Transforms raw PoolDayData from The Graph into chart-ready format.

@@ -1,4 +1,4 @@
-import type { RawPoolHourData, FormattedHourlyData } from '../../types'
+import type { FormattedHourlyData, RawPoolHourData } from '../../types'
 
 /**
  * Utility: Transforms raw PoolHourData from The Graph into chart-ready format.

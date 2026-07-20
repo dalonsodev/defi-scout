@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
-import { calculateIL } from '../utils/calculateIL'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { debugLog } from '../../../../utils/logger'
-import type { ProcessResult } from '../utils/simulateRangePerformance'
+import { calculateIL } from '../utils/calculateIL'
 import type { RawToken, UserInputs } from '../../../../types'
+import type { ProcessResult } from '../utils/simulateRangePerformance'
 
 interface PoolData {
   token0: RawToken
@@ -80,24 +80,12 @@ interface ProjectionCalculatorResult {
  * @param rangeInputs - User-defined LP position parameters
  * @param rangeInputs.capitalUSD - Deposit amount in USD
  *
- * @param {Object} results - Output from simulateRangePerformance
- * @param {boolean} results.success - Whether simulation completed
- * @param {Object} results.composition - Token amounts (amount0, amount1)
- * @param {number} results.dailyFeesUSD - Historical daily fee earnings
+ * @param results - Output from simulateRangePerformance
+ * @param results.success - Whether simulation completed
+ * @param results.composition - Token amounts (amount0, amount1)
+ * @param results.dailyFeesUSD - Historical daily fee earnings
  *
- * @returns {Object} Projection interface
- * @returns {Object} returns.hodlStrategy - Buy-and-hold metrics (pnl, totalValue)
- * @returns {Object} returns.lpStrategy - LP metrics (pnl, feesEarned, ilPercent)
- * @returns {boolean} returns.isCalculating - Loading state
- * @returns {number} returns.daysToBreakEven - Days until LP fees offset IL
- * @returns {number} returns.currentToken0PriceUSD - Current USD price of token0
- * @returns {number} returns.currentToken1PriceUSD - Current USD price of token1
- * @returns {number} returns.futureToken0Price - User input (scenario price)
- * @returns {number} returns.futureToken1Price - User input
- * @returns {number} returns.projectionDays - User input (time horizon)
- * @returns {Function} returns.setFutureToken0Price - Update scenario price
- * @returns {Function} returns.setFutureToken1Price - Update scenario price
- * @returns {Function} returns.setProjectionDays - Update time horizon
+ * @returns Projection interface with position metrics, loading state, current prices and user-defined projections
  *
  * @example
  * const projection = useProjectionCalculator(pool, rangeInputs, simulationResults)
