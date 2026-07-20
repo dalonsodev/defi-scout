@@ -20,11 +20,6 @@ interface PoolDetailLoaderData {
   ethPriceUSD: number
 }
 
-interface OutletContextData {
-  favoriteIds: Set<string>
-  toggleFavorite: (poolId: string) => Promise<void>
-}
-
 const DexScreenLogo = (): ReactNode => (
   <svg
     width="1.5em"
