@@ -53,16 +53,15 @@ interface RowType {
  *
  * Accessibility: CMD/CTRL+click on rows opens detail page in new tab (power user feature)
  *
- * @param {Object} props
- * @param {Array<Object>} props.pools - Paginated pool dataset (40 items max)
- * @param {Object<string, Array<number>>} props.sparklineData - Cache of historical APY data by pool ID
- * @param {Function} props.onVisiblePoolsChange - Callback to notify parent of IDs in viewport
- * @param {Array<id: string, desc: boolean>} props.sorting - TanStack sorting state
- * @param {Function} props.onSortingChange - Handler to update sorting criteria
- * @param {React.ForwardedRef<HTMLDivElement[lang="en"]>} ref - Ref to internal scroll container (for auto-scroll)
- * @param {Set<string>} props.favoriteIds - Favorited pool IDs; used for O(1) isFavorited lookup
- * @param {(poolId: string) => Promise<void>} props.toggleFavorite - Toggles favorite; opens auth modal if unauthenticated
- * @returns {JSX.Element}
+ * @param props
+ * @param props.pools - Paginated pool dataset (40 items max)
+ * @param props.sparklineData - Cache of historical APY data by pool ID
+ * @param props.onVisiblePoolsChange - Callback to notify parent of IDs in viewport
+ * @param props.sorting - TanStack sorting state
+ * @param props.onSortingChange - Handler to update sorting criteria
+ * @param ref - Ref to internal scroll container (for auto-scroll)
+ * @param props.favoriteIds - Favorited pool IDs; used for O(1) isFavorited lookup
+ * @param props.toggleFavorite - Toggles favorite; opens auth modal if unauthenticated
  */
 const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
   (

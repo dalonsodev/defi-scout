@@ -38,10 +38,10 @@ const getInitials = (platformSlug: string): string => {
  * Example: "uniswap-v3" => "UV", "aave-v2" => "AV"
  * Limitation: Only 2 chars (not 1 or 3) for visual consistency across all badges.
  *
- * @param {Object} props
- * @param {string} props.platform - Platform Slug (must match PLATFORM_ICONS keys)
- * @param {"sm" | "md" | "lg"} [props.size="md"] - Visual size preset
- * @returns {JSX.Element} Rounded logo image or a fallback initials badge
+ * @param props
+ * @param props.platform - Platform Slug (must match PLATFORM_ICONS keys)
+ * @param [props.size="md"] - Visual size preset
+ * @returns Rounded logo image or a fallback initials badge
  *
  * @example
  * <PlatformIcon platform="uniswap-v3" size="lg" />

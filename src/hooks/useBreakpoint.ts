@@ -17,7 +17,7 @@ interface BreakPointResult {
  * Breakpoint: 768px (Tailwind's md) - chosen to match table responsive behavior
  * where <768px hides less critical columns.
  *
- * @returns {{ isDesktop: boolean }} - true when viewport >= 768px
+ * @returns true when viewport >= 768px
  *
  * @example
  * function ChartContainer() {

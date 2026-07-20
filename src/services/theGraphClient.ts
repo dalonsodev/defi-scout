@@ -413,8 +413,8 @@ export async function fetchPools(variables: PoolVariables): Promise<RawPool[]> {
  * @param startDate - Unix timestamp in seconds for oldest data point
  *
  * @returns result
- * @returns {Object} result.pool - Pool metadata (tokens, TVL, prices)
- * @returns {Array} result.history - Daily snapshots (volumeUSD, tvlUSD, feesUSD, prices)
+ * @returns result.pool - Pool metadata (tokens, TVL, prices)
+ * @returns result.history - Daily snapshots (volumeUSD, tvlUSD, feesUSD, prices)
  */
 export async function fetchPoolHistory(
   poolId: string,
