@@ -1,5 +1,6 @@
 import { Link, Outlet, useNavigation } from 'react-router-dom'
 import { Navbar } from './Navbar'
+import type { ReactNode } from 'react'
 
 /**
  * Architecture: Global Application Layout Wrapper.
@@ -19,7 +20,7 @@ import { Navbar } from './Navbar'
  *
  * @returns Global site structure: navbar + route outlet + loading indicator
  */
-export function Layout() {
+export function Layout(): ReactNode {
   const navigation = useNavigation()
   const isLoading = navigation.state === 'loading'
 
