@@ -1,5 +1,5 @@
 import { fetchPools } from '../services/theGraphClient'
-import { FormattedPool, RawPool } from '../types'
+import { FormattedPool } from '../types'
 import { formatPoolData } from './utils/formatPoolData'
 
 /**
