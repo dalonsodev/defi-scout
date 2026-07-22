@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import { CHART_COLORS } from '../../../constants/chartColors'
 import type { TooltipContentProps } from 'recharts'
 import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent'
+import type { FormattedHourlyData } from '../../../types'
 
 interface CustomPriceTooltipProps extends Partial<TooltipContentProps<ValueType, NameType>> {
   tokenSymbols: [string, string]
@@ -49,8 +50,11 @@ export function CustomPriceTooltip({
   if (!active || !payload?.length) return null
 
   const entry = payload[0]
-  const rawData = entry.payload as { value: number }
-  const price = rawData.value
+  const rawData = entry.payload as FormattedHourlyData
+  const key = selectedTokenIdx === 0 ? 'token0Price' : 'token1Price'
+  const price = rawData[key]
+
+  if (typeof price !== 'number') return null
 
   // Domain Logic: Resolve pair direction based on selected token
   // selectedTokenIdx=0 => "token0 per token1" (e.g. "WETH per USDC")
