@@ -9,6 +9,8 @@
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?logo=firebase&logoColor=black)
 
+**🔗 [Live Demo](https://defiscout.netlify.app)**
+
 ![demo](./public/demo.gif)
 
 ---
@@ -167,5 +169,3 @@ SVG `fill` and `stroke` attributes don't resolve CSS custom properties like `hsl
 
 Built by **David Alonso**
 [GitHub](https://github.com/dalonsodev) · [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)
-
-Live demo: _coming soon_
