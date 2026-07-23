@@ -9,13 +9,15 @@
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?logo=firebase&logoColor=black)
 
-![demo](./public/demo.gif)
+**🔗 [Live Demo](https://defiscout.netlify.app)**
 
 ---
 
 ## ✨ Features
 
 ### Pool Explorer
+
+https://github.com/user-attachments/assets/5ee53252-20ff-4899-861c-d0e321291fa3
 
 - Responsive table with key metrics: APY, TVL, 24h Volume, platform, and 14-day sparklines
 - **Global sorting** — clicking a column header sorts the full 1,000-pool dataset, not just the current page
@@ -26,6 +28,8 @@
 
 ### Pool Detail & Analytics
 
+https://github.com/user-attachments/assets/afd5aaf0-690a-4d0c-baa5-2476f61767d5
+
 Click any pool to get a full breakdown:
 
 - **KPI cards** — current TVL, 24h volume, and 7-day average APY
@@ -35,6 +39,8 @@ Click any pool to get a full breakdown:
 - Links to Etherscan and DexScreener
 
 ### Range Calculator
+
+https://github.com/user-attachments/assets/854aa95d-3ff6-40a8-9759-e9e1a9d97267
 
 Built on top of the pool detail data:
 
@@ -166,6 +172,8 @@ SVG `fill` and `stroke` attributes don't resolve CSS custom properties like `hsl
 ## 📬 Contact
 
 Built by **David Alonso**
-[GitHub](https://github.com/dalonsodev) · [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)
+[GitHub](https://github.com/dalonsodev) · [LinkedIn](https://www.linkedin.com/in/dalonsodev) · [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)
 
-Live demo: _coming soon_
+Available for remote contract work
+
+Based in Spain 🇪🇸 · working with international teams · CET
