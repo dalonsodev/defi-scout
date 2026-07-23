@@ -168,4 +168,8 @@ SVG `fill` and `stroke` attributes don't resolve CSS custom properties like `hsl
 ## 📬 Contact
 
 Built by **David Alonso**
-[GitHub](https://github.com/dalonsodev) · [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)
+[GitHub](https://github.com/dalonsodev) · [LinkedIn](https://www.linkedin.com/in/dalonsodev) · [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)
+
+Available for remote contract work
+
+Based in Spain 🇪🇸 · working with international teams · CET
