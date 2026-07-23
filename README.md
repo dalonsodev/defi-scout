@@ -11,13 +11,13 @@
 
 **🔗 [Live Demo](https://defiscout.netlify.app)**
 
-![demo](./public/demo.gif)
-
 ---
 
 ## ✨ Features
 
 ### Pool Explorer
+
+https://github.com/user-attachments/assets/5ee53252-20ff-4899-861c-d0e321291fa3
 
 - Responsive table with key metrics: APY, TVL, 24h Volume, platform, and 14-day sparklines
 - **Global sorting** — clicking a column header sorts the full 1,000-pool dataset, not just the current page
@@ -28,6 +28,8 @@
 
 ### Pool Detail & Analytics
 
+https://github.com/user-attachments/assets/afd5aaf0-690a-4d0c-baa5-2476f61767d5
+
 Click any pool to get a full breakdown:
 
 - **KPI cards** — current TVL, 24h volume, and 7-day average APY
@@ -37,6 +39,8 @@ Click any pool to get a full breakdown:
 - Links to Etherscan and DexScreener
 
 ### Range Calculator
+
+https://github.com/user-attachments/assets/854aa95d-3ff6-40a8-9759-e9e1a9d97267
 
 Built on top of the pool detail data:
 
