@@ -92,14 +92,12 @@
   /* Glass Surfaces */
   .glass-surface {
     background: var(--glass-bg-surface);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    @apply backdrop-blur-md;
     border: 1px solid var(--border-subtle);
   }
   .glass-overlay {
     background: var(--glass-bg-overlay);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    @apply backdrop-blur-[20px];
     border: 1px solid var(--border-medium);
   }
   .glass-input {
