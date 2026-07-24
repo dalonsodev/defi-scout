@@ -106,7 +106,7 @@ export function AuthModal(): ReactNode {
     >
       <div
         ref={modalRef}
-        className="modal-box glass-modal max-w-xl rounded-2xl"
+        className="modal-box glass-overlay max-w-xl rounded-2xl"
       >
         <button
           onClick={handleClose}
