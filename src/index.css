@@ -133,39 +133,69 @@
     color: var(--text-primary);
   }
 
-  /* Colored Blobs */
+  /*
+  * Colored Blobs — ambient background glow.
+  *
+  * IMPORTANT: Use static radial-gradients, NOT filter: blur().
+  * A blurred solid circle is re-rasterized by the GPU on every compositor
+  * invalidation. Opening any translucent modal forced a full-viewport
+  * recomposite of these blurs, stalling modal open by 6-14s on real iOS
+  * devices (invisible in DevTools' desktop-GPU emulation).
+  * Radial-gradients are baked at paint time -> near-zero recomposite cost.
+  * Do not reintroduce filter: blur() here.
+  */
   .blob-1 {
     position: absolute;
     top: 0;
     left: 0;
-    width: 700px;
-    height: 700px;
-    transform: translate(-30%, -30%);
-    background: #6366f1;
-    border-radius: 50%;
-    opacity: 0.12;
-    filter: blur(120px);
+    width: 1000px;
+    height: 1000px;
+    transform: translate(-30%, -35%);
+    background: radial-gradient(
+      circle closest-side,
+      rgba(99, 102, 241, 0.18) 0%,
+      rgba(99, 102, 241, 0.14) 20%,
+      rgba(99, 102, 241, 0.09) 38%,
+      rgba(99, 102, 241, 0.05) 54%,
+      rgba(99, 102, 241, 0.025) 68%,
+      rgba(99, 102, 241, 0.01) 82%,
+      transparent 95%
+    );
   }
   .blob-2 {
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 600px;
-    height: 600px;
-    transform: translate(30%, 30%);
-    background: #db2777;
-    opacity: 0.09;
-    filter: blur(100px);
+    width: 850px;
+    height: 850px;
+    transform: translate(30%, 40%);
+    background: radial-gradient(
+      circle closest-side,
+      rgba(219, 39, 119, 0.14) 0%,
+      rgba(219, 39, 119, 0.11) 20%,
+      rgba(219, 39, 119, 0.07) 38%,
+      rgba(219, 39, 119, 0.04) 54%,
+      rgba(219, 39, 119, 0.02) 68%,
+      rgba(219, 39, 119, 0.008) 82%,
+      transparent 95%
+    );
   }
   .blob-3 {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 400px;
-    height: 400px;
+    width: 570px;
+    height: 570px;
     transform: translate(-50%, -50%);
-    background: #7c3aed;
-    opacity: 0.06;
-    filter: blur(140px);
+    background: radial-gradient(
+      circle closest-side,
+      rgba(124, 58, 237, 0.09) 0%,
+      rgba(124, 58, 237, 0.07) 20%,
+      rgba(124, 58, 237, 0.045) 38%,
+      rgba(124, 58, 237, 0.025) 54%,
+      rgba(124, 58, 237, 0.012) 68%,
+      rgba(124, 58, 237, 0.005) 82%,
+      transparent 95%
+    );
   }
 }
