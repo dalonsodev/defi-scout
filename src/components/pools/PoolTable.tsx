@@ -5,7 +5,7 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import { createRef, forwardRef, useEffect, useMemo } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 import { baseColumns } from '../../data/tableColumns'
 import { useBreakpoint } from '../../hooks/useBreakpoint'
 import { useIntersection } from '../../hooks/useIntersection'

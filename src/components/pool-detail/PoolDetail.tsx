@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useLoaderData, useLocation, useNavigate, useOutletContext } from 'react-router-dom'
+import { useLoaderData, useLocation, useNavigate, useOutletContext } from 'react-router'
 import { FilledStarIcon, OutlinedStarIcon } from '../common/StarIcons'
 import { usePoolHourlyData } from './calculator/hooks/usePoolHourlyData'
 import { RangeCalculator } from './calculator/RangeCalculator'

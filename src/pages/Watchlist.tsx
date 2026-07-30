@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { Link, useLoaderData, useOutletContext } from 'react-router-dom'
+import { Link, useLoaderData, useOutletContext } from 'react-router'
 import { PaginationControls } from '../components/common/PaginationControls'
 import { PoolTable } from '../components/pools/PoolTable'
 import { useSparklines } from '../hooks/useSparklines'

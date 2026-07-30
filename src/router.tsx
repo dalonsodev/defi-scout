@@ -1,4 +1,4 @@
-import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom'
+import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router'
 import { Error } from './components/common/Error'
 import { FavoritesLayout } from './components/layout/FavoritesLayout'
 import { Layout } from './components/layout/Layout'
