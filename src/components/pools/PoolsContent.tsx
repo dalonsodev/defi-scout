@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router'
 import { usePrevious } from '../../hooks/usePrevious'
 import { useSparklines } from '../../hooks/useSparklines'
 import { parseSearchParams, updateSearchParams } from '../../utils/urlState'

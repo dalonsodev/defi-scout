@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from 'react-router-dom'
+import { LoaderFunctionArgs } from 'react-router'
 import { fetchPoolHistory } from '../services/theGraphClient'
 import { formatPoolHistory } from './utils/formatPoolHistory'
 import type { FormattedPoolHistory, RawPoolHistory } from '../types'

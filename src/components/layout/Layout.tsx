@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigation } from 'react-router-dom'
+import { Link, Outlet, useNavigation } from 'react-router'
 import { Navbar } from './Navbar'
 import type { ReactNode } from 'react'
 

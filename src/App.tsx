@@ -1,4 +1,4 @@
-import { RouterProvider } from 'react-router-dom'
+import { RouterProvider } from 'react-router'
 import { AuthModal } from './components/common/AuthModal'
 import { BackgroundVisuals } from './components/layout/BackgroundVisuals'
 import { AuthProvider } from './context/AuthContext'

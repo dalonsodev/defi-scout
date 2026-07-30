@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
+import { isRouteErrorResponse, useRouteError } from 'react-router'
 
 /**
  * UI: Global Route Error Boundary.

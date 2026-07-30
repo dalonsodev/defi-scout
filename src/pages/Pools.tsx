@@ -1,4 +1,4 @@
-import { useLoaderData, useOutletContext } from 'react-router-dom'
+import { useLoaderData, useOutletContext } from 'react-router'
 import { PoolsContent } from '../components/pools/PoolsContent'
 import { usePoolFilters } from '../hooks/usePoolFilters'
 import type { ReactNode } from 'react'
