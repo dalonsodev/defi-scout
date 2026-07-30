@@ -60,7 +60,7 @@ export function Navbar(): ReactNode {
           Pools
         </Link>
 
-        {currentUser === null && <div className="loading loading-spinner loading-sm"></div>}
+        {currentUser === null && <div className="loading loading-spinner loading-sm" />}
 
         {currentUser === false && (
           <button

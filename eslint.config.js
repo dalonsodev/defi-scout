@@ -1,9 +1,10 @@
 import js from '@eslint/js'
-import globals from 'globals'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import reactPlugin from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import globals from 'globals'
 import tseslint from 'typescript-eslint'
-import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default tseslint.config(
   {
@@ -26,6 +27,7 @@ export default tseslint.config(
       }
     },
     plugins: {
+      react: reactPlugin,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh
     },
@@ -33,7 +35,15 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'prefer-const': 'error',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }]
+      'react/self-closing-comp': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
+        }
+      ]
     }
   },
   {

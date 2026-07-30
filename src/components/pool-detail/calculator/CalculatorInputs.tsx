@@ -96,7 +96,7 @@ export function CalculatorInputs({
         <div className="mt-3 space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
-              <span className="bg-primary h-2 w-2 rounded-full"></span>
+              <span className="bg-primary h-2 w-2 rounded-full" />
               {primary.symbol}
               {composition && (
                 <span className="text-base-content/60">
@@ -114,7 +114,7 @@ export function CalculatorInputs({
 
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
-              <span className="bg-secondary h-2 w-2 rounded-full"></span>
+              <span className="bg-secondary h-2 w-2 rounded-full" />
               {secondary.symbol}
               {composition && (
                 <span className="text-base-content/60">

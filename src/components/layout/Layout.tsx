@@ -30,7 +30,7 @@ export function Layout(): ReactNode {
       <main className="mb-4 flex-1 p-0 sm:px-2 md:mb-0 md:p-6">
         {isLoading && (
           <div className="fixed top-20 right-4 z-50">
-            <span className="loading loading-spinner loading-lg"></span>
+            <span className="loading loading-spinner loading-lg" />
           </div>
         )}
         <Outlet />
