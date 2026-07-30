@@ -9,7 +9,7 @@ import Pools from './pages/Pools'
 import Watchlist from './pages/Watchlist'
 
 /**
- * Application Router: React Router 6.4+ (with loader-based data fetching)
+ * Application Router: React Router v8 (with loader-based data fetching)
  *
  * Architecture Decision: Uses loaders for data fetching (render-as-you-fetch).
  * Loaders execute before component rendering, eliminating useEffect waterfalls.
