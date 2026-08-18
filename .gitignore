@@ -1,25 +1,45 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# 1. Dependencies (Safeguard for environments without a global gitignore)
+node_modules/
 
-node_modules
-dist
-dist-ssr
+# 2. Production & Build Outputs
+dist/
+dist-ssr/
+build/
+coverage/
 *.local
 
-# Editor directories and files
+# 3. Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# 4. Environment Variables (CRITICAL: Never commit credentials or API keys)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 5. Package Manager Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 6. OS / System Files
+.DS_Store
+Thumbs.db
+.fseventsd
+
+# Tooling and TypeScript Caches
+*.tsbuildinfo
+.eslintcache
+.prettiercache
+.vite/
+.netlify/
