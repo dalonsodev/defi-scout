@@ -1,5 +1,13 @@
 {
-  "cSpell.words": ["Datas", "DATAS", "sparkline", "sparklines", "Sparklines", "tseslint"],
+  "cSpell.words": [
+    "crawlable",
+    "Datas",
+    "DATAS",
+    "sparkline",
+    "sparklines",
+    "Sparklines",
+    "tseslint"
+  ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
