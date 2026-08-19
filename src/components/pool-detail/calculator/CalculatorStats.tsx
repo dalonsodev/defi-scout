@@ -152,7 +152,7 @@ export function CalculatorStats({
 
       <div className="flex gap-2">
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => { setIsModalOpen(true); }}
           className="btn btn-sm btn-glass flex-1 rounded-xl"
         >
           Simulate Position Performance
@@ -164,7 +164,7 @@ export function CalculatorStats({
         poolData={poolData}
         rangeInputs={rangeInputs}
         results={results}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => { setIsModalOpen(false); }}
       />
     </>
   )

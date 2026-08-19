@@ -31,9 +31,9 @@ export function PaginationControls({
   // Smart ellipsis: [1, "...", current-2, current-1, current, current+1, current+2, "...", last]
   const visiblePages = getVisiblePages(currentPage, totalPages)
 
-  const goToPrev = () => onPageChange(currentPage - 1)
-  const goToNext = () => onPageChange(currentPage + 1)
-  const goToPage = (page: number | string) => onPageChange(page)
+  const goToPrev = () => { onPageChange(currentPage - 1); }
+  const goToNext = () => { onPageChange(currentPage + 1); }
+  const goToPage = (page: number | string) => { onPageChange(page); }
 
   const isFirstPage = currentPage === 1
   const isLastPage = currentPage === totalPages
@@ -70,7 +70,7 @@ export function PaginationControls({
           return (
             <button
               key={page}
-              onClick={() => goToPage(page)}
+              onClick={() => { goToPage(page); }}
               className={`btn btn-sm btn-glass rounded-xl ${page === currentPage ? 'btn-active' : ''}`}
             >
               {page}

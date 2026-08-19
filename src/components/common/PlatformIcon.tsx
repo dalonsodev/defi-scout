@@ -47,7 +47,7 @@ const getInitials = (platformSlug: string): string => {
  * <PlatformIcon platform="uniswap-v3" size="lg" />
  * // Renders 32x32 image or "UV" badge if CDN fails
  */
-export function PlatformIcon({ platform, size = 'md' }: PlatformIconProps): ReactNode {
+export function PlatformIcon({ platform, size }: PlatformIconProps): ReactNode {
   const [hasError, setHasError] = useState(false)
 
   const ext = PLATFORM_ICONS[platform]
@@ -69,7 +69,7 @@ export function PlatformIcon({ platform, size = 'md' }: PlatformIconProps): Reac
       src={iconUrl}
       alt={platform}
       className={`${SIZE_CLASSES[size]} rounded-full object-cover`}
-      onError={() => setHasError(true)}
+      onError={() => { setHasError(true); }}
     />
   )
 }

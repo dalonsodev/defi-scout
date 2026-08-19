@@ -62,7 +62,7 @@ const BlockExplorerIcon = (): ReactNode => (
  * State orchestrator for liquidity simulation and historical trend visualization.
  */
 export function PoolDetail(): ReactNode {
-  const { pool, history, ethPriceUSD } = useLoaderData() as PoolDetailLoaderData
+  const { pool, history, ethPriceUSD } = useLoaderData()
   const {
     hourlyData,
     rawHourlyData,
@@ -75,7 +75,7 @@ export function PoolDetail(): ReactNode {
     isLoading: tickIsLoading,
     fetchError: tickError
   } = usePoolTickData(pool.id, Number(pool.tick), Number(pool.feeTier))
-  const { favoriteIds, toggleFavorite } = useOutletContext() as FavoritesOutletContext
+  const { favoriteIds, toggleFavorite } = useOutletContext()
   const hasHydrated = useRef(false)
   const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
   const [rangeInputs, setRangeInputs] = useState({

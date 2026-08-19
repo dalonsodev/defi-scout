@@ -114,7 +114,7 @@ export function PoolsContent({
   const handleSortingChange: OnChangeFn<SortingState> = (updaterOrValue) => {
     const newSorting =
       typeof updaterOrValue === 'function'
-        ? (updaterOrValue as (old: SortingState) => SortingState)(sorting)
+        ? (updaterOrValue)(sorting)
         : updaterOrValue
 
     if (!newSorting || newSorting.length === 0) {

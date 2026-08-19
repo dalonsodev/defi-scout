@@ -41,7 +41,7 @@ export function useBreakpoint(): BreakPointResult {
     // "change" event fires only when breakpoint crosses, not on every pixel resize
     mq.addEventListener('change', handleChange)
 
-    return () => mq.removeEventListener('change', handleChange)
+    return () => { mq.removeEventListener('change', handleChange); }
   }, [])
 
   return { isDesktop }

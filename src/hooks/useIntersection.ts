@@ -65,7 +65,7 @@ export function useIntersection(
       }
     })
 
-    return () => observer.disconnect()
+    return () => { observer.disconnect(); }
   }, [refs, options])
 
   return visibleIds
