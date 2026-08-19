@@ -9,10 +9,17 @@ import tseslint from 'typescript-eslint'
 
 export default defineConfig(
   {
-    ignores: ['dist', 'coverage', '.vite']
+    ignores: [
+      'dist',
+      'coverage',
+      '.vite',
+      'eslint.config.js',
+      'scripts/buildIconMap.js',
+      'scripts/lib/testPlatformIcon.js'
+    ]
   },
   js.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.strictTypeChecked,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
@@ -24,7 +31,9 @@ export default defineConfig(
       parser: tseslint.parser,
       parserOptions: {
         ecmaFeatures: { jsx: true },
-        sourceType: 'module'
+        sourceType: 'module',
+        project: true,
+        tsConfigRootDir: import.meta.dirname
       }
     },
     plugins: {
@@ -49,12 +58,9 @@ export default defineConfig(
   },
   {
     files: ['vite.config.ts'],
-    languageOptions: {
-      globals: globals.node
-    },
-    rules: {
-      'no-undef': 'off'
-    }
+    extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: { globals: globals.node },
+    rules: { 'no-undef': 'off' }
   },
   eslintConfigPrettier
 )
