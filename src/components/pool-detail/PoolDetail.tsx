@@ -62,7 +62,7 @@ const BlockExplorerIcon = (): ReactNode => (
  * State orchestrator for liquidity simulation and historical trend visualization.
  */
 export function PoolDetail(): ReactNode {
-  const { pool, history, ethPriceUSD } = useLoaderData()
+  const { pool, history, ethPriceUSD } = useLoaderData<PoolDetailLoaderData>()
   const {
     hourlyData,
     rawHourlyData,
@@ -75,7 +75,7 @@ export function PoolDetail(): ReactNode {
     isLoading: tickIsLoading,
     fetchError: tickError
   } = usePoolTickData(pool.id, Number(pool.tick), Number(pool.feeTier))
-  const { favoriteIds, toggleFavorite } = useOutletContext()
+  const { favoriteIds, toggleFavorite } = useOutletContext<FavoritesOutletContext>()
   const hasHydrated = useRef(false)
   const [selectedTokenIdx, setSelectedTokenIdx] = useState(0)
   const [rangeInputs, setRangeInputs] = useState({
@@ -85,7 +85,7 @@ export function PoolDetail(): ReactNode {
     maxPrice: '',
     assumedPrice: ''
   })
-  const { state } = useLocation()
+  const locationState = useLocation()
   const navigate = useNavigate()
 
   /**
@@ -203,7 +203,7 @@ export function PoolDetail(): ReactNode {
 
   // Stats: Derived metrics from historical snapshots
   const latestSnapshot = history[history.length - 1] ?? {}
-  const poolAgeDays = pool?.createdAtTimestamp
+  const poolAgeDays = pool.createdAtTimestamp
     ? Math.floor(Date.now() / 1000 - Number(pool.createdAtTimestamp)) / 86400
     : 0
 
@@ -215,7 +215,11 @@ export function PoolDetail(): ReactNode {
   const isFavorited = favoriteIds.has(pool.id)
 
   // Check if user comes from watchlist
-  const fromWatchlist = state?.from === 'watchlist'
+  const fromWatchlist =
+    locationState.state !== null &&
+    typeof locationState.state === 'object' &&
+    'from' in locationState.state &&
+    (locationState.state as { from: unknown }).from === 'watchlist'
 
   return (
     <div className="container mx-auto max-w-7xl px-4 pt-4">
@@ -224,7 +228,9 @@ export function PoolDetail(): ReactNode {
       </title>
       {/* NAVIGATION: Contextual return */}
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => {
+          void navigate(-1)
+        }}
         className="btn btn-ghost btn-sm mb-4 gap-2 rounded-xl md:mb-6"
       >
         <span>←</span>
@@ -304,7 +310,9 @@ export function PoolDetail(): ReactNode {
               >
                 <button
                   className="btn btn-ghost btn-circle btn-sm"
-                  onClick={() => toggleFavorite(pool.id)}
+                  onClick={() => {
+                    void toggleFavorite(pool.id)
+                  }}
                   aria-label={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
                 >
                   {isFavorited ? <FilledStarIcon /> : <OutlinedStarIcon />}
@@ -321,11 +329,11 @@ export function PoolDetail(): ReactNode {
           <div className="grid grid-cols-3 gap-4">
             <StatCard
               label="TVL"
-              value={formatCurrency(Number(latestSnapshot.tvlUSD))}
+              value={formatCurrency(latestSnapshot.tvlUSD)}
             />
             <StatCard
               label="Volume (24h)"
-              value={formatCurrency(Number(latestSnapshot.volumeUSD))}
+              value={formatCurrency(latestSnapshot.volumeUSD)}
             />
             <StatCard
               label="Avg APY (7d)"
@@ -407,7 +415,7 @@ function formatCurrency(value: number): string {
 }
 
 function calculateAverageAPY(snapshots: FormattedPoolHistory[], currentTVL: number): number {
-  if (!snapshots || snapshots.length === 0 || !currentTVL) return 0
+  if (snapshots.length === 0 || !currentTVL) return 0
 
   const apyValues = snapshots
     .filter((s) => s.feesUSD && s.tvlUSD)
