@@ -13,7 +13,7 @@
 
 ---
 
-## ✨ Features
+## Features
 
 ### Pool Explorer
 
@@ -60,7 +60,7 @@ Built on top of the pool detail data:
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Technology             | Purpose                                                    |
 | ---------------------- | ---------------------------------------------------------- |
@@ -76,7 +76,7 @@ Built on top of the pool detail data:
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ```bash
 # 1. Clone the repo
@@ -104,7 +104,7 @@ npm run build     # Production build
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 src/
@@ -135,7 +135,7 @@ src/
 
 ---
 
-## 🏗️ Architecture Notes
+## Architecture Notes
 
 ### Why TheGraph for everything?
 
@@ -169,10 +169,10 @@ SVG `fill` and `stroke` attributes don't resolve CSS custom properties like `hsl
 
 ---
 
-## 📬 Contact
+## Contact
 
 Built by **David Alonso**
-[GitHub](https://github.com/dalonsodev) · [LinkedIn](https://www.linkedin.com/in/dalonsodev) · [masdavidalonso@gmail.com](mailto:masdavidalonso@gmail.com)
+[GitHub](https://github.com/dalonsodev) · [LinkedIn](https://www.linkedin.com/in/dalonsodev) · [hello@dalon.so](mailto:hello@dalon.so)
 
 Available for remote contract work
 
