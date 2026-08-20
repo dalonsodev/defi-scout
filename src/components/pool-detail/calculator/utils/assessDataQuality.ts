@@ -23,7 +23,7 @@ interface AssesDataQualityResult {
  */
 export function assessDataQuality(hourlyData: RawPoolHourData[]): AssesDataQualityResult {
   // Defensive: Prevents crash if TheGraph query fails or returns null or empty array
-  if (!hourlyData || !Array.isArray(hourlyData) || hourlyData.length === 0) {
+  if (!Array.isArray(hourlyData) || hourlyData.length === 0) {
     return { quality: 'EMPTY', warnings: ['No data provided for analysis.'] }
   }
 

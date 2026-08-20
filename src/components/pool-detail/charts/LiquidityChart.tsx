@@ -47,7 +47,7 @@ export function LiquidityChart({
   }, [tickData, selectedTokenIdx, token0Decimals, token1Decimals])
 
   const yDomain = useMemo(() => {
-    if (!processedData?.length) return [0, 'auto'] as AxisDomain
+    if (!processedData.length) return [0, 'auto'] as AxisDomain
 
     const sorted = [...processedData].sort((a, b) => a.liquidity - b.liquidity)
     const p95 = sorted[Math.floor(sorted.length * 0.95)]
@@ -56,7 +56,7 @@ export function LiquidityChart({
   }, [processedData])
 
   const referencePoints = useMemo(() => {
-    if (!processedData?.length) return {}
+    if (!processedData.length) return {}
 
     const nearest = (target: number) => {
       return processedData.reduce((best, item) =>
@@ -71,7 +71,7 @@ export function LiquidityChart({
     }
   }, [processedData, rangeInputs, currentPrice])
 
-  if (tickError || !processedData?.length) return null
+  if (tickError || !processedData.length) return null
 
   return (
     <div className="card glass-surface rounded-2xl p-4">

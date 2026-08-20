@@ -14,7 +14,7 @@ interface SparklineCellProps {
  * @param sparklineData - Global cache (poolId → APY history)
  */
 export function SparklineCell({ poolId, sparklineData }: SparklineCellProps): ReactNode {
-  const data = sparklineData?.[poolId]
+  const data = sparklineData[poolId]
 
   if (!data) {
     return (

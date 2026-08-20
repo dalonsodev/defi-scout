@@ -121,7 +121,7 @@ export function simulateRangePerformance({
   }
 
   // ===== STAGE 3: METADATA VALIDATION =====
-  if (!pool?.totalValueLockedToken0 || !pool?.totalValueLockedToken1) {
+  if (!pool.totalValueLockedToken0 || !pool.totalValueLockedToken1) {
     return {
       success: false,
       error: 'Pool metadata incomplete. Cannot calculate liquidity.',
@@ -129,7 +129,7 @@ export function simulateRangePerformance({
     }
   }
 
-  if (!pool?.token0?.decimals || !pool?.token1?.decimals) {
+  if (!pool.token0.decimals || !pool.token1.decimals) {
     return {
       success: false,
       error: 'Token decimals missing. Cannot normalize liquidity.',
@@ -207,7 +207,7 @@ export function simulateRangePerformance({
 
   debugLog('Position Composition:', {
     capital: `$${capitalUSD.toLocaleString()}`,
-    split: `${token0Percent}% / ${token1Percent}%`,
+    split: `${String(token0Percent)}% / ${String(token1Percent)}%`,
     range: `${effectiveMin.toFixed(4)} - ${effectiveMax.toFixed(4)}`
   })
 

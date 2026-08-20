@@ -7,7 +7,7 @@ import type { FormattedHourlyData, RawPoolHourData } from '../../types'
  * @returns Formatted hourly data with parsed numbers and readable dates
  */
 export function formatHourlyData(rawHourlyData: RawPoolHourData[]): FormattedHourlyData[] {
-  if (!rawHourlyData?.length) {
+  if (!rawHourlyData.length) {
     return []
   }
 

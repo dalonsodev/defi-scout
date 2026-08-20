@@ -60,7 +60,7 @@ export function validateInputs({
         error: 'Min Price must be lower than Max Price'
       }
     }
-    if (assumedPrice === '' || assumedPrice == null) {
+    if (assumedPrice === '') {
       return {
         success: false,
         error: 'Assumed Entry Price required when full range is off'

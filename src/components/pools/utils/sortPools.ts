@@ -61,11 +61,16 @@ export function sortPools(pools: FormattedPool[], sorting: SortDescriptor[]): Fo
  * @returns Comparable primitive value
  */
 const getSortValue = (pool: FormattedPool, columnId: string): number | string => {
-  // Text columns: Force string type for stable text sorting
+  // Text columns: known string keys on FormattedPool — return directly
   if (['name', 'chain', 'platformName'].includes(columnId)) {
-    return String((pool as unknown as Record<string, unknown>)[columnId] ?? '')
+    const key = columnId as keyof Pick<FormattedPool, 'name' | 'chain' | 'platformName'>
+    return pool[key]
   }
 
-  // Numeric columns: Force number type to prevent lexicographic comparison
-  return Number((pool as unknown as Record<string, unknown>)[columnId] ?? 0)
+  // Numeric columns: narrow to keyof FormattedPool and guard against
+  // non-numeric values to prevent lexicographic comparison bugs
+  const key = columnId as keyof FormattedPool
+  const value = pool[key]
+
+  return typeof value === 'number' ? value : 0
 }

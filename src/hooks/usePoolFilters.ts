@@ -81,7 +81,9 @@ export function usePoolFilters(): PoolFiltersResult {
 
   // Simple updater (debouncing handled by useDebouncedFilterInputs)
   const updateFilter = useCallback(
-    (key: string, value: unknown) => updateSearchParams(navigate, searchParams, { [key]: value }),
+    (key: string, value: unknown) => {
+      updateSearchParams(navigate, searchParams, { [key]: value })
+    },
     [navigate, searchParams]
   )
 
@@ -101,7 +103,7 @@ export function usePoolFilters(): PoolFiltersResult {
 
   // Clear all filters
   const clearFilters = useCallback(
-    () => navigate(window.location.pathname, { replace: true }),
+    () => void navigate(window.location.pathname, { replace: true }),
     [navigate]
   )
 

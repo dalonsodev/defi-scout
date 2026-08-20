@@ -32,6 +32,11 @@ interface RowType {
   row: { original: FormattedPool }
 }
 
+interface ColumnMetaExtended {
+  isSticky?: boolean
+  tooltip?: string
+}
+
 /**
  * Z-INDEX HIERARCHY (Critical for sticky positioning):
  * z-2: Body cells (sticky first column on horizontal scroll)
@@ -90,9 +95,7 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
     })
 
     useEffect(() => {
-      if (onVisiblePoolsChange) {
-        onVisiblePoolsChange(visiblePoolIds)
-      }
+      onVisiblePoolsChange(visiblePoolIds)
     }, [visiblePoolIds, onVisiblePoolsChange])
 
     const columns = useMemo(() => {
@@ -114,7 +117,7 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
                       aria-label={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
                       onClick={(e) => {
                         e.stopPropagation()
-                        toggleFavorite(row.original.id)
+                        void toggleFavorite(row.original.id)
                       }}
                     >
                       {isFavorited ? <FilledStarIcon /> : <OutlinedStarIcon />}
@@ -151,7 +154,7 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
             ...col,
             cell: ({ row }: RowType) => (
               <div className="text-success text-right font-semibold">
-                {Number(row.original.apyBase ?? 0).toFixed(2)}%
+                {row.original.apyBase.toFixed(2)}%
               </div>
             )
           }
@@ -231,9 +234,7 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
 
     const visibleColumns = useMemo(() => {
       return columns.filter((col) => {
-        const showOn = col.meta?.showOn
-
-        if (!showOn) return true
+        const showOn = col.meta.showOn
 
         if (showOn === 'both') return true
         if (showOn === 'mobile' && !isDesktop) return true
@@ -262,8 +263,9 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
       return table.getHeaderGroups().map((hg) => (
         <tr key={hg.id}>
           {hg.headers.map((header) => {
-            const isSticky = header.column.columnDef.meta?.isSticky
-            const tooltipText = header.column.columnDef.meta?.tooltip
+            const meta = header.column.columnDef.meta as ColumnMetaExtended | undefined
+            const isSticky = meta?.isSticky
+            const tooltipText = meta?.tooltip
 
             return (
               <th
@@ -287,7 +289,9 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
                     <span
                       className="tooltip tooltip-bottom text-base-content/60 text-sm"
                       data-tip={tooltipText}
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                      }}
                     >
                       ⓘ
                     </span>
@@ -320,7 +324,7 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
           if (e.metaKey || e.ctrlKey) {
             window.open(`/pools/${poolId}`, '_blank')
           } else {
-            navigate(`/pools/${poolId}`, { state: { from } })
+            void navigate(`/pools/${poolId}`, { state: { from } })
           }
         }
 
@@ -333,7 +337,8 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
             className="group cursor-pointer transition-colors duration-150 hover:bg-white/4"
           >
             {row.getVisibleCells().map((cell) => {
-              const isSticky = cell.column.columnDef.meta?.isSticky
+              const meta = cell.column.columnDef.meta as ColumnMetaExtended | undefined
+              const isSticky = meta?.isSticky
 
               return (
                 <td

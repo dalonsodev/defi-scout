@@ -219,5 +219,5 @@ export function updateSearchParams(
   const newParams = buildCleanSearchParams(newState)
 
   // 4. Navigate with new params (replace to avoid history pollution)
-  navigate(`?${newParams.toString()}`, { replace: true })
+  void navigate(`?${newParams.toString()}`, { replace: true })
 }

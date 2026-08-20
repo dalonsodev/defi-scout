@@ -58,7 +58,7 @@ export function useFocusTrap(
 
       return () => {
         document.removeEventListener('keydown', handleKeyDown)
-        ;(savedFocusRef.current as HTMLElement)?.focus()
+        ;(savedFocusRef.current as HTMLElement).focus()
       }
     }
   }, [isOpen, modalRef])

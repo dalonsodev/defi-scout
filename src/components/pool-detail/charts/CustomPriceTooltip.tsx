@@ -10,6 +10,11 @@ interface CustomPriceTooltipProps extends Partial<TooltipContentProps<ValueType,
   dateShortMap: Map<number, string>
 }
 
+interface PriceEntry {
+  color: string
+  payload: FormattedHourlyData
+}
+
 /**
  * UI: Price Ratio Tooltip (Recharts Custom Component)
  *
@@ -49,10 +54,9 @@ export function CustomPriceTooltip({
 }: CustomPriceTooltipProps): ReactNode | null {
   if (!active || !payload?.length) return null
 
-  const entry = payload[0]
-  const rawData = entry.payload as FormattedHourlyData
+  const entry = payload[0] as PriceEntry
   const key = selectedTokenIdx === 0 ? 'token0Price' : 'token1Price'
-  const price = rawData[key]
+  const price = entry.payload[key]
 
   if (typeof price !== 'number') return null
 
@@ -66,7 +70,7 @@ export function CustomPriceTooltip({
   const formattedPrice = price < 1 ? price.toFixed(8) : price.toFixed(2)
 
   const labelAsNumber = typeof label === 'string' ? Number(label) : (label as number)
-  const displayLabel = dateShortMap?.get(labelAsNumber) ?? String(label ?? '')
+  const displayLabel = dateShortMap.get(labelAsNumber) ?? String(label ?? '')
 
   return (
     <div

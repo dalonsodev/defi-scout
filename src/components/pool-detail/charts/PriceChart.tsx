@@ -52,29 +52,29 @@ export function PriceChart({
     selectedTokenIdx === 0 ? `${baseToken} / ${quoteToken}` : `${quoteToken} / ${baseToken}`
 
   const labelIntervalHours = useMemo(() => {
-    if (!hourlyData?.length) return 7
+    if (!hourlyData.length) return 7
     const daysInWindow = hourlyData.length / 24
     const labelEveryNDays = LABEL_THRESHOLDS.find((t) => daysInWindow <= t.max)?.value ?? 7
     return labelEveryNDays * 24
   }, [hourlyData])
 
   const visibleTicks = useMemo(() => {
-    if (!hourlyData?.length) return []
+    if (!hourlyData.length) return []
     return hourlyData.filter((_, i) => i % labelIntervalHours === 0)
   }, [hourlyData, labelIntervalHours])
 
-  const tickLabelMap = useMemo(() => {
-    if (!hourlyData?.length) return new Map()
+  const tickLabelMap = useMemo<Map<number, string>>(() => {
+    if (!hourlyData.length) return new Map<number, string>()
     return new Map(visibleTicks.map((d) => [d.periodStartUnix, d.dayLabel]))
   }, [hourlyData, visibleTicks])
 
-  const dateShortMap = useMemo(() => {
-    if (!hourlyData?.length) return new Map()
+  const dateShortMap = useMemo<Map<number, string>>(() => {
+    if (!hourlyData.length) return new Map<number, string>()
     return new Map(hourlyData.map((h) => [h.periodStartUnix, h.dateShort]))
   }, [hourlyData])
 
   const yDomain = useMemo(() => {
-    if (!hourlyData?.length) return ['auto', 'auto']
+    if (!hourlyData.length) return ['auto', 'auto']
 
     const prices = hourlyData.map((h) => h[dataKey]).filter((x): x is number => x !== null)
 
@@ -87,7 +87,7 @@ export function PriceChart({
     return [min - range * 0.15, max + range * 0.15]
   }, [hourlyData, dataKey])
 
-  if (!hourlyData?.length) return null
+  if (!hourlyData.length) return null
 
   return (
     <div className="card glass-surface rounded-2xl p-4">
@@ -102,7 +102,7 @@ export function PriceChart({
             dataKey="periodStartUnix"
             axisLine={false}
             ticks={visibleTicks.map((d) => d.periodStartUnix)}
-            tickFormatter={(v) => tickLabelMap.get(v) ?? ''}
+            tickFormatter={(v: number) => tickLabelMap.get(v) ?? ''}
             tickLine={false}
             style={{ fontSize: '12px' }}
             textAnchor="end"

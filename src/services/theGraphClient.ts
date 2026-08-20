@@ -34,11 +34,12 @@ interface PoolHistoryResponse {
 
 const SUBGRAPH_URL =
   'https://gateway.thegraph.com/api/subgraphs/id/5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV'
-const API_KEY = import.meta.env.VITE_THEGRAPH_API_KEY
+const env = import.meta.env as Record<string, string | undefined>
+const API_KEY = env.VITE_THEGRAPH_API_KEY
 
 const client = new GraphQLClient(SUBGRAPH_URL, {
   headers: {
-    Authorization: `Bearer ${API_KEY}`
+    Authorization: `Bearer ${String(API_KEY)}`
   }
 })
 
@@ -321,7 +322,7 @@ export async function fetchWatchedPools(poolIds: string[]): Promise<RawPool[]> {
  */
 export async function fetchPoolSparklines(
   poolAddresses: string[]
-): Promise<Record<string, RawPoolDayData[]>> {
+): Promise<Record<string, RawPoolDayData[] | undefined>> {
   // Calculate 14 days ago (Unix timestamp in seconds)
   const startDate = Math.floor(Date.now() / 1000) - 14 * 86400
 
@@ -331,17 +332,14 @@ export async function fetchPoolSparklines(
   })
 
   // Group flat array by pool ID (TheGraph returns all poolDayDatas in one array)
-  const grouped: Record<string, RawPoolDayData[]> = {}
+  const grouped: Record<string, RawPoolDayData[] | undefined> = {}
 
   data.poolDayDatas.forEach((dayData: RawPoolDayData): void => {
     if (!dayData.pool?.id) throw new Error('Missing pool reference on poolDayData')
 
     const poolId = dayData.pool.id
 
-    if (!grouped[poolId]) {
-      grouped[poolId] = []
-    }
-
+    grouped[poolId] ??= []
     grouped[poolId].push(dayData)
   })
 
@@ -364,7 +362,7 @@ export async function fetchPoolSparklines(
  * ])
  * // => [7.30, 8.42] (APY percentages)
  */
-export function formatSparklineData(poolDayDatas: RawPoolDayData[]): number[] {
+export function formatSparklineData(poolDayDatas: RawPoolDayData[] | undefined): number[] {
   if (!poolDayDatas || poolDayDatas.length === 0) return []
 
   return poolDayDatas.map((snapshot) => {
@@ -428,7 +426,7 @@ export async function fetchPoolHistory(
   return {
     pool: data.pool,
     history: data.poolDayDatas,
-    ethPriceUSD: parseFloat(data.bundle?.ethPriceUSD) || 0
+    ethPriceUSD: parseFloat(data.bundle.ethPriceUSD) || 0
   }
 }
 

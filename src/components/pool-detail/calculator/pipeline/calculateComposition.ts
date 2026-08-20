@@ -173,9 +173,9 @@ export function calculateComposition({
   }
 
   // ===== CONCENTRATED MODE (V3-STYLE) =====
-  const minNum = Number(minPrice)
-  const maxNum = Number(maxPrice)
-  const assumedNum = Number(assumedPrice)
+  const minNum = minPrice
+  const maxNum = maxPrice
+  const assumedNum = assumedPrice
 
   // Step 1: Normalize price scale to protocol standard (token0Price)
   // UI displays prices relative to selected token (e.g. "3107 USDT per WETH")

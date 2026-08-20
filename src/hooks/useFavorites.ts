@@ -40,7 +40,7 @@ export function useFavorites(): UseFavoritesResult {
       }
     }
 
-    fetchFavorites()
+    void fetchFavorites()
     // Cleanup: Prevents state update on unmounted component
     return () => {
       cancelled = true

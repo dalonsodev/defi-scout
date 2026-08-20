@@ -46,7 +46,7 @@ export function invertPriceRange(inputs: InputsToInvert): RangeResult | null {
 
   const oldMin = Number(minPrice)
   const oldMax = Number(maxPrice)
-  const oldAssumed = Number(assumedPrice)
+  const oldAssumed = assumedPrice
 
   if (!Number.isFinite(oldMin) || !Number.isFinite(oldMax) || !Number.isFinite(oldAssumed))
     return null

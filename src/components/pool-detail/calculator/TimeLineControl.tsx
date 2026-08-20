@@ -45,8 +45,8 @@ export function TimeLineControl({
 }: TimeLineControlProps): ReactNode {
   // State Management: Discrete adjustments with boundary enforcement
   // Alternative considered: Range slider => Assess including it for enhanced UX
-  const increment = () => onDaysChange(Math.min(days + 1, 365))
-  const decrement = () => onDaysChange(Math.max(days - 1, 0))
+  const increment = () => { onDaysChange(Math.min(days + 1, 365)); }
+  const decrement = () => { onDaysChange(Math.max(days - 1, 0)); }
 
   return (
     <div className="form-control">

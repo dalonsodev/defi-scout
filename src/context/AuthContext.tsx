@@ -23,11 +23,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }): ReactNode =
       setCurrentUser(user ?? false)
     })
 
-    return () => unsubscribe()
+    return () => { unsubscribe(); }
   }, [])
 
-  const openAuthModal = () => setIsAuthModalOpen(true)
-  const closeAuthModal = () => setIsAuthModalOpen(false)
+  const openAuthModal = () => { setIsAuthModalOpen(true); }
+  const closeAuthModal = () => { setIsAuthModalOpen(false); }
   const logout = () => signOut(auth)
 
   return (

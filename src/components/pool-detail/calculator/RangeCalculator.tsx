@@ -50,9 +50,7 @@ export function RangeCalculator({
 
   // Derived State: Display price adapts to selected base token
   const displayPrice = useMemo(() => {
-    if (!pool) return 0
-
-    const currentPrice = parseFloat(pool?.token0Price)
+    const currentPrice = parseFloat(pool.token0Price)
 
     return selectedTokenIdx === 0
       ? currentPrice // Token0 per Token1
@@ -61,8 +59,7 @@ export function RangeCalculator({
 
   // Token Price Normalization: Convert pool prices to USD for display
   const { token0PriceUSD, token1PriceUSD } = useMemo(() => {
-    const currentPrice =
-      parseFloat(pool?.token0Price) || parseFloat(hourlyData?.[0]?.token0Price) || 0
+    const currentPrice = parseFloat(pool.token0Price) || parseFloat(hourlyData[0]?.token0Price) || 0
 
     return calculateTokenPrices(pool.token0, pool.token1, ethPriceUSD, currentPrice)
   }, [hourlyData, pool, ethPriceUSD])
@@ -113,8 +110,6 @@ export function RangeCalculator({
    * Recalculates only whenever inputs or market data change.
    */
   const results = useMemo(() => {
-    if (!hourlyData) return null
-
     const assumedPrice = Number(inputs.assumedPrice)
 
     return simulateRangePerformance({
@@ -130,7 +125,7 @@ export function RangeCalculator({
     })
   }, [inputs, selectedTokenIdx, hourlyData, pool, ethPriceUSD])
 
-  const composition = results?.success ? (results as ProcessSuccess).composition : null
+  const composition = results.success ? (results as ProcessSuccess).composition : null
   const positionUrl = useMemo(
     () => buildUniswapPositionUrl(pool, inputs, selectedTokenIdx, composition ?? undefined),
     [pool, inputs, selectedTokenIdx, composition]

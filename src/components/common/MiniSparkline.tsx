@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { CHART_COLORS } from '../../constants/chartColors'
 
 interface MiniSparklineProps {
-  data: number[]
+  data: number[] | undefined
   width?: number
   height?: number
 }
@@ -65,7 +65,7 @@ export function MiniSparkline({ data, width = 80, height = 20 }: MiniSparklinePr
     .map((value, index) => {
       const x = (index / (values.length - 1)) * width
       const y = normalizeY(value)
-      return `${x},${y}`
+      return `${String(x)},${String(y)}`
     })
     .join(' ')
 
@@ -73,7 +73,7 @@ export function MiniSparkline({ data, width = 80, height = 20 }: MiniSparklinePr
     <svg
       width={width}
       height={height}
-      viewBox={`0 0 ${width} ${height}`}
+      viewBox={`0 0 ${String(width)} ${String(height)}`}
       className="mx-auto block"
       preserveAspectRatio="none"
     >
