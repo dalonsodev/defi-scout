@@ -147,14 +147,18 @@ function StrategyCard({ title, isWinner, data, isCalculating }: StrategyCardProp
           </div>
 
           {/* Domain Logic: LP-specific metrics (IL and Fees) only for Uniswap V3 */}
-          <div className="flex justify-between text-sm">
-            <span className="text-base-content/60">Fees Earned</span>
-            <span className="text-success">+${strategyData.feesEarned.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-base-content/60">Impermanent Loss</span>
-            <span className="text-error">{strategyData.ilPercent}%</span>
-          </div>
+          {strategyData.feesEarned !== undefined && (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="text-base-content/60">Fees Earned</span>
+                <span className="text-success">+${strategyData.feesEarned.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-base-content/60">Impermanent Loss</span>
+                <span className="text-error">{strategyData.ilPercent}%</span>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

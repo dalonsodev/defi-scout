@@ -32,8 +32,8 @@ export interface LpStrategy {
   totalValue: number
   pnl: number
   pnlPercent: string
-  feesEarned: number
-  ilPercent: string
+  feesEarned?: number
+  ilPercent?: string
 }
 
 interface ProjectionCalculatorResult {
