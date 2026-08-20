@@ -11,8 +11,8 @@ import type { FormattedPool } from '../types'
 const PAGE_SIZE = 40
 
 export default function Watchlist(): ReactNode {
-  const { pools } = useLoaderData()
-  const { favoriteIds, toggleFavorite } = useOutletContext()
+  const { pools } = useLoaderData<{ pools: FormattedPool[] }>()
+  const { favoriteIds, toggleFavorite } = useOutletContext<FavoritesOutletContext>()
   const [sorting, setSorting] = useState<SortingState>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [visiblePoolIds, setVisiblePoolIds] = useState<Set<string>>(new Set())
@@ -66,7 +66,9 @@ export default function Watchlist(): ReactNode {
           <PaginationControls
             totalPages={totalPages}
             currentPage={currentPage}
-            onPageChange={(page) => { setCurrentPage(Number(page)); }}
+            onPageChange={(page) => {
+              setCurrentPage(Number(page))
+            }}
           />
         </div>
       </div>

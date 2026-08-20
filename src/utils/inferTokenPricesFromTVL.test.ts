@@ -6,7 +6,7 @@ describe('inferTokenPricesFromTVL', () => {
   describe('Edge Cases - Existence', () => {
     it('should fail if tvlUSD is missing', () => {
       const result = inferTokenPricesFromTVL({
-        tvlUSD: null as unknown as number,
+        tvlUSD: null,
         tvlToken0: 200_000,
         tvlToken1: 350_000,
         currentPrice: 3200
@@ -21,7 +21,7 @@ describe('inferTokenPricesFromTVL', () => {
     it('should fail if tvlToken0 is missing', () => {
       const result = inferTokenPricesFromTVL({
         tvlUSD: 550_000,
-        tvlToken0: undefined as unknown as number,
+        tvlToken0: undefined,
         tvlToken1: 350_000,
         currentPrice: 3200
       })
@@ -37,7 +37,7 @@ describe('inferTokenPricesFromTVL', () => {
         tvlUSD: 550_000,
         tvlToken0: 200_000,
         tvlToken1: 350_000,
-        currentPrice: null as unknown as number
+        currentPrice: null
       })
 
       expect(result.success).toBe(false)

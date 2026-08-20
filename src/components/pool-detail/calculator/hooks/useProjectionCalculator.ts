@@ -103,8 +103,8 @@ export function useProjectionCalculator(
   rangeInputs: UserInputs,
   results: ProcessResult | null
 ): ProjectionCalculatorResult {
-  const token0PriceUSD = results?.success ? results?.token0PriceUSD : 0
-  const token1PriceUSD = results?.success ? results?.token1PriceUSD : 0
+  const token0PriceUSD = results?.success ? results.token0PriceUSD : 0
+  const token1PriceUSD = results?.success ? results.token1PriceUSD : 0
 
   // User Inputs: Future price scenario and time horizon
   const hasHydrated = useRef(false)

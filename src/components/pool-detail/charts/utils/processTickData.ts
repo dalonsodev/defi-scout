@@ -20,7 +20,7 @@ export function processTickData(
   token0Decimals: number,
   token1Decimals: number
 ): { price: number; liquidity: number }[] {
-  if (!tickData || !tickData.ticks || tickData.ticks.length < 2) return []
+  if (tickData.ticks.length < 2) return []
 
   const { tick: currentTick, liquidity: poolLiquidity, ticks } = tickData
 
@@ -30,7 +30,7 @@ export function processTickData(
   if (splitIdx <= 0 || splitIdx >= ticks.length) return []
 
   // Anchor current range
-  const liquidities = new Array(ticks.length - 1)
+  const liquidities = new Array<number>(ticks.length - 1)
   liquidities[splitIdx - 1] = parseFloat(poolLiquidity)
 
   // Walk RIGHT: ranges above current

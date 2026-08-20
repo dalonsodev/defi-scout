@@ -8,6 +8,17 @@ interface CustomTVLTooltipProps extends Partial<TooltipContentProps<ValueType, N
   dateShortMap: Map<number, string>
 }
 
+interface TVLPayloadEntry {
+  feesUSD: number
+  volumeToTvlRatio: number
+}
+
+interface TVLEntry {
+  name: string
+  value: number
+  color: string
+}
+
 /**
  * UI: Multi-Series Chart Tooltip (TVL + Vol + Vol/TVl ratio + Fees)
  *
@@ -49,9 +60,10 @@ export function CustomTVLTooltip({
   if (!active || !payload?.length) return null
 
   const labelAsNumber = typeof label === 'string' ? Number(label) : (label as number)
-  const displayLabel = dateShortMap?.get(labelAsNumber) ?? label
-  const feesUSD = payload[0]?.payload?.feesUSD
-  const volumeToTvlRatio = payload[0]?.payload?.volumeToTvlRatio
+  const displayLabel = dateShortMap.get(labelAsNumber) ?? label
+  const entryPayload = (payload[0] as { payload: TVLPayloadEntry } | undefined)?.payload
+  const feesUSD = entryPayload?.feesUSD
+  const volumeToTvlRatio = entryPayload?.volumeToTvlRatio
 
   return (
     <div
@@ -67,7 +79,8 @@ export function CustomTVLTooltip({
 
       {/* Metric rows with context-aware formatting */}
       {payload.map((entry, index) => {
-        const formattedValue = formatCompactCurrency(entry.value)
+        const typedEntry = entry as TVLEntry
+        const formattedValue = formatCompactCurrency(typedEntry.value)
 
         return (
           // Note: Using index as key (React anti-pattern) because payload order
@@ -80,9 +93,9 @@ export function CustomTVLTooltip({
             <div className="flex items-center gap-2">
               <div
                 className="h-3 w-3 rounded-full"
-                style={{ backgroundColor: entry.color }}
+                style={{ backgroundColor: typedEntry.color }}
               />
-              <span className="text-sm">{entry.name}:</span>
+              <span className="text-sm">{typedEntry.name}:</span>
             </div>
             <span className="text-sm font-semibold">{formattedValue}</span>
           </div>

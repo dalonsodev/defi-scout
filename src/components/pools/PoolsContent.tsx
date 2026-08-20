@@ -56,8 +56,6 @@ export function PoolsContent({
 }: PoolsContentProps): ReactNode {
   // Platform dropdown options (sorted alphabetically)
   const availablePlatforms = useMemo(() => {
-    if (!pools) return []
-
     const uniqueProjects = [...new Set(pools.map((pool) => pool.project))]
 
     return uniqueProjects
@@ -70,7 +68,7 @@ export function PoolsContent({
 
   // Filter full dataset (8k pools) to matching subset
   const filteredPools = useMemo(() => {
-    if (!pools || !Array.isArray(pools)) return []
+    if (!Array.isArray(pools)) return []
     return filterPools(pools, filters)
   }, [pools, filters])
 
@@ -113,11 +111,9 @@ export function PoolsContent({
 
   const handleSortingChange: OnChangeFn<SortingState> = (updaterOrValue) => {
     const newSorting =
-      typeof updaterOrValue === 'function'
-        ? (updaterOrValue)(sorting)
-        : updaterOrValue
+      typeof updaterOrValue === 'function' ? updaterOrValue(sorting) : updaterOrValue
 
-    if (!newSorting || newSorting.length === 0) {
+    if (newSorting.length === 0) {
       updateSearchParams(navigate, searchParams, {
         sortBy: 'tvlUsd',
         sortDir: 'desc'
@@ -162,7 +158,10 @@ export function PoolsContent({
 
     if (tableRef.current) {
       tableRef.current.setAttribute('aria-live', 'polite')
-      tableRef.current.setAttribute('aria-label', `Showing page ${pageIndex + 1} of ${totalPages}`)
+      tableRef.current.setAttribute(
+        'aria-label',
+        `Showing page ${String(pageIndex + 1)} of ${String(totalPages)}`
+      )
     }
   }, [pageIndex, totalPages, filtersKey])
 

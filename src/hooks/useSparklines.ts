@@ -7,7 +7,7 @@ interface SparklinesParams {
   currentPage: number
 }
 
-export type SparklineCache = Record<string, number[]>
+export type SparklineCache = Record<string, number[] | undefined>
 
 interface SparklinesResult {
   sparklineData: SparklineCache
@@ -52,7 +52,7 @@ export function useSparklines({ visiblePools, currentPage }: SparklinesParams): 
     // Freemium Gate: Pages 2+ handled by SparklineCell (shows "Upgrade to Pro" tooltip)
     if (currentPage > 1) return
 
-    if (!visiblePools || visiblePools.size === 0) return
+    if (visiblePools.size === 0) return
 
     // Prevents setState after component unmounts during async fetch
     let isMounted = true
@@ -82,7 +82,7 @@ export function useSparklines({ visiblePools, currentPage }: SparklinesParams): 
       }
     }
 
-    fetchData()
+    void fetchData()
 
     return () => {
       isMounted = false

@@ -70,7 +70,7 @@ export function usePoolHourlyData(poolId: string, daysLookback: number = 30): Po
       }
     }
 
-    loadHourlyData()
+    void loadHourlyData()
     return () => {
       cancelled = true
     } // Cleanup: Prevents state update on unmounted component

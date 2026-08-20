@@ -50,7 +50,7 @@ export function PoolCharts({
   tickIsLoading
 }: PoolChartsProps): ReactNode {
   // UI/UX: Empty state
-  if (!history?.length) {
+  if (!history.length) {
     return (
       <div className="card bg-base-200 rounded-2xl p-8 text-center">
         <p className="text-base-content/60">No historical data available</p>

@@ -11,10 +11,10 @@ import type { FormattedPool } from '../types'
  * Connects router data with global filtering logic
  */
 export default function Pools(): ReactNode {
-  const { pools } = useLoaderData()
+  const { pools } = useLoaderData<{ pools: FormattedPool[] }>()
 
   const { filters, updateFilter, togglePlatform, clearFilters } = usePoolFilters()
-  const { favoriteIds, toggleFavorite } = useOutletContext()
+  const { favoriteIds, toggleFavorite } = useOutletContext<FavoritesOutletContext>()
 
   return (
     <div className="mx-auto max-w-7xl">

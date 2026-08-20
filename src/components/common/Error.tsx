@@ -21,7 +21,11 @@ export function Error(): ReactNode {
   const error = useRouteError()
 
   if (isRouteErrorResponse(error)) {
-    const errorMessage = error.data?.message ?? String(error.data || error.statusText)
+    const data = error.data as { message?: string } | string | null | undefined
+    const errorMessage =
+      typeof data === 'object' && data?.message
+        ? data.message
+        : String(error.data ?? error.statusText)
 
     return (
       <>

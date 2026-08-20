@@ -1,10 +1,10 @@
 import { debugLog } from './logger'
 
 interface InferTokenPricesFromTVLParams {
-  tvlUSD: number
-  tvlToken0: number
-  tvlToken1: number
-  currentPrice: number
+  tvlUSD: number | null | undefined
+  tvlToken0: number | null | undefined
+  tvlToken1: number | null | undefined
+  currentPrice: number | null | undefined
 }
 
 type InferPricesResult =

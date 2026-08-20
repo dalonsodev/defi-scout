@@ -11,11 +11,11 @@ function formatDateShort(timestamp: number): string {
   const month = date.toLocaleDateString('en-US', { month: 'short' })
   const day = date.getDate()
 
-  return `${month} ${day}`
+  return `${month} ${String(day)}`
 }
 
 export function formatPoolHistory(rawPoolDayData: RawPoolDayData[]): FormattedPoolHistory[] {
-  if (!rawPoolDayData?.length) {
+  if (!rawPoolDayData.length) {
     return []
   }
   return rawPoolDayData.map((day) => {

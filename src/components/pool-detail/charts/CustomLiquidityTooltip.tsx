@@ -9,6 +9,11 @@ interface CustomLiquidityTooltipProps extends Partial<TooltipContentProps<ValueT
   selectedTokenIdx: number
 }
 
+interface LiquidityEntry {
+  color: string
+  payload: { price: number }
+}
+
 /**
  * UI: Liquidity Distribution Tooltip (Recharts Custom Component)
  *
@@ -22,9 +27,8 @@ export function CustomLiquidityTooltip({
   if (!active || !payload?.length) return null
 
   const [token0Symbol, token1Symbol] = tokenSymbols
-  const entry = payload[0]
-  const rawData = entry.payload as { price: number }
-  const price = rawData.price
+  const entry = payload[0] as LiquidityEntry
+  const price = entry.payload.price
   const label =
     selectedTokenIdx === 0
       ? `${token0Symbol} per ${token1Symbol}`

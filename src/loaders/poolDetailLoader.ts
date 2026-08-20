@@ -43,6 +43,7 @@ export async function poolDetailLoader({
 }: LoaderFunctionArgs): Promise<PoolDetailLoaderResult> {
   const { poolId } = params
 
+  // eslint-disable-next-line @typescript-eslint/only-throw-error
   if (!poolId) throw new Response('Pool ID missing', { status: 400 })
 
   // TheGraph uses Unix timestamps in seconds (not milliseconds like Date.now())
@@ -52,7 +53,7 @@ export async function poolDetailLoader({
     const { pool, history, ethPriceUSD } = await fetchPoolHistory(poolId, thirtyDaysAgo)
 
     // Edge Case: Pool exists but has no daily snapshots (new pool, or indexing lag)
-    if (!history || history.length === 0) {
+    if (history.length === 0) {
       return {
         poolId,
         history: [],
@@ -69,6 +70,7 @@ export async function poolDetailLoader({
     console.error('Pool detail loader error:', error)
 
     // React Router error boundary: Renders ErrorBoundary component instead of detail page
+    // eslint-disable-next-line @typescript-eslint/only-throw-error
     throw new Response('Failed to load pool data', { status: 500 })
   }
 }

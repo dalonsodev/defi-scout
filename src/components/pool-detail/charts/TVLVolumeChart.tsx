@@ -19,8 +19,6 @@ export function TVLVolumeChart({ history }: TVLVolumeChartProps) {
   // Logic: Calculate capital efficiency ratio (Volume / TVL)
   // Higher ratios indicate better fee generation per dollar of liquidity
   const historyWithRatio = useMemo(() => {
-    if (!history) return []
-
     return history.map((day) => ({
       ...day,
       volumeToTvlRatio: day.tvlUSD > 0 ? day.volumeUSD / day.tvlUSD : 0
@@ -52,7 +50,7 @@ export function TVLVolumeChart({ history }: TVLVolumeChartProps) {
             dataKey="dateTimestamp"
             tick={{ dy: 5 }}
             ticks={weeklyTicks.map((d) => d.dateTimestamp)}
-            tickFormatter={(v) => tickLabelMap.get(v) ?? ''}
+            tickFormatter={(v: number) => tickLabelMap.get(v) ?? ''}
             axisLine={false}
             tickLine={false}
             style={{ fontSize: '12px' }}
@@ -62,7 +60,7 @@ export function TVLVolumeChart({ history }: TVLVolumeChartProps) {
           <YAxis
             yAxisId="left"
             style={{ fontSize: '11px' }}
-            tickFormatter={(value) => formatCompactCurrency(value)}
+            tickFormatter={(value) => formatCompactCurrency(Number(value))}
             axisLine={false}
             tickLine={false}
           />
@@ -72,7 +70,7 @@ export function TVLVolumeChart({ history }: TVLVolumeChartProps) {
             yAxisId="right"
             orientation="right"
             style={{ fontSize: '11px' }}
-            tickFormatter={(value) => formatCompactCurrency(value)}
+            tickFormatter={(value) => formatCompactCurrency(Number(value))}
             axisLine={false}
             tickLine={false}
           />

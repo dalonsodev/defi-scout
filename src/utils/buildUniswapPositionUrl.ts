@@ -41,8 +41,8 @@ export function buildUniswapPositionUrl(
     minTick = Math.ceil(MIN_TICK / tickSpacing) * tickSpacing
     maxTick = Math.floor(MAX_TICK / tickSpacing) * tickSpacing
   } else {
-    const maxPriceNum = parseFloat(inputs.maxPrice.toString())
-    const minPriceNum = parseFloat(inputs.minPrice.toString())
+    const maxPriceNum = parseFloat(inputs.maxPrice)
+    const minPriceNum = parseFloat(inputs.minPrice)
 
     const canonicalMin = selectedTokenIdx === 1 ? 1 / maxPriceNum : minPriceNum
     const canonicalMax = selectedTokenIdx === 1 ? 1 / minPriceNum : maxPriceNum
@@ -72,10 +72,10 @@ export function buildUniswapPositionUrl(
 
   const priceRangeState = JSON.stringify({
     priceInverted,
-    fullRange: !!inputs.fullRange,
+    fullRange: inputs.fullRange,
     minTick,
     maxTick,
-    initialPrice: inputs.fullRange ? '' : String(inputs.assumedPrice),
+    initialPrice: inputs.fullRange ? '' : inputs.assumedPrice,
     inputMode: 'price'
   })
 

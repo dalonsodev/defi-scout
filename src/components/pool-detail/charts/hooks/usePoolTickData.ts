@@ -27,7 +27,7 @@ export function usePoolTickData(
   const [fetchError, setFetchError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!poolId || currentTick == null || !feeTier) return
+    if (!poolId || !feeTier) return
 
     setIsLoading(true)
     setFetchError(null)
@@ -55,7 +55,7 @@ export function usePoolTickData(
       }
     }
 
-    loadTickData()
+    void loadTickData()
     return () => {
       cancelled = true
     } // Cleanup: Prevents state update on unmounted component

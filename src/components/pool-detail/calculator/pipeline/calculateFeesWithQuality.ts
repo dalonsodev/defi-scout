@@ -152,7 +152,7 @@ export function calculateFeesWithQuality({
   }
 
   if (finalQuality !== initialQuality) {
-    warnings.unshift(`⚠️ Quality downgraded to ${finalQuality} (${hoursSkipped} anomalies)`)
+    warnings.unshift(`⚠️ Quality downgraded to ${finalQuality} (${String(hoursSkipped)} anomalies)`)
   }
 
   return {

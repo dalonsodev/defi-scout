@@ -96,7 +96,7 @@ export function formatPoolData(rawPools: RawPool[]): FormattedPool[] {
       id: pool.id,
       symbol: `${pool.token0.symbol} / ${pool.token1.symbol || 'UNKNOWN'}`,
       feeTier,
-      feeTierFormatted: `${feeTier / 10000}%`,
+      feeTierFormatted: `${String(feeTier / 10000)}%`,
       name: `${pool.token0.symbol} / ${pool.token1.symbol || 'LP Pool'}`,
       chain: 'ethereum',
       project: 'uniswap-v3',

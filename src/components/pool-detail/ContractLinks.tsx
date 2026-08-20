@@ -73,9 +73,11 @@ export function ContractLinks({ pool, chain = 'ethereum' }: ContractLinksProps) 
 
   function handleCopy(id: string, address: string) {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    navigator.clipboard.writeText(address)
+    void navigator.clipboard.writeText(address)
     setCopiedId(id)
-    timeoutRef.current = setTimeout(() => { setCopiedId(null); }, 2000)
+    timeoutRef.current = setTimeout(() => {
+      setCopiedId(null)
+    }, 2000)
   }
 
   return (
@@ -90,7 +92,9 @@ export function ContractLinks({ pool, chain = 'ethereum' }: ContractLinksProps) 
           <div>
             <button
               className="btn btn-glass btn-xs btn-circle mr-2"
-              onClick={() => { handleCopy(item.id, item.address); }}
+              onClick={() => {
+                handleCopy(item.id, item.address)
+              }}
               aria-label="Copy contract address"
             >
               {copiedId === item.id ? <CheckIcon /> : <CopyIcon />}
