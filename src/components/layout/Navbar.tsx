@@ -30,9 +30,7 @@ export function Navbar(): ReactNode {
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   return (
@@ -81,9 +79,7 @@ export function Navbar(): ReactNode {
             <div className="flex flex-col">
               <button
                 className="btn btn-md md:btn-sm btn-ghost btn-circle mr-1"
-                onClick={() => {
-                  setIsOpen((prev) => !prev)
-                }}
+                onClick={() => setIsOpen((prev) => !prev)}
               >
                 {currentUser.photoURL ? (
                   <img
@@ -114,9 +110,7 @@ export function Navbar(): ReactNode {
                   <Link
                     to="/watchlist"
                     className="btn btn-ghost rounded-xl text-lg md:text-sm"
-                    onClick={() => {
-                      setIsOpen(false)
-                    }}
+                    onClick={() => setIsOpen(false)}
                   >
                     Watchlist
                   </Link>

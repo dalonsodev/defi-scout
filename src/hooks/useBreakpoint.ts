@@ -34,14 +34,12 @@ export function useBreakpoint(): BreakPointResult {
 
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 768px)')
-    const handleChange = (e: MediaQueryListEvent) => {
-      setIsDesktop(e.matches)
-    }
+    const handleChange = (e: MediaQueryListEvent): void => setIsDesktop(e.matches)
 
     // "change" event fires only when breakpoint crosses, not on every pixel resize
     mq.addEventListener('change', handleChange)
 
-    return () => { mq.removeEventListener('change', handleChange); }
+    return () => mq.removeEventListener('change', handleChange)
   }, [])
 
   return { isDesktop }

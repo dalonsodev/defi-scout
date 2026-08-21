@@ -54,17 +54,13 @@ export function CurrentPriceCard({
       <div className="join mt-4">
         <button
           className={`${glassBtnClasses} rounded-l-xl ${selectedTokenIdx === 0 ? 'btn-active' : ''}`}
-          onClick={() => {
-            onTokenChange(0)
-          }}
+          onClick={() => onTokenChange(0)}
         >
           {pool.token0.symbol}
         </button>
         <button
           className={`${glassBtnClasses} rounded-r-xl ${selectedTokenIdx === 1 ? 'btn-active' : ''}`}
-          onClick={() => {
-            onTokenChange(1)
-          }}
+          onClick={() => onTokenChange(1)}
         >
           {pool.token1.symbol}
         </button>

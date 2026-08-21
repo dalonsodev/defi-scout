@@ -46,6 +46,13 @@ export default defineConfig(
       'prefer-const': 'error',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'react/self-closing-comp': 'error',
+      '@typescript-eslint/no-confusing-void-expression': [
+        'error',
+        {
+          ignoreVoidOperator: true,
+          ignoreVoidReturningFunctions: true
+        }
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

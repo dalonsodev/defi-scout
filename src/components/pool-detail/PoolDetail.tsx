@@ -228,9 +228,7 @@ export function PoolDetail(): ReactNode {
       </title>
       {/* NAVIGATION: Contextual return */}
       <button
-        onClick={() => {
-          void navigate(-1)
-        }}
+        onClick={() => void navigate(-1)}
         className="btn btn-ghost btn-sm mb-4 gap-2 rounded-xl md:mb-6"
       >
         <span>←</span>
@@ -310,9 +308,7 @@ export function PoolDetail(): ReactNode {
               >
                 <button
                   className="btn btn-ghost btn-circle btn-sm"
-                  onClick={() => {
-                    void toggleFavorite(pool.id)
-                  }}
+                  onClick={() => void toggleFavorite(pool.id)}
                   aria-label={`${isFavorited ? 'Remove from' : 'Add to'} Watchlist`}
                 >
                   {isFavorited ? <FilledStarIcon /> : <OutlinedStarIcon />}

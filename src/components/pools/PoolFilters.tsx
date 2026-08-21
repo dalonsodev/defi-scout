@@ -84,10 +84,10 @@ export function PoolFilters({
           placeholder="WETH or WETH/USDC"
           value={localFilters.search}
           className="input glass-input input-sm w-full rounded-xl pl-8"
-          onChange={(e) => { updateLocalFilter('search', e.target.value); }}
+          onChange={(e) => updateLocalFilter('search', e.target.value)}
         />
         <button
-          onClick={() => { setIsOpen(true); }}
+          onClick={() => setIsOpen(true)}
           className="btn btn-sm btn-outline btn-glass rounded-xl md:hidden"
         >
           Filters
@@ -100,7 +100,7 @@ export function PoolFilters({
       {/* Backdrop */}
       <div
         className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 md:hidden ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'} `}
-        onClick={() => { setIsOpen(false); }}
+        onClick={() => setIsOpen(false)}
       />
 
       {/* Bottom sheet */}
@@ -111,7 +111,7 @@ export function PoolFilters({
           <div className="bg-base-300 mx-auto mb-4 h-1 w-12 rounded-full" />
           <button
             className="btn btn-sm btn-circle btn-glass absolute top-4 right-4 mb-4 text-sm"
-            onClick={() => { setIsOpen(false); }}
+            onClick={() => setIsOpen(false)}
           >
             ✕
           </button>
@@ -131,7 +131,7 @@ export function PoolFilters({
               placeholder="Min TVL ($)"
               value={localFilters.tvlUsd}
               className="input glass-input input-sm w-full rounded-xl sm:flex-1"
-              onChange={(e) => { updateLocalFilter('tvlUsd', e.target.value); }}
+              onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
             />
 
             <input
@@ -139,7 +139,7 @@ export function PoolFilters({
               placeholder="Min Vol 24h ($)"
               value={localFilters.volumeUsd1d}
               className="input glass-input input-sm w-full rounded-xl sm:flex-1"
-              onChange={(e) => { updateLocalFilter('volumeUsd1d', e.target.value); }}
+              onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
             />
 
             <button
@@ -164,14 +164,14 @@ export function PoolFilters({
         placeholder="Min TVL ($)"
         value={localFilters.tvlUsd}
         className="input glass-input input-sm hidden w-36 rounded-xl md:block"
-        onChange={(e) => { updateLocalFilter('tvlUsd', e.target.value); }}
+        onChange={(e) => updateLocalFilter('tvlUsd', e.target.value)}
       />
       <input
         type="number"
         placeholder="Min Vol 24h ($)"
         value={localFilters.volumeUsd1d}
         className="input glass-input input-sm hidden w-36 rounded-xl md:block"
-        onChange={(e) => { updateLocalFilter('volumeUsd1d', e.target.value); }}
+        onChange={(e) => updateLocalFilter('volumeUsd1d', e.target.value)}
       />
       <button
         onClick={handleClearFilters}
