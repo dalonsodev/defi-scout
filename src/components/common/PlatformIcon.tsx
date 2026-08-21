@@ -69,7 +69,7 @@ export function PlatformIcon({ platform, size }: PlatformIconProps): ReactNode {
       src={iconUrl}
       alt={platform}
       className={`${SIZE_CLASSES[size]} rounded-full object-cover`}
-      onError={() => { setHasError(true); }}
+      onError={() => setHasError(true)}
     />
   )
 }

@@ -76,9 +76,7 @@ export function PaginationControls({
           return (
             <button
               key={page}
-              onClick={() => {
-                goToPage(page)
-              }}
+              onClick={() => goToPage(page)}
               className={`btn btn-sm btn-glass rounded-xl ${page === currentPage ? 'btn-active' : ''}`}
             >
               {page}

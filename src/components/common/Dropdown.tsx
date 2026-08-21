@@ -39,9 +39,7 @@ export function Dropdown({ selected, onToggle, options }: DropdownProps): ReactN
     document.addEventListener('mousedown', handleClickOutside)
 
     // Cleanup: Prevents memory leaks when the component unmounts
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   return (
@@ -53,9 +51,7 @@ export function Dropdown({ selected, onToggle, options }: DropdownProps): ReactN
       <button
         type="button"
         className="btn btn-sm glass-input w-full justify-between rounded-xl"
-        onClick={() => {
-          setIsOpen((prev) => !prev)
-        }}
+        onClick={() => setIsOpen((prev) => !prev)}
       >
         {selected.length > 0 ? `Selected (${String(selected.length)})` : 'All Platforms'}
         <svg
@@ -83,9 +79,7 @@ export function Dropdown({ selected, onToggle, options }: DropdownProps): ReactN
                   type="checkbox"
                   className="checkbox checkbox-sm"
                   checked={selected.includes(option.value)}
-                  onChange={() => {
-                    onToggle(option.value)
-                  }}
+                  onChange={() => onToggle(option.value)}
                 />
                 <span className="label-text ml-2">{option.display}</span>
               </label>

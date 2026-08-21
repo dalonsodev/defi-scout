@@ -83,7 +83,7 @@ export function CalculatorInputs({
             type="number"
             id="deposit-amount"
             value={inputs.capitalUSD}
-            onChange={(e) => { onChange('capitalUSD', Number(e.target.value)); }}
+            onChange={(e) => onChange('capitalUSD', Number(e.target.value))}
             className="input input-xl glass-input w-full rounded-xl pl-10 text-3xl font-bold"
             min="0"
           />
@@ -141,7 +141,7 @@ export function CalculatorInputs({
             <input
               type="checkbox"
               checked={inputs.fullRange}
-              onChange={(e) => { onChange('fullRange', e.target.checked); }}
+              onChange={(e) => onChange('fullRange', e.target.checked)}
               className="toggle toggle-sm"
             />
           </label>
@@ -152,7 +152,7 @@ export function CalculatorInputs({
         <div className="mb-3 flex gap-2 md:mb-6">
           <button
             type="button"
-            onClick={() => { onPresetClick('±10%'); }}
+            onClick={() => onPresetClick('±10%')}
             className="btn btn-sm btn-glass flex-1 rounded-xl"
             disabled={inputs.fullRange}
           >
@@ -160,7 +160,7 @@ export function CalculatorInputs({
           </button>
           <button
             type="button"
-            onClick={() => { onPresetClick('±15%'); }}
+            onClick={() => onPresetClick('±15%')}
             className="btn btn-sm btn-glass flex-1 rounded-xl"
             disabled={inputs.fullRange}
           >
@@ -168,7 +168,7 @@ export function CalculatorInputs({
           </button>
           <button
             type="button"
-            onClick={() => { onPresetClick('±20%'); }}
+            onClick={() => onPresetClick('±20%')}
             className="btn btn-sm btn-glass flex-1 rounded-xl"
             disabled={inputs.fullRange}
           >
@@ -183,7 +183,7 @@ export function CalculatorInputs({
               <div className="mb-1 flex flex-1 items-center justify-between gap-1">
                 <button
                   type="button"
-                  onClick={() => { onIncrement('minPrice', -1); }}
+                  onClick={() => onIncrement('minPrice', -1)}
                   disabled={inputs.fullRange}
                   className="btn btn-sm md:btn-xs btn-circle btn-glass"
                   title="Decrease by 1 tick spacing"
@@ -193,7 +193,7 @@ export function CalculatorInputs({
                 <label className="text-base-content/60 text-xs">Min Price</label>
                 <button
                   type="button"
-                  onClick={() => { onIncrement('minPrice', 1); }}
+                  onClick={() => onIncrement('minPrice', 1)}
                   disabled={inputs.fullRange}
                   className="btn btn-sm md:btn-xs btn-circle btn-glass"
                   title="Increase by 1 tick spacing"
@@ -206,7 +206,7 @@ export function CalculatorInputs({
             <input
               type="number"
               value={inputs.fullRange ? '' : formatPriceInput(inputs.minPrice)}
-              onChange={(e) => { onChange('minPrice', Number(e.target.value)); }}
+              onChange={(e) => onChange('minPrice', Number(e.target.value))}
               disabled={inputs.fullRange}
               placeholder="0"
               className="input input-md glass-input w-full rounded-xl text-center text-lg"
@@ -221,7 +221,7 @@ export function CalculatorInputs({
               <div className="mb-1 flex flex-1 items-center justify-between gap-1">
                 <button
                   type="button"
-                  onClick={() => { onIncrement('maxPrice', -1); }}
+                  onClick={() => onIncrement('maxPrice', -1)}
                   disabled={inputs.fullRange}
                   className="btn btn-sm md:btn-xs btn-circle btn-glass"
                   title="Decrease by 1 tick spacing"
@@ -231,7 +231,7 @@ export function CalculatorInputs({
                 <label className="text-base-content/60 text-xs">Max Price</label>
                 <button
                   type="button"
-                  onClick={() => { onIncrement('maxPrice', 1); }}
+                  onClick={() => onIncrement('maxPrice', 1)}
                   disabled={inputs.fullRange}
                   className="btn btn-sm md:btn-xs btn-circle btn-glass"
                   title="Increase by 1 tick spacing"
@@ -244,7 +244,7 @@ export function CalculatorInputs({
             <input
               type="number"
               value={inputs.fullRange ? '' : formatPriceInput(inputs.maxPrice)}
-              onChange={(e) => { onChange('maxPrice', Number(e.target.value)); }}
+              onChange={(e) => onChange('maxPrice', Number(e.target.value))}
               disabled={inputs.fullRange}
               placeholder="∞"
               className="input input-md glass-input w-full rounded-xl text-center text-lg"
@@ -261,7 +261,7 @@ export function CalculatorInputs({
             <div className="flex flex-1 items-center justify-between gap-1">
               <button
                 type="button"
-                onClick={() => { onIncrement('assumedPrice', -1); }}
+                onClick={() => onIncrement('assumedPrice', -1)}
                 className="btn btn-sm md:btn-xs btn-circle btn-glass"
                 title="Decrease by 1 tick spacing"
               >
@@ -287,7 +287,7 @@ export function CalculatorInputs({
 
               <button
                 type="button"
-                onClick={() => { onIncrement('assumedPrice', 1); }}
+                onClick={() => onIncrement('assumedPrice', 1)}
                 className="btn btn-sm md:btn-xs btn-circle btn-glass"
                 title="Increase by 1 tick spacing"
               >
@@ -300,7 +300,7 @@ export function CalculatorInputs({
             type="number"
             id="assumed-entry-price"
             value={inputs.fullRange ? '' : formatPriceInput(inputs.assumedPrice)}
-            onChange={(e) => { onChange('assumedPrice', Number(e.target.value)); }}
+            onChange={(e) => onChange('assumedPrice', Number(e.target.value))}
             disabled={inputs.fullRange}
             placeholder={inputs.fullRange ? '50/50 split' : ''}
             className="input input-md glass-input w-full rounded-xl text-center text-lg"

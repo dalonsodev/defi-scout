@@ -81,7 +81,7 @@ export function PriceInputSection({
           <input
             type="number"
             value={futureToken0PriceUSD}
-            onChange={(e) => { onToken0PriceChange(Number(e.target.value)); }}
+            onChange={(e) => onToken0PriceChange(Number(e.target.value))}
             className="flex-1 bg-transparent"
             aria-label="Future Price"
           />
@@ -119,7 +119,7 @@ export function PriceInputSection({
           <input
             type="number"
             value={futureToken1PriceUSD}
-            onChange={(e) => { onToken1PriceChange(Number(e.target.value)); }}
+            onChange={(e) => onToken1PriceChange(Number(e.target.value))}
             className="flex-1 bg-transparent"
             aria-label="Future Price"
           />

@@ -161,9 +161,7 @@ export function AuthModal(): ReactNode {
                 type="email"
                 className="input glass-input mt-1 w-full rounded-xl"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                }}
+                onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
               />
 
@@ -179,9 +177,7 @@ export function AuthModal(): ReactNode {
                         <button
                           type="button"
                           className="link-primary -mb-2 cursor-pointer"
-                          onClick={() => {
-                            setMode(MODE.FORGOT)
-                          }}
+                          onClick={() => setMode(MODE.FORGOT)}
                         >
                           Forgot password?
                         </button>
@@ -194,9 +190,7 @@ export function AuthModal(): ReactNode {
                     type="password"
                     className="input glass-input mt-1 w-full rounded-xl"
                     value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value)
-                    }}
+                    onChange={(e) => setPassword(e.target.value)}
                     autoComplete={mode === MODE.LOGIN ? 'current-password' : 'new-password'}
                   />
                 </>

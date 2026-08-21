@@ -289,9 +289,7 @@ const PoolTable = forwardRef<HTMLDivElement, PoolTableProps>(
                     <span
                       className="tooltip tooltip-bottom text-base-content/60 text-sm"
                       data-tip={tooltipText}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                      }}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       ⓘ
                     </span>
