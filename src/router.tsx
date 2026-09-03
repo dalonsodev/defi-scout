@@ -4,9 +4,7 @@ import { FavoritesLayout } from './components/layout/FavoritesLayout'
 import { Layout } from './components/layout/Layout'
 import { poolDetailLoader } from './loaders/poolDetailLoader'
 import { poolsLoader } from './loaders/poolsLoader'
-import { watchlistLoader } from './loaders/watchlistLoader'
 import Pools from './pages/Pools'
-import Watchlist from './pages/Watchlist'
 
 /**
  * Application Router: React Router v8 (with loader-based data fetching)
@@ -45,8 +43,11 @@ export const router = createBrowserRouter(
         />
         <Route
           path="watchlist"
-          element={<Watchlist />}
-          loader={watchlistLoader}
+          lazy={async () => {
+            const pageModule = await import('./pages/Watchlist')
+            const loaderModule = await import('./loaders/watchlistLoader')
+            return { Component: pageModule.default, loader: loaderModule.watchlistLoader }
+          }}
         />
       </Route>
     </Route>
