@@ -1,6 +1,7 @@
 import { collection, getDocs } from 'firebase/firestore'
 import { redirect } from 'react-router'
-import { auth, db } from '../../firebase'
+import { auth } from '../../firebase-auth'
+import { db } from '../../firebase-firestore'
 import { fetchWatchedPools } from '../services/theGraphClient'
 import { FormattedPool } from '../types'
 import { formatPoolData } from './utils/formatPoolData'

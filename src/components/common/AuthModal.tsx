@@ -6,7 +6,7 @@ import {
   signInWithPopup
 } from 'firebase/auth'
 import { useRef, useState } from 'react'
-import { auth } from '../../../firebase'
+import { auth } from '../../../firebase-auth'
 import { useAuth } from '../../context/AuthContext'
 import { useFocusTrap } from './hooks/useFocusTrap'
 import type { FirebaseError } from 'firebase/app'
