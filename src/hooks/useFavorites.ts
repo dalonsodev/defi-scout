@@ -1,12 +1,40 @@
-import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
-import { db } from '../../firebase-firestore'
 import { useAuth } from '../context/AuthContext'
+import type {
+  collection,
+  deleteDoc,
+  doc,
+  Firestore,
+  getDocs,
+  serverTimestamp,
+  setDoc
+} from 'firebase/firestore'
 
 interface UseFavoritesResult {
   favoriteIds: Set<string>
   toggleFavorite: (poolId: string) => Promise<void>
   isLoggedIn: boolean
+}
+
+interface ImportFirebase {
+  collection: typeof collection
+  deleteDoc: typeof deleteDoc
+  doc: typeof doc
+  getDocs: typeof getDocs
+  serverTimestamp: typeof serverTimestamp
+  setDoc: typeof setDoc
+  db: Firestore
+}
+
+const importFirebase = async (): Promise<ImportFirebase> => {
+  const [firestoreModule, dbModule] = await Promise.all([
+    import('firebase/firestore'),
+    import('../../firebase-firestore')
+  ])
+  const { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } = firestoreModule
+  const { db } = dbModule
+
+  return { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, db }
 }
 
 /**
@@ -31,9 +59,10 @@ export function useFavorites(): UseFavoritesResult {
     let cancelled = false
 
     const fetchFavorites = async (): Promise<void> => {
+      const { collection, getDocs, db } = await importFirebase()
       const favoritesRef = collection(db, 'users', currentUser.uid, 'favorites')
       const querySnapshot = await getDocs(favoritesRef)
-      const poolIds = new Set(querySnapshot.docs.map((doc) => doc.id))
+      const poolIds = new Set<string>(querySnapshot.docs.map((doc) => doc.id))
 
       if (!cancelled) {
         setFavoriteIds(poolIds)
@@ -61,6 +90,11 @@ export function useFavorites(): UseFavoritesResult {
       openAuthModal()
       return
     }
+
+    // On a cache-cold first click, the optimistic update is delayed behind
+    // the Firestore chunk load. Acceptable trade-off for a portfolio scope.
+    const { doc, deleteDoc, setDoc, serverTimestamp, db } = await importFirebase()
+
     const docRef = doc(db, 'users', currentUser.uid, 'favorites', poolId)
 
     if (favoriteIds.has(poolId)) {
