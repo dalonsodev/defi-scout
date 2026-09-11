@@ -127,7 +127,7 @@ export function AuthModal(): ReactNode {
               : 'Reset Password'}
         </h3>
 
-        <form onSubmit={void handleSubmit}>
+        <form onSubmit={(e) => void handleSubmit(e)}>
           {resetSent ? (
             <>
               <div
@@ -236,7 +236,7 @@ export function AuthModal(): ReactNode {
                   <button
                     type="button"
                     className="btn btn-outline btn-glass mb-2 w-full rounded-xl"
-                    onClick={void handleGoogleSignIn}
+                    onClick={() => void handleGoogleSignIn()}
                     disabled={isLoading}
                   >
                     <svg
