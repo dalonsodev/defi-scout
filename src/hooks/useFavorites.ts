@@ -1,40 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import type {
-  collection,
-  deleteDoc,
-  doc,
-  Firestore,
-  getDocs,
-  serverTimestamp,
-  setDoc
-} from 'firebase/firestore'
+import { importFirebase } from '../services/lazyFirestore'
 
 interface UseFavoritesResult {
   favoriteIds: Set<string>
   toggleFavorite: (poolId: string) => Promise<void>
   isLoggedIn: boolean
-}
-
-interface ImportFirebase {
-  collection: typeof collection
-  deleteDoc: typeof deleteDoc
-  doc: typeof doc
-  getDocs: typeof getDocs
-  serverTimestamp: typeof serverTimestamp
-  setDoc: typeof setDoc
-  db: Firestore
-}
-
-const importFirebase = async (): Promise<ImportFirebase> => {
-  const [firestoreModule, dbModule] = await Promise.all([
-    import('firebase/firestore'),
-    import('../../firebase-firestore')
-  ])
-  const { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } = firestoreModule
-  const { db } = dbModule
-
-  return { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, db }
 }
 
 /**
