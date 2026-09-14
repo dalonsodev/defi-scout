@@ -7,16 +7,18 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
+        chunkFileNames(chunkInfo) {
+          if (chunkInfo.moduleIds.some((id) => id.includes('/node_modules/@firebase/firestore/'))) {
+            return 'assets/vendor-firebase-firestore-[hash].js'
+          }
+          return 'assets/[name]-[hash].js'
+        },
         manualChunks(id) {
           const normalizedId = id.replace(/\\/g, '/')
 
           if (normalizedId.includes('/node_modules/')) {
             if (normalizedId.includes('/node_modules/@firebase/auth/')) {
               return 'vendor-firebase-auth'
-            }
-
-            if (normalizedId.includes('/node_modules/@firebase/firestore/')) {
-              return 'vendor-firebase-firestore'
             }
 
             if (
