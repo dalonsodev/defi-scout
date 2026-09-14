@@ -1,7 +1,6 @@
-import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
-import { db } from '../../firebase'
 import { useAuth } from '../context/AuthContext'
+import { importFirebase } from '../services/lazyFirestore'
 
 interface UseFavoritesResult {
   favoriteIds: Set<string>
@@ -31,9 +30,10 @@ export function useFavorites(): UseFavoritesResult {
     let cancelled = false
 
     const fetchFavorites = async (): Promise<void> => {
+      const { collection, getDocs, db } = await importFirebase()
       const favoritesRef = collection(db, 'users', currentUser.uid, 'favorites')
       const querySnapshot = await getDocs(favoritesRef)
-      const poolIds = new Set(querySnapshot.docs.map((doc) => doc.id))
+      const poolIds = new Set<string>(querySnapshot.docs.map((doc) => doc.id))
 
       if (!cancelled) {
         setFavoriteIds(poolIds)
@@ -61,6 +61,11 @@ export function useFavorites(): UseFavoritesResult {
       openAuthModal()
       return
     }
+
+    // On a cache-cold first click, the optimistic update is delayed behind
+    // the Firestore chunk load. Acceptable trade-off for a portfolio scope.
+    const { doc, deleteDoc, setDoc, serverTimestamp, db } = await importFirebase()
+
     const docRef = doc(db, 'users', currentUser.uid, 'favorites', poolId)
 
     if (favoriteIds.has(poolId)) {

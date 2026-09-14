@@ -116,7 +116,7 @@ export function Navbar(): ReactNode {
                   </Link>
                   <button
                     className="btn btn-ghost text-md rounded-xl whitespace-nowrap text-red-500 md:text-xs"
-                    onClick={void logout}
+                    onClick={() => void logout()}
                   >
                     Log out
                     <svg

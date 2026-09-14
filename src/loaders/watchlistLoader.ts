@@ -1,6 +1,6 @@
-import { collection, getDocs } from 'firebase/firestore'
 import { redirect } from 'react-router'
-import { auth, db } from '../../firebase'
+import { auth } from '../../firebase-auth'
+import { importFirebase } from '../services/lazyFirestore'
 import { fetchWatchedPools } from '../services/theGraphClient'
 import { FormattedPool } from '../types'
 import { formatPoolData } from './utils/formatPoolData'
@@ -27,6 +27,8 @@ interface WatchlistLoaderSuccess {
 export async function watchlistLoader(): Promise<WatchlistLoaderSuccess | Response> {
   // Hard redirect if unauthenticated
   if (auth.currentUser === null) return redirect('/')
+
+  const { collection, getDocs, db } = await importFirebase()
 
   // Phase 1: Firestore -> pool IDs
   const snapshot = await getDocs(collection(db, 'users', auth.currentUser.uid, 'favorites'))
