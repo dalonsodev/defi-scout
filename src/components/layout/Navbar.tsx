@@ -35,9 +35,9 @@ export function Navbar(): ReactNode {
 
   return (
     <header
-      className={`navbar glass-surface sticky top-2 z-50 mx-2 mt-2 w-auto rounded-full px-0 sm:px-2 md:top-0 md:mx-0 md:mt-0 md:w-full md:rounded-none md:rounded-b-3xl md:px-2`}
+      className={`navbar glass-surface sticky top-2 z-50 mx-2 mt-2 w-auto justify-between rounded-full px-0 sm:px-2 md:top-0 md:mx-0 md:mt-0 md:w-full md:rounded-none md:rounded-b-3xl md:px-2`}
     >
-      <div className="ml-3.5 flex-1 md:ml-2">
+      <div className="ml-3.5 md:ml-2">
         {/* Brand: Site logo */}
         <Link
           to="/"
